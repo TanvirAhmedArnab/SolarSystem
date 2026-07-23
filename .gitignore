@@ -109,3 +109,15 @@ InitTestScene*.unity*
 
 # Unity AI Assistant local checkpoint and UI preferences
 /ProjectSettings/Packages/com.unity.ai.assistant/Settings.json
+
+# Reproducible source-asset download cache and unused extracted Kenney sounds
+/SourceAssets/_Downloads/
+/SourceAssets/ThirdParty/Audio/KenneyInterfaceSounds/Audio/*
+/SourceAssets/ThirdParty/Audio/KenneyInterfaceSounds/Patreon.url
+!/SourceAssets/ThirdParty/Audio/KenneyInterfaceSounds/Audio/close_001.ogg
+!/SourceAssets/ThirdParty/Audio/KenneyInterfaceSounds/Audio/confirmation_001.ogg
+!/SourceAssets/ThirdParty/Audio/KenneyInterfaceSounds/Audio/error_004.ogg
+!/SourceAssets/ThirdParty/Audio/KenneyInterfaceSounds/Audio/open_001.ogg
+!/SourceAssets/ThirdParty/Audio/KenneyInterfaceSounds/Audio/select_001.ogg
+!/SourceAssets/ThirdParty/Audio/KenneyInterfaceSounds/Audio/switch_002.ogg
+!/SourceAssets/ThirdParty/Audio/KenneyInterfaceSounds/Audio/tick_002.ogg

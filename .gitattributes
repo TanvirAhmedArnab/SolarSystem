@@ -178,3 +178,6 @@ Packages/packages-lock.json linguist-generated
 
 # Exceptions for .asset files such as lightning pre-baking
 LightingData.asset     binary
+
+# Preserve bundled third-party license formatting byte-for-byte.
+SourceAssets/ThirdParty/Audio/KenneyInterfaceSounds/License.txt -text whitespace=-blank-at-eol

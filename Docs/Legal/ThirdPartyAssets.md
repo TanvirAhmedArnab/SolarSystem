@@ -5,6 +5,8 @@
 **Version:** 0.3.0  
 **Last reviewed:** 2026-07-22
 
+**Live-source verification:** Rechecked 2026-07-22 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records.
+
 > Operational provenance record, not legal advice. Re-check source pages before release and reject assets with ambiguous rights.
 
 ## Release Credits and Provenance
@@ -87,6 +89,14 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 | AUD-OGA-SUN-001 | Fireplace Sound Loop | PagDev / OpenGameArt | CC0 1.0 | Imported Sun ambience source |
 | AUD-OGA-EARTH-001 | Forest Ambience | TinyWorlds / OpenGameArt | CC0 1.0 | Imported Earth ambience source |
 | AUD-KEN-001 | Interface Sounds | Kenney | CC0 1.0 | Seven-file runtime subset imported |
+
+## Repository Inclusion Policy
+
+- Commit every Unity-ready asset used by the project through Git LFS.
+- Commit the corresponding source original when it is part of the approved working set.
+- Treat `SourceAssets/_Downloads` as a reproducible, ignored cache rather than permanent repository content.
+- For the 100-file Kenney pack, commit only the seven selected originals plus the bundled license and provider link; leave 93 unused sounds and the archive out of Git.
+- Keep the manifest and retrieval script so the complete source package can be reproduced and its archive hash verified.
 
 ## Unity Import Record
 

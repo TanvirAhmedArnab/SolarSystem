@@ -35,8 +35,24 @@ Unity imported the initial licensed working set under `Assets/SolarSystem/Conten
 | Template Readme and TutorialInfo removal | Pass |
 | Original sources preserved | Pass |
 
+## Repository Candidate Validation
+
+| Check | Result |
+|---|---|
+| Live license/source-page review | Pass: Solar System Scope CC BY 4.0; Kenney and three OpenGameArt sources CC0; USGS product constraints recorded |
+| Selected source binaries | Pass: 33 |
+| Unity-to-source SHA-256 parity | Pass: zero unmatched hashes in either direction |
+| Download manifest | Pass: 27 rows, zero missing files, size mismatches, or hash mismatches |
+| Staged Git LFS paths | Pass: 66 valid pointers representing 33 deduplicated objects |
+| Staged Unity metadata | Pass: zero missing partners and zero duplicate GUIDs |
+| Staged generated files | Pass: zero |
+| Strong-signature secret scan | Pass: zero matches |
+| Staged diff whitespace check | Pass |
+
+The reproducible Kenney ZIP, 93 unused extracted sounds, and promotional link remain ignored. The candidate includes only the seven selected source sounds, bundled license, provider link, manifest, retrieval tooling, and approved source/runtime media.
+
 ## Remaining review gates
 
 Import does not equal final presentation approval. Texture orientation, seams, color space, alpha, normal-map classification, wrap mode, compression, and material behavior remain to be reviewed when each material is created. Music, Sun, Earth, and UI audio still require in-scene audition, loop, spatial-blend, rolloff, and loudness review.
 
-No commit or push was performed.
+No asset-import commit or push was performed as part of this validation.

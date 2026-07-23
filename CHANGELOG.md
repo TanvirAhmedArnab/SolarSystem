@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Project-authored runtime, editor, Edit Mode test, and Play Mode test assembly boundaries.
 - Unity-aware repository attributes, Git LFS rules, and generated-file ignores.
 - Initial Edit Mode assembly-foundation smoke test.
+- Initial licensed texture, ambient-audio, music, and UI-sound working set with source provenance.
 
 ### Changed
 
