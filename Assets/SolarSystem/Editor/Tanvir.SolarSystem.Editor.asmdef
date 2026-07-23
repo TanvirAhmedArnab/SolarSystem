@@ -4,6 +4,7 @@
   "references": [
     "Tanvir.SolarSystem.Core",
     "Tanvir.SolarSystem.Runtime",
+    "Unity.InputSystem",
     "Unity.RenderPipelines.Core.Runtime"
   ],
   "includePlatforms": ["Editor"],

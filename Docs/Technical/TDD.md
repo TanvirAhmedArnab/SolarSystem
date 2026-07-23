@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; representative Slice 2 scale proof implemented  
-**Version:** 0.5.0  
+**Document status:** Living technical authority; Slice 3 interaction proof implemented  
+**Version:** 0.6.0  
 **Last updated:** 2026-07-23  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -31,6 +31,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.4.0 | 2026-07-22 | Codex, for Tanvir | Implemented serialized Sun-Earth-Moon authoring, coordinate/scale adapters, centralized views, cached orbit paths, the visible scene, and Slice 2 validation | Sun-Earth-Moon proof validated; scale tuning and Jupiter remain open |
 | 0.4.1 | 2026-07-23 | Codex, for Tanvir | Separated Slice 2 editor orchestration, asset authoring, build data, and scene construction; revalidated the complete visible proof | Technical refactor validated; product scope unchanged |
 | 0.5.0 | 2026-07-23 | Codex, for Tanvir | Added verified Jupiter authoring and presentation, gas-giant scale acceptance tests, camera-range evidence, and complete Slice 2 validation | Representative graybox slice validated; final guided-comparison tuning remains open |
+| 0.6.0 | 2026-07-23 | Codex, for Tanvir | Added the project-owned input map, stable-ID selection, raycast adapters, explicit interaction composition, and validated free/focus camera state machine | First Slice 3 interaction proof validated; time, scale-comparison, and UI work remain |
 
 ### 1.3 Status vocabulary
 
@@ -338,35 +339,42 @@ Render positions are relative to an explicit render origin, normally the current
 
 ### 6.6 Selection and focus
 
-`SelectionService` owns a valid `CelestialBodyId?`. Selection changes publish one C# event. Camera, UI, audio, and highlighting subscribe through explicit initialization and unsubscribe on disposal/disable.
+**[IMPLEMENTED]** `SelectionService` owns a valid `CelestialBodyId?`.
+Selection changes publish one C# event and duplicate selections do not produce
+duplicate notifications. `CelestialSelectionController` is the Unity adapter:
+it raycasts from the current pointer through the explorer camera, resolves a
+`CelestialBodyView`, and updates the service. Each body owns one root-level
+`SphereCollider` whose radius follows the projected visual radius.
 
 Focus may follow selection but remains a separate command so cinematic mode can move without changing informational selection.
 
 ### 6.7 Camera
 
-`FocusCameraController` supports:
+**[IMPLEMENTED/PARTIAL]** `SolarSystemCameraController` currently supports:
 
-- Free-fly navigation.
-- Focus/orbit around a selected body.
-- Scripted cinematic waypoints using the same focus and simulation services.
-- Interruptible transitions.
-- Reduced-motion or instant-transition behavior.
+- damped free-flight navigation with a temporary boost;
+- focus and pointer orbit around a selected body;
+- body-relative zoom limits;
+- smooth transitions that can be cancelled or redirected.
 
-Camera transitions use unscaled time so pausing the simulation does not trap the camera. Near/far clipping and movement speed respond to the current display scale and target radius.
+Camera transitions and movement use unscaled time so pausing the simulation
+does not trap the camera. Focus distance and zoom limits respond to the target's
+projected radius. Context-sensitive free-flight speed, scripted cinematic
+waypoints, and reduced-motion/instant transitions remain pending.
 
 ### 6.8 Input
 
-`SolarSystemInputAdapter` owns Input System callbacks and converts them into application commands. Runtime systems do not poll keyboard keys directly.
+**[IMPLEMENTED/PARTIAL]** `SolarSystemInputAdapter` owns Input System callbacks
+and converts the project-owned `Explorer` map into continuous intent and
+discrete commands. Runtime systems do not poll keyboard keys directly. The
+binding contract is maintained in `Docs/Design/Controls.md`.
 
-Action-map groups are expected for:
+The implemented map covers:
 
-- Navigation.
-- Selection/focus.
-- Simulation time.
-- Scale comparison.
-- UI/help.
+- WASD/arrow movement, Q/E elevation, right-mouse look, and Shift boost;
+- left-click selection, F focus, Escape cancellation, and mouse-wheel zoom.
 
-Exact bindings are deferred to the input/UI design pass.
+Simulation time, scale comparison, and UI/help actions remain pending.
 
 ### 6.9 UI
 
@@ -653,7 +661,19 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
 
 ### Slice 3 - Interaction vertical slice
 
-- Add input adapter, selection, focus/free camera, time controls, scale mode, and representative UI.
+**Status: In progress; first proof implemented and validated on 2026-07-23.**
+
+- A project-owned Input System asset, explicit interaction composition root,
+  stable-ID selection, raycast body adapters, and the free/focus camera state
+  machine are implemented.
+- Focus transitions use unscaled time, can redirect to another body, and return
+  to free flight without snapping.
+- Unity compilation completed with zero Console errors or warnings; all 52 Edit
+  Mode cases and both real-scene Play Mode cases passed.
+- Simulation time controls, guided scale mode, representative UI/help,
+  selection highlighting, and reduced-motion behavior remain pending.
+- Detailed evidence is recorded in
+  `Docs/ProjectManagement/Slice 3 Interaction Proof Validation.md`.
 
 ### Slice 4 - Visual/content completion
 

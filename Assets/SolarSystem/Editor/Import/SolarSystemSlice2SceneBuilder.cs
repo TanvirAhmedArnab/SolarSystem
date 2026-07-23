@@ -1,5 +1,9 @@
+using System;
 using Tanvir.SolarSystem.Application;
 using Tanvir.SolarSystem.Authoring;
+using Tanvir.SolarSystem.Input;
+using Tanvir.SolarSystem.Interaction;
+using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -14,6 +18,8 @@ namespace Tanvir.SolarSystem.Editor.Import
     internal static class SolarSystemSlice2SceneBuilder
     {
         private const string ScenePath = "Assets/SolarSystem/Scenes/SolarSystem.unity";
+        private const string InputAssetPath =
+            "Assets/SolarSystem/Settings/Input/IA_SolarSystem.asset";
         private const int EarthOrbitSampleCount = 192;
         private const int MoonOrbitSampleCount = 128;
         private const int JupiterOrbitSampleCount = 256;
@@ -69,7 +75,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                     JupiterOrbitSampleCount,
                     JupiterOrbitWidth);
 
-            ConfigureComposition(
+            ConfigureSimulationComposition(
                 composition,
                 controller,
                 content.Catalog,
@@ -77,7 +83,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 new[] { sunView, earthView, moonView, jupiterView },
                 new[] { earthOrbit, moonOrbit, jupiterOrbit });
 
-            CreateCamera(environmentRoot);
+            Camera camera = CreateCamera(environmentRoot);
+            CreateInteractionComposition(applicationRoot, camera);
             CreateLighting(environmentRoot);
             CreateGlobalVolume(environmentRoot);
 
@@ -96,6 +103,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             GameObject bodyObject = new GameObject(definition.DisplayName);
             bodyObject.transform.SetParent(parent, false);
             CelestialBodyView view = bodyObject.AddComponent<CelestialBodyView>();
+            SphereCollider selectionCollider = bodyObject.AddComponent<SphereCollider>();
 
             GameObject visual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             visual.name = "Visual";
@@ -106,6 +114,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             var serializedView = new SerializedObject(view);
             serializedView.FindProperty("definition").objectReferenceValue = definition;
             serializedView.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+            serializedView.FindProperty("selectionCollider").objectReferenceValue =
+                selectionCollider;
             serializedView.ApplyModifiedPropertiesWithoutUndo();
             return view;
         }
@@ -136,7 +146,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             return path;
         }
 
-        private static void CreateCamera(Transform parent)
+        private static Camera CreateCamera(Transform parent)
         {
             GameObject cameraObject = new GameObject("Main Camera");
             cameraObject.tag = "MainCamera";
@@ -150,6 +160,39 @@ namespace Tanvir.SolarSystem.Editor.Import
             camera.farClipPlane = 250f;
             camera.fieldOfView = 50f;
             cameraObject.AddComponent<AudioListener>();
+            return camera;
+        }
+
+        private static void CreateInteractionComposition(
+            Transform parent,
+            Camera camera)
+        {
+            UnityEngine.InputSystem.InputActionAsset inputActions =
+                AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>(
+                    InputAssetPath);
+            if (inputActions == null)
+            {
+                throw new ArgumentNullException(nameof(inputActions));
+            }
+
+            GameObject interactionObject = new GameObject("SolarSystemInteractionRoot");
+            interactionObject.transform.SetParent(parent, false);
+            SolarSystemInputAdapter input =
+                interactionObject.AddComponent<SolarSystemInputAdapter>();
+            CelestialSelectionController selection =
+                interactionObject.AddComponent<CelestialSelectionController>();
+            SolarSystemCameraController cameraController =
+                camera.gameObject.AddComponent<SolarSystemCameraController>();
+            SolarSystemInteractionCompositionRoot composition =
+                interactionObject.AddComponent<SolarSystemInteractionCompositionRoot>();
+
+            var serialized = new SerializedObject(composition);
+            serialized.FindProperty("inputActions").objectReferenceValue = inputActions;
+            serialized.FindProperty("explorerCamera").objectReferenceValue = camera;
+            serialized.FindProperty("inputAdapter").objectReferenceValue = input;
+            serialized.FindProperty("selectionController").objectReferenceValue = selection;
+            serialized.FindProperty("cameraController").objectReferenceValue = cameraController;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void CreateLighting(Transform parent)
@@ -175,7 +218,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 "Assets/Settings/SampleSceneProfile.asset");
         }
 
-        private static void ConfigureComposition(
+        private static void ConfigureSimulationComposition(
             SolarSystemCompositionRoot composition,
             SolarSystemSimulationController controller,
             CelestialCatalogDefinition catalog,

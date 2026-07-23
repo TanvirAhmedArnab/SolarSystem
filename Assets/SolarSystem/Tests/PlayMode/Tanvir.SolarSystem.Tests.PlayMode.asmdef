@@ -1,7 +1,10 @@
 {
   "name": "Tanvir.SolarSystem.Tests.PlayMode",
   "rootNamespace": "Tanvir.SolarSystem.Tests.PlayMode",
-  "references": ["Tanvir.SolarSystem.Runtime"],
+  "references": [
+    "Tanvir.SolarSystem.Core",
+    "Tanvir.SolarSystem.Runtime"
+  ],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

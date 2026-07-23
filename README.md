@@ -50,6 +50,7 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 
 - [Game Design Document](Docs/Design/GDD.md)
 - [Technical Design Document](Docs/Technical/TDD.md)
+- [Keyboard and Mouse Controls](Docs/Design/Controls.md)
 - [Art Bible](Docs/Art/ArtBible.md)
 - [Unity Package Baseline](Docs/Technical/Unity%20Package%20Baseline.md)
 - [Third-Party Assets and Licensing](Docs/Legal/ThirdPartyAssets.md)
@@ -58,10 +59,11 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 1 Deterministic Simulation Validation](Docs/ProjectManagement/Slice%201%20Deterministic%20Simulation%20Validation.md)
 - [Slice 2 Sun-Earth-Moon Validation](Docs/ProjectManagement/Slice%202%20Sun%20Earth%20Moon%20Validation.md)
 - [Slice 2 Jupiter Scale Validation](Docs/ProjectManagement/Slice%202%20Jupiter%20Scale%20Validation.md)
+- [Slice 3 Interaction Proof Validation](Docs/ProjectManagement/Slice%203%20Interaction%20Proof%20Validation.md)
 
 ## Current validation state
 
-The approved foundation, deterministic simulation, and representative Sun-Earth-Moon-Jupiter graybox compile with a clean Console. The project currently passes 43 Edit Mode cases and one real-scene Play Mode case. Coverage includes assembly boundaries, immutable authoring conversion, catalog validation, simulation time, elliptical motion, hierarchy composition, coordinate mapping, terrestrial-to-gas-giant presentation scaling, centralized view updates, pause behavior, camera framing, and cached orbit paths. Detailed evidence is recorded in `Docs/ProjectManagement` and will be refreshed at each material baseline change.
+The approved foundation, deterministic simulation, representative Sun-Earth-Moon-Jupiter graybox, and first keyboard/mouse interaction proof compile with a clean Console. The project currently passes 52 Edit Mode cases and two real-scene Play Mode cases. Coverage includes assembly boundaries, immutable authoring conversion, catalog validation, simulation time, elliptical motion, hierarchy composition, coordinate mapping, presentation scaling, centralized view updates, pause behavior, project-owned input bindings, raycast selection, smooth redirectable focus, camera framing, and damped free flight. Detailed evidence is recorded in `Docs/ProjectManagement` and will be refreshed at each material baseline change.
 
 ## License
 

@@ -2,7 +2,8 @@
   "name": "Tanvir.SolarSystem.Runtime",
   "rootNamespace": "Tanvir.SolarSystem",
   "references": [
-    "Tanvir.SolarSystem.Core"
+    "Tanvir.SolarSystem.Core",
+    "Unity.InputSystem"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

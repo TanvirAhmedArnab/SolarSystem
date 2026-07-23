@@ -1,6 +1,8 @@
 using System.Collections;
 using NUnit.Framework;
 using Tanvir.SolarSystem.Application;
+using Tanvir.SolarSystem.Interaction;
+using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -73,6 +75,73 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             AssertWithinViewport(camera, jupiter);
         }
 
+        [UnityTest]
+        public IEnumerator SolarSystemScene_SelectsFocusesRedirectsAndReturnsToFreeFlight()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(interaction.IsInitialized, Is.True);
+
+            simulation.SimulationController.SetPaused(true);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "jupiter",
+                    out CelestialBodyView jupiter),
+                Is.True);
+
+            Camera camera = Camera.main;
+            CelestialSelectionController selection = interaction.SelectionController;
+            SolarSystemCameraController cameraController = interaction.CameraController;
+            Physics.SyncTransforms();
+            Vector3 earthScreen = camera.WorldToScreenPoint(earth.transform.position);
+
+            Assert.That(
+                selection.SelectAtScreenPosition(earthScreen),
+                Is.True,
+                "The Earth selection collider should resolve from the camera ray.");
+            Assert.That(selection.SelectedView, Is.SameAs(earth));
+            Assert.That(selection.Service.SelectedId.Value.Value, Is.EqualTo("earth"));
+
+            cameraController.Focus(earth);
+            yield return new WaitForSecondsRealtime(0.75f);
+            Assert.That(cameraController.Mode, Is.EqualTo(SolarSystemCameraMode.Focused));
+            Assert.That(cameraController.FocusedTarget, Is.SameAs(earth));
+            AssertCameraFaces(camera, earth);
+
+            cameraController.Focus(jupiter);
+            yield return new WaitForSecondsRealtime(0.75f);
+            Assert.That(cameraController.Mode, Is.EqualTo(SolarSystemCameraMode.Focused));
+            Assert.That(cameraController.FocusedTarget, Is.SameAs(jupiter));
+            AssertCameraFaces(camera, jupiter);
+
+            cameraController.ReturnToFreeFlight();
+            Vector3 beforeFlight = camera.transform.position;
+            cameraController.StepFreeFlight(
+                Vector2.up,
+                0f,
+                Vector2.zero,
+                false,
+                0.25f);
+
+            Assert.That(cameraController.Mode, Is.EqualTo(SolarSystemCameraMode.FreeFlight));
+            Assert.That(cameraController.FocusedTarget, Is.Null);
+            Assert.That(
+                Vector3.Distance(beforeFlight, camera.transform.position),
+                Is.GreaterThan(0.01f));
+        }
+
         private static void AssertWithinViewport(Camera camera, CelestialBodyView view)
         {
             Vector3 viewport = camera.WorldToViewportPoint(view.transform.position);
@@ -85,6 +154,16 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 viewport.y,
                 Is.InRange(0f, 1f),
                 $"{view.name} is outside vertical framing.");
+        }
+
+        private static void AssertCameraFaces(Camera camera, CelestialBodyView view)
+        {
+            Vector3 direction =
+                (view.transform.position - camera.transform.position).normalized;
+            Assert.That(Vector3.Dot(camera.transform.forward, direction), Is.GreaterThan(0.999f));
+            Assert.That(
+                Vector3.Distance(camera.transform.position, view.transform.position),
+                Is.GreaterThan(view.CurrentDisplayRadius));
         }
     }
 }

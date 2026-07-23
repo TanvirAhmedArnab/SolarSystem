@@ -21,6 +21,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Centralized composition, simulation controller, body views, and cached orbit-path views.
 - Reproducible `SolarSystem` graybox scene with textured bodies, camera, lighting, and volume.
 - Edit Mode authoring/projection coverage and real-scene Play Mode motion/pause validation.
+- Project-owned `Explorer` Input System map for reviewed keyboard and mouse controls.
+- Stable-ID selection service and celestial-body raycast selection colliders.
+- Damped free-flight camera plus smooth, redirectable focus/orbit behavior using unscaled time.
+- Interaction composition root with Edit Mode contract tests and a real-scene Play Mode journey.
 
 ### Changed
 
@@ -30,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Enabled the intentional `SolarSystem` scene as the sole build scene.
 - Separated Slice 2 editor orchestration, asset authoring, build data, and scene construction without changing the visible or serialized domain contract.
 - Renamed the evolving graybox catalog to `Catalog_SolarSystem` and validated the provisional scale across Earth, Jupiter, and the Sun.
+- Expanded the reproducible graybox builder to author and wire the Slice 3 interaction graph.
 
 ### Removed
 

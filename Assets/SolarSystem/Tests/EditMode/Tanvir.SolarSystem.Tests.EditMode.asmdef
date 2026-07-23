@@ -1,7 +1,11 @@
 {
   "name": "Tanvir.SolarSystem.Tests.EditMode",
   "rootNamespace": "Tanvir.SolarSystem.Tests.EditMode",
-  "references": ["Tanvir.SolarSystem.Core", "Tanvir.SolarSystem.Runtime"],
+  "references": [
+    "Tanvir.SolarSystem.Core",
+    "Tanvir.SolarSystem.Runtime",
+    "Unity.InputSystem"
+  ],
   "includePlatforms": ["Editor"],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

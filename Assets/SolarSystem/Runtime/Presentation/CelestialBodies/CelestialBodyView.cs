@@ -12,8 +12,10 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
     {
         [SerializeField] private CelestialBodyDefinition definition;
         [SerializeField] private Transform visualRoot;
+        [SerializeField] private SphereCollider selectionCollider;
 
         private CelestialBodyModel model;
+        private float currentDisplayRadius;
 
         /// <summary>Gets the assigned authoring definition.</summary>
         public CelestialBodyDefinition Definition => definition;
@@ -23,6 +25,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Gets whether this view has received a validated runtime model.</summary>
         public bool IsInitialized => model != null;
+
+        /// <summary>Gets the body's latest projected visual radius in world units.</summary>
+        public float CurrentDisplayRadius => currentDisplayRadius;
 
         /// <summary>Initializes the view against its immutable runtime model.</summary>
         public void Initialize(CelestialBodyModel runtimeModel)
@@ -40,6 +45,11 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             if (visualRoot == null)
             {
                 throw new InvalidOperationException($"View '{name}' has no visual root.");
+            }
+
+            if (selectionCollider == null)
+            {
+                throw new InvalidOperationException($"View '{name}' has no selection collider.");
             }
 
             if (definition.StableId != runtimeModel.Id.Value)
@@ -66,7 +76,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             }
 
             transform.position = state.Position;
-            visualRoot.localScale = Vector3.one * (state.DisplayRadius * 2f);
+            currentDisplayRadius = state.DisplayRadius;
+            visualRoot.localScale = Vector3.one * (currentDisplayRadius * 2f);
+            selectionCollider.radius = currentDisplayRadius;
 
             Quaternion axialTilt = Quaternion.AngleAxis((float)model.AxialTiltDeg, Vector3.forward);
             Quaternion siderealSpin = Quaternion.AngleAxis(-state.RotationAngleDeg, Vector3.up);
