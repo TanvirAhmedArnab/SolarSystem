@@ -1,0 +1,75 @@
+.hud-root {
+    position: absolute;
+    top: 32px;
+    left: 32px;
+    right: 32px;
+    bottom: 32px;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.status-panel {
+    width: 420px;
+    padding: 20px 22px 18px 22px;
+    background-color: rgba(6, 13, 25, 0.88);
+    border-left-width: 3px;
+    border-left-color: rgb(77, 193, 225);
+    border-top-left-radius: 3px;
+    border-top-right-radius: 12px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 12px;
+}
+
+.eyebrow {
+    margin-bottom: 9px;
+    color: rgb(111, 210, 235);
+    font-size: 11px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+}
+
+.target {
+    color: rgb(243, 247, 251);
+    font-size: 22px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+}
+
+.divider {
+    height: 1px;
+    margin-top: 14px;
+    margin-bottom: 13px;
+    background-color: rgba(150, 180, 205, 0.25);
+}
+
+.status {
+    margin-bottom: 7px;
+    color: rgb(117, 224, 178);
+    font-size: 13px;
+    -unity-font-style: bold;
+}
+
+.status.is-paused {
+    color: rgb(255, 190, 104);
+}
+
+.rate {
+    color: rgb(190, 204, 218);
+    font-size: 12px;
+}
+
+.hint-panel {
+    padding: 11px 15px;
+    background-color: rgba(6, 13, 25, 0.82);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.hints {
+    color: rgb(183, 201, 217);
+    font-size: 11px;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+}

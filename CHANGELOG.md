@@ -25,6 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Stable-ID selection service and celestial-body raycast selection colliders.
 - Damped free-flight camera plus smooth, redirectable focus/orbit behavior using unscaled time.
 - Interaction composition root with Edit Mode contract tests and a real-scene Play Mode journey.
+- Bounded simulation pause/speed application service with a documented one-day-per-second baseline.
+- UI Toolkit explorer HUD showing run state, rate, selection, and contextual keyboard hints.
+- Edit Mode time/UI asset coverage and a real-scene HUD feedback and resumed-motion journey.
 
 ### Changed
 
@@ -35,6 +38,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Separated Slice 2 editor orchestration, asset authoring, build data, and scene construction without changing the visible or serialized domain contract.
 - Renamed the evolving graybox catalog to `Catalog_SolarSystem` and validated the provisional scale across Earth, Jupiter, and the Sun.
 - Expanded the reproducible graybox builder to author and wire the Slice 3 interaction graph.
+- Advanced the project input contract to include Space and bracket-key time commands.
+- Set the provisional scene default to the documented `10x` rate preset.
 
 ### Removed
 

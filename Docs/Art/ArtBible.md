@@ -2,8 +2,8 @@
 
 **Owner:** Tanvir  
 **Status:** Living draft with approved source-asset direction  
-**Version:** 0.3.0  
-**Last updated:** 2026-07-22  
+**Version:** 0.4.0  
+**Last updated:** 2026-07-23  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
 
@@ -130,6 +130,14 @@ Use the Solar System Scope Stars + Milky Way 2K map initially. Keep it dim and i
 
 Use an open-source sans-serif with tabular numerals after license review. Icons use a single consistent line family or project-authored SVG. UI transitions use short fades and translations; reduced-motion mode uses brief fades or cuts.
 
+**[IMPLEMENTED PROOF]** The first explorer HUD uses a compact observatory card
+with deep navy transparency, a thin cyan instrumentation edge, neutral
+high-contrast text, green running state, amber paused state, and a separate
+low-priority control-hint surface. It preserves the system view at 16:9 and
+uses UI Toolkit scaling from a 1920x1080 reference. Unity's default runtime
+sans-serif remains temporary until the open font decision and license review
+are complete.
+
 ## 7. Audio Direction
 
 ### Music
@@ -211,6 +219,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.4.0 | 2026-07-23 | Recorded the visually validated UI Toolkit explorer HUD proof and retained the licensed-font gate | Pending owner review |
 | 0.3.0 | 2026-07-22 | Replaced restricted music with CC0 audio and defined Sun 2D and Earth 3D ambience direction | Pending owner review |
 | 0.2.0 | 2026-07-22 | Reconciled the Unity content root and recorded the imported texture and UI-audio working set | Pending owner review |
 | 0.1.0 | 2026-07-22 | Initial visual, material, texture, UI, and audio direction | Pending owner review |

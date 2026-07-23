@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionAsset
   m_ActionMaps:
   - m_Name: Explorer
-    m_Id: 42c42da4-44b6-4682-b6e3-6a02ec79cdcb
+    m_Id: 3ef0ff9a-6ee3-4a13-a53e-37dbab47c83a
     m_Asset: {fileID: 11400000}
     m_Actions:
     - m_Name: Move
       m_Type: 0
       m_ExpectedControlType: Vector2
-      m_Id: 6240c2b7-de44-49c7-b890-678593849fb3
+      m_Id: 2532e78d-c6fa-4e72-a974-3b479a0117e9
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -29,7 +29,7 @@ MonoBehaviour:
     - m_Name: Elevate
       m_Type: 0
       m_ExpectedControlType: Axis
-      m_Id: bf5590a1-5c0c-4724-9f38-a6ff57ee9e76
+      m_Id: 3b11c42d-ddb0-47b5-89b1-7189c51a974a
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -38,7 +38,7 @@ MonoBehaviour:
     - m_Name: Boost
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: f1189a47-348f-40f0-a141-86acd7de25c6
+      m_Id: 9ac67cf5-363d-4a88-9dd9-9acbf74aa36c
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -47,7 +47,7 @@ MonoBehaviour:
     - m_Name: Look
       m_Type: 0
       m_ExpectedControlType: Vector2
-      m_Id: f9f27e0d-9376-4e32-98bc-041b13632a35
+      m_Id: 6ea09399-9488-4a6b-ae3e-76829689bad9
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -56,7 +56,7 @@ MonoBehaviour:
     - m_Name: LookModifier
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: ed5a4764-3842-42f1-85ff-69c0581d4aa8
+      m_Id: afc3286b-471e-4955-993c-fba88eb75436
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -65,7 +65,7 @@ MonoBehaviour:
     - m_Name: PointerPosition
       m_Type: 2
       m_ExpectedControlType: Vector2
-      m_Id: 0fe21481-bba1-4556-9e49-48780c5b7667
+      m_Id: e01776d2-f15f-49eb-8141-e825d178cada
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -74,7 +74,7 @@ MonoBehaviour:
     - m_Name: Zoom
       m_Type: 2
       m_ExpectedControlType: Axis
-      m_Id: c15412a7-6664-4a8b-a4ca-94761c2c9f9c
+      m_Id: 47065239-3310-44d7-a856-1a435c240ffa
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -83,7 +83,7 @@ MonoBehaviour:
     - m_Name: Select
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: 1b89423f-8c92-4e3a-8c7d-c11ded8734f0
+      m_Id: 754bbc9c-a18e-4a22-a290-6a5f47dd14dc
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -92,7 +92,7 @@ MonoBehaviour:
     - m_Name: Focus
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: 805fb37f-7085-46bf-be5f-f409617078bc
+      m_Id: cc61d2b3-7a05-4b15-95fe-45eafb9b1087
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -101,7 +101,34 @@ MonoBehaviour:
     - m_Name: Cancel
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: 8d790f85-12f6-437e-830c-d96df4b91d8c
+      m_Id: 8bdfaada-a944-4864-baed-df9153db8c0c
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+      m_Priority: 0
+    - m_Name: TogglePause
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: e759ea07-6f90-44e1-845f-92c799a2e2ec
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+      m_Priority: 0
+    - m_Name: DecreaseTimeSpeed
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: b1271506-41f4-4ad0-b564-114d3008df5a
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+      m_Priority: 0
+    - m_Name: IncreaseTimeSpeed
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 7d90fd85-a886-42fd-b928-915efc8ec140
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -109,7 +136,7 @@ MonoBehaviour:
       m_Priority: 0
     m_Bindings:
     - m_Name: 2DVector
-      m_Id: 44de3e05-dbc1-4848-a8a3-3b9d4f68df3c
+      m_Id: 972e7f0c-e241-47bf-ae84-253f60ef5109
       m_Path: 2DVector
       m_Interactions: 
       m_Processors: 
@@ -117,7 +144,7 @@ MonoBehaviour:
       m_Action: Move
       m_Flags: 4
     - m_Name: Up
-      m_Id: 6dda1f5e-e134-47bd-bf52-56af1623dbbf
+      m_Id: 1252ee85-0b13-425a-98ef-4fabf78de5ea
       m_Path: <Keyboard>/w
       m_Interactions: 
       m_Processors: 
@@ -125,7 +152,7 @@ MonoBehaviour:
       m_Action: Move
       m_Flags: 8
     - m_Name: Down
-      m_Id: 9493e00c-3fb5-4f5f-aaee-79327c41b6b2
+      m_Id: 312e01ea-3040-4a1f-93f0-be84083a4d41
       m_Path: <Keyboard>/s
       m_Interactions: 
       m_Processors: 
@@ -133,7 +160,7 @@ MonoBehaviour:
       m_Action: Move
       m_Flags: 8
     - m_Name: Left
-      m_Id: 7b2ac80e-f5e9-4da0-bf69-fbea90928aa7
+      m_Id: 700cc10a-d4bf-483e-b3cd-3542b54d80ec
       m_Path: <Keyboard>/a
       m_Interactions: 
       m_Processors: 
@@ -141,7 +168,7 @@ MonoBehaviour:
       m_Action: Move
       m_Flags: 8
     - m_Name: Right
-      m_Id: 5af5e600-8e7e-42d5-82f9-47a6ca680a1a
+      m_Id: cd1de10e-156f-4edc-9395-763163f6ba12
       m_Path: <Keyboard>/d
       m_Interactions: 
       m_Processors: 
@@ -149,7 +176,7 @@ MonoBehaviour:
       m_Action: Move
       m_Flags: 8
     - m_Name: 2DVector
-      m_Id: 894e4b1e-4a28-4950-a67a-6db592e6d85a
+      m_Id: be12b370-8b29-4c30-8fac-9a302339517a
       m_Path: 2DVector
       m_Interactions: 
       m_Processors: 
@@ -157,7 +184,7 @@ MonoBehaviour:
       m_Action: Move
       m_Flags: 4
     - m_Name: Up
-      m_Id: a8ffd5d4-46c8-48fc-8179-68344b6bae44
+      m_Id: 57d82449-bafa-4342-a511-22276f6e663a
       m_Path: <Keyboard>/upArrow
       m_Interactions: 
       m_Processors: 
@@ -165,7 +192,7 @@ MonoBehaviour:
       m_Action: Move
       m_Flags: 8
     - m_Name: Down
-      m_Id: 1d853fe4-1f14-4e89-b783-54e4fc5214da
+      m_Id: 3d164c30-1c8c-4d39-a1f5-ee4c91751e11
       m_Path: <Keyboard>/downArrow
       m_Interactions: 
       m_Processors: 
@@ -173,7 +200,7 @@ MonoBehaviour:
       m_Action: Move
       m_Flags: 8
     - m_Name: Left
-      m_Id: a2824782-5d7d-4f3d-b8c6-805571301cd7
+      m_Id: c066db86-d010-4224-b44f-94dee191e5cc
       m_Path: <Keyboard>/leftArrow
       m_Interactions: 
       m_Processors: 
@@ -181,7 +208,7 @@ MonoBehaviour:
       m_Action: Move
       m_Flags: 8
     - m_Name: Right
-      m_Id: 72a34b84-3e4c-4bc3-8ca7-27b59c270779
+      m_Id: 9f14d724-4c40-4f8e-9e66-0fc83e583371
       m_Path: <Keyboard>/rightArrow
       m_Interactions: 
       m_Processors: 
@@ -189,7 +216,7 @@ MonoBehaviour:
       m_Action: Move
       m_Flags: 8
     - m_Name: 1DAxis
-      m_Id: 6c8e7e03-fe32-426f-b500-a2fba4c0f96f
+      m_Id: 2a0103d5-9bfd-4a26-aa39-6c9314055602
       m_Path: 1DAxis
       m_Interactions: 
       m_Processors: 
@@ -197,7 +224,7 @@ MonoBehaviour:
       m_Action: Elevate
       m_Flags: 4
     - m_Name: Negative
-      m_Id: 1a038cfb-8733-468b-9ab0-82d069ce281a
+      m_Id: f3abcd75-6730-464d-85e5-6577ec164f54
       m_Path: <Keyboard>/q
       m_Interactions: 
       m_Processors: 
@@ -205,7 +232,7 @@ MonoBehaviour:
       m_Action: Elevate
       m_Flags: 8
     - m_Name: Positive
-      m_Id: dce53689-e760-47d1-8d10-66017879f2f8
+      m_Id: a3c2c974-7897-479f-a425-e70ec631375e
       m_Path: <Keyboard>/e
       m_Interactions: 
       m_Processors: 
@@ -213,7 +240,7 @@ MonoBehaviour:
       m_Action: Elevate
       m_Flags: 8
     - m_Name: 
-      m_Id: 233e53b5-6e8e-45ea-b3c1-2c0c142dc227
+      m_Id: cce01de2-557d-43c3-a981-f8d70cf5235e
       m_Path: <Keyboard>/leftShift
       m_Interactions: 
       m_Processors: 
@@ -221,7 +248,7 @@ MonoBehaviour:
       m_Action: Boost
       m_Flags: 0
     - m_Name: 
-      m_Id: a454c464-bdab-4fa4-ac38-827f4ad8bb36
+      m_Id: e1217009-c98c-49a3-a57b-a12446ebfd5a
       m_Path: <Mouse>/delta
       m_Interactions: 
       m_Processors: 
@@ -229,7 +256,7 @@ MonoBehaviour:
       m_Action: Look
       m_Flags: 0
     - m_Name: 
-      m_Id: 5b896e62-76fe-4a06-8417-441ef34fe3c2
+      m_Id: d9342b9d-fc4a-4c1e-b1f0-90c588a1f911
       m_Path: <Mouse>/rightButton
       m_Interactions: 
       m_Processors: 
@@ -237,7 +264,7 @@ MonoBehaviour:
       m_Action: LookModifier
       m_Flags: 0
     - m_Name: 
-      m_Id: f6c72a74-41c0-43a2-91eb-e81f700bd77a
+      m_Id: 8e11589f-0b2c-4171-8b13-32812534c634
       m_Path: <Mouse>/position
       m_Interactions: 
       m_Processors: 
@@ -245,7 +272,7 @@ MonoBehaviour:
       m_Action: PointerPosition
       m_Flags: 0
     - m_Name: 
-      m_Id: 9258e08e-1721-4388-b93c-45ef7aea20f9
+      m_Id: 7a451f3b-3b11-48d9-bb7b-27d65bcca3d1
       m_Path: <Mouse>/scroll/y
       m_Interactions: 
       m_Processors: 
@@ -253,7 +280,7 @@ MonoBehaviour:
       m_Action: Zoom
       m_Flags: 0
     - m_Name: 
-      m_Id: bbb01490-0a1d-4710-863a-23e8db1565c1
+      m_Id: b9cd9ede-e887-47b0-bbca-497832a35a4b
       m_Path: <Mouse>/leftButton
       m_Interactions: 
       m_Processors: 
@@ -261,7 +288,7 @@ MonoBehaviour:
       m_Action: Select
       m_Flags: 0
     - m_Name: 
-      m_Id: 63cedf22-3c8b-4627-be7d-d8a486123ade
+      m_Id: 5b9d62b0-63d2-4210-8d27-aaeee283c544
       m_Path: <Keyboard>/f
       m_Interactions: 
       m_Processors: 
@@ -269,12 +296,36 @@ MonoBehaviour:
       m_Action: Focus
       m_Flags: 0
     - m_Name: 
-      m_Id: f4ddf99c-b34b-42f3-9f88-f3c6861315a0
+      m_Id: a4bcfaa2-6180-4cee-a08c-8135cb9a1bdb
       m_Path: <Keyboard>/escape
       m_Interactions: 
       m_Processors: 
       m_Groups: 
       m_Action: Cancel
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 796c8d56-66ad-4300-9e9b-9d25af4b5af0
+      m_Path: <Keyboard>/space
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: TogglePause
+      m_Flags: 0
+    - m_Name: 
+      m_Id: cb96d47f-1c99-4920-9c01-91f6176b1eb4
+      m_Path: <Keyboard>/leftBracket
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: DecreaseTimeSpeed
+      m_Flags: 0
+    - m_Name: 
+      m_Id: e0335a10-b182-4c01-918e-d5f747f67cc6
+      m_Path: <Keyboard>/rightBracket
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: IncreaseTimeSpeed
       m_Flags: 0
   m_ControlSchemes: []
   m_IsProjectWide: 0

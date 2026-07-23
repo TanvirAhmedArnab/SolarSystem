@@ -5,6 +5,7 @@ using Tanvir.SolarSystem.Input;
 using Tanvir.SolarSystem.Interaction;
 using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
+using Tanvir.SolarSystem.Presentation.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -36,6 +37,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             Transform bodyRoot = CreateGroup("CelestialBodies", simulationRoot);
             Transform orbitRoot = CreateGroup("OrbitPaths", simulationRoot);
             Transform environmentRoot = CreateGroup("_Environment", sceneRoot.transform);
+            Transform interfaceRoot = CreateGroup("_Interface", sceneRoot.transform);
             CreateGroup("_Diagnostics", sceneRoot.transform);
 
             GameObject compositionObject = new GameObject("SolarSystemCompositionRoot");
@@ -84,7 +86,13 @@ namespace Tanvir.SolarSystem.Editor.Import
                 new[] { earthOrbit, moonOrbit, jupiterOrbit });
 
             Camera camera = CreateCamera(environmentRoot);
-            CreateInteractionComposition(applicationRoot, camera);
+            SolarSystemHudPresenter hudPresenter =
+                SolarSystemHudSceneBuilder.Create(interfaceRoot);
+            CreateInteractionComposition(
+                applicationRoot,
+                camera,
+                controller,
+                hudPresenter);
             CreateLighting(environmentRoot);
             CreateGlobalVolume(environmentRoot);
 
@@ -165,7 +173,9 @@ namespace Tanvir.SolarSystem.Editor.Import
 
         private static void CreateInteractionComposition(
             Transform parent,
-            Camera camera)
+            Camera camera,
+            SolarSystemSimulationController simulationController,
+            SolarSystemHudPresenter hudPresenter)
         {
             UnityEngine.InputSystem.InputActionAsset inputActions =
                 AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>(
@@ -181,6 +191,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 interactionObject.AddComponent<SolarSystemInputAdapter>();
             CelestialSelectionController selection =
                 interactionObject.AddComponent<CelestialSelectionController>();
+            SimulationTimeInputController timeInput =
+                interactionObject.AddComponent<SimulationTimeInputController>();
             SolarSystemCameraController cameraController =
                 camera.gameObject.AddComponent<SolarSystemCameraController>();
             SolarSystemInteractionCompositionRoot composition =
@@ -192,6 +204,10 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.FindProperty("inputAdapter").objectReferenceValue = input;
             serialized.FindProperty("selectionController").objectReferenceValue = selection;
             serialized.FindProperty("cameraController").objectReferenceValue = cameraController;
+            serialized.FindProperty("simulationController").objectReferenceValue =
+                simulationController;
+            serialized.FindProperty("timeInputController").objectReferenceValue = timeInput;
+            serialized.FindProperty("hudPresenter").objectReferenceValue = hudPresenter;
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -232,7 +248,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.FindProperty("simulationController").objectReferenceValue = controller;
             SetArray(serialized.FindProperty("bodyViews"), views);
             SetArray(serialized.FindProperty("orbitPaths"), paths);
-            serialized.FindProperty("simulationSecondsPerRealSecond").doubleValue = 604800d;
+            serialized.FindProperty("simulationSecondsPerRealSecond").doubleValue =
+                SimulationTimeControlService.BaselineSecondsPerRealSecond * 10d;
             serialized.FindProperty("beginPaused").boolValue = false;
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }

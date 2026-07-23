@@ -26,6 +26,15 @@ namespace Tanvir.SolarSystem.Input
         /// <summary>Raised when the user requests a return to free flight.</summary>
         public event Action CancelPerformed;
 
+        /// <summary>Raised when the user requests pause or resume.</summary>
+        public event Action TogglePausePerformed;
+
+        /// <summary>Raised when the user requests the next slower simulation rate.</summary>
+        public event Action DecreaseTimeSpeedPerformed;
+
+        /// <summary>Raised when the user requests the next faster simulation rate.</summary>
+        public event Action IncreaseTimeSpeedPerformed;
+
         /// <summary>Gets planar movement intent.</summary>
         public Vector2 Move => move?.ReadValue<Vector2>() ?? Vector2.zero;
 
@@ -71,6 +80,9 @@ namespace Tanvir.SolarSystem.Input
             explorer.FindAction("Select", true).performed += OnSelect;
             explorer.FindAction("Focus", true).performed += OnFocus;
             explorer.FindAction("Cancel", true).performed += OnCancel;
+            explorer.FindAction("TogglePause", true).performed += OnTogglePause;
+            explorer.FindAction("DecreaseTimeSpeed", true).performed += OnDecreaseTimeSpeed;
+            explorer.FindAction("IncreaseTimeSpeed", true).performed += OnIncreaseTimeSpeed;
             explorer.Enable();
         }
 
@@ -85,6 +97,15 @@ namespace Tanvir.SolarSystem.Input
 
         private void OnCancel(InputAction.CallbackContext context) => CancelPerformed?.Invoke();
 
+        private void OnTogglePause(InputAction.CallbackContext context) =>
+            TogglePausePerformed?.Invoke();
+
+        private void OnDecreaseTimeSpeed(InputAction.CallbackContext context) =>
+            DecreaseTimeSpeedPerformed?.Invoke();
+
+        private void OnIncreaseTimeSpeed(InputAction.CallbackContext context) =>
+            IncreaseTimeSpeedPerformed?.Invoke();
+
         private void Release()
         {
             if (explorer == null)
@@ -95,6 +116,9 @@ namespace Tanvir.SolarSystem.Input
             explorer.FindAction("Select", true).performed -= OnSelect;
             explorer.FindAction("Focus", true).performed -= OnFocus;
             explorer.FindAction("Cancel", true).performed -= OnCancel;
+            explorer.FindAction("TogglePause", true).performed -= OnTogglePause;
+            explorer.FindAction("DecreaseTimeSpeed", true).performed -= OnDecreaseTimeSpeed;
+            explorer.FindAction("IncreaseTimeSpeed", true).performed -= OnIncreaseTimeSpeed;
             explorer.Disable();
             explorer = null;
         }

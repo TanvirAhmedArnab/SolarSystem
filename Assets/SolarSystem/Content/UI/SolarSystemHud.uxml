@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="hud-root" class="hud-root" picking-mode="Ignore">
+        <ui:VisualElement class="status-panel" picking-mode="Ignore">
+            <ui:Label text="SOLAR SYSTEM EXPLORER" class="eyebrow" />
+            <ui:Label name="selection-target" text="TARGET  ·  NONE" class="target" />
+            <ui:VisualElement class="divider" />
+            <ui:Label name="simulation-state" text="SIMULATION  ·  RUNNING" class="status" />
+            <ui:Label name="simulation-rate" text="TIME RATE  ·  10x" class="rate" />
+        </ui:VisualElement>
+        <ui:VisualElement class="hint-panel" picking-mode="Ignore">
+            <ui:Label name="control-hints" text="SPACE  PAUSE / RESUME     [  SLOWER     ]  FASTER     F  FOCUS" class="hints" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -2,6 +2,7 @@ using System;
 using Tanvir.SolarSystem.Input;
 using Tanvir.SolarSystem.Interaction;
 using Tanvir.SolarSystem.Presentation.Camera;
+using Tanvir.SolarSystem.Presentation.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,12 +18,21 @@ namespace Tanvir.SolarSystem.Application
         [SerializeField] private SolarSystemInputAdapter inputAdapter;
         [SerializeField] private CelestialSelectionController selectionController;
         [SerializeField] private SolarSystemCameraController cameraController;
+        [SerializeField] private SolarSystemSimulationController simulationController;
+        [SerializeField] private SimulationTimeInputController timeInputController;
+        [SerializeField] private SolarSystemHudPresenter hudPresenter;
 
         /// <summary>Gets the selection controller after bootstrap.</summary>
         public CelestialSelectionController SelectionController => selectionController;
 
         /// <summary>Gets the explorer camera controller after bootstrap.</summary>
         public SolarSystemCameraController CameraController => cameraController;
+
+        /// <summary>Gets the active simulation-time command service.</summary>
+        public SimulationTimeControlService TimeControls => timeInputController?.Service;
+
+        /// <summary>Gets the runtime HUD presenter.</summary>
+        public SolarSystemHudPresenter HudPresenter => hudPresenter;
 
         /// <summary>Gets whether the full interaction graph initialized successfully.</summary>
         public bool IsInitialized =>
@@ -31,7 +41,11 @@ namespace Tanvir.SolarSystem.Application
             selectionController != null &&
             selectionController.IsInitialized &&
             cameraController != null &&
-            cameraController.IsInitialized;
+            cameraController.IsInitialized &&
+            timeInputController != null &&
+            timeInputController.IsInitialized &&
+            hudPresenter != null &&
+            hudPresenter.IsInitialized;
 
         private void Awake()
         {
@@ -46,7 +60,10 @@ namespace Tanvir.SolarSystem.Application
                 explorerCamera == null ||
                 inputAdapter == null ||
                 selectionController == null ||
-                cameraController == null)
+                cameraController == null ||
+                simulationController == null ||
+                timeInputController == null ||
+                hudPresenter == null)
             {
                 throw new InvalidOperationException(
                     "Interaction composition root has missing serialized dependencies.");
@@ -56,6 +73,9 @@ namespace Tanvir.SolarSystem.Application
             var selectionService = new SelectionService();
             selectionController.Initialize(explorerCamera, inputAdapter, selectionService);
             cameraController.Initialize(inputAdapter, selectionController);
+            var timeControls = new SimulationTimeControlService(simulationController);
+            timeInputController.Initialize(inputAdapter, timeControls);
+            hudPresenter.Initialize(timeControls, selectionService);
         }
     }
 }

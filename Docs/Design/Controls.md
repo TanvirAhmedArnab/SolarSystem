@@ -2,7 +2,7 @@
 
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
-**Status:** Implemented Slice 3 interaction proof  
+**Status:** Implemented Slice 3 interaction and time-control proof  
 **Last updated:** 2026-07-23  
 **Input asset:** `Assets/SolarSystem/Settings/Input/IA_SolarSystem.asset`
 
@@ -39,13 +39,26 @@ celestial simulation does not disable exploration.
 Selection and focus are intentionally separate. Clicking a body changes
 selection; it does not move the camera until the user presses F.
 
+## Simulation Time
+
+| Intent | Binding | Behavior |
+|---|---|---|
+| Pause or resume | Space | Toggle authoritative simulation-time advancement |
+| Slower | Left bracket `[` | Move to the next slower supported preset |
+| Faster | Right bracket `]` | Move to the next faster supported preset |
+
+The current proof defines `1x` as one simulated day per real second. The
+supported bounded presets are `1x`, `10x`, `100x`, `1,000x`, and `10,000x`;
+the scene starts at `10x`. The values and default remain provisional product
+tuning decisions, but the command boundary, units, bounds, and display contract
+are implemented and tested. Speed changes do not resume a paused simulation.
+
 ## Deferred Controls
 
 The following approved product capabilities are not part of this bounded proof
 and remain pending for later Slice 3 candidates:
 
-- simulation pause and speed controls;
 - guided scale-comparison controls;
-- HUD, help, and selection feedback;
+- complete Help, settings, and contextual onboarding;
 - reduced-motion or instant-transition setting;
 - gamepad bindings, which are outside the first public-release baseline.

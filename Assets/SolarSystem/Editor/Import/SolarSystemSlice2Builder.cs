@@ -20,6 +20,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                     "Project input asset did not load after deterministic authoring.");
             }
 
+            SolarSystemUiAssetBuilder.Build();
             GameObject sceneRoot = SolarSystemSlice2SceneBuilder.Build(content);
 
             AssetDatabase.SaveAssets();

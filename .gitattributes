@@ -40,9 +40,9 @@ LICENSE                 text eol=lf
 *.shadersubgraph        unity-json
 
 # Unity UI Toolkit files
-*.tss                   text diff=css linguist-language=css
-*.uss                   text diff=css linguist-language=css
-*.uxml                  text linguist-language=xml linguist-detectable
+*.tss                   text diff=css linguist-language=css eol=lf
+*.uss                   text diff=css linguist-language=css eol=lf
+*.uxml                  text linguist-language=xml linguist-detectable eol=lf
 
 # Unity YAML files
 *.anim                  unity-yaml

@@ -1,0 +1,45 @@
+using NUnit.Framework;
+using UnityEditor;
+using UnityEngine.UIElements;
+
+namespace Tanvir.SolarSystem.Tests.EditMode
+{
+    public sealed class SolarSystemHudAssetTests
+    {
+        private const string PanelPath =
+            "Assets/SolarSystem/Settings/UI/PanelSettings_SolarSystem.asset";
+        private const string VisualTreePath =
+            "Assets/SolarSystem/Content/UI/SolarSystemHud.uxml";
+        private const string StylePath =
+            "Assets/SolarSystem/Content/UI/SolarSystemHud.uss";
+
+        [Test]
+        public void HudAssets_ProvideRequiredRuntimeContract()
+        {
+            PanelSettings panel = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelPath);
+            VisualTreeAsset tree =
+                AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(VisualTreePath);
+            StyleSheet style = AssetDatabase.LoadAssetAtPath<StyleSheet>(StylePath);
+
+            Assert.That(panel, Is.Not.Null);
+            Assert.That(tree, Is.Not.Null);
+            Assert.That(style, Is.Not.Null);
+
+            TemplateContainer root = tree.CloneTree();
+            Assert.That(root.Q<Label>("simulation-state"), Is.Not.Null);
+            Assert.That(root.Q<Label>("simulation-rate"), Is.Not.Null);
+            Assert.That(root.Q<Label>("selection-target"), Is.Not.Null);
+            Assert.That(root.Q<Label>("control-hints"), Is.Not.Null);
+        }
+
+        [Test]
+        public void PanelSettings_UseApprovedReferenceResolution()
+        {
+            PanelSettings panel = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelPath);
+
+            Assert.That(panel.scaleMode, Is.EqualTo(PanelScaleMode.ScaleWithScreenSize));
+            Assert.That(panel.referenceResolution.x, Is.EqualTo(1920));
+            Assert.That(panel.referenceResolution.y, Is.EqualTo(1080));
+        }
+    }
+}

@@ -4,6 +4,7 @@ using Tanvir.SolarSystem.Application;
 using Tanvir.SolarSystem.Interaction;
 using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
+using Tanvir.SolarSystem.Presentation.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -140,6 +141,59 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(
                 Vector3.Distance(beforeFlight, camera.transform.position),
                 Is.GreaterThan(0.01f));
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_TimeCommandsUpdateMotionAndHudFeedback()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(interaction.IsInitialized, Is.True);
+
+            SimulationTimeControlService timeControls = interaction.TimeControls;
+            SolarSystemHudPresenter hud = interaction.HudPresenter;
+            Assert.That(timeControls, Is.Not.Null);
+            Assert.That(hud, Is.Not.Null);
+            Assert.That(hud.IsInitialized, Is.True);
+            Assert.That(timeControls.CurrentMultiplier, Is.EqualTo(10));
+            Assert.That(hud.SimulationStateText, Does.Contain("RUNNING"));
+            Assert.That(hud.SimulationRateText, Does.Contain("10x"));
+
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            interaction.SelectionController.Select(earth);
+            Assert.That(hud.SelectionText, Does.Contain("EARTH"));
+
+            timeControls.TogglePaused();
+            Vector3 pausedPosition = earth.transform.position;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(timeControls.IsPaused, Is.True);
+            Assert.That(hud.SimulationStateText, Does.Contain("PAUSED"));
+            Assert.That(
+                Vector3.Distance(pausedPosition, earth.transform.position),
+                Is.LessThan(0.00001f));
+
+            Assert.That(timeControls.IncreaseSpeed(), Is.True);
+            Assert.That(timeControls.CurrentMultiplier, Is.EqualTo(100));
+            Assert.That(hud.SimulationRateText, Does.Contain("100x"));
+
+            timeControls.TogglePaused();
+            Vector3 resumedPosition = earth.transform.position;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(timeControls.IsPaused, Is.False);
+            Assert.That(
+                Vector3.Distance(resumedPosition, earth.transform.position),
+                Is.GreaterThan(0.001f));
         }
 
         private static void AssertWithinViewport(Camera camera, CelestialBodyView view)

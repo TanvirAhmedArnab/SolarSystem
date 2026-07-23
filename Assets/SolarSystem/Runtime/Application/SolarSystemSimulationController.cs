@@ -9,7 +9,7 @@ namespace Tanvir.SolarSystem.Application
 {
     /// <summary>Owns the single ordered per-frame simulation and presentation update.</summary>
     [DisallowMultipleComponent]
-    public sealed class SolarSystemSimulationController : MonoBehaviour
+    public sealed class SolarSystemSimulationController : MonoBehaviour, ISimulationTimeController
     {
         private readonly Dictionary<CelestialBodyId, int> bodyIndices =
             new Dictionary<CelestialBodyId, int>();

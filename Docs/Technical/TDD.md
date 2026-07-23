@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Slice 3 interaction proof implemented  
-**Version:** 0.6.0  
+**Document status:** Living technical authority; Slice 3 time-control and HUD proof implemented  
+**Version:** 0.7.0  
 **Last updated:** 2026-07-23  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -32,6 +32,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.4.1 | 2026-07-23 | Codex, for Tanvir | Separated Slice 2 editor orchestration, asset authoring, build data, and scene construction; revalidated the complete visible proof | Technical refactor validated; product scope unchanged |
 | 0.5.0 | 2026-07-23 | Codex, for Tanvir | Added verified Jupiter authoring and presentation, gas-giant scale acceptance tests, camera-range evidence, and complete Slice 2 validation | Representative graybox slice validated; final guided-comparison tuning remains open |
 | 0.6.0 | 2026-07-23 | Codex, for Tanvir | Added the project-owned input map, stable-ID selection, raycast adapters, explicit interaction composition, and validated free/focus camera state machine | First Slice 3 interaction proof validated; time, scale-comparison, and UI work remain |
+| 0.7.0 | 2026-07-23 | Codex, for Tanvir | Added bounded time-control commands, read-only presentation state, the first runtime UI Toolkit HUD, reproducible UI authoring, and complete behavioral/visual validation | Time-control and HUD proof validated; scale comparison and broader interface remain |
 
 ### 1.3 Status vocabulary
 
@@ -372,15 +373,26 @@ binding contract is maintained in `Docs/Design/Controls.md`.
 The implemented map covers:
 
 - WASD/arrow movement, Q/E elevation, right-mouse look, and Shift boost;
-- left-click selection, F focus, Escape cancellation, and mouse-wheel zoom.
+- left-click selection, F focus, Escape cancellation, and mouse-wheel zoom;
+- Space pause/resume plus bracket-key slower/faster commands.
 
-Simulation time, scale comparison, and UI/help actions remain pending.
+`SimulationTimeInputController` translates the three time intents into an
+application service. Input code does not access the clock or simulation
+controller. Scale comparison and complete UI/help actions remain pending.
 
 ### 6.9 UI
 
-**[PROPOSED]** Use runtime UI Toolkit for portfolio overlays and panels, subject to a small proof before broad implementation.
+**[IMPLEMENTED/PARTIAL]** Runtime UI Toolkit is validated for the portfolio HUD.
+`PanelSettings_SolarSystem` uses a 1920x1080 Scale With Screen Size reference,
+while a project-owned UXML/USS pair defines the status and control-hint layout.
 
-`SolarSystemHudPresenter` converts application snapshots into display strings with explicit units. UI never performs orbital math. Frequently changing numeric labels may update at 10 Hz unless visual testing requires more, while selection/command feedback updates immediately.
+`SolarSystemHudPresenter` reads `SimulationTimeControlService` and
+`SelectionService`, converts their snapshots into display strings with explicit
+units, and reacts only to effective settings/selection changes. UI never
+performs orbital math or writes simulation state. The proof displays running or
+paused state, the labeled multiplier and baseline meaning, current selection,
+and concise keyboard hints. Broader body data, navigator, settings, Help,
+scale-mode display, and licensed typography remain pending.
 
 ### 6.10 Audio
 
@@ -661,19 +673,26 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
 
 ### Slice 3 - Interaction vertical slice
 
-**Status: In progress; first proof implemented and validated on 2026-07-23.**
+**Status: In progress; interaction and time/HUD proofs implemented and validated on 2026-07-23.**
 
 - A project-owned Input System asset, explicit interaction composition root,
   stable-ID selection, raycast body adapters, and the free/focus camera state
   machine are implemented.
 - Focus transitions use unscaled time, can redirect to another body, and return
   to free flight without snapping.
-- Unity compilation completed with zero Console errors or warnings; all 52 Edit
-  Mode cases and both real-scene Play Mode cases passed.
-- Simulation time controls, guided scale mode, representative UI/help,
-  selection highlighting, and reduced-motion behavior remain pending.
+- A bounded `SimulationTimeControlService` defines a provisional one-day-per-
+  real-second baseline and the `1x` through `10,000x` presets without exposing
+  simulation internals to input or presentation.
+- The first runtime UI Toolkit HUD shows pause state, time rate, selected body,
+  and keyboard hints through read-only application state.
+- Unity compilation completed with zero Console errors or warnings; all 64 Edit
+  Mode cases and all three real-scene Play Mode cases passed.
+- Guided scale mode, full body information/help/settings, selection
+  highlighting, licensed typography, and reduced-motion behavior remain pending.
 - Detailed evidence is recorded in
   `Docs/ProjectManagement/Slice 3 Interaction Proof Validation.md`.
+- Time-control and HUD evidence is recorded in
+  `Docs/ProjectManagement/Slice 3 Simulation Time and HUD Validation.md`.
 
 ### Slice 4 - Visual/content completion
 
@@ -713,7 +732,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 
 | ID | Decision needed | Recommendation | Owner | Gate | Status |
 |---|---|---|---|---|---|
-| TDD-OPEN-003 | Runtime UI technology | Prove UI Toolkit with the first HUD slice; fall back to uGUI only for a documented blocker | Tanvir | Slice 3 | Open |
+| TDD-OPEN-003 | Runtime UI technology | Runtime UI Toolkit proof passed with project-owned UXML, USS, PanelSettings, presenter, and real-scene validation | Tanvir | Slice 3 | Resolved by 0.7.0 implementation evidence |
 | TDD-OPEN-004 | Exact distance-compression and radius-exaggeration curves | Tune ScriptableObject presets during graybox usability testing | Tanvir | Slice 2 | Open |
 | TDD-OPEN-005 | Exact reference PC | Record actual CPU, GPU, RAM, storage, and display before formal profiling | Tanvir | Slice 4 | Open |
 
