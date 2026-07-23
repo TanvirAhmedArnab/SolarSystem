@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f0c39ba5e8a744c8533815ee975f4a, type: 3}
+  m_Name: Body_Earth
+  m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.CelestialBodyDefinition
+  stableId: earth
+  displayName: Earth
+  category: 1
+  parentId: sun
+  scientificSourceId: NASA_NSSDC_EARTH_AND_JPL_APPROX_POS_J2000
+  meanRadiusKm: 6371
+  hasMass: 1
+  massKg: 5.9722e+24
+  rotationPeriodSeconds: 86164.2
+  axialTiltDeg: 23.44
+  hasOrbit: 1
+  orbit:
+    semiMajorAxisKm: 149598261.1504425
+    eccentricity: 0.01671123
+    inclinationDeg: -0.00001531
+    longitudeAscendingNodeDeg: 0
+    argumentPeriapsisDeg: 102.93768193
+    meanAnomalyAtEpochDeg: -2.4731102699999923
+    orbitalPeriodSeconds: 31558149.7635456

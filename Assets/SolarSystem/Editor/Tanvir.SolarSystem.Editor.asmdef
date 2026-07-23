@@ -1,7 +1,11 @@
 {
   "name": "Tanvir.SolarSystem.Editor",
   "rootNamespace": "Tanvir.SolarSystem.Editor",
-  "references": ["Tanvir.SolarSystem.Runtime"],
+  "references": [
+    "Tanvir.SolarSystem.Core",
+    "Tanvir.SolarSystem.Runtime",
+    "Unity.RenderPipelines.Core.Runtime"
+  ],
   "includePlatforms": ["Editor"],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

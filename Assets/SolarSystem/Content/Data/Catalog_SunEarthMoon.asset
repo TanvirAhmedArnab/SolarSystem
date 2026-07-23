@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10c1565f03fa11c4d913d4321425b314, type: 3}
+  m_Name: Catalog_SunEarthMoon
+  m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.CelestialCatalogDefinition
+  bodies:
+  - {fileID: 11400000, guid: 2912d180801d5eb459837f92b0b8c0c7, type: 2}
+  - {fileID: 11400000, guid: 4515272fd76d1524cb423f9680465c19, type: 2}
+  - {fileID: 11400000, guid: bd92b09b5ee47d245a0a900d1060c10b, type: 2}

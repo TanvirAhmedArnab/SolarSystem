@@ -54,30 +54,47 @@ namespace Tanvir.SolarSystem.Simulation
                 throw new ArgumentNullException(nameof(catalog));
             }
 
-            RequireFiniteTime(simulationTimeSeconds);
-            var orderedStates = new List<CelestialState>(catalog.Count);
-            var statesById = new Dictionary<CelestialBodyId, CelestialState>(catalog.Count);
+            var orderedStates = new CelestialState[catalog.Count];
+            Evaluate(catalog, simulationTimeSeconds, orderedStates);
+            return new ReadOnlyCollection<CelestialState>(orderedStates);
+        }
 
-            foreach (CelestialBodyModel body in catalog.OrderedBodies)
+        /// <summary>Evaluates a catalog into a caller-owned buffer without per-call collections.</summary>
+        public void Evaluate(
+            CelestialCatalog catalog,
+            double simulationTimeSeconds,
+            CelestialState[] destination)
+        {
+            if (catalog == null)
             {
+                throw new ArgumentNullException(nameof(catalog));
+            }
+
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (destination.Length < catalog.Count)
+            {
+                throw new ArgumentException(
+                    "Destination buffer must contain at least one element per catalog body.",
+                    nameof(destination));
+            }
+
+            RequireFiniteTime(simulationTimeSeconds);
+            for (int index = 0; index < catalog.Count; index++)
+            {
+                CelestialBodyModel body = catalog.OrderedBodies[index];
                 Double3 parentPositionKm = Double3.Zero;
                 if (body.ParentId.HasValue)
                 {
-                    if (!statesById.TryGetValue(body.ParentId.Value, out CelestialState parentState))
-                    {
-                        throw new InvalidOperationException(
-                            $"Catalog order placed '{body.Id}' before parent '{body.ParentId.Value}'.");
-                    }
-
-                    parentPositionKm = parentState.PhysicalPositionKm;
+                    int parentIndex = FindPriorBodyIndex(catalog, body.ParentId.Value, index);
+                    parentPositionKm = destination[parentIndex].PhysicalPositionKm;
                 }
 
-                CelestialState state = Evaluate(body, parentPositionKm, simulationTimeSeconds);
-                orderedStates.Add(state);
-                statesById.Add(body.Id, state);
+                destination[index] = Evaluate(body, parentPositionKm, simulationTimeSeconds);
             }
-
-            return new ReadOnlyCollection<CelestialState>(orderedStates);
         }
 
         /// <summary>Evaluates one body from authoritative time and its parent's world position.</summary>
@@ -209,6 +226,23 @@ namespace Tanvir.SolarSystem.Simulation
                 (cosineNode * inclinedX) - (sineNode * inclinedY),
                 (sineNode * inclinedX) + (cosineNode * inclinedY),
                 inclinedZ);
+        }
+
+        private static int FindPriorBodyIndex(
+            CelestialCatalog catalog,
+            CelestialBodyId parentId,
+            int childIndex)
+        {
+            for (int index = 0; index < childIndex; index++)
+            {
+                if (catalog.OrderedBodies[index].Id == parentId)
+                {
+                    return index;
+                }
+            }
+
+            throw new InvalidOperationException(
+                $"Catalog order placed a body before parent '{parentId}'.");
         }
 
         private static double EvaluateRotationAngleDeg(

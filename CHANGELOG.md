@@ -15,12 +15,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Initial licensed texture, ambient-audio, music, and UI-sound working set with source provenance.
 - Immutable celestial value types, validated parent-first catalog, and authoritative simulation clock.
 - Deterministic analytical Kepler orbit, hierarchy, speed, and signed-rotation evaluation with Edit Mode coverage.
+- Serialized Sun, Earth, and Moon definitions with audited scientific source records.
+- Unity coordinate and presentation-scale adapters with allocation-free catalog evaluation.
+- Centralized composition, simulation controller, body views, and cached orbit-path views.
+- Reproducible `SolarSystem` graybox scene with textured bodies, camera, lighting, and volume.
+- Edit Mode authoring/projection coverage and real-scene Play Mode motion/pause validation.
 
 ### Changed
 
 - Reduced the direct Unity package set to the approved project baseline.
 - Configured the PC quality tier and PC URP asset as the sole release baseline.
 - Recorded intentional Unity project identity and current serialization state.
+- Enabled the intentional `SolarSystem` scene as the sole build scene.
+- Separated Slice 2 editor orchestration, asset authoring, build data, and scene construction without changing the visible or serialized domain contract.
 
 ### Removed
 

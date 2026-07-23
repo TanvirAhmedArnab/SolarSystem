@@ -53,12 +53,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Art Bible](Docs/Art/ArtBible.md)
 - [Unity Package Baseline](Docs/Technical/Unity%20Package%20Baseline.md)
 - [Third-Party Assets and Licensing](Docs/Legal/ThirdPartyAssets.md)
+- [Celestial Data Sources](Docs/Science/Celestial%20Data%20Sources.md)
 - [Pre-First-Project-Commit Checklist](Docs/ProjectManagement/Pre-First-Project-Commit%20Checklist.md)
 - [Slice 1 Deterministic Simulation Validation](Docs/ProjectManagement/Slice%201%20Deterministic%20Simulation%20Validation.md)
+- [Slice 2 Sun-Earth-Moon Validation](Docs/ProjectManagement/Slice%202%20Sun%20Earth%20Moon%20Validation.md)
 
 ## Current validation state
 
-The approved foundation and deterministic-simulation slice have completed Unity import and compilation with a clean Console. The project Edit Mode suite currently passes 31/31 cases covering assembly boundaries, catalog validation, simulation time, elliptical orbital motion, hierarchy composition, analytical speed, rotation, and repeatability. Detailed evidence is recorded in `Docs/ProjectManagement` and will be refreshed at each material baseline change.
+The approved foundation, deterministic simulation, and initial visible Sun-Earth-Moon proof compile with a clean Console. The project currently passes 40 Edit Mode cases and one real-scene Play Mode case. Coverage includes assembly boundaries, immutable authoring conversion, catalog validation, simulation time, elliptical motion, hierarchy composition, coordinate mapping, presentation scaling, centralized view updates, pause behavior, and cached orbit paths. Detailed evidence is recorded in `Docs/ProjectManagement` and will be refreshed at each material baseline change.
 
 ## License
 

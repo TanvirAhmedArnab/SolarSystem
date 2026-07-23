@@ -6,9 +6,9 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Slice 1 implemented  
-**Version:** 0.3.0  
-**Last updated:** 2026-07-22  
+**Document status:** Living technical authority; Slice 2 Sun-Earth-Moon proof implemented  
+**Version:** 0.4.1  
+**Last updated:** 2026-07-23  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
 **Art authority:** `Docs/Art/ArtBible.md`
@@ -28,6 +28,8 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.1.0 | 2026-07-22 | Codex, for Tanvir | Initial architecture, folders, assemblies, schemas, algorithms, scene plan, tests, risks, and delivery slices | Pending owner review |
 | 0.2.0 | 2026-07-22 | Codex, for Tanvir | Recorded approval of the Slice 0 namespace, assembly, precision, composition, authoring-state, and scene architecture | Slice 0 architecture approved |
 | 0.3.0 | 2026-07-22 | Codex, for Tanvir | Implemented and validated immutable runtime models, deterministic catalog ordering, simulation clock, Kepler evaluator, and Slice 1 tests | Slice 1 implementation validated |
+| 0.4.0 | 2026-07-22 | Codex, for Tanvir | Implemented serialized Sun-Earth-Moon authoring, coordinate/scale adapters, centralized views, cached orbit paths, the visible scene, and Slice 2 validation | Sun-Earth-Moon proof validated; scale tuning and Jupiter remain open |
+| 0.4.1 | 2026-07-23 | Codex, for Tanvir | Separated Slice 2 editor orchestration, asset authoring, build data, and scene construction; revalidated the complete visible proof | Technical refactor validated; product scope unchanged |
 
 ### 1.3 Status vocabulary
 
@@ -229,7 +231,7 @@ Create folders only when the first file needs them. Original downloaded sources 
 
 - `Tanvir.SolarSystem.Core`: deterministic value types, validation rules, orbital/rotation math, no MonoBehaviours or ScriptableObjects.
 - `Tanvir.SolarSystem.Runtime`: application services, authoring adapters, views, camera, input, UI, and audio; references Core and necessary Unity packages.
-- `Tanvir.SolarSystem.Editor`: catalog validators/import tools; editor-only; references Runtime.
+- `Tanvir.SolarSystem.Editor`: catalog validators/import tools; editor-only; references Core, Runtime, and URP Core where editor scene generation requires those types.
 - `Tanvir.SolarSystem.Tests.EditMode`: formula, data, catalog, and service tests.
 - `Tanvir.SolarSystem.Tests.PlayMode`: bootstrap and representative interaction flows.
 
@@ -259,6 +261,17 @@ Examples:
 - `CompositionRoot`: constructs and wires the object graph.
 
 Avoid generic `Manager`, `Helper`, or `Utils` names.
+
+### 5.5 Editor builder boundaries
+
+**[IMPLEMENTED]** The reproducible Slice 2 builder follows the same separation-of-concerns standard as runtime code:
+
+- `SolarSystemSlice2Builder` exposes the public menu command and orchestrates the build.
+- `SolarSystemSlice2AssetBuilder` creates or updates scientific definitions, the catalog, presentation scale, and materials.
+- `SolarSystemSlice2BuildData` carries editor-only build inputs between focused stages.
+- `SolarSystemSlice2SceneBuilder` constructs, initializes, saves, and registers the visible scene.
+
+The public command remains `Tools > Solar System > Rebuild Slice 2 Graybox`. A rebuild may assign new Unity local file IDs because it creates a fresh scene; validation therefore compares the serialized authoring assets and the complete scene contract rather than treating local file IDs as domain data.
 
 ## 6. Runtime Systems
 
@@ -317,6 +330,8 @@ Initial modes:
 - `GuidedComparison`: controlled transition showing why a single true scale is impractical.
 
 `ScaleProjector` receives physical positions/radii, focus origin, and scale settings; it returns float-space positions and display radii. The exact monotonic distance function and radius clamps remain configurable and must be validated against the guided experience.
+
+**[IMPLEMENTED/PROVISIONAL]** The first graybox projects each parent-relative offset with `15 * log10(1 + distanceKm / 1,000,000)` and projects radius with `0.8 * (radiusKm / 6,371)^0.4`, clamped to `[0.18, 4.8]` Unity units. Hierarchy-relative projection preserves a readable Moon offset while parent-first composition keeps relationships deterministic. These values are evidence-producing defaults, not an approval of `TDD-OPEN-004`.
 
 Render positions are relative to an explicit render origin, normally the current focus anchor, preventing large float magnitudes. Physical positions remain unchanged.
 
@@ -426,7 +441,7 @@ Use `double` for physical time, distances, anomalies, and velocities. Convert to
 - Presentation references: material profile, optional atmosphere/ring profile, label metadata.
 - Scientific source record ID and last verification date.
 
-`CelestialCatalogDefinition` contains the body definitions and scale presets. Individual definitions remain independently inspectable; the catalog provides deterministic ordering and validation.
+`CelestialCatalogDefinition` contains the body definitions. Individual definitions remain independently inspectable; the catalog provides deterministic ordering and validation. `PresentationScaleDefinition` owns the separate, explicitly non-physical presentation preset.
 
 ### 7.3 IDs and references
 
@@ -469,13 +484,13 @@ Rotation angle is evaluated from time and signed sidereal rotation period. The s
 
 ### 8.4 Coordinate conventions
 
-**[APPROVED/IMPLEMENTED]** Core orbital calculations use a right-handed reference frame whose orbital reference plane is XY and whose positive normal is +Z. Orbital-plane coordinates are transformed by `Rz(longitude of ascending node) * Rx(inclination) * Rz(argument of periapsis)`. A future Runtime adapter will map this domain frame into Unity's left-handed, Y-up presentation convention exactly once at the Core/Runtime boundary and will receive its own tests in Slice 2.
+**[APPROVED/IMPLEMENTED]** Core orbital calculations use a right-handed reference frame whose orbital reference plane is XY and whose positive normal is +Z. Orbital-plane coordinates are transformed by `Rz(longitude of ascending node) * Rx(inclination) * Rz(argument of periapsis)`. `UnityCoordinateAdapter` maps Core `(x, y, z)` to Unity `(x, z, y)` exactly once at the Core/Runtime boundary, placing the orbital plane on Unity XZ and the positive normal on Unity +Y. Edit Mode tests cover this mapping.
 
 ## 9. Scene, Prefab, and Bootstrap Design
 
 ### 9.1 Build scene
 
-**[PROPOSED]** Replace the template `SampleScene` with one intentional `SolarSystem` scene for the first release. Additive scenes are deferred until a real loading or ownership boundary appears.
+**[IMPLEMENTED]** The intentional `SolarSystem` scene is the sole enabled build scene. The template `SampleScene` remains on disk pending a separately approved removal. Additive scenes are deferred until a real loading or ownership boundary appears.
 
 ### 9.2 Scene hierarchy
 
@@ -483,18 +498,25 @@ Rotation angle is evaluated from time and signed sidereal rotation period. The s
 SolarSystem
   _Application
     SolarSystemCompositionRoot
-    EventSystem / UI document host
-    AudioDirector
-  _Presentation
-    CelestialBodyRoot
-    OrbitPathRoot
-    CameraRig
-    Lighting
-    GlobalVolume
+  _Simulation
+    CelestialBodies
+      Sun
+        Visual
+      Earth
+        Visual
+      Moon
+        Visual
+    OrbitPaths
+      Earth Orbit
+      Moon Orbit
+  _Environment
+    Main Camera
+    Sun Key Light
+    Global Volume
   _Diagnostics
 ```
 
-Underscore-prefixed scene groups are organizational roots, not lookup keys.
+Underscore-prefixed scene groups are organizational roots, not lookup keys. Interaction, UI, and audio objects will be added beneath the existing responsibility groups when their slices are implemented; they are not represented as already present.
 
 ### 9.3 Celestial body prefab
 
@@ -617,9 +639,13 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
 
 ### Slice 2 - Graybox vertical slice
 
-- Add Sun, Earth, Moon, and Jupiter definitions.
-- Create scale projector, views, cached orbit paths, and the `SolarSystem` scene.
-- Validate precision and camera range before full content production.
+**Status: In progress; the approved Sun-Earth-Moon proof was implemented on 2026-07-22 and fully revalidated after the editor-builder refactor on 2026-07-23.**
+
+- Serialized Sun, Earth, and Moon definitions, scientific source records, scale projection, centralized views, cached paths, and the `SolarSystem` scene are implemented.
+- Unity compilation completed with zero Console errors or warnings; all 40 Edit Mode cases and the real-scene Play Mode case passed.
+- The exact presentation-scale curve remains provisional under `TDD-OPEN-004`.
+- Jupiter and broader camera-range evaluation remain outstanding before Slice 2 is complete.
+- Detailed evidence is recorded in `Docs/ProjectManagement/Slice 2 Sun Earth Moon Validation.md`.
 
 ### Slice 3 - Interaction vertical slice
 

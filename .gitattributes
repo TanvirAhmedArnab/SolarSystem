@@ -9,7 +9,7 @@
 # Define macros (only works in top-level gitattributes files)
 [attr]lfs               filter=lfs diff=lfs merge=lfs -text
 [attr]unity-json        eol=lf linguist-language=json
-[attr]unity-yaml        merge=unityyamlmerge eol=lf linguist-language=yaml
+[attr]unity-yaml        merge=unityyamlmerge eol=lf linguist-language=yaml whitespace=-trailing-space
 
 # Repository text files use deterministic LF endings on every platform.
 .gitattributes          text eol=lf
