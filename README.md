@@ -54,10 +54,11 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Unity Package Baseline](Docs/Technical/Unity%20Package%20Baseline.md)
 - [Third-Party Assets and Licensing](Docs/Legal/ThirdPartyAssets.md)
 - [Pre-First-Project-Commit Checklist](Docs/ProjectManagement/Pre-First-Project-Commit%20Checklist.md)
+- [Slice 1 Deterministic Simulation Validation](Docs/ProjectManagement/Slice%201%20Deterministic%20Simulation%20Validation.md)
 
 ## Current validation state
 
-The approved foundation has completed a Unity import and compilation pass with a clean Console. The Edit Mode foundation smoke test passes. Detailed evidence is recorded in `Docs/ProjectManagement` and will be refreshed at each material baseline change.
+The approved foundation and deterministic-simulation slice have completed Unity import and compilation with a clean Console. The project Edit Mode suite currently passes 31/31 cases covering assembly boundaries, catalog validation, simulation time, elliptical orbital motion, hierarchy composition, analytical speed, rotation, and repeatability. Detailed evidence is recorded in `Docs/ProjectManagement` and will be refreshed at each material baseline change.
 
 ## License
 

@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Draft with proposed architecture  
-**Version:** 0.2.0  
+**Document status:** Living technical authority; Slice 1 implemented  
+**Version:** 0.3.0  
 **Last updated:** 2026-07-22  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -27,6 +27,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 |---|---|---|---|---|
 | 0.1.0 | 2026-07-22 | Codex, for Tanvir | Initial architecture, folders, assemblies, schemas, algorithms, scene plan, tests, risks, and delivery slices | Pending owner review |
 | 0.2.0 | 2026-07-22 | Codex, for Tanvir | Recorded approval of the Slice 0 namespace, assembly, precision, composition, authoring-state, and scene architecture | Slice 0 architecture approved |
+| 0.3.0 | 2026-07-22 | Codex, for Tanvir | Implemented and validated immutable runtime models, deterministic catalog ordering, simulation clock, Kepler evaluator, and Slice 1 tests | Slice 1 implementation validated |
 
 ### 1.3 Status vocabulary
 
@@ -386,14 +387,19 @@ classDiagram
     }
     class CelestialBodyModel {
         +CelestialBodyId Id
-        +CelestialBodyId ParentId
+        +string DisplayName
+        +CelestialBodyCategory Category
+        +CelestialBodyId? ParentId
         +double MeanRadiusKm
+        +double? MassKg
         +double RotationPeriodSeconds
         +double AxialTiltDeg
-        +OrbitalElements Orbit
+        +OrbitalElements? Orbit
+        +string ScientificSourceId
     }
     class CelestialState {
         +CelestialBodyId Id
+        +Double3 ParentRelativePositionKm
         +Double3 PhysicalPositionKm
         +double OrbitalSpeedKmPerSec
         +double RotationAngleDeg
@@ -448,6 +454,8 @@ The orbital-plane position is rotated by argument of periapsis, inclination, and
 
 Use Newton-Raphson iteration for eccentric anomaly with a documented maximum iteration count and tolerance. All approved planets and moons have eccentricities safely below 1; parabolic and hyperbolic trajectories are deferred for future comets.
 
+**[IMPLEMENTED] Numerical contract:** `KeplerOrbitEvaluator` uses at most 20 Newton-Raphson iterations and a correction tolerance of `1e-12` radians. Circular and high-eccentricity elliptical fixtures, analytical speed, inclined/node rotations, hierarchy composition, repeatability, and invalid inputs are covered by Edit Mode tests.
+
 ### 8.2 Determinism
 
 - Evaluation depends on immutable definitions and the authoritative `double` simulation time.
@@ -461,7 +469,7 @@ Rotation angle is evaluated from time and signed sidereal rotation period. The s
 
 ### 8.4 Coordinate conventions
 
-**[PROPOSED]** Domain orbital calculations use a documented right-handed reference plane. A single adapter maps that plane into Unity's left-handed, Y-up world convention. Conversion occurs once at the Core/Runtime boundary and is covered by tests.
+**[APPROVED/IMPLEMENTED]** Core orbital calculations use a right-handed reference frame whose orbital reference plane is XY and whose positive normal is +Z. Orbital-plane coordinates are transformed by `Rz(longitude of ascending node) * Rx(inclination) * Rz(argument of periapsis)`. A future Runtime adapter will map this domain frame into Unity's left-handed, Y-up presentation convention exactly once at the Core/Runtime boundary and will receive its own tests in Slice 2.
 
 ## 9. Scene, Prefab, and Bootstrap Design
 
@@ -600,8 +608,12 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
 
 ### Slice 1 - Deterministic simulation
 
-- Implement value types, clock, catalog model, Kepler evaluator, and tests.
-- Use programmatic test fixtures before creating all ScriptableObject content.
+**Status: Implemented and validated on 2026-07-22.**
+
+- Immutable value types, clock, validated catalog model, Kepler evaluator, and tests are implemented in the Unity-free Core assembly.
+- Programmatic Sun, planet, and moon fixtures prove the domain model before ScriptableObject authoring begins.
+- Unity compilation completed with zero Console errors or warnings; all 31 project Edit Mode cases passed.
+- Detailed evidence is recorded in `Docs/ProjectManagement/Slice 1 Deterministic Simulation Validation.md`.
 
 ### Slice 2 - Graybox vertical slice
 

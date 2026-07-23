@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Unity-aware repository attributes, Git LFS rules, and generated-file ignores.
 - Initial Edit Mode assembly-foundation smoke test.
 - Initial licensed texture, ambient-audio, music, and UI-sound working set with source provenance.
+- Immutable celestial value types, validated parent-first catalog, and authoritative simulation clock.
+- Deterministic analytical Kepler orbit, hierarchy, speed, and signed-rotation evaluation with Edit Mode coverage.
 
 ### Changed
 
