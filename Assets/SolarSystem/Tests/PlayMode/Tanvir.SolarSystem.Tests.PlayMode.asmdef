@@ -1,0 +1,15 @@
+{
+  "name": "Tanvir.SolarSystem.Tests.PlayMode",
+  "rootNamespace": "Tanvir.SolarSystem.Tests.PlayMode",
+  "references": ["Tanvir.SolarSystem.Runtime"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": ["TestAssemblies"]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Tanvir.SolarSystem.Core",
+  "rootNamespace": "Tanvir.SolarSystem",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}
