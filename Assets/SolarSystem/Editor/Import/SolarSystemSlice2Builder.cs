@@ -17,7 +17,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             AssetDatabase.Refresh();
             Selection.activeGameObject = sceneRoot;
             SceneView.lastActiveSceneView?.FrameSelected();
-            Debug.Log("SLICE2_BUILD_COMPLETE|scene=SolarSystem|bodies=3|orbits=2");
+            Debug.Log("SLICE2_BUILD_COMPLETE|scene=SolarSystem|bodies=4|orbits=3");
         }
     }
 }

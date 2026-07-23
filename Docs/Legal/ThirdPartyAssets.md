@@ -2,8 +2,8 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.3.0  
-**Last reviewed:** 2026-07-22
+**Version:** 0.3.1  
+**Last reviewed:** 2026-07-23
 
 **Live-source verification:** Rechecked 2026-07-22 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records.
 
@@ -106,13 +106,22 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 
 | Source IDs | Unity destination | Import status |
 |---|---|---|
-| TEX-SSS-001-016 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Body>` | Imported; material and orientation review pending |
+| TEX-SSS-001-016 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Body>` | Imported; Jupiter material and orientation validated, remaining material review pending |
 | TEX-SSS-017 | `Assets/SolarSystem/Content/Art/Textures/Environment/T_Space_MilkyWay_2K.jpg` | Imported; sky presentation review pending |
 | TEX-USGS-001-006 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Moon>` | Imported as visibly named `Browse` evaluation textures |
 | AUD-KEN-001 selected subset | `Assets/SolarSystem/Content/Audio/SFX/UI` | Imported; audition and loudness review pending |
 | AUD-OGA-MUS-001 | `Assets/SolarSystem/Content/Audio/Music/A_Music_OuterSpaceLoop.mp3` | Imported; 2D music mix review pending |
 | AUD-OGA-SUN-001 | `Assets/SolarSystem/Content/Audio/Ambience/CelestialBodies/Sun/A_Sun_BurningLoop.wav` | Imported; intended 2D loop and mix review pending |
 | AUD-OGA-EARTH-001 | `Assets/SolarSystem/Content/Audio/Ambience/CelestialBodies/Earth/A_Earth_ForestAmbienceLoop.mp3` | Imported; intended 3D rolloff and mix review pending |
+
+### Active Jupiter texture record
+
+- Source ID: `TEX-SSS-011`
+- Source: `SourceAssets/ThirdParty/Textures/SolarSystemScope/2k_jupiter.jpg`
+- Unity derivative: `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Jupiter/T_Jupiter_Surface_2K.jpg`
+- Active material: `Assets/SolarSystem/Content/Materials/CelestialBodies/M_Jupiter.mat`
+- SHA-256 for source and Unity derivative: `B0F04D005350252636B0E3396FC592548CBD9E9126B269D32D5C6ABD4B0E4F2B`
+- License: Solar System Scope, CC BY 4.0; release attribution remains required.
 
 ### Kenney selected-subset mapping
 

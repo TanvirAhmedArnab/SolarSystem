@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f0c39ba5e8a744c8533815ee975f4a, type: 3}
+  m_Name: Body_Jupiter
+  m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.CelestialBodyDefinition
+  stableId: jupiter
+  displayName: Jupiter
+  category: 1
+  parentId: sun
+  scientificSourceId: JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_JUPITER_FACTS
+  meanRadiusKm: 69911
+  hasMass: 1
+  massKg: 1.898125e+27
+  rotationPeriodSeconds: 35729.856
+  axialTiltDeg: 3
+  hasOrbit: 1
+  orbit:
+    semiMajorAxisKm: 778340816.6927108
+    eccentricity: 0.04838624
+    inclinationDeg: 1.30439695
+    longitudeAscendingNodeDeg: 100.47390909
+    argumentPeriapsisDeg: -85.74542926000001
+    meanAnomalyAtEpochDeg: 19.66796068
+    orbitalPeriodSeconds: 374355659.12399995

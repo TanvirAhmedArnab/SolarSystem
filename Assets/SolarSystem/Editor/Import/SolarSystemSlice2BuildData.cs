@@ -11,11 +11,13 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal CelestialBodyDefinition Sun { get; set; }
         internal CelestialBodyDefinition Earth { get; set; }
         internal CelestialBodyDefinition Moon { get; set; }
+        internal CelestialBodyDefinition Jupiter { get; set; }
         internal CelestialCatalogDefinition Catalog { get; set; }
         internal PresentationScaleDefinition Scale { get; set; }
         internal Material SunMaterial { get; set; }
         internal Material EarthMaterial { get; set; }
         internal Material MoonMaterial { get; set; }
+        internal Material JupiterMaterial { get; set; }
         internal Material OrbitMaterial { get; set; }
     }
 

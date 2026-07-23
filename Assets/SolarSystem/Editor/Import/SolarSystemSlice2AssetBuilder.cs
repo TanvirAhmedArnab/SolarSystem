@@ -73,10 +73,29 @@ namespace Tanvir.SolarSystem.Editor.Import
                     318.15d,
                     135.27d,
                     27.322d * SecondsPerDay)));
+            CelestialBodyDefinition jupiter = CreateBody(new SolarSystemSlice2BodyData(
+                "Body_Jupiter",
+                "jupiter",
+                "Jupiter",
+                CelestialBodyCategory.Planet,
+                "sun",
+                "JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_JUPITER_FACTS",
+                69911d,
+                1.898125e27d,
+                0.41354d * SecondsPerDay,
+                3d,
+                new SolarSystemSlice2OrbitData(
+                    AstronomicalUnitKm * 5.202887d,
+                    0.04838624d,
+                    1.30439695d,
+                    100.47390909d,
+                    14.72847983d - 100.47390909d,
+                    34.39644051d - 14.72847983d,
+                    11.862615d * 365.25d * SecondsPerDay)));
 
             CelestialCatalogDefinition catalog = CreateOrLoad<CelestialCatalogDefinition>(
-                $"{DataRoot}/Catalog_SunEarthMoon.asset");
-            SetObjectArray(catalog, "bodies", sun, earth, moon);
+                $"{DataRoot}/Catalog_SolarSystem.asset");
+            SetObjectArray(catalog, "bodies", sun, earth, moon, jupiter);
             PresentationScaleDefinition scale = CreateOrLoad<PresentationScaleDefinition>(
                 $"{DataRoot}/Scale/Scale_PresentationGraybox.asset");
             ConfigureScale(scale);
@@ -86,6 +105,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 Sun = sun,
                 Earth = earth,
                 Moon = moon,
+                Jupiter = jupiter,
                 Catalog = catalog,
                 Scale = scale,
                 SunMaterial = CreateMaterial(
@@ -106,6 +126,12 @@ namespace Tanvir.SolarSystem.Editor.Import
                     "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Moon/T_Moon_Surface_2K.jpg",
                     Color.white,
                     0.1f),
+                JupiterMaterial = CreateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Jupiter.mat",
+                    "Universal Render Pipeline/Lit",
+                    "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Jupiter/T_Jupiter_Surface_2K.jpg",
+                    Color.white,
+                    0.35f),
                 OrbitMaterial = CreateMaterial(
                     $"{MaterialRoot}/Environment/M_OrbitPath.mat",
                     "Universal Render Pipeline/Unlit",

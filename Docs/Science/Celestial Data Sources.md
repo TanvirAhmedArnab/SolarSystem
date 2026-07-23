@@ -1,14 +1,14 @@
 # Celestial Data Sources
 
 **Project:** Solar System Simulation  
-**Dataset slice:** Sun-Earth-Moon graybox  
-**Verification date:** 2026-07-22  
+**Dataset slice:** Sun-Earth-Moon-Jupiter graybox  
+**Verification date:** 2026-07-23  
 **Authoring epoch:** J2000.0 where orbital elements provide an epoch  
 **Accuracy tier:** Educational visualization; not a date-exact ephemeris
 
 ## Purpose
 
-This record maps every scientific value in the first serialized catalog to an authoritative source and documents conversions or approximations. The Unity assets contain stable source-record IDs that resolve to the sections below.
+This record maps every scientific value in the serialized graybox catalog to an authoritative source and documents conversions or approximations. The Unity assets contain stable source-record IDs that resolve to the sections below.
 
 ## Sun
 
@@ -84,6 +84,35 @@ Primary sources:
 - [JPL Planetary Satellite Physical Parameters](https://ssd.jpl.nasa.gov/sats/phys_par/)
 - [JPL Planetary Satellite Mean Elements](https://ssd.jpl.nasa.gov/sats/elem/sep.html)
 
+## Jupiter
+
+**Source record ID:** `JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_JUPITER_FACTS`
+
+Authored physical values:
+
+- Volumetric mean radius: `69,911 km`
+- Mass: `1.898125 × 10^27 kg`
+- Sidereal rotation period: `0.41354 days`, converted to `35,729.856 seconds`
+- Axial tilt: `3 degrees`
+
+Authored J2000 orbital values:
+
+- Semi-major axis: `5.202887 AU`, converted with `1 AU = 149,597,870.7 km` to `778,340,816.6927109 km`
+- Eccentricity: `0.04838624`
+- Inclination: `1.30439695 degrees`
+- Mean longitude: `34.39644051 degrees`
+- Longitude of perihelion: `14.72847983 degrees`
+- Longitude of ascending node: `100.47390909 degrees`
+- Argument of periapsis: `-85.74542926 degrees`, calculated as longitude of perihelion minus longitude of ascending node
+- Mean anomaly: `19.66796068 degrees`, calculated as mean longitude minus longitude of perihelion
+- Sidereal orbital period: `11.862615 Julian years`, converted to `4,332.82012875 days`
+
+Primary sources:
+
+- [JPL Planetary Physical Parameters](https://ssd.jpl.nasa.gov/planets/phys_par.html)
+- [JPL Approximate Positions of the Planets](https://ssd.jpl.nasa.gov/planets/approx_pos.html)
+- [NASA Jupiter Facts](https://science.nasa.gov/jupiter/jupiter-facts/)
+
 ## Presentation Transformations
 
 Physical values remain unchanged in the authoring assets and immutable runtime models. The graybox presentation uses a separate provisional scale asset:
@@ -101,5 +130,7 @@ These values are intentionally transformed for legibility. They remain a tunable
 - Orbital elements are fixed at their authoring epoch; secular element rates and perturbations are not evaluated.
 - The Earth follows the JPL Earth-Moon barycenter approximation.
 - The Moon uses fixed mean elements and does not model nodal or apsidal precession, libration, or solar perturbations.
+- Jupiter uses the fixed JPL 1800-2050 approximation row without secular rates or perturbations.
+- Jupiter is represented by its volumetric mean radius; equatorial bulge is not yet modeled.
 - The Sun uses one adopted rotation period even though it rotates differentially by latitude.
 - The simulation epoch is an educational reference state, not the current real-world date.

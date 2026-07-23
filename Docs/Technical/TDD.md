@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Slice 2 Sun-Earth-Moon proof implemented  
-**Version:** 0.4.1  
+**Document status:** Living technical authority; representative Slice 2 scale proof implemented  
+**Version:** 0.5.0  
 **Last updated:** 2026-07-23  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -30,6 +30,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.3.0 | 2026-07-22 | Codex, for Tanvir | Implemented and validated immutable runtime models, deterministic catalog ordering, simulation clock, Kepler evaluator, and Slice 1 tests | Slice 1 implementation validated |
 | 0.4.0 | 2026-07-22 | Codex, for Tanvir | Implemented serialized Sun-Earth-Moon authoring, coordinate/scale adapters, centralized views, cached orbit paths, the visible scene, and Slice 2 validation | Sun-Earth-Moon proof validated; scale tuning and Jupiter remain open |
 | 0.4.1 | 2026-07-23 | Codex, for Tanvir | Separated Slice 2 editor orchestration, asset authoring, build data, and scene construction; revalidated the complete visible proof | Technical refactor validated; product scope unchanged |
+| 0.5.0 | 2026-07-23 | Codex, for Tanvir | Added verified Jupiter authoring and presentation, gas-giant scale acceptance tests, camera-range evidence, and complete Slice 2 validation | Representative graybox slice validated; final guided-comparison tuning remains open |
 
 ### 1.3 Status vocabulary
 
@@ -506,9 +507,12 @@ SolarSystem
         Visual
       Moon
         Visual
+      Jupiter
+        Visual
     OrbitPaths
       Earth Orbit
       Moon Orbit
+      Jupiter Orbit
   _Environment
     Main Camera
     Sun Key Light
@@ -639,13 +643,13 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
 
 ### Slice 2 - Graybox vertical slice
 
-**Status: In progress; the approved Sun-Earth-Moon proof was implemented on 2026-07-22 and fully revalidated after the editor-builder refactor on 2026-07-23.**
+**Status: Implemented and validated on 2026-07-23.**
 
-- Serialized Sun, Earth, and Moon definitions, scientific source records, scale projection, centralized views, cached paths, and the `SolarSystem` scene are implemented.
-- Unity compilation completed with zero Console errors or warnings; all 40 Edit Mode cases and the real-scene Play Mode case passed.
-- The exact presentation-scale curve remains provisional under `TDD-OPEN-004`.
-- Jupiter and broader camera-range evaluation remain outstanding before Slice 2 is complete.
-- Detailed evidence is recorded in `Docs/ProjectManagement/Slice 2 Sun Earth Moon Validation.md`.
+- Serialized Sun, Earth, Moon, and Jupiter definitions, scientific source records, scale projection, centralized views, cached paths, and the `SolarSystem` scene are implemented.
+- Jupiter proves the terrestrial-to-gas-giant radius range and the broader heliocentric camera range without changing the established projection parameters.
+- Unity compilation completed with zero Console errors or warnings; all 43 Edit Mode cases and the real-scene Play Mode case passed.
+- The exact presentation-scale curve remains a tunable proposal under `TDD-OPEN-004`; the representative architecture and range proof no longer depend on resolving that final UX choice.
+- Detailed evidence is recorded in `Docs/ProjectManagement/Slice 2 Sun Earth Moon Validation.md` and `Docs/ProjectManagement/Slice 2 Jupiter Scale Validation.md`.
 
 ### Slice 3 - Interaction vertical slice
 

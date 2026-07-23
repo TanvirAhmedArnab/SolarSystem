@@ -93,7 +93,7 @@ The presentation scale is intentionally non-physical and visibly tuned for this 
 ## Remaining Risks and Next Gate
 
 - `TDD-OPEN-004` remains open: the current compression and exaggeration values are provisional.
-- Jupiter remains outstanding from the broader TDD Slice 2 plan.
+- Jupiter was outstanding at the time of this validation and was subsequently completed in `Slice 2 Jupiter Scale Validation.md`.
 - The camera is composition-only; free flight, focus, transitions, and input belong to Slice 3.
 - Materials are an initial textured proof, not the final atmosphere, clouds, emission, exposure, or lighting treatment.
 - Orbit paths are cached at the active presentation scale; runtime scale-mode transitions are not implemented.

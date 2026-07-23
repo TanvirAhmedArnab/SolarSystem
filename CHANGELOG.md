@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Immutable celestial value types, validated parent-first catalog, and authoritative simulation clock.
 - Deterministic analytical Kepler orbit, hierarchy, speed, and signed-rotation evaluation with Edit Mode coverage.
 - Serialized Sun, Earth, and Moon definitions with audited scientific source records.
+- Verified Jupiter definition, textured material, deterministic orbit, and cached orbit path.
 - Unity coordinate and presentation-scale adapters with allocation-free catalog evaluation.
 - Centralized composition, simulation controller, body views, and cached orbit-path views.
 - Reproducible `SolarSystem` graybox scene with textured bodies, camera, lighting, and volume.
@@ -28,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Recorded intentional Unity project identity and current serialization state.
 - Enabled the intentional `SolarSystem` scene as the sole build scene.
 - Separated Slice 2 editor orchestration, asset authoring, build data, and scene construction without changing the visible or serialized domain contract.
+- Renamed the evolving graybox catalog to `Catalog_SolarSystem` and validated the provisional scale across Earth, Jupiter, and the Sun.
 
 ### Removed
 

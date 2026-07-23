@@ -54,6 +54,26 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         }
 
         [Test]
+        public void GasGiantProjection_PreservesReadableSizeAndDistanceOrdering()
+        {
+            float earthRadius = projector.ProjectRadius(6371d);
+            float jupiterRadius = projector.ProjectRadius(69911d);
+            float sunRadius = projector.ProjectRadius(695700d);
+            float earthDistance = projector.ProjectRelativePosition(
+                new Double3(149598261.150442527d, 0d, 0d)).magnitude;
+            float jupiterPeriapsisDistance = projector.ProjectRelativePosition(
+                new Double3(740678634.0040555d, 0d, 0d)).magnitude;
+            float jupiterApoapsisDistance = projector.ProjectRelativePosition(
+                new Double3(816002999.3813663d, 0d, 0d)).magnitude;
+
+            Assert.That(jupiterRadius, Is.GreaterThan(earthRadius));
+            Assert.That(jupiterRadius, Is.LessThan(sunRadius));
+            Assert.That(jupiterRadius / earthRadius, Is.InRange(2.5f, 2.7f));
+            Assert.That(jupiterPeriapsisDistance, Is.GreaterThan(earthDistance + 10f));
+            Assert.That(jupiterApoapsisDistance, Is.LessThan(45f));
+        }
+
+        [Test]
         public void CatalogProjection_ComposesMoonFromProjectedEarthPosition()
         {
             CelestialCatalog catalog = CelestialTestFactory.BuildCatalog(

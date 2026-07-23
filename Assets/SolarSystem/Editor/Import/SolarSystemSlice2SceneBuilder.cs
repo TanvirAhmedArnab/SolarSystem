@@ -14,6 +14,12 @@ namespace Tanvir.SolarSystem.Editor.Import
     internal static class SolarSystemSlice2SceneBuilder
     {
         private const string ScenePath = "Assets/SolarSystem/Scenes/SolarSystem.unity";
+        private const int EarthOrbitSampleCount = 192;
+        private const int MoonOrbitSampleCount = 128;
+        private const int JupiterOrbitSampleCount = 256;
+        private const float EarthOrbitWidth = 0.055f;
+        private const float MoonOrbitWidth = 0.025f;
+        private const float JupiterOrbitWidth = 0.065f;
 
         internal static GameObject Build(SolarSystemSlice2Content content)
         {
@@ -39,18 +45,37 @@ namespace Tanvir.SolarSystem.Editor.Import
                 CreateBodyView(content.Earth, content.EarthMaterial, bodyRoot);
             CelestialBodyView moonView =
                 CreateBodyView(content.Moon, content.MoonMaterial, bodyRoot);
+            CelestialBodyView jupiterView =
+                CreateBodyView(content.Jupiter, content.JupiterMaterial, bodyRoot);
             CelestialOrbitPathView earthOrbit =
-                CreateOrbitPath(content.Earth, content.OrbitMaterial, orbitRoot, 192, 0.055f);
+                CreateOrbitPath(
+                    content.Earth,
+                    content.OrbitMaterial,
+                    orbitRoot,
+                    EarthOrbitSampleCount,
+                    EarthOrbitWidth);
             CelestialOrbitPathView moonOrbit =
-                CreateOrbitPath(content.Moon, content.OrbitMaterial, orbitRoot, 128, 0.025f);
+                CreateOrbitPath(
+                    content.Moon,
+                    content.OrbitMaterial,
+                    orbitRoot,
+                    MoonOrbitSampleCount,
+                    MoonOrbitWidth);
+            CelestialOrbitPathView jupiterOrbit =
+                CreateOrbitPath(
+                    content.Jupiter,
+                    content.OrbitMaterial,
+                    orbitRoot,
+                    JupiterOrbitSampleCount,
+                    JupiterOrbitWidth);
 
             ConfigureComposition(
                 composition,
                 controller,
                 content.Catalog,
                 content.Scale,
-                new[] { sunView, earthView, moonView },
-                new[] { earthOrbit, moonOrbit });
+                new[] { sunView, earthView, moonView, jupiterView },
+                new[] { earthOrbit, moonOrbit, jupiterOrbit });
 
             CreateCamera(environmentRoot);
             CreateLighting(environmentRoot);
