@@ -1,4 +1,5 @@
 using System;
+using Tanvir.SolarSystem.Audio;
 using Tanvir.SolarSystem.Input;
 using Tanvir.SolarSystem.Interaction;
 using Tanvir.SolarSystem.Presentation.Camera;
@@ -21,6 +22,7 @@ namespace Tanvir.SolarSystem.Application
         [SerializeField] private SolarSystemSimulationController simulationController;
         [SerializeField] private SimulationTimeInputController timeInputController;
         [SerializeField] private SolarSystemHudPresenter hudPresenter;
+        [SerializeField] private AudioDirector audioDirector;
 
         /// <summary>Gets the selection controller after bootstrap.</summary>
         public CelestialSelectionController SelectionController => selectionController;
@@ -34,6 +36,9 @@ namespace Tanvir.SolarSystem.Application
         /// <summary>Gets the runtime HUD presenter.</summary>
         public SolarSystemHudPresenter HudPresenter => hudPresenter;
 
+        /// <summary>Gets the runtime audio director after bootstrap.</summary>
+        public AudioDirector AudioDirector => audioDirector;
+
         /// <summary>Gets whether the full interaction graph initialized successfully.</summary>
         public bool IsInitialized =>
             inputAdapter != null &&
@@ -45,7 +50,9 @@ namespace Tanvir.SolarSystem.Application
             timeInputController != null &&
             timeInputController.IsInitialized &&
             hudPresenter != null &&
-            hudPresenter.IsInitialized;
+            hudPresenter.IsInitialized &&
+            audioDirector != null &&
+            audioDirector.IsInitialized;
 
         private void Awake()
         {
@@ -63,7 +70,8 @@ namespace Tanvir.SolarSystem.Application
                 cameraController == null ||
                 simulationController == null ||
                 timeInputController == null ||
-                hudPresenter == null)
+                hudPresenter == null ||
+                audioDirector == null)
             {
                 throw new InvalidOperationException(
                     "Interaction composition root has missing serialized dependencies.");
@@ -76,6 +84,7 @@ namespace Tanvir.SolarSystem.Application
             var timeControls = new SimulationTimeControlService(simulationController);
             timeInputController.Initialize(inputAdapter, timeControls);
             hudPresenter.Initialize(timeControls, selectionController, explorerCamera);
+            audioDirector.Initialize(selectionService, timeControls, cameraController);
         }
     }
 }

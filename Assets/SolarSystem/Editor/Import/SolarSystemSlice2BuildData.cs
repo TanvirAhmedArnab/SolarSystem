@@ -17,6 +17,12 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal Material OrbitMaterial { get; set; }
         internal Material SkyboxMaterial { get; set; }
         internal VolumeProfile VisualProfile { get; set; }
+        internal AudioClip MusicClip { get; set; }
+        internal AudioClip SunAmbienceClip { get; set; }
+        internal AudioClip EarthAmbienceClip { get; set; }
+        internal AudioClip SelectionClip { get; set; }
+        internal AudioClip FocusClip { get; set; }
+        internal AudioClip TimeControlClip { get; set; }
     }
 
     /// <summary>Pairs one authored body with its scene presentation assets.</summary>

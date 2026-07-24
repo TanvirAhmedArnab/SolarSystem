@@ -1,6 +1,7 @@
 using System.Collections;
 using NUnit.Framework;
 using Tanvir.SolarSystem.Application;
+using Tanvir.SolarSystem.Audio;
 using Tanvir.SolarSystem.Interaction;
 using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
@@ -265,6 +266,72 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(RenderSettings.reflectionIntensity, Is.EqualTo(0.18f).Within(0.001f));
 
             Assert.That(RenderSettings.sun, Is.Null);
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_UsesLicensedEventDrivenAudioBaseline()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(interaction.IsInitialized, Is.True);
+
+            AudioDirector audio = interaction.AudioDirector;
+            Assert.That(audio, Is.Not.Null);
+            Assert.That(audio.IsInitialized, Is.True);
+            Assert.That(audio.MusicSource.clip.name, Is.EqualTo("A_Music_OuterSpaceLoop"));
+            Assert.That(audio.MusicSource.loop, Is.True);
+            Assert.That(audio.MusicSource.playOnAwake, Is.True);
+            Assert.That(audio.MusicSource.spatialBlend, Is.Zero);
+
+            Assert.That(audio.SunAmbienceSource.clip.name, Is.EqualTo("A_Sun_BurningLoop"));
+            Assert.That(audio.SunAmbienceSource.loop, Is.True);
+            Assert.That(audio.SunAmbienceSource.spatialBlend, Is.Zero);
+
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                audio.EarthAmbienceSource.clip.name,
+                Is.EqualTo("A_Earth_ForestAmbienceLoop"));
+            Assert.That(audio.EarthAmbienceSource.transform.parent, Is.SameAs(earth.transform));
+            Assert.That(audio.EarthAmbienceSource.loop, Is.True);
+            Assert.That(audio.EarthAmbienceSource.spatialBlend, Is.EqualTo(1f));
+            Assert.That(
+                audio.EarthAmbienceSource.rolloffMode,
+                Is.EqualTo(AudioRolloffMode.Logarithmic));
+            Assert.That(audio.EarthAmbienceSource.minDistance, Is.EqualTo(1.5f));
+            Assert.That(audio.EarthAmbienceSource.maxDistance, Is.EqualTo(12f));
+            Assert.That(audio.EarthAmbienceSource.dopplerLevel, Is.Zero);
+            Assert.That(audio.UiSource.spatialBlend, Is.Zero);
+            Assert.That(audio.UiSource.playOnAwake, Is.False);
+
+            interaction.SelectionController.Select(earth);
+            Assert.That(audio.LastFeedbackCue, Is.EqualTo(AudioFeedbackCue.Selection));
+            Assert.That(audio.FeedbackCueCount, Is.EqualTo(1));
+
+            interaction.CameraController.Focus(earth);
+            Assert.That(audio.LastFeedbackCue, Is.EqualTo(AudioFeedbackCue.Focus));
+            Assert.That(audio.FeedbackCueCount, Is.EqualTo(2));
+
+            interaction.TimeControls.TogglePaused();
+            Assert.That(audio.LastFeedbackCue, Is.EqualTo(AudioFeedbackCue.TimeControl));
+            Assert.That(audio.FeedbackCueCount, Is.EqualTo(3));
+
+            audio.SetMuted(true);
+            Assert.That(audio.IsMuted, Is.True);
+            Assert.That(audio.MusicSource.mute, Is.True);
+            Assert.That(audio.SunAmbienceSource.mute, Is.True);
+            Assert.That(audio.EarthAmbienceSource.mute, Is.True);
+            Assert.That(audio.UiSource.mute, Is.True);
         }
 
         [UnityTest]

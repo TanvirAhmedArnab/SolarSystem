@@ -38,6 +38,9 @@ namespace Tanvir.SolarSystem.Presentation.Camera
         /// <summary>Gets whether dependencies have been assigned.</summary>
         public bool IsInitialized => input != null && selection != null;
 
+        /// <summary>Raised when a focus transition starts or redirects to a body.</summary>
+        public event Action<CelestialBodyView> FocusStarted;
+
         /// <summary>Initializes the camera and subscribes to discrete interaction intent.</summary>
         public void Initialize(
             SolarSystemInputAdapter inputAdapter,
@@ -85,6 +88,7 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             transitionElapsed = 0f;
             velocity = Vector3.zero;
             Mode = SolarSystemCameraMode.FocusTransition;
+            FocusStarted?.Invoke(target);
         }
 
         /// <summary>Cancels focus without snapping or changing the current camera pose.</summary>

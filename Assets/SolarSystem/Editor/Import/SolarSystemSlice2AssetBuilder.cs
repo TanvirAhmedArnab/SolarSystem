@@ -26,6 +26,18 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialTextureRoot + "/Saturn/T_Saturn_RingsAlpha_2K.png";
         private const string SpaceTexturePath =
             "Assets/SolarSystem/Content/Art/Textures/Environment/T_Space_MilkyWay_2K.jpg";
+        private const string MusicClipPath =
+            "Assets/SolarSystem/Content/Audio/Music/A_Music_OuterSpaceLoop.mp3";
+        private const string SunAmbienceClipPath =
+            "Assets/SolarSystem/Content/Audio/Ambience/CelestialBodies/Sun/A_Sun_BurningLoop.wav";
+        private const string EarthAmbienceClipPath =
+            "Assets/SolarSystem/Content/Audio/Ambience/CelestialBodies/Earth/A_Earth_ForestAmbienceLoop.mp3";
+        private const string SelectionClipPath =
+            "Assets/SolarSystem/Content/Audio/SFX/UI/A_UI_Select.ogg";
+        private const string FocusClipPath =
+            "Assets/SolarSystem/Content/Audio/SFX/UI/A_UI_FocusConfirmation.ogg";
+        private const string TimeControlClipPath =
+            "Assets/SolarSystem/Content/Audio/SFX/UI/A_UI_TimeTick.ogg";
         private const float EarthNormalStrength = 0.28f;
         private const float SunSmoothness = 0f;
         private const float MercurySmoothness = 0.08f;
@@ -302,6 +314,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 OrbitSmoothness);
             Material skyboxMaterial = CreateSkyboxMaterial();
             VolumeProfile visualProfile = CreateVisualProfile();
+            ConfigureAudioImporters();
 
             return new SolarSystemSlice2Content
             {
@@ -312,8 +325,64 @@ namespace Tanvir.SolarSystem.Editor.Import
                 SaturnRingMaterial = CreateSaturnRingMaterial(),
                 OrbitMaterial = orbitMaterial,
                 SkyboxMaterial = skyboxMaterial,
-                VisualProfile = visualProfile
+                VisualProfile = visualProfile,
+                MusicClip = LoadRequiredAsset<AudioClip>(MusicClipPath),
+                SunAmbienceClip = LoadRequiredAsset<AudioClip>(SunAmbienceClipPath),
+                EarthAmbienceClip = LoadRequiredAsset<AudioClip>(EarthAmbienceClipPath),
+                SelectionClip = LoadRequiredAsset<AudioClip>(SelectionClipPath),
+                FocusClip = LoadRequiredAsset<AudioClip>(FocusClipPath),
+                TimeControlClip = LoadRequiredAsset<AudioClip>(TimeControlClipPath)
             };
+        }
+
+        private static void ConfigureAudioImporters()
+        {
+            ConfigureAudioImporter(MusicClipPath, true, false);
+            ConfigureAudioImporter(SunAmbienceClipPath, true, true);
+            ConfigureAudioImporter(EarthAmbienceClipPath, true, true);
+            ConfigureAudioImporter(SelectionClipPath, false, true);
+            ConfigureAudioImporter(FocusClipPath, false, true);
+            ConfigureAudioImporter(TimeControlClipPath, false, true);
+        }
+
+        private static void ConfigureAudioImporter(
+            string path,
+            bool streaming,
+            bool forceToMono)
+        {
+            AudioImporter importer = AssetImporter.GetAtPath(path) as AudioImporter;
+            if (importer == null)
+            {
+                throw new InvalidOperationException(
+                    $"Required audio importer '{path}' is missing.");
+            }
+
+            AudioImporterSampleSettings settings = importer.defaultSampleSettings;
+            AudioClipLoadType expectedLoadType =
+                streaming ? AudioClipLoadType.Streaming : AudioClipLoadType.DecompressOnLoad;
+            bool changed =
+                importer.forceToMono != forceToMono ||
+                importer.loadInBackground != streaming ||
+                settings.loadType != expectedLoadType ||
+                settings.preloadAudioData == streaming ||
+                settings.compressionFormat != AudioCompressionFormat.Vorbis ||
+                Math.Abs(settings.quality - 0.7f) > 0.0001f ||
+                settings.sampleRateSetting != AudioSampleRateSetting.OptimizeSampleRate;
+
+            if (!changed)
+            {
+                return;
+            }
+
+            importer.forceToMono = forceToMono;
+            importer.loadInBackground = streaming;
+            settings.loadType = expectedLoadType;
+            settings.preloadAudioData = !streaming;
+            settings.compressionFormat = AudioCompressionFormat.Vorbis;
+            settings.quality = 0.7f;
+            settings.sampleRateSetting = AudioSampleRateSetting.OptimizeSampleRate;
+            importer.defaultSampleSettings = settings;
+            importer.SaveAndReimport();
         }
 
         private static SolarSystemSlice2BodyContent CreatePlanetContent(
@@ -821,6 +890,18 @@ namespace Tanvir.SolarSystem.Editor.Import
 
             asset = ScriptableObject.CreateInstance<T>();
             AssetDatabase.CreateAsset(asset, path);
+            return asset;
+        }
+
+        private static T LoadRequiredAsset<T>(string path) where T : Object
+        {
+            T asset = AssetDatabase.LoadAssetAtPath<T>(path);
+            if (asset == null)
+            {
+                throw new InvalidOperationException(
+                    $"Required authored asset '{path}' is missing or failed to import.");
+            }
+
             return asset;
         }
 

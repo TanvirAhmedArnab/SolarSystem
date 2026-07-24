@@ -6,9 +6,9 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; eight-planet baseline validated  
-**Version:** 0.11.0  
-**Last updated:** 2026-07-23  
+**Document status:** Living technical authority; event-driven audio baseline validated  
+**Version:** 0.12.0  
+**Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
 **Art authority:** `Docs/Art/ArtBible.md`
@@ -37,6 +37,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.9.0 | 2026-07-23 | Codex, for Tanvir | Added the project-owned panoramic skybox, deterministic visual asset authoring, focused URP volume profile, camera post-processing contract, tuned representative materials, and visual validation | First visual-production foundation validated; unique atmosphere/cloud/solar shaders remain evidence-gated |
 | 0.10.0 | 2026-07-23 | Codex, for Tanvir | Replaced the fixed directional-light approximation with a Sun-parented point source, explicit radial-illumination constraints, and real-scene regression coverage | Sun-facing day hemispheres and opposing night hemispheres validated for the representative scene |
 | 0.11.0 | 2026-07-23 | Codex, for Tanvir | Expanded the deterministic authoring pipeline to all eight planets, added a generated Saturn annulus, and reframed the initial camera for the complete planetary envelope | Required planetary baseline validated; advanced atmosphere, cloud, and ring shading remain deferred |
+| 0.12.0 | 2026-07-24 | Codex, for Tanvir | Added event-driven audio feedback, independent runtime channel levels and mute, deterministic clip-import contracts, and licensed scene ambience | Automated behavior validated; owner listening and final mix approval remain |
 
 ### 1.3 Status vocabulary
 
@@ -429,7 +430,27 @@ scale-mode controls, and licensed typography remain release work.
 
 ### 6.10 Audio
 
-`AudioDirector` responds to explicit application events and owns ambient/UI mixer routing. It does not infer events by watching transforms. Ambient music, UI effects, and master volume remain independently adjustable.
+`AudioDirector` responds to explicit application events and owns the runtime
+audio-channel policy. It does not infer events by watching transforms or own
+gameplay state.
+
+- `SelectionService.SelectionChanged` maps a non-empty selection to the select cue.
+- `SolarSystemCameraController.FocusStarted` maps an accepted focus request to
+  the focus-confirmation cue.
+- `SimulationTimeControlService.Changed` maps pause and speed changes to the
+  time cue.
+- Master, music, UI, and celestial gains are normalized, independently
+  adjustable, and applied without changing the source assets. Master mute
+  preserves the chosen channel gains.
+- Music and UI use non-spatial sources under `_Audio`. The stylized Sun source
+  is 2D and parented to the Sun; Earth ambience is fully 3D and parented to
+  Earth with logarithmic attenuation.
+- Complete initialization subscribes once; destruction or reinitialization
+  removes prior subscriptions.
+
+The current baseline uses explicit `AudioSource` channel routing. A Unity
+`AudioMixer` asset and player-facing settings bindings are future work and
+must not be implied by the implemented API.
 
 ## 7. Data Model and Authoring
 
@@ -624,7 +645,9 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Orbit paths use cached geometry and update only when scale/settings change.
 - Post-processing respects accessibility toggles; motion blur defaults off.
 - Quality tiers and LODs are introduced from measured screen-space need.
-- Audio routes through mixer groups for master, music, and UI levels.
+- Audio uses explicit master, music, UI, and celestial channel gains. A future
+  `AudioMixer` may expose the same contract after profiling and settings-UI
+  requirements justify the asset.
 
 ## 11. Error Handling, Diagnostics, and Validation
 
@@ -773,6 +796,8 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   `Docs/ProjectManagement/Slice 4 Visual Foundation Validation.md`.
 - Sun-origin illumination evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Sun-Origin Illumination Validation.md`.
+- Licensed audio and event-routing evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Audio Baseline Validation.md`.
 
 ### Slice 4 - Visual/content completion
 
@@ -781,9 +806,12 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   source-linked definitions, deterministic orbits, audited 2K textures, Lit
   materials, selectable views, and cached orbit paths. Saturn adds a generated
   ring mesh. The initial camera frames the complete authored system.
+- **[IMPLEMENTED BASELINE]** Licensed music, 2D Sun ambience, 3D Earth
+  ambience, selection/focus/time cues, and independent runtime levels/mute are
+  integrated through application events and reproducible import policies.
 - The broader proposed moon set, atmosphere/cloud layers, advanced planet and
-  ring shaders, audio integration, labels/navigation, and accessibility options
-  remain Slice 4 work.
+  ring shaders, labels/navigation, player-facing audio settings, final audio
+  mix approval, and accessibility options remain Slice 4 work.
 
 ### Slice 5 - Portfolio release
 

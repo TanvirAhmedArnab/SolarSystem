@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.6.0  
-**Last updated:** 2026-07-23  
+**Version:** 0.7.0  
+**Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
 
@@ -33,6 +33,7 @@
 | 0.4.0 | 2026-07-22 | Codex, for Tanvir | Recorded approval of the GDD authority, URP, deterministic analytical orbits, and lightweight trunk-based development | Foundation decisions approved |
 | 0.5.0 | 2026-07-23 | Codex, for Tanvir | Recorded the validated selection-feedback and educational body-information experience that closes the interaction vertical slice | Implemented product behavior recorded; broader release interface remains |
 | 0.6.0 | 2026-07-23 | Codex, for Tanvir | Recorded the implemented eight-planet content baseline, full-system overview framing, and first Saturn ring presentation | Required planetary roster implemented; final fidelity and selected moon set remain |
+| 0.7.0 | 2026-07-24 | Codex, for Tanvir | Recorded the implemented licensed music, celestial ambience, and interaction-feedback baseline | Technical behavior validated; owner listening and final mix approval remain |
 
 ### 1.3 Source hierarchy
 
@@ -357,6 +358,15 @@ If audio is included:
 - All sources and licenses are recorded.
 - The application starts at a considerate volume and supports mute.
 
+**[IMPLEMENTED BASELINE]** The scene now plays the approved CC0 music loop,
+stylized 2D Sun ambience, and spatial 3D Earth ambience. Selection, focus, and
+simulation-time changes produce restrained UI cues. Master, music, UI, and
+celestial levels are independently adjustable through the runtime audio
+service, and master mute preserves the chosen channel levels. A player-facing
+settings surface is still required. Final loudness, loop-seam, and fatigue
+approval remains an owner listening gate; this implementation does not claim
+that sound propagates through space.
+
 ## 13. Technical Product Constraints
 
 These constraints define product quality; implementation details belong in the TDD.
@@ -493,7 +503,9 @@ Each rule should have one authoritative owner document; other documents link to 
 **Current progress:** The Sun, eight planets, and Earth's Moon are populated as
 the deterministic planetary baseline. Major moons beyond Earth's Moon,
 advanced per-body visual layers, labels/navigation, cinematic routing, and
-accessibility completion remain.
+accessibility completion remain. The licensed music, Sun/Earth ambience, and
+event-driven UI feedback baseline is implemented; final listening/mix approval
+and a settings UI remain.
 
 ### Milestone 5 - Portfolio release
 

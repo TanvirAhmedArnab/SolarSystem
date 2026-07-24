@@ -1,9 +1,9 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated representative visual foundation  
-**Version:** 0.7.0  
-**Last updated:** 2026-07-23  
+**Status:** Living authority with validated visual and audio foundations  
+**Version:** 0.8.0  
+**Last updated:** 2026-07-24  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
 
@@ -201,10 +201,20 @@ Approved source: **Outer Space Loop by wipics**, CC0 1.0.
 
 Use the seamless loop as quiet, non-diegetic 2D ambience with independent music volume and mute controls. CC0 permits commercial use, modification, and redistribution without attribution; retain an optional creator credit as professional provenance.
 
+**[IMPLEMENTED BASELINE]** `A_Music_OuterSpaceLoop.mp3` imports as a
+stereo, streaming Vorbis clip with background loading and plays from a
+non-spatial scene source.
+
 ### Celestial-body ambience
 
 - **Sun:** `A_Sun_BurningLoop.wav`, sourced from PagDev's CC0 Fireplace Sound Loop. Configure as a looping 2D AudioSource (`Spatial Blend = 0`) so it supplies a stylized solar-burning layer independent of camera distance.
 - **Earth:** `A_Earth_ForestAmbienceLoop.mp3`, sourced from TinyWorlds' CC0 Forest Ambience. Configure as a looping 3D AudioSource (`Spatial Blend = 1`) attached to Earth, with a measured logarithmic rolloff range that supports focus shots without leaking across the system view.
+
+**[IMPLEMENTED BASELINE]** Both ambience clips import as mono, streaming
+Vorbis audio with background loading. The Sun source is 2D and parented to the
+Sun. The Earth source is fully 3D and parented to Earth, using logarithmic
+rolloff from `1.5` to `12` presentation units with Doppler and reverb-zone
+effects disabled.
 
 These sounds are interpretive experience design, not a claim that sound propagates through space. Each must have an independent mixer level, a restrained fade during focus transitions, and no audible discontinuity when looping.
 
@@ -223,6 +233,12 @@ Initial audition mapping:
 - Invalid action: `error_004.ogg`
 
 Only the selected subset enters the runtime build. Music stays below informational feedback, and repeated sounds must remain fatigue-free.
+
+**[IMPLEMENTED BASELINE]** Selection uses `A_UI_Select.ogg`, focus uses
+`A_UI_FocusConfirmation.ogg`, and pause/speed changes use
+`A_UI_TimeTick.ogg`. These short mono cues preload and decompress on load.
+Open, close, toggle, and invalid-action mappings remain reserved for future
+features.
 
 ## 8. Folder and Naming Rules
 
@@ -274,6 +290,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.8.0 | 2026-07-24 | Recorded the implemented licensed music, 2D Sun ambience, 3D Earth ambience, UI cues, and deterministic import contracts | Technical baseline validated; owner listening approval pending |
 | 0.7.0 | 2026-07-23 | Recorded the eight-planet material baseline, deterministic Saturn annulus, and deferred atmosphere/cloud/ring fidelity layers | Pending owner review |
 | 0.6.0 | 2026-07-23 | Replaced the fixed directional approximation with validated Sun-origin radial illumination and explicit day/night readability | Pending owner review |
 | 0.5.0 | 2026-07-23 | Recorded the validated project-owned skybox, URP volume, lighting, and representative material foundation | Pending owner review |

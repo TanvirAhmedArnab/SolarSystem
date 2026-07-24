@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Tanvir.SolarSystem.Application;
+using Tanvir.SolarSystem.Audio;
 using Tanvir.SolarSystem.Authoring;
 using Tanvir.SolarSystem.Input;
 using Tanvir.SolarSystem.Interaction;
@@ -26,6 +27,9 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string SolarRadialLightName = "Solar Radial Light";
         private const string LegacySolarKeyLightName = "Sun Key Light";
         private const string SunStableId = "sun";
+        private const string EarthStableId = "earth";
+        private const float EarthAmbienceMinimumDistance = 1.5f;
+        private const float EarthAmbienceMaximumDistance = 12f;
         private const float SolarRadialIntensityCandela = 1450f;
         private const float SolarRadialRange = 80f;
         private const float SolarRadialTemperature = 5600f;
@@ -42,6 +46,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             Transform bodyRoot = CreateGroup("CelestialBodies", simulationRoot);
             Transform orbitRoot = CreateGroup("OrbitPaths", simulationRoot);
             Transform environmentRoot = CreateGroup("_Environment", sceneRoot.transform);
+            Transform audioRoot = CreateGroup("_Audio", sceneRoot.transform);
             Transform interfaceRoot = CreateGroup("_Interface", sceneRoot.transform);
             CreateGroup("_Diagnostics", sceneRoot.transform);
 
@@ -55,6 +60,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             var bodyViews = new List<CelestialBodyView>(content.Bodies.Length);
             var orbitPaths = new List<CelestialOrbitPathView>(content.Bodies.Length - 1);
             CelestialBodyView sunView = null;
+            CelestialBodyView earthView = null;
             foreach (SolarSystemSlice2BodyContent body in content.Bodies)
             {
                 bool isSaturn = body.Definition.StableId == "saturn";
@@ -68,6 +74,10 @@ namespace Tanvir.SolarSystem.Editor.Import
                 if (body.Definition.StableId == SunStableId)
                 {
                     sunView = view;
+                }
+                else if (body.Definition.StableId == EarthStableId)
+                {
+                    earthView = view;
                 }
 
                 if (body.Definition.HasOrbit)
@@ -86,6 +96,11 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires the Sun root.");
             }
 
+            if (earthView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Earth.");
+            }
+
             ConfigureSimulationComposition(
                 composition,
                 controller,
@@ -97,11 +112,14 @@ namespace Tanvir.SolarSystem.Editor.Import
             Camera camera = CreateCamera(environmentRoot);
             SolarSystemHudPresenter hudPresenter =
                 SolarSystemHudSceneBuilder.Create(interfaceRoot);
+            AudioDirector audioDirector =
+                CreateAudioSystem(audioRoot, sunView, earthView, content);
             CreateInteractionComposition(
                 applicationRoot,
                 camera,
                 controller,
-                hudPresenter);
+                hudPresenter,
+                audioDirector);
             CreateLighting(sunView.transform);
             CreateGlobalVolume(environmentRoot, content.VisualProfile);
             ConfigureRenderSettings(content.SkyboxMaterial);
@@ -256,7 +274,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             Transform parent,
             Camera camera,
             SolarSystemSimulationController simulationController,
-            SolarSystemHudPresenter hudPresenter)
+            SolarSystemHudPresenter hudPresenter,
+            AudioDirector audioDirector)
         {
             UnityEngine.InputSystem.InputActionAsset inputActions =
                 AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>(
@@ -289,7 +308,76 @@ namespace Tanvir.SolarSystem.Editor.Import
                 simulationController;
             serialized.FindProperty("timeInputController").objectReferenceValue = timeInput;
             serialized.FindProperty("hudPresenter").objectReferenceValue = hudPresenter;
+            serialized.FindProperty("audioDirector").objectReferenceValue = audioDirector;
             serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static AudioDirector CreateAudioSystem(
+            Transform audioRoot,
+            CelestialBodyView sun,
+            CelestialBodyView earth,
+            SolarSystemSlice2Content content)
+        {
+            AudioDirector director = audioRoot.gameObject.AddComponent<AudioDirector>();
+            AudioSource music = CreateAudioSource(
+                "Music",
+                audioRoot,
+                content.MusicClip,
+                true,
+                0f);
+            AudioSource ui = CreateAudioSource(
+                "Interface Feedback",
+                audioRoot,
+                null,
+                false,
+                0f);
+            AudioSource sunAmbience = CreateAudioSource(
+                "Burning Ambience",
+                sun.transform,
+                content.SunAmbienceClip,
+                true,
+                0f);
+            AudioSource earthAmbience = CreateAudioSource(
+                "Forest Ambience",
+                earth.transform,
+                content.EarthAmbienceClip,
+                true,
+                1f);
+            earthAmbience.rolloffMode = AudioRolloffMode.Logarithmic;
+            earthAmbience.minDistance = EarthAmbienceMinimumDistance;
+            earthAmbience.maxDistance = EarthAmbienceMaximumDistance;
+
+            var serialized = new SerializedObject(director);
+            serialized.FindProperty("musicSource").objectReferenceValue = music;
+            serialized.FindProperty("sunAmbienceSource").objectReferenceValue = sunAmbience;
+            serialized.FindProperty("earthAmbienceSource").objectReferenceValue = earthAmbience;
+            serialized.FindProperty("uiSource").objectReferenceValue = ui;
+            serialized.FindProperty("selectionClip").objectReferenceValue =
+                content.SelectionClip;
+            serialized.FindProperty("focusClip").objectReferenceValue = content.FocusClip;
+            serialized.FindProperty("timeControlClip").objectReferenceValue =
+                content.TimeControlClip;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            return director;
+        }
+
+        private static AudioSource CreateAudioSource(
+            string name,
+            Transform parent,
+            AudioClip clip,
+            bool loop,
+            float spatialBlend)
+        {
+            GameObject sourceObject = new GameObject(name);
+            sourceObject.transform.SetParent(parent, false);
+            AudioSource source = sourceObject.AddComponent<AudioSource>();
+            source.clip = clip;
+            source.loop = loop;
+            source.playOnAwake = clip != null;
+            source.spatialBlend = spatialBlend;
+            source.dopplerLevel = 0f;
+            source.reverbZoneMix = 0f;
+            return source;
         }
 
         private static void CreateLighting(Transform sun)

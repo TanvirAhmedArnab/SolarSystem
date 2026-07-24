@@ -45,6 +45,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   two-sided transparent presentation.
 - Full-system overview framing and regression coverage for all ten authored
   bodies, nine orbit paths, the radial-light envelope, and Saturn's ring wiring.
+- Event-driven audio direction with independently adjustable master, music, UI,
+  and celestial levels plus a non-destructive master mute.
+- Licensed CC0 music, 2D Sun ambience, 3D Earth ambience, and UI feedback for
+  selection, focus, and simulation-time changes.
+- Deterministic audio import policies and Edit/Play Mode regression coverage for
+  routing, spatialization, event mapping, and scene wiring.
 
 ### Changed
 
