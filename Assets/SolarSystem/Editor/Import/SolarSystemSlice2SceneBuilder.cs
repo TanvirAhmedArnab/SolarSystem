@@ -30,6 +30,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string LegacySolarKeyLightName = "Sun Key Light";
         private const string SunStableId = "sun";
         private const string EarthStableId = "earth";
+        private const string VenusStableId = "venus";
         private const string JupiterStableId = "jupiter";
         private const string SaturnStableId = "saturn";
         private const float EarthAmbienceMinimumDistance = 1.5f;
@@ -65,6 +66,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             var orbitPaths = new List<CelestialOrbitPathView>(content.Bodies.Length - 1);
             CelestialBodyView sunView = null;
             CelestialBodyView earthView = null;
+            CelestialBodyView venusView = null;
             CelestialBodyView jupiterView = null;
             CelestialBodyView saturnView = null;
             foreach (SolarSystemSlice2BodyContent body in content.Bodies)
@@ -84,6 +86,10 @@ namespace Tanvir.SolarSystem.Editor.Import
                 else if (body.Definition.StableId == EarthStableId)
                 {
                     earthView = view;
+                }
+                else if (body.Definition.StableId == VenusStableId)
+                {
+                    venusView = view;
                 }
                 else if (body.Definition.StableId == JupiterStableId)
                 {
@@ -115,6 +121,11 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Earth.");
             }
 
+            if (venusView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Venus.");
+            }
+
             if (jupiterView == null)
             {
                 throw new InvalidOperationException("The authored content requires Jupiter.");
@@ -126,7 +137,18 @@ namespace Tanvir.SolarSystem.Editor.Import
             }
 
             CreateSunVisual(sunView, content);
-            CreateEarthLayers(earthView, content);
+            CreateLayeredBodyVisual(
+                earthView,
+                content.EarthLayerDefinition,
+                content.EarthCloudMaterial,
+                content.EarthAtmosphereMaterial,
+                "Earth");
+            CreateLayeredBodyVisual(
+                venusView,
+                content.VenusLayerDefinition,
+                content.VenusCloudMaterial,
+                content.VenusAtmosphereMaterial,
+                "Venus");
             CreateGasGiantVisual(
                 jupiterView,
                 content.JupiterVisualDefinition,
@@ -297,40 +319,45 @@ namespace Tanvir.SolarSystem.Editor.Import
             serializedBody.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void CreateEarthLayers(
-            CelestialBodyView earth,
-            SolarSystemSlice2Content content)
+        private static void CreateLayeredBodyVisual(
+            CelestialBodyView body,
+            CelestialLayerVisualDefinition definition,
+            Material cloudMaterial,
+            Material atmosphereMaterial,
+            string displayName)
         {
-            if (content.EarthLayerDefinition == null ||
-                content.EarthCloudMaterial == null ||
-                content.EarthAtmosphereMaterial == null)
+            if (definition == null ||
+                cloudMaterial == null ||
+                atmosphereMaterial == null)
             {
                 throw new InvalidOperationException(
-                    "Earth layered presentation assets are incomplete.");
+                    $"{displayName} layered presentation assets are incomplete.");
             }
 
-            Transform visualRoot = earth.VisualRoot;
+            Transform visualRoot = body.VisualRoot;
             MeshRenderer surfaceRenderer =
                 visualRoot.GetComponent<MeshRenderer>();
             surfaceRenderer.shadowCastingMode = ShadowCastingMode.Off;
             surfaceRenderer.receiveShadows = false;
+            surfaceRenderer.lightProbeUsage = LightProbeUsage.Off;
+            surfaceRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
 
             Transform cloudShell = CreateLayerSphere(
                 "Cloud Layer",
                 visualRoot,
-                content.EarthCloudMaterial,
-                content.EarthLayerDefinition.CloudShellRadiusMultiplier);
+                cloudMaterial,
+                definition.CloudShellRadiusMultiplier);
             Transform atmosphereShell = CreateLayerSphere(
                 "Atmosphere Layer",
                 visualRoot,
-                content.EarthAtmosphereMaterial,
-                content.EarthLayerDefinition.AtmosphereShellRadiusMultiplier);
+                atmosphereMaterial,
+                definition.AtmosphereShellRadiusMultiplier);
 
             CelestialLayeredBodyView layeredView =
-                earth.gameObject.AddComponent<CelestialLayeredBodyView>();
+                body.gameObject.AddComponent<CelestialLayeredBodyView>();
             var serializedLayer = new SerializedObject(layeredView);
             serializedLayer.FindProperty("definition").objectReferenceValue =
-                content.EarthLayerDefinition;
+                definition;
             serializedLayer.FindProperty("cloudShell").objectReferenceValue =
                 cloudShell;
             serializedLayer.FindProperty("atmosphereShell").objectReferenceValue =
@@ -343,7 +370,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 atmosphereShell.GetComponent<MeshRenderer>();
             serializedLayer.ApplyModifiedPropertiesWithoutUndo();
 
-            var serializedBody = new SerializedObject(earth);
+            var serializedBody = new SerializedObject(body);
             serializedBody.FindProperty("layeredBodyView").objectReferenceValue =
                 layeredView;
             serializedBody.ApplyModifiedPropertiesWithoutUndo();

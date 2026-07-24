@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.7.0  
+**Version:** 0.8.0  
 **Last reviewed:** 2026-07-24
 
 **Live-source verification:** Rechecked 2026-07-22 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records.
@@ -106,7 +106,7 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 
 | Source IDs | Unity destination | Import status |
 |---|---|---|
-| TEX-SSS-001-016 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Body>` | Imported; Sun, eight planet surfaces, layered Earth maps, Moon, and Saturn ring active; Venus atmosphere remains pending |
+| TEX-SSS-001-016 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Body>` | Imported; Sun, eight planet surfaces, layered Earth and Venus maps, Moon, and Saturn ring active |
 | TEX-SSS-017 | `Assets/SolarSystem/Content/Art/Textures/Environment/T_Space_MilkyWay_2K.jpg` | Imported; sky presentation review pending |
 | TEX-USGS-001-006 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Moon>` | Imported as visibly named `Browse` evaluation textures |
 | AUD-KEN-001 selected subset | `Assets/SolarSystem/Content/Audio/SFX/UI` | Imported; audition and loudness review pending |
@@ -151,6 +151,33 @@ policy, and annulus geometry are project-authored and introduce no new
 third-party media or license. The rendering changes do not alter the existing
 CC BY 4.0 attribution obligation for `TEX-SSS-012` and `TEX-SSS-013`.
 
+### Active Venus atmosphere texture records
+
+- Source IDs: `TEX-SSS-002` (surface) and `TEX-SSS-003` (atmosphere).
+- Sources:
+  `SourceAssets/ThirdParty/Textures/SolarSystemScope/2k_venus_surface.jpg`
+  and `2k_venus_atmosphere.jpg`.
+- Unity derivatives:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Venus/T_Venus_Surface_2K.jpg`
+  and `T_Venus_Atmosphere_2K.jpg`.
+- Active materials: `M_Venus.mat`, `M_Venus_CloudDeck.mat`, and
+  `M_Venus_Atmosphere.mat`.
+- SHA-256:
+  `DBE5DB1C794A8AB4CBF7DD6BF193540C400FC833CE1E6CC399318AA68026278B`
+  for the surface and
+  `225012AD4911730605C4E189CA2A3BF674FCE50CC48AAB4102B936B47D6991AC`
+  for the atmosphere source and matching Unity derivative.
+- License: Solar System Scope, CC BY 4.0; release attribution remains required.
+- Modification status: texture pixels are unchanged. The project-owned opaque
+  cloud shader keeps the atmosphere map anchored and samples neighboring
+  source texels for restrained relief; the outer atmosphere shader uses no
+  additional texture.
+
+The Venus layer definition/model/view reuse, cloud shader, atmosphere
+material, and reproducible scene wiring are project-authored. They introduce
+no new third-party media or license and do not alter the existing Solar System
+Scope CC BY 4.0 attribution obligation.
+
 ### Active eight-planet material records
 
 The baseline activates the following byte-identical Unity derivatives from the
@@ -160,6 +187,7 @@ already approved Solar System Scope CC BY 4.0 working set:
 |---|---|---|---|
 | TEX-SSS-001 | Mercury surface | `CelestialBodies/Mercury/T_Mercury_Surface_2K.jpg` | `M_Mercury.mat` |
 | TEX-SSS-002 | Venus surface | `CelestialBodies/Venus/T_Venus_Surface_2K.jpg` | `M_Venus.mat` |
+| TEX-SSS-003 | Venus atmosphere | `CelestialBodies/Venus/T_Venus_Atmosphere_2K.jpg` | `M_Venus_CloudDeck.mat` |
 | TEX-SSS-004 | Earth day surface | `CelestialBodies/Earth/T_Earth_DayAlbedo_2K.jpg` | `M_Earth.mat` |
 | TEX-SSS-005 | Earth night emission | `CelestialBodies/Earth/T_Earth_NightEmission_2K.jpg` | `M_Earth.mat` |
 | TEX-SSS-006 | Earth clouds | `CelestialBodies/Earth/T_Earth_Clouds_2K.jpg` | `M_Earth_Clouds.mat` |
@@ -185,7 +213,7 @@ license is introduced.
 
 ### Active solar hero record
 
-- Source ID: `TEX-SSS-003`
+- Source ID: `TEX-SSS-016`
 - Source: `SourceAssets/ThirdParty/Textures/SolarSystemScope/2k_sun.jpg`
 - Unity derivative:
   `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Sun/T_Sun_Surface_2K.jpg`
@@ -197,7 +225,7 @@ license is introduced.
 
 The solar surface/corona shaders, shell wiring, immutable authoring, and
 deterministic motion code are project-authored. They introduce no new
-third-party asset or license. Their use of TEX-SSS-003 continues the existing
+third-party asset or license. Their use of TEX-SSS-016 continues the existing
 Solar System Scope CC BY 4.0 attribution obligation.
 
 ### Kenney selected-subset mapping

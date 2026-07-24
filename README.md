@@ -72,13 +72,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Solar Surface and Corona Validation](Docs/ProjectManagement/Slice%204%20Solar%20Surface%20and%20Corona%20Validation.md)
 - [Slice 4 Jupiter Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Jupiter%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Saturn Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Saturn%20Hero%20Rendering%20Validation.md)
+- [Slice 4 Venus Atmosphere Rendering Validation](Docs/ProjectManagement/Slice%204%20Venus%20Atmosphere%20Rendering%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/Earth-Moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 127 Edit Mode cases and
-12 real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 129 Edit Mode cases and
+13 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -105,6 +106,10 @@ analytical orbit, signed rotation, and Great Red Spot identity.
 Saturn now extends that reusable pattern with a distinct restrained band
 profile, thin atmosphere, and a dedicated two-sided Sun-aware ring shader that
 keeps the approved radial alpha texture anchored to the generated annulus.
+Venus now uses the reusable layered-body path to place its approved opaque
+cloud map above the proportional surface, add a restrained Sun-aware limb, and
+evaluate retrograde cloud motion from absolute simulation time without exposing
+an unjustifiably detailed solid surface.
 Detailed evidence is recorded in `Docs/ProjectManagement`.
 
 ## License

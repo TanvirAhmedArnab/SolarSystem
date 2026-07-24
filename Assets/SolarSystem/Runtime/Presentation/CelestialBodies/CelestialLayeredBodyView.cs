@@ -19,6 +19,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         [SerializeField] private MeshRenderer atmosphereRenderer;
 
         private CelestialLayerVisualModel model;
+        private double signedRotationPeriodSeconds;
 
         /// <summary>Gets whether the view owns a validated immutable layer model.</summary>
         public bool IsInitialized => model != null;
@@ -75,13 +76,14 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             }
 
             model = runtimeModel;
+            signedRotationPeriodSeconds = body.RotationPeriodSeconds;
             cloudShell.localScale = Vector3.one * model.CloudShellRadiusMultiplier;
             atmosphereShell.localScale =
                 Vector3.one * model.AtmosphereShellRadiusMultiplier;
         }
 
-        /// <summary>Applies deterministic layer motion from the owning body's state.</summary>
-        public void Apply(float bodyRotationAngleDeg)
+        /// <summary>Applies deterministic layer motion from authoritative absolute time.</summary>
+        public void Apply(double simulationTimeSeconds)
         {
             if (model == null)
             {
@@ -89,8 +91,21 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
                     $"Layered view '{name}' must be initialized before use.");
             }
 
+            if (double.IsNaN(simulationTimeSeconds) ||
+                double.IsInfinity(simulationTimeSeconds))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(simulationTimeSeconds),
+                    "Layer simulation time must be finite.");
+            }
+
+            double relativeAngle =
+                -360d *
+                simulationTimeSeconds /
+                signedRotationPeriodSeconds *
+                (model.CloudRotationMultiplier - 1f);
             CloudRelativeRotationDeg =
-                -bodyRotationAngleDeg * (model.CloudRotationMultiplier - 1f);
+                Mathf.Repeat((float)(relativeAngle % 360d), 360f);
             cloudShell.localRotation =
                 Quaternion.AngleAxis(CloudRelativeRotationDeg, Vector3.up);
         }

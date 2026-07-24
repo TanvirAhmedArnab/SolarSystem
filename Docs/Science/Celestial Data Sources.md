@@ -2,7 +2,7 @@
 
 **Project:** Solar System Simulation  
 **Dataset slice:** Sun, eight planets, and Earth's Moon baseline  
-**Verification date:** 2026-07-23  
+**Verification date:** 2026-07-24  
 **Authoring epoch:** J2000.0 where orbital elements provide an epoch  
 **Accuracy tier:** Educational visualization; not a date-exact ephemeris
 
@@ -166,6 +166,19 @@ Primary sources:
 - [JPL Planetary Physical Parameters](https://ssd.jpl.nasa.gov/planets/phys_par.html)
 - [JPL Approximate Positions of the Planets](https://ssd.jpl.nasa.gov/planets/approx_pos.html)
 - [NASA Venus Facts](https://science.nasa.gov/venus/venus-facts/)
+
+Presentation-only cloud reference:
+
+- [NASA NTRS: Retrograde rotation of the upper atmosphere of Venus](https://ntrs.nasa.gov/citations/19730032631)
+- [ESA: Chasing clouds on Venus](https://www.esa.int/Science_Exploration/Space_Science/Chasing_clouds_on_Venus)
+
+The layered Venus treatment uses approximately `4.5 days` as a reviewed
+sidereal upper-cloud presentation reference and retains the retrograde
+direction. NASA's cited observation reported `4.50 days` for one particular
+40-day interval, while ESA summarizes roughly four Earth days at the cloud
+tops. The renderer therefore treats `4.5 days` as an illustrative deterministic
+rate, not a current global atmospheric constant or a model of altitude,
+latitude, time-varying winds, chemistry, scattering, or fluid dynamics.
 
 ## Mars
 

@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, Earth, Sun, Jupiter, and Saturn hero foundations  
-**Version:** 0.14.0  
+**Status:** Living authority with validated visual, audio, guided-scale, Earth, Sun, Jupiter, Saturn, and Venus hero foundations  
+**Version:** 0.15.0  
 **Last updated:** 2026-07-24  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -126,9 +126,23 @@ The baseline uses the audited 2K surface map with `0.08` smoothness.
 ### Venus
 Separate surface and atmosphere/cloud spheres. Warm cream and sulfur yellow, not emissive orange. Cloud motion is slow and independent.
 
-The baseline uses the audited 2K surface map with `0.24` smoothness. The
-already imported atmosphere map remains deferred until the separate cloud-shell
-contract is implemented.
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Venus uses the reusable layered-body
+architecture with the audited 2K surface map retained beneath an opaque cloud
+deck. The approved 2K atmosphere map remains anchored to that deck, supplies
+the recognizable warm cream and sulfur-yellow identity, and prevents a falsely
+detailed solid surface from showing through the planet's continuous cloud
+cover. Three nearby source samples add restrained relief without animated UVs
+or procedural replacement of the source identity.
+
+The cloud shell is `1.0115` times the physical surface radius and carries
+deterministic retrograde motion derived from absolute simulation time and
+Venus's signed rotation. Its reviewed presentation rate uses an approximately
+`4.5`-day upper-cloud reference; this is not a claim of exact cloud altitude,
+fluid dynamics, atmospheric chemistry, or date-specific circulation. A
+separate transparent, non-shadow-casting atmosphere shell at `1.02` radius
+adds a restrained Sun-aware limb. Only that outer rim uses transparency, so
+overdraw remains bounded while Venus's exact proportional surface radius,
+analytical orbit, axial tilt, and signed solid-body rotation remain unchanged.
 
 ### Earth
 Separate surface, cloud, and atmosphere layers. Day map drives albedo, specular differentiates oceans, normal detail stays subtle, night lights appear only on the unlit hemisphere, and clouds rotate independently.
@@ -366,13 +380,14 @@ An asset is ready only when:
 2. **[OPEN] Icon family:** project-authored or compatible open-license set.
 3. **[OPEN] Moon upgrades:** identify browse maps needing higher resolution after hero shots.
 4. **[OPEN] Remaining shader fidelity:** profile the validated Earth, Sun,
-   Jupiter, and Saturn patterns, then select the next body-specific technique.
+   Jupiter, Saturn, and Venus patterns, then select the next body-specific technique.
 5. **[OPEN] Audio mix:** approve music, Sun, Earth, and UI loudness after in-scene audition.
 
 ## Revision History
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.15.0 | 2026-07-24 | Added Venus's anchored opaque cloud deck, deterministic retrograde cloud presentation, restrained Sun-aware limb, bounded transparency, and explicit scientific limitations | Venus atmosphere slice implemented and visually validated |
 | 0.14.0 | 2026-07-24 | Added Saturn's anchored gas-giant surface, restrained limb, and two-sided Sun-aware radial ring treatment with explicit scientific limitations | Saturn hero slice implemented and visually validated |
 | 0.13.0 | 2026-07-24 | Added the validated anchored-texture Jupiter surface, restrained source-derived band relief, deterministic low-amplitude detail, Sun-aware limb, and scientific-limitation disclosure | Jupiter hero slice implemented and visually validated |
 | 0.12.0 | 2026-07-24 | Added the validated deterministic solar surface, separate restrained corona, exposure-safe overview/focus treatment, and evidence-based decision to omit lens flare | Solar hero slice implemented and visually validated |

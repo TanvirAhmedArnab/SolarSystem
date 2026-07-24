@@ -93,6 +93,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Edit Mode Saturn surface/atmosphere/ring contracts and real-scene Play Mode
   coverage for exact scale, hierarchy, tilt alignment, deterministic phase,
   Sun-origin lighting, focus visibility, and state preservation.
+- Project-owned opaque Venus cloud-deck shader plus a restrained transparent
+  atmosphere limb using the approved anchored Venus atmosphere texture.
+- Reusable layered-body motion driven by authoritative absolute simulation
+  time, preserving deterministic signed cloud direction across wrapped body
+  rotations without frame-delta accumulation.
+- Edit Mode Venus authoring/material/import contracts and real-scene Play Mode
+  coverage for exact scale, hierarchy, retrograde cloud motion, pause,
+  Sun-origin lighting, focus visibility, renderer policy, and state preservation.
 
 ### Changed
 
@@ -141,6 +149,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   reusable gas-giant profile and project-owned ring presentation while
   retaining both approved texture derivatives, geometry, scientific data,
   proportional scale, orbit, tilt, and signed rotation.
+- Replaced Venus's generic exposed Lit surface with an opaque warm cloud deck
+  and restrained atmosphere shell while retaining both approved texture
+  derivatives, exact proportional radius, analytical orbit, signed retrograde
+  rotation, axial tilt, selection, focus, UI, audio, and comparison behavior.
 - Suppressed cached orbit guides only during close camera focus and restored
   them in free flight so overview geometry cannot obscure hero views.
 - Paused simulation and temporarily locked selection, time, and navigation

@@ -40,6 +40,18 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Saturn_Atmosphere.mat";
         private const string SaturnVisualDefinitionPath =
             "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Saturn.asset";
+        private const string VenusSurfaceTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Venus/T_Venus_Surface_2K.jpg";
+        private const string VenusAtmosphereTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Venus/T_Venus_Atmosphere_2K.jpg";
+        private const string VenusSurfaceMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Venus.mat";
+        private const string VenusCloudMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Venus_CloudDeck.mat";
+        private const string VenusAtmosphereMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Venus_Atmosphere.mat";
+        private const string VenusLayerDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Venus.asset";
         private const string EarthMaterialPath =
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Earth.mat";
         private const string EarthNormalPath =
@@ -333,6 +345,97 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(importer.sRGBTexture, Is.True);
             Assert.That(importer.mipmapEnabled, Is.True);
             Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Repeat));
+        }
+
+        [Test]
+        public void VenusMaterials_UseAnchoredOpaqueCloudDeckAndLayerContract()
+        {
+            Texture2D surfaceTexture =
+                AssetDatabase.LoadAssetAtPath<Texture2D>(VenusSurfaceTexturePath);
+            Texture2D atmosphereTexture =
+                AssetDatabase.LoadAssetAtPath<Texture2D>(
+                    VenusAtmosphereTexturePath);
+            Material surface =
+                AssetDatabase.LoadAssetAtPath<Material>(VenusSurfaceMaterialPath);
+            Material clouds =
+                AssetDatabase.LoadAssetAtPath<Material>(VenusCloudMaterialPath);
+            Material atmosphere =
+                AssetDatabase.LoadAssetAtPath<Material>(
+                    VenusAtmosphereMaterialPath);
+            CelestialLayerVisualDefinition definition =
+                AssetDatabase.LoadAssetAtPath<CelestialLayerVisualDefinition>(
+                    VenusLayerDefinitionPath);
+            var surfaceImporter =
+                AssetImporter.GetAtPath(VenusSurfaceTexturePath) as TextureImporter;
+            var atmosphereImporter =
+                AssetImporter.GetAtPath(VenusAtmosphereTexturePath) as TextureImporter;
+
+            Assert.That(surfaceTexture, Is.Not.Null);
+            Assert.That(atmosphereTexture, Is.Not.Null);
+            Assert.That(surface, Is.Not.Null);
+            Assert.That(surface.GetTexture("_BaseMap"), Is.SameAs(surfaceTexture));
+            Assert.That(clouds, Is.Not.Null);
+            Assert.That(
+                clouds.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Venus Cloud Deck"));
+            Assert.That(
+                clouds.GetTexture("_CloudMap"),
+                Is.SameAs(atmosphereTexture));
+            Assert.That(
+                clouds.GetFloat("_ReliefStrength"),
+                Is.EqualTo(VenusLayerRenderingContract.CloudReliefStrength)
+                    .Within(0.0001f));
+            Assert.That(
+                clouds.GetFloat("_AmbientBrightness"),
+                Is.EqualTo(
+                    VenusLayerRenderingContract.CloudAmbientBrightness)
+                    .Within(0.0001f));
+            Assert.That(
+                clouds.GetFloat("_SunBrightness"),
+                Is.EqualTo(VenusLayerRenderingContract.CloudSunBrightness)
+                    .Within(0.0001f));
+            Assert.That(
+                clouds.renderQueue,
+                Is.EqualTo((int)RenderQueue.Geometry + 1));
+            Assert.That(clouds.enableInstancing, Is.True);
+
+            Assert.That(atmosphere, Is.Not.Null);
+            Assert.That(
+                atmosphere.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Atmosphere Rim"));
+            Assert.That(
+                atmosphere.GetFloat("_RimIntensity"),
+                Is.EqualTo(VenusLayerRenderingContract.AtmosphereIntensity)
+                    .Within(0.0001f));
+            Assert.That(
+                atmosphere.renderQueue,
+                Is.EqualTo((int)RenderQueue.Transparent + 10));
+            Assert.That(atmosphere.enableInstancing, Is.True);
+
+            Assert.That(definition, Is.Not.Null);
+            Assert.That(definition.BodyStableId, Is.EqualTo("venus"));
+            Assert.That(
+                definition.CloudShellRadiusMultiplier,
+                Is.EqualTo(VenusLayerRenderingContract.CloudShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                definition.AtmosphereShellRadiusMultiplier,
+                Is.EqualTo(
+                    VenusLayerRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                definition.CloudRotationMultiplier,
+                Is.EqualTo(VenusLayerRenderingContract.CloudRotationMultiplier)
+                    .Within(0.0001f));
+            Assert.That(surfaceImporter, Is.Not.Null);
+            Assert.That(surfaceImporter.sRGBTexture, Is.True);
+            Assert.That(surfaceImporter.wrapMode, Is.EqualTo(TextureWrapMode.Repeat));
+            Assert.That(atmosphereImporter, Is.Not.Null);
+            Assert.That(atmosphereImporter.sRGBTexture, Is.True);
+            Assert.That(atmosphereImporter.mipmapEnabled, Is.True);
+            Assert.That(
+                atmosphereImporter.wrapMode,
+                Is.EqualTo(TextureWrapMode.Repeat));
         }
     }
 }

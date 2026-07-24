@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Earth, Sun, Jupiter, and Saturn hero representative slices validated  
-**Version:** 0.18.0  
+**Document status:** Living technical authority; Earth, Sun, Jupiter, Saturn, and Venus hero representative slices validated  
+**Version:** 0.19.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -44,6 +44,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.16.0 | 2026-07-24 | Codex, for Tanvir | Added project-owned solar surface/corona shaders, immutable solar authoring, absolute-time phase evaluation, cached property blocks, reproducible scene wiring, and complete asset/scene regression coverage | Solar hero architecture implemented and validated |
 | 0.17.0 | 2026-07-24 | Codex, for Tanvir | Added reusable gas-giant authoring, anchored-texture Jupiter surface/atmosphere shaders, absolute-time band phase, cached property blocks, reproducible scene wiring, and complete asset/scene regression coverage | Jupiter hero architecture implemented and validated |
 | 0.18.0 | 2026-07-24 | Codex, for Tanvir | Extended the reusable gas-giant path to Saturn and added a project-owned one-sample, two-sided, Sun-aware ring shader with deterministic authoring and complete asset/scene regression coverage | Saturn hero architecture implemented and validated |
+| 0.19.0 | 2026-07-24 | Codex, for Tanvir | Extended the reusable layered-body path to Venus, corrected layer motion to absolute signed simulation time, and added an opaque anchored cloud deck with bounded atmosphere transparency and complete asset/scene regression coverage | Venus atmosphere architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -704,12 +705,13 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - `CelestialLayerVisualDefinition` stores reviewed shell scale and cloud-rate
   authoring; startup converts it to immutable `CelestialLayerVisualModel`
   state. `CelestialLayeredBodyView` applies shell scale and deterministic
-  cloud drift from the body's evaluated signed rotation without accumulating
-  frame delta.
+  relative cloud motion from authoritative absolute simulation time and the
+  body's signed rotation period. It does not depend on a wrapped body angle,
+  accumulate frame delta, instantiate materials, or allocate in steady-state
+  updates.
 - `SolarShaderGlobals` publishes one allocation-free
-  `_SolarSystemSunPositionWS` value in `LateUpdate`. The Earth surface, cloud,
-  and atmosphere shaders derive their day/night or rim response from that live
-  position.
+  `_SolarSystemSunPositionWS` value in `LateUpdate`. Layered Earth and Venus
+  shaders derive their day/night or rim response from that live position.
 - `SolarVisualDefinition` stores the reviewed Sun shell multiplier and
   surface/corona flow cycles. Startup converts it to immutable
   `SolarVisualModel` state. `SolarVisualView` evaluates both phases from
@@ -727,6 +729,16 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   non-shadow-casting cloud shell at `1.004` radius, and a transparent
   non-shadow-casting atmosphere shell at `1.018` radius. The shell multipliers
   are presentation values and never enter scientific radius or orbit state.
+- Venus reuses the immutable layered-body definition/model/view path with an
+  opaque cloud shell at `1.0115` radius and a transparent atmosphere rim at
+  `1.02` radius. The anchored approved atmosphere map is sampled three times
+  for restrained source-derived relief; it does not slide in shader UV space.
+  The shell transform carries a reviewed `54.004` signed rotation multiplier
+  from absolute time, approximating a `4.5`-day retrograde upper-cloud
+  reference without claiming exact atmospheric-fluid behavior. The cloud deck
+  writes depth and is queued immediately after opaque geometry; only the outer
+  rim contributes bounded transparent overdraw. Both renderers cast no shadows
+  and use no light or reflection probes.
 - `GasGiantVisualDefinition` stores a stable body ID, reviewed atmosphere-shell
   multiplier, and band-detail cycles per signed rotation. Startup converts it
   to immutable `GasGiantVisualModel` state. `GasGiantVisualView` evaluates one
@@ -802,6 +814,9 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Gas-giant authoring conversion, finite parameter validation, signed
   absolute-time phase evaluation, atmosphere scale, property-block updates,
   and renderer policy.
+- Venus layered-body conversion, finite shell parameters, absolute-time signed
+  phase, anchored texture and opaque-depth contracts, atmosphere transparency,
+  import policy, and exact shell scales.
 
 ### 12.3 Play Mode tests
 
@@ -824,6 +839,9 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   Earth-relative radius, deterministic band phase and pause behavior,
   Sun-origin lighting, focus/overview presentation, renderer policy, and
   preserved camera/simulation state.
+- The real scene validates Venus's surface/cloud/atmosphere hierarchy, exact
+  proportional radius, retrograde absolute-time layer motion, pause freeze,
+  live-Sun response, close focus, renderer policy, and preserved state.
 
 ### 12.4 Manual validation
 
@@ -982,6 +1000,13 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   retaining exact scientific scale, orbit, signed spin, and axial tilt.
 - Saturn hero evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Saturn Hero Rendering Validation.md`.
+- **[IMPLEMENTED REPRESENTATIVE SLICE]** Venus now reuses the immutable
+  layered-body architecture with an anchored opaque cloud deck, deterministic
+  absolute-time retrograde cloud motion, and one restrained Sun-aware
+  atmosphere shell. Scientific scale, orbit, signed solid-body rotation,
+  axial tilt, selection, focus, and state restoration remain unchanged.
+- Venus atmosphere evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Venus Atmosphere Rendering Validation.md`.
 - The broader proposed moon set, unique atmosphere/advanced shaders for other
   bodies, particle-scale ring simulation, labels/navigation, player-facing audio
   settings, final audio mix approval, and accessibility options remain Slice 4
@@ -1048,6 +1073,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-017 | 2026-07-24 | Present the Sun with project-owned URP surface/corona shaders, absolute simulation-time phases, cached property blocks, and a visual/light separation; omit lens flare unless live evidence requires it | Implemented candidate | Tanvir | Deterministic, reusable hero treatment with controlled transparency and exposure cost |
 | TDD-018 | 2026-07-24 | Prove a reusable gas-giant contract on Jupiter with anchored source identity, source-derived band relief, low-amplitude absolute-time detail, one restrained atmosphere shell, and cached property-block updates | Implemented candidate | Tanvir | Preserves the Great Red Spot and scientific state while adding bounded hero fidelity and a reusable Saturn-facing architecture |
 | TDD-019 | 2026-07-24 | Extend the gas-giant contract to Saturn and render its generated annulus with anchored radial alpha, one-sample premultiplied transparency, symmetric live-Sun response, and no shadow/probe cost | Implemented candidate | Tanvir | Distinct Saturn identity and readable rings without duplicating runtime architecture or claiming particle-scale/self-shadow photometry |
+| TDD-020 | 2026-07-24 | Reuse the layered-body contract for Venus, anchor an opaque source cloud deck above the hidden surface, derive retrograde shell motion from absolute signed simulation time, and bound transparency to one restrained atmosphere rim | Implemented candidate | Tanvir | Recognizable cloud-covered Venus without false surface exposure, wrapped-angle discontinuities, duplicated adapters, or unbounded overdraw |
 
 ## 19. Definition of Done for TDD Version 1.0
 

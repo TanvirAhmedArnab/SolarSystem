@@ -111,7 +111,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             Quaternion axialTilt = Quaternion.AngleAxis((float)model.AxialTiltDeg, Vector3.forward);
             Quaternion siderealSpin = Quaternion.AngleAxis(-state.RotationAngleDeg, Vector3.up);
             visualRoot.localRotation = axialTilt * siderealSpin;
-            layeredBodyView?.Apply(state.RotationAngleDeg);
+            layeredBodyView?.Apply(simulationTimeSeconds);
             solarVisualView?.Apply(simulationTimeSeconds);
             gasGiantVisualView?.Apply(simulationTimeSeconds);
         }

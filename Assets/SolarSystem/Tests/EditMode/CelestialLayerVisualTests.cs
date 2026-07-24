@@ -81,7 +81,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 CelestialTestFactory.CreateOrbitingBody("earth", "sun");
 
             view.Initialize(earth);
-            view.Apply(120f);
+            view.Apply(120d);
 
             Assert.That(view.IsInitialized, Is.True);
             Assert.That(
@@ -92,12 +92,75 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 atmosphere.localScale.x,
                 Is.EqualTo(EarthLayerRenderingContract.AtmosphereShellRadiusMultiplier)
                     .Within(0.0001f));
-            float expectedAngle =
-                -120f * (EarthLayerRenderingContract.CloudRotationMultiplier - 1f);
-            Assert.That(view.CloudRelativeRotationDeg, Is.EqualTo(expectedAngle).Within(0.0001f));
+            float expectedAngle = Mathf.Repeat(
+                -360f *
+                120f /
+                10f *
+                (EarthLayerRenderingContract.CloudRotationMultiplier - 1f),
+                360f);
             Assert.That(
-                Mathf.DeltaAngle(0f, cloud.localEulerAngles.y),
+                view.CloudRelativeRotationDeg,
                 Is.EqualTo(expectedAngle).Within(0.0001f));
+            Assert.That(
+                Mathf.DeltaAngle(
+                    view.CloudRelativeRotationDeg,
+                    cloud.localEulerAngles.y),
+                Is.Zero.Within(0.0001f));
+        }
+
+        [Test]
+        public void VenusLayeredView_UsesAbsoluteTimeAndSignedRetrogradeRotation()
+        {
+            CelestialLayerVisualDefinition definition = CreateDefinition(
+                "venus",
+                VenusLayerRenderingContract.CloudShellRadiusMultiplier,
+                VenusLayerRenderingContract.AtmosphereShellRadiusMultiplier,
+                VenusLayerRenderingContract.CloudRotationMultiplier);
+            GameObject root = CreateObject("Venus");
+            Transform cloud = CreateRendererObject("Cloud Layer", root.transform);
+            Transform atmosphere =
+                CreateRendererObject("Atmosphere Layer", root.transform);
+            MeshRenderer surface = root.AddComponent<MeshRenderer>();
+            CelestialLayeredBodyView view =
+                root.AddComponent<CelestialLayeredBodyView>();
+            var serialized = new SerializedObject(view);
+            serialized.FindProperty("definition").objectReferenceValue = definition;
+            serialized.FindProperty("cloudShell").objectReferenceValue = cloud;
+            serialized.FindProperty("atmosphereShell").objectReferenceValue = atmosphere;
+            serialized.FindProperty("surfaceRenderer").objectReferenceValue = surface;
+            serialized.FindProperty("cloudRenderer").objectReferenceValue =
+                cloud.GetComponent<MeshRenderer>();
+            serialized.FindProperty("atmosphereRenderer").objectReferenceValue =
+                atmosphere.GetComponent<MeshRenderer>();
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            CelestialBodyModel venus = CelestialTestFactory.CreateOrbitingBody(
+                "venus",
+                "sun",
+                rotationPeriodSeconds: -10d);
+
+            view.Initialize(venus);
+            view.Apply(0.25d);
+            float first = view.CloudRelativeRotationDeg;
+            view.Apply(0.25d);
+            float repeated = view.CloudRelativeRotationDeg;
+            view.Apply(0.5d);
+            float advanced = view.CloudRelativeRotationDeg;
+
+            Assert.That(view.IsInitialized, Is.True);
+            Assert.That(first, Is.EqualTo(repeated).Within(0.0001f));
+            Assert.That(
+                Mathf.DeltaAngle(first, advanced),
+                Is.GreaterThan(0f),
+                "Venus's cloud deck should follow its signed retrograde direction.");
+            Assert.That(
+                cloud.localScale.x,
+                Is.EqualTo(VenusLayerRenderingContract.CloudShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                atmosphere.localScale.x,
+                Is.EqualTo(
+                    VenusLayerRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
         }
 
         [Test]
@@ -110,17 +173,30 @@ namespace Tanvir.SolarSystem.Tests.EditMode
 
         private CelestialLayerVisualDefinition CreateDefinition()
         {
+            return CreateDefinition(
+                "earth",
+                EarthLayerRenderingContract.CloudShellRadiusMultiplier,
+                EarthLayerRenderingContract.AtmosphereShellRadiusMultiplier,
+                EarthLayerRenderingContract.CloudRotationMultiplier);
+        }
+
+        private CelestialLayerVisualDefinition CreateDefinition(
+            string bodyStableId,
+            float cloudShellRadiusMultiplier,
+            float atmosphereShellRadiusMultiplier,
+            float cloudRotationMultiplier)
+        {
             CelestialLayerVisualDefinition definition =
                 ScriptableObject.CreateInstance<CelestialLayerVisualDefinition>();
             createdObjects.Add(definition);
             var serialized = new SerializedObject(definition);
-            serialized.FindProperty("bodyStableId").stringValue = "earth";
+            serialized.FindProperty("bodyStableId").stringValue = bodyStableId;
             serialized.FindProperty("cloudShellRadiusMultiplier").floatValue =
-                EarthLayerRenderingContract.CloudShellRadiusMultiplier;
+                cloudShellRadiusMultiplier;
             serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =
-                EarthLayerRenderingContract.AtmosphereShellRadiusMultiplier;
+                atmosphereShellRadiusMultiplier;
             serialized.FindProperty("cloudRotationMultiplier").floatValue =
-                EarthLayerRenderingContract.CloudRotationMultiplier;
+                cloudRotationMultiplier;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             return definition;
         }

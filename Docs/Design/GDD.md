@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.13.0  
+**Version:** 0.14.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -40,6 +40,7 @@
 | 0.11.0 | 2026-07-24 | Codex, for Tanvir | Implemented an exposure-safe solar hero treatment with subtle deterministic surface motion and a restrained corona while preserving the Sun as the scientific and lighting origin | Product behavior implemented and validated |
 | 0.12.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Jupiter hero treatment with stable source identity, readable cloud bands, subtle deterministic detail, a restrained atmospheric limb, and explicit non-scientific-fluid disclosure | Product behavior implemented and validated |
 | 0.13.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Saturn hero treatment with readable cream bands, a restrained limb, and two-sided Sun-aware rings while preserving approved scale and scientific motion | Product behavior implemented and validated |
+| 0.14.0 | 2026-07-24 | Codex, for Tanvir | Implemented a cloud-covered Venus hero treatment with warm source-grounded identity, deterministic retrograde cloud presentation, a restrained Sun-aware limb, and explicit atmospheric-simulation limits | Product behavior implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -274,7 +275,8 @@ physical data, deterministic J2000-based orbital elements, an audited texture,
 a selectable body view, an orbit path, and the existing educational information
 panel. Saturn includes a first transparent ring presentation. Atmospheres,
 cloud layers, planet-specific shader effects, and the proposed major-moon set
-remain later content/fidelity work rather than implied completion.
+remain later content/fidelity work except where representative Earth, Sun,
+Jupiter, Saturn, and Venus slices are explicitly documented.
 
 ### 8.2 Body information overlay
 
@@ -420,6 +422,15 @@ remain anchored, and motion freezes with simulation pause. This visual layer
 does not alter Saturn's proportional radius, analytical orbit, signed rotation,
 axial tilt, or generated annulus. Ring particle scale, self-shadowing,
 transmission, and exact photometry are not simulated and are not claimed.
+
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Venus now presents a continuous warm,
+opaque cloud deck from the approved atmosphere map rather than exposing
+surface detail that is not optically visible from space. Its cloud pattern
+moves deterministically in the retrograde direction from absolute simulation
+time, with a restrained Sun-aware atmospheric limb and no claims of exact
+cloud altitude, chemistry, scattering, or fluid dynamics. The treatment does
+not alter Venus's proportional radius, analytical orbit, signed solid-body
+rotation, axial tilt, or selection and focus behavior.
 
 ### 11.4 Asset provenance
 
@@ -580,7 +591,8 @@ Each rule should have one authoritative owner document; other documents link to 
 
 **Current progress:** The Sun, eight planets, and Earth's Moon are populated as
 the deterministic planetary baseline. Major moons beyond Earth's Moon,
-unique visual layers beyond the representative Earth, Sun, and Jupiter treatments,
+unique visual layers beyond the representative Earth, Sun, Jupiter, Saturn,
+and Venus treatments,
 labels/navigation, cinematic routing, and accessibility completion remain.
 The licensed music, Sun/Earth ambience, and
 event-driven UI feedback baseline is implemented; final listening/mix approval

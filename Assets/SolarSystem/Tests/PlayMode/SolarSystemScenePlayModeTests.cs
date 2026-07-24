@@ -994,6 +994,125 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             AssertReceivesSunOriginLight(radialLight, sun, saturn);
         }
 
+        [UnityTest]
+        public IEnumerator SolarSystemScene_UsesDeterministicVenusCloudDeckAndLimb()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "venus",
+                    out CelestialBodyView venus),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+
+            CelestialLayeredBodyView layers = venus.LayeredBodyView;
+            Assert.That(layers, Is.Not.Null);
+            Assert.That(layers.IsInitialized, Is.True);
+            Assert.That(layers.CloudShell.parent, Is.SameAs(venus.VisualRoot));
+            Assert.That(layers.AtmosphereShell.parent, Is.SameAs(venus.VisualRoot));
+            Assert.That(
+                layers.CloudShell.localScale.x,
+                Is.EqualTo(VenusLayerRenderingContract.CloudShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                layers.AtmosphereShell.localScale.x,
+                Is.EqualTo(
+                    VenusLayerRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                venus.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(6051.8f / 6371.0084f).Within(0.001f));
+            Assert.That(
+                layers.CloudRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Venus Cloud Deck"));
+            Assert.That(
+                layers.CloudRenderer.sharedMaterial.renderQueue,
+                Is.EqualTo((int)RenderQueue.Geometry + 1));
+            Assert.That(
+                layers.AtmosphereRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Atmosphere Rim"));
+            Assert.That(
+                layers.CloudRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(layers.CloudRenderer.receiveShadows, Is.False);
+            Assert.That(
+                layers.CloudRenderer.lightProbeUsage,
+                Is.EqualTo(LightProbeUsage.Off));
+            Assert.That(
+                layers.CloudRenderer.reflectionProbeUsage,
+                Is.EqualTo(ReflectionProbeUsage.Off));
+            Assert.That(
+                layers.AtmosphereRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+
+            Light radialLight =
+                GameObject.Find("Solar Radial Light")?.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            AssertReceivesSunOriginLight(radialLight, sun, venus);
+            Vector4 publishedSun =
+                Shader.GetGlobalVector("_SolarSystemSunPositionWS");
+            Assert.That(
+                Vector3.Distance(publishedSun, sun.transform.position),
+                Is.LessThan(0.0001f));
+
+            float cloudAngleBefore = layers.CloudRelativeRotationDeg;
+            yield return new WaitForSecondsRealtime(0.2f);
+            float runningDelta =
+                Mathf.DeltaAngle(
+                    cloudAngleBefore,
+                    layers.CloudRelativeRotationDeg);
+            Assert.That(
+                runningDelta,
+                Is.GreaterThan(1f),
+                "Venus's cloud deck should advance in its retrograde direction.");
+
+            simulation.SimulationController.SetPaused(true);
+            yield return null;
+            float pausedAngle = layers.CloudRelativeRotationDeg;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(
+                Mathf.Abs(
+                    Mathf.DeltaAngle(
+                        pausedAngle,
+                        layers.CloudRelativeRotationDeg)),
+                Is.LessThan(0.0001f));
+
+            interaction.SelectionController.Select(venus);
+            interaction.CameraController.Focus(venus);
+            yield return WaitUntilFocused(interaction.CameraController);
+            yield return null;
+            Assert.That(layers.SurfaceRenderer.enabled, Is.True);
+            Assert.That(layers.CloudRenderer.enabled, Is.True);
+            Assert.That(layers.AtmosphereRenderer.enabled, Is.True);
+            Assert.That(
+                simulation.SimulationController.ClockSnapshot.IsPaused,
+                Is.True);
+
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+            Assert.That(
+                interaction.CameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.FreeFlight));
+            AssertReceivesSunOriginLight(radialLight, sun, venus);
+        }
+
         private static void AssertReceivesSunOriginLight(
             Light radialLight,
             CelestialBodyView sun,
