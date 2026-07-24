@@ -18,10 +18,14 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         [SerializeField] private LineRenderer lineRenderer;
         [SerializeField] private int sampleCount = 128;
         private bool hasReadableWidth;
+        private bool isPresentationVisible = true;
         private float readableWidth;
 
         /// <summary>Gets the stable ID whose orbit this path represents.</summary>
         public string StableId => definition == null ? string.Empty : definition.StableId;
+
+        /// <summary>Gets whether camera presentation policy currently permits rendering.</summary>
+        public bool IsPresentationVisible => isPresentationVisible;
 
         /// <summary>Initializes and caches the complete orbit shape.</summary>
         public void Initialize(
@@ -78,7 +82,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
                 _ => throw new InvalidOperationException(
                     $"Unsupported scale mode '{projector.CurrentMode}'.")
             };
-            lineRenderer.enabled = true;
+            lineRenderer.enabled = isPresentationVisible;
             lineRenderer.useWorldSpace = false;
             int resolvedSampleCount = Math.Max(MinimumSampleCount, sampleCount);
             lineRenderer.positionCount = resolvedSampleCount + 1;
@@ -98,6 +102,16 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         public void ApplyParentPosition(Vector3 parentPosition)
         {
             transform.position = parentPosition;
+        }
+
+        /// <summary>Shows or hides the cached path without changing its authored geometry.</summary>
+        public void SetPresentationVisible(bool visible)
+        {
+            isPresentationVisible = visible;
+            if (lineRenderer != null)
+            {
+                lineRenderer.enabled = visible && lineRenderer.positionCount > 0;
+            }
         }
     }
 }

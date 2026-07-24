@@ -18,6 +18,16 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Earth.mat";
         private const string EarthNormalPath =
             "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Earth/T_Earth_Normal_2K.tif";
+        private const string EarthSpecularPath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Earth/T_Earth_Specular_2K.tif";
+        private const string EarthNightPath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Earth/T_Earth_NightEmission_2K.jpg";
+        private const string EarthCloudPath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Earth/T_Earth_Clouds_2K.jpg";
+        private const string EarthCloudMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Earth_Clouds.mat";
+        private const string EarthAtmosphereMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Earth_Atmosphere.mat";
 
         [Test]
         public void VisualProfile_UsesApprovedRestrainedPostProcessing()
@@ -57,21 +67,60 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         }
 
         [Test]
-        public void EarthMaterial_UsesSubtleLinearNormalDetail()
+        public void EarthMaterials_UseAuditedLayeredRenderingInputs()
         {
             Material earth = AssetDatabase.LoadAssetAtPath<Material>(EarthMaterialPath);
             Texture2D normal = AssetDatabase.LoadAssetAtPath<Texture2D>(EarthNormalPath);
+            Texture2D specular = AssetDatabase.LoadAssetAtPath<Texture2D>(EarthSpecularPath);
+            Texture2D night = AssetDatabase.LoadAssetAtPath<Texture2D>(EarthNightPath);
+            Texture2D clouds = AssetDatabase.LoadAssetAtPath<Texture2D>(EarthCloudPath);
+            Material cloudMaterial =
+                AssetDatabase.LoadAssetAtPath<Material>(EarthCloudMaterialPath);
+            Material atmosphereMaterial =
+                AssetDatabase.LoadAssetAtPath<Material>(EarthAtmosphereMaterialPath);
             var importer = AssetImporter.GetAtPath(EarthNormalPath) as TextureImporter;
+            var specularImporter =
+                AssetImporter.GetAtPath(EarthSpecularPath) as TextureImporter;
+            var cloudImporter =
+                AssetImporter.GetAtPath(EarthCloudPath) as TextureImporter;
 
             Assert.That(earth, Is.Not.Null);
-            Assert.That(earth.shader.name, Is.EqualTo("Universal Render Pipeline/Lit"));
+            Assert.That(
+                earth.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Earth Surface"));
             Assert.That(earth.GetTexture("_BumpMap"), Is.SameAs(normal));
             Assert.That(earth.GetFloat("_BumpScale"), Is.EqualTo(0.28f).Within(0.001f));
-            Assert.That(earth.IsKeywordEnabled("_NORMALMAP"), Is.True);
+            Assert.That(earth.GetTexture("_SpecularMap"), Is.SameAs(specular));
+            Assert.That(earth.GetTexture("_NightMap"), Is.SameAs(night));
+            Assert.That(earth.GetFloat("_OceanSpecular"), Is.GreaterThan(
+                earth.GetFloat("_LandSpecular")));
+            Assert.That(earth.GetFloat("_OceanSmoothness"), Is.GreaterThan(
+                earth.GetFloat("_LandSmoothness")));
             Assert.That(earth.enableInstancing, Is.True);
             Assert.That(importer, Is.Not.Null);
             Assert.That(importer.textureType, Is.EqualTo(TextureImporterType.NormalMap));
             Assert.That(importer.sRGBTexture, Is.False);
+            Assert.That(specularImporter, Is.Not.Null);
+            Assert.That(specularImporter.sRGBTexture, Is.False);
+
+            Assert.That(cloudMaterial, Is.Not.Null);
+            Assert.That(
+                cloudMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Earth Cloud Layer"));
+            Assert.That(cloudMaterial.GetTexture("_CloudMap"), Is.SameAs(clouds));
+            Assert.That(cloudMaterial.renderQueue, Is.EqualTo((int)RenderQueue.Transparent));
+            Assert.That(cloudMaterial.enableInstancing, Is.True);
+            Assert.That(cloudImporter, Is.Not.Null);
+            Assert.That(cloudImporter.sRGBTexture, Is.False);
+
+            Assert.That(atmosphereMaterial, Is.Not.Null);
+            Assert.That(
+                atmosphereMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Atmosphere Rim"));
+            Assert.That(
+                atmosphereMaterial.renderQueue,
+                Is.EqualTo((int)RenderQueue.Transparent + 10));
+            Assert.That(atmosphereMaterial.GetFloat("_RimIntensity"), Is.LessThan(0.5f));
         }
     }
 }

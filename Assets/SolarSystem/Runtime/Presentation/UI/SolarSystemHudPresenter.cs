@@ -45,6 +45,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private Label bodyAxialTilt;
         private Label bodyOrbitDistance;
         private Label bodyOrbitPeriod;
+        private Label bodyScaleNote;
         private Label bodySource;
 
         /// <summary>Gets whether the document and application state are connected.</summary>
@@ -73,6 +74,9 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         /// <summary>Gets the selected body's source record shown in the information card.</summary>
         public string BodySourceText => bodySource?.text ?? string.Empty;
+
+        /// <summary>Gets the selected body's presentation-scale disclosure.</summary>
+        public string BodyScaleNoteText => bodyScaleNote?.text ?? string.Empty;
 
         /// <summary>Gets the contextual action shown beneath the Space keycap.</summary>
         public string PauseActionText => pauseAction?.text ?? string.Empty;
@@ -229,6 +233,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
             bodyAxialTilt = null;
             bodyOrbitDistance = null;
             bodyOrbitPeriod = null;
+            bodyScaleNote = null;
             bodySource = null;
         }
 
@@ -274,6 +279,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
             bodyAxialTilt = RequireLabel(root, "body-axial-tilt");
             bodyOrbitDistance = RequireLabel(root, "body-orbit-distance");
             bodyOrbitPeriod = RequireLabel(root, "body-orbit-period");
+            bodyScaleNote = RequireLabel(root, "body-scale-note");
             bodySource = RequireLabel(root, "body-source");
             IsInitialized = true;
             Refresh();
@@ -306,6 +312,11 @@ namespace Tanvir.SolarSystem.Presentation.UI
             bodyAxialTilt.text = information.AxialTilt;
             bodyOrbitDistance.text = information.OrbitDistance;
             bodyOrbitPeriod.text = information.OrbitPeriod;
+            bodyScaleNote.text = selectedView.StableId == "earth"
+                ? "SCALE NOTE / EARTH'S SURFACE RADIUS IS PROPORTIONAL; " +
+                  "CLOUD AND ATMOSPHERE THICKNESS ARE EXAGGERATED FOR READABILITY."
+                : "SCALE NOTE / BODY RADII ARE EARTH-PROPORTIONAL; " +
+                  "ORBIT SPACING IS COMPRESSED.";
             bodySource.text = information.SourceRecord;
             SetBodyInformationVisible(true);
         }

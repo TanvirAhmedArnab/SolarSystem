@@ -43,7 +43,7 @@
                 <ui:Label text="ORBITAL PERIOD" class="fact-key" />
                 <ui:Label name="body-orbit-period" text="" class="fact-value" />
             </ui:VisualElement>
-            <ui:Label text="SCALE NOTE / BODY RADII ARE EARTH-PROPORTIONAL; ORBIT SPACING IS COMPRESSED." class="scale-note" />
+            <ui:Label name="body-scale-note" text="SCALE NOTE / BODY RADII ARE EARTH-PROPORTIONAL; ORBIT SPACING IS COMPRESSED." class="scale-note" />
             <ui:Label text="SOURCE RECORD" class="source-key" />
             <ui:Label name="body-source" text="" class="source-value" />
         </ui:VisualElement>

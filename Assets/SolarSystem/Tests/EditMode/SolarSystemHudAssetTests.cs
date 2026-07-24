@@ -50,6 +50,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(root.Q<Label>("body-axial-tilt"), Is.Not.Null);
             Assert.That(root.Q<Label>("body-orbit-distance"), Is.Not.Null);
             Assert.That(root.Q<Label>("body-orbit-period"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-scale-note"), Is.Not.Null);
             Assert.That(root.Q<Label>("body-source"), Is.Not.Null);
             Assert.That(
                 root.Q<VisualElement>("scale-comparison-panel"),

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Tanvir.SolarSystem.Authoring;
+using Tanvir.SolarSystem.Presentation.CelestialBodies;
 using Tanvir.SolarSystem.Presentation.Scale;
 using Tanvir.SolarSystem.Simulation;
 using UnityEditor;
@@ -23,6 +24,16 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialTextureRoot + "/Earth/T_Earth_Normal_2K.tif";
         private const string EarthSpecularPath =
             CelestialTextureRoot + "/Earth/T_Earth_Specular_2K.tif";
+        private const string EarthNightPath =
+            CelestialTextureRoot + "/Earth/T_Earth_NightEmission_2K.jpg";
+        private const string EarthCloudPath =
+            CelestialTextureRoot + "/Earth/T_Earth_Clouds_2K.jpg";
+        private const string EarthSurfaceShader =
+            "SolarSystem/Celestial/Earth Surface";
+        private const string EarthCloudShader =
+            "SolarSystem/Celestial/Earth Cloud Layer";
+        private const string AtmosphereShader =
+            "SolarSystem/Celestial/Atmosphere Rim";
         private const string SaturnRingTexturePath =
             CelestialTextureRoot + "/Saturn/T_Saturn_RingsAlpha_2K.png";
         private const string SpaceTexturePath =
@@ -41,7 +52,6 @@ namespace Tanvir.SolarSystem.Editor.Import
             "Assets/SolarSystem/Content/Audio/SFX/UI/A_UI_TimeTick.ogg";
         private const string ScaleComparisonClipPath =
             "Assets/SolarSystem/Content/Audio/SFX/UI/A_UI_ToggleScale.ogg";
-        private const float EarthNormalStrength = 0.28f;
         private const float SunSmoothness = 0f;
         private const float MercurySmoothness = 0.08f;
         private const float VenusSmoothness = 0.24f;
@@ -88,6 +98,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         {
             EnsureFolder($"{DataRoot}/CelestialBodies");
             EnsureFolder($"{DataRoot}/Scale");
+            EnsureFolder($"{DataRoot}/VisualLayers");
             EnsureFolder($"{MaterialRoot}/CelestialBodies");
             EnsureFolder($"{MaterialRoot}/Environment");
             EnsureFolder(RenderingSettingsRoot);
@@ -326,6 +337,9 @@ namespace Tanvir.SolarSystem.Editor.Import
                 Scale = scale,
                 SaturnRingMesh = CreateSaturnRingMesh(),
                 SaturnRingMaterial = CreateSaturnRingMaterial(),
+                EarthLayerDefinition = CreateEarthLayerDefinition(),
+                EarthCloudMaterial = CreateEarthCloudMaterial(),
+                EarthAtmosphereMaterial = CreateEarthAtmosphereMaterial(),
                 OrbitMaterial = orbitMaterial,
                 SkyboxMaterial = skyboxMaterial,
                 VisualProfile = visualProfile,
@@ -442,10 +456,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 smoothness);
             if (displayName == "Earth")
             {
-                ConfigureLitMaterial(
-                    material,
-                    AssetDatabase.LoadAssetAtPath<Texture2D>(EarthNormalPath),
-                    EarthNormalStrength);
+                ConfigureEarthSurfaceMaterial(material);
             }
 
             return CreateBodyContent(
@@ -477,6 +488,19 @@ namespace Tanvir.SolarSystem.Editor.Import
             float smoothness,
             bool unlit = false)
         {
+            if (bodyName == "Earth")
+            {
+                Material earthMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Earth.mat",
+                    EarthSurfaceShader);
+                earthMaterial.SetTexture(
+                    "_BaseMap",
+                    LoadRequiredAsset<Texture2D>(
+                        $"{CelestialTextureRoot}/Earth/{textureName}"));
+                earthMaterial.SetColor("_BaseColor", tint);
+                return earthMaterial;
+            }
+
             Material material = CreateMaterial(
                 $"{MaterialRoot}/CelestialBodies/M_{bodyName}.mat",
                 unlit
@@ -505,6 +529,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 $"{CelestialTextureRoot}/Mercury/T_Mercury_Surface_2K.jpg",
                 $"{CelestialTextureRoot}/Venus/T_Venus_Surface_2K.jpg",
                 $"{CelestialTextureRoot}/Earth/T_Earth_DayAlbedo_2K.jpg",
+                EarthNightPath,
                 $"{CelestialTextureRoot}/Moon/T_Moon_Surface_2K.jpg",
                 $"{CelestialTextureRoot}/Mars/T_Mars_Surface_2K.jpg",
                 $"{CelestialTextureRoot}/Jupiter/T_Jupiter_Surface_2K.jpg",
@@ -533,6 +558,11 @@ namespace Tanvir.SolarSystem.Editor.Import
                 TextureWrapMode.Repeat);
             ConfigureTextureImporter(
                 EarthSpecularPath,
+                TextureImporterType.Default,
+                false,
+                TextureWrapMode.Repeat);
+            ConfigureTextureImporter(
+                EarthCloudPath,
                 TextureImporterType.Default,
                 false,
                 TextureWrapMode.Repeat);
@@ -578,6 +608,101 @@ namespace Tanvir.SolarSystem.Editor.Import
             material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.EmissiveIsBlack;
             material.enableInstancing = true;
             EditorUtility.SetDirty(material);
+        }
+
+        private static void ConfigureEarthSurfaceMaterial(Material material)
+        {
+            material.SetTexture(
+                "_BaseMap",
+                LoadRequiredAsset<Texture2D>(
+                    $"{CelestialTextureRoot}/Earth/T_Earth_DayAlbedo_2K.jpg"));
+            material.SetColor("_BaseColor", EarthTint);
+            material.SetTexture(
+                "_BumpMap",
+                LoadRequiredAsset<Texture2D>(EarthNormalPath));
+            material.SetFloat(
+                "_BumpScale",
+                EarthLayerRenderingContract.NormalStrength);
+            material.SetTexture(
+                "_SpecularMap",
+                LoadRequiredAsset<Texture2D>(EarthSpecularPath));
+            material.SetFloat("_LandSpecular", 0.025f);
+            material.SetFloat("_OceanSpecular", 0.34f);
+            material.SetFloat("_LandSmoothness", 0.18f);
+            material.SetFloat("_OceanSmoothness", 0.64f);
+            material.SetTexture(
+                "_NightMap",
+                LoadRequiredAsset<Texture2D>(EarthNightPath));
+            material.SetColor(
+                "_NightColor",
+                new Color(1.2f, 0.68f, 0.28f, 1f));
+            material.SetFloat("_NightIntensity", 1.1f);
+            material.SetFloat(
+                "_NightFadeStart",
+                EarthLayerRenderingContract.NightFadeStart);
+            material.SetFloat(
+                "_NightFadeEnd",
+                EarthLayerRenderingContract.NightFadeEnd);
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+        }
+
+        private static CelestialLayerVisualDefinition CreateEarthLayerDefinition()
+        {
+            const string path =
+                DataRoot + "/VisualLayers/VisualLayers_Earth.asset";
+            CelestialLayerVisualDefinition definition =
+                CreateOrLoad<CelestialLayerVisualDefinition>(path);
+            var serialized = new SerializedObject(definition);
+            serialized.FindProperty("bodyStableId").stringValue = "earth";
+            serialized.FindProperty("cloudShellRadiusMultiplier").floatValue =
+                EarthLayerRenderingContract.CloudShellRadiusMultiplier;
+            serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =
+                EarthLayerRenderingContract.AtmosphereShellRadiusMultiplier;
+            serialized.FindProperty("cloudRotationMultiplier").floatValue =
+                EarthLayerRenderingContract.CloudRotationMultiplier;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+            return definition;
+        }
+
+        private static Material CreateEarthCloudMaterial()
+        {
+            const string path =
+                MaterialRoot + "/CelestialBodies/M_Earth_Clouds.mat";
+            Material material = CreateOrUpdateMaterial(path, EarthCloudShader);
+            material.SetTexture(
+                "_CloudMap",
+                LoadRequiredAsset<Texture2D>(EarthCloudPath));
+            material.SetColor(
+                "_CloudColor",
+                new Color(0.95f, 0.98f, 1f, 1f));
+            material.SetFloat("_CoverageThreshold", 0.16f);
+            material.SetFloat("_CoverageContrast", 2.4f);
+            material.SetFloat("_Opacity", 0.62f);
+            material.SetFloat("_AmbientBrightness", 0.08f);
+            material.SetFloat("_SunBrightness", 1f);
+            material.renderQueue = (int)RenderQueue.Transparent;
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        private static Material CreateEarthAtmosphereMaterial()
+        {
+            const string path =
+                MaterialRoot + "/CelestialBodies/M_Earth_Atmosphere.mat";
+            Material material = CreateOrUpdateMaterial(path, AtmosphereShader);
+            material.SetColor(
+                "_AtmosphereColor",
+                new Color(0.12f, 0.46f, 1f, 1f));
+            material.SetFloat("_RimPower", 4.2f);
+            material.SetFloat("_RimIntensity", 0.38f);
+            material.SetFloat("_NightsideVisibility", 0.12f);
+            material.renderQueue = (int)RenderQueue.Transparent + 10;
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
         }
 
         private static void ConfigureLitMaterial(
@@ -886,6 +1011,31 @@ namespace Tanvir.SolarSystem.Editor.Import
             }
 
             EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        private static Material CreateOrUpdateMaterial(
+            string path,
+            string shaderName)
+        {
+            Shader shader = Shader.Find(shaderName);
+            if (shader == null)
+            {
+                throw new InvalidOperationException(
+                    $"Required shader '{shaderName}' is unavailable.");
+            }
+
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                material = new Material(shader);
+                AssetDatabase.CreateAsset(material, path);
+            }
+            else
+            {
+                material.shader = shader;
+            }
+
             return material;
         }
 

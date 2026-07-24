@@ -68,13 +68,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Audio Baseline Validation](Docs/ProjectManagement/Slice%204%20Audio%20Baseline%20Validation.md)
 - [Slice 4 Proportional Scale Calibration Validation](Docs/ProjectManagement/Slice%204%20Proportional%20Scale%20Calibration%20Validation.md)
 - [Slice 4 Guided Physical Scale Comparison Validation](Docs/ProjectManagement/Slice%204%20Guided%20Physical%20Scale%20Comparison%20Validation.md)
+- [Slice 4 Layered Earth Rendering Validation](Docs/ProjectManagement/Slice%204%20Layered%20Earth%20Rendering%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/Earth-Moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 112 Edit Mode cases and
-eight real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 116 Edit Mode cases and
+nine real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -88,6 +89,9 @@ feedback with independent runtime levels and mute. A cancellable three-stage
 comparison now teaches the scale problem by moving from the readable overview
 to one shared linear orbit unit and then to literal `Earth radius = 1`
 spacing, while preserving the prior selection, time, audio, and camera state.
+Earth now provides the representative layered-rendering proof with a custom
+URP surface, ocean response, nightside-only city lights, independent clouds,
+a restrained atmosphere rim, and close-focus orbit-guide suppression.
 Detailed evidence is recorded in `Docs/ProjectManagement`.
 
 ## License

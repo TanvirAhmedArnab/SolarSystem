@@ -13,6 +13,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         [SerializeField] private CelestialBodyDefinition definition;
         [SerializeField] private Transform visualRoot;
         [SerializeField] private SphereCollider selectionCollider;
+        [SerializeField] private CelestialLayeredBodyView layeredBodyView;
 
         private CelestialBodyModel model;
         private float currentDisplayRadius;
@@ -28,6 +29,12 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Gets the body's latest projected visual radius in world units.</summary>
         public float CurrentDisplayRadius => currentDisplayRadius;
+
+        /// <summary>Gets the transform containing the rendered body and optional layers.</summary>
+        public Transform VisualRoot => visualRoot;
+
+        /// <summary>Gets the optional layered-body presentation adapter.</summary>
+        public CelestialLayeredBodyView LayeredBodyView => layeredBodyView;
 
         /// <summary>Initializes the view against its immutable runtime model.</summary>
         public void Initialize(CelestialBodyModel runtimeModel)
@@ -59,6 +66,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             }
 
             model = runtimeModel;
+            layeredBodyView?.Initialize(runtimeModel);
         }
 
         /// <summary>Applies one projected snapshot to the transform hierarchy.</summary>
@@ -85,6 +93,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             Quaternion axialTilt = Quaternion.AngleAxis((float)model.AxialTiltDeg, Vector3.forward);
             Quaternion siderealSpin = Quaternion.AngleAxis(-state.RotationAngleDeg, Vector3.up);
             visualRoot.localRotation = axialTilt * siderealSpin;
+            layeredBodyView?.Apply(state.RotationAngleDeg);
         }
     }
 }

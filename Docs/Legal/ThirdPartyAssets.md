@@ -78,7 +78,7 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 
 | IDs | Content | Provider | License | Status |
 |---|---|---|---|---|
-| TEX-SSS-001-017 | Sun, planets, Earth layers, Moon, ring, starfield | Solar System Scope | CC BY 4.0 | Imported; required planet surfaces and Saturn ring active |
+| TEX-SSS-001-017 | Sun, planets, Earth layers, Moon, ring, starfield | Solar System Scope | CC BY 4.0 | Imported; required planet surfaces, layered Earth, Saturn ring, and starfield active |
 | TEX-USGS-001 | Io browse mosaic | USGS / Galileo and Voyager | Public domain | Imported evaluation source |
 | TEX-USGS-002 | Europa browse mosaic | USGS / Galileo and Voyager | No use constraints listed | Imported evaluation source |
 | TEX-USGS-003 | Ganymede browse mosaic | USGS / Galileo and Voyager | Public domain | Imported evaluation source |
@@ -106,7 +106,7 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 
 | Source IDs | Unity destination | Import status |
 |---|---|---|
-| TEX-SSS-001-016 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Body>` | Imported; Sun, eight planet surfaces, Moon, and Saturn ring baseline active; unused Earth/Venus layers remain pending |
+| TEX-SSS-001-016 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Body>` | Imported; Sun, eight planet surfaces, layered Earth maps, Moon, and Saturn ring active; Venus atmosphere remains pending |
 | TEX-SSS-017 | `Assets/SolarSystem/Content/Art/Textures/Environment/T_Space_MilkyWay_2K.jpg` | Imported; sky presentation review pending |
 | TEX-USGS-001-006 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Moon>` | Imported as visibly named `Browse` evaluation textures |
 | AUD-KEN-001 selected subset | `Assets/SolarSystem/Content/Audio/SFX/UI` | Imported; audition and loudness review pending |
@@ -133,6 +133,10 @@ already approved Solar System Scope CC BY 4.0 working set:
 | TEX-SSS-001 | Mercury surface | `CelestialBodies/Mercury/T_Mercury_Surface_2K.jpg` | `M_Mercury.mat` |
 | TEX-SSS-002 | Venus surface | `CelestialBodies/Venus/T_Venus_Surface_2K.jpg` | `M_Venus.mat` |
 | TEX-SSS-004 | Earth day surface | `CelestialBodies/Earth/T_Earth_DayAlbedo_2K.jpg` | `M_Earth.mat` |
+| TEX-SSS-005 | Earth night emission | `CelestialBodies/Earth/T_Earth_NightEmission_2K.jpg` | `M_Earth.mat` |
+| TEX-SSS-006 | Earth clouds | `CelestialBodies/Earth/T_Earth_Clouds_2K.jpg` | `M_Earth_Clouds.mat` |
+| TEX-SSS-007 | Earth normal detail | `CelestialBodies/Earth/T_Earth_Normal_2K.tif` | `M_Earth.mat` |
+| TEX-SSS-008 | Earth ocean specular mask | `CelestialBodies/Earth/T_Earth_Specular_2K.tif` | `M_Earth.mat` |
 | TEX-SSS-010 | Mars surface | `CelestialBodies/Mars/T_Mars_Surface_2K.jpg` | `M_Mars.mat` |
 | TEX-SSS-011 | Jupiter surface | `CelestialBodies/Jupiter/T_Jupiter_Surface_2K.jpg` | `M_Jupiter.mat` |
 | TEX-SSS-012 | Saturn surface | `CelestialBodies/Saturn/T_Saturn_Surface_2K.jpg` | `M_Saturn.mat` |
@@ -144,6 +148,12 @@ The generated `SM_Saturn_Rings.asset` contains project-authored geometry only;
 its appearance remains a derivative use of TEX-SSS-013 and therefore retains
 the source texture's CC BY 4.0 attribution obligation. No new third-party asset
 or license was introduced by the eight-planet baseline.
+
+The layered-Earth shaders, shell geometry, and deterministic motion code are
+project-authored. They activate the already approved TEX-SSS-004 through
+TEX-SSS-008 derivatives without modifying their pixels, so the existing Solar
+System Scope CC BY 4.0 attribution obligation continues and no new third-party
+license is introduced.
 
 ### Kenney selected-subset mapping
 

@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, and guided-scale foundations  
-**Version:** 0.10.0  
+**Status:** Living authority with validated visual, audio, guided-scale, and layered-Earth foundations  
+**Version:** 0.11.0  
 **Last updated:** 2026-07-24  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -60,7 +60,7 @@ threshold, `0.32` bloom intensity, `-0.10 EV` post exposure, `+6` contrast,
 surface detail and UI legibility at the 1080p mid-range-PC baseline.
 
 **[IMPLEMENTED]** A warm `5600 K` point light is parented to the authored Sun
-at local origin. Its `1450 cd` intensity and `80`-unit range are presentation
+at local origin. Its `165,000 cd` intensity and `620`-unit range are presentation
 values calibrated for the compressed-distance scene; they are not literal
 astronomical photometry. The point source supplies a radial light vector to
 Earth, Moon, Jupiter, and future bodies, so the day hemisphere always faces the
@@ -122,10 +122,21 @@ contract is implemented.
 ### Earth
 Separate surface, cloud, and atmosphere layers. Day map drives albedo, specular differentiates oceans, normal detail stays subtle, night lights appear only on the unlit hemisphere, and clouds rotate independently.
 
-The foundation surface uses the audited day map plus the imported linear normal
-map at `0.28` strength. Specular, night emission, clouds, and atmosphere remain
-separate later layers; the standard Lit shader is not allowed to fake
-nightside-only emission.
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Earth uses a project-owned URP surface
+shader with the audited day, linear normal, linear ocean-specular, and
+night-emission maps. The day surface remains physically lit by the live
+Sun-origin point source; warm city lights fade in only on the Sun-opposed
+hemisphere. Ocean response is driven by the source specular mask and tuned
+below mirror-like intensity.
+
+Clouds use a separate transparent shell at `1.004` Earth-surface radius and
+rotate deterministically at `1.025` times Earth's signed spin. A separate
+non-shadow-casting atmosphere shell at `1.018` radius supplies a restrained
+Sun-aware blue rim. These shell thicknesses are intentionally exaggerated for
+readability and are disclosed in the selected-body panel; they do not change
+Earth's proportional physical surface radius. Orbit paths are suppressed only
+while the camera is in close focus so they cannot obscure the layered material,
+then restored in free flight.
 
 ### Moon
 Use Solar System Scope 2K initially. NASA CGI Moon Kit is the upgrade candidate if hero shots justify it. Keep saturation and normal intensity low.
@@ -315,13 +326,15 @@ An asset is ready only when:
 1. **[OPEN] Font family:** decide after UI wireframes and license review.
 2. **[OPEN] Icon family:** project-authored or compatible open-license set.
 3. **[OPEN] Moon upgrades:** identify browse maps needing higher resolution after hero shots.
-4. **[OPEN] Shader fidelity:** select atmosphere and solar techniques after profiling.
+4. **[OPEN] Remaining shader fidelity:** profile the validated Earth pattern,
+   then select solar and other body-specific atmosphere techniques.
 5. **[OPEN] Audio mix:** approve music, Sun, Earth, and UI loudness after in-scene audition.
 
 ## Revision History
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.11.0 | 2026-07-24 | Added the validated layered-Earth surface, nightside emission, independent cloud shell, restrained atmosphere rim, focus readability, and explicit scale disclosure | Representative visual slice implemented and visually validated |
 | 0.10.0 | 2026-07-24 | Added the validated three-stage scale-comparison card, visual-density rules, transformation disclosures, and linear-stage honesty requirements | Approved behavior implemented and visually validated |
 | 0.9.0 | 2026-07-24 | Established exact Earth-relative rendered radii, selection-only accessibility accommodation, and readable compressed-overview composition rules | Approved and implementation validated |
 | 0.8.0 | 2026-07-24 | Recorded the implemented licensed music, 2D Sun ambience, 3D Earth ambience, UI cues, and deterministic import contracts | Technical baseline validated; owner listening approval pending |

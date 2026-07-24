@@ -7,6 +7,7 @@ using Tanvir.SolarSystem.Input;
 using Tanvir.SolarSystem.Interaction;
 using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
+using Tanvir.SolarSystem.Presentation.Lighting;
 using Tanvir.SolarSystem.Presentation.Scale;
 using Tanvir.SolarSystem.Presentation.UI;
 using UnityEditor;
@@ -102,6 +103,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Earth.");
             }
 
+            CreateEarthLayers(earthView, content);
             ConfigureSimulationComposition(
                 composition,
                 controller,
@@ -120,7 +122,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 camera,
                 controller,
                 hudPresenter,
-                audioDirector);
+                audioDirector,
+                orbitPaths.ToArray());
             CreateLighting(sunView.transform);
             CreateGlobalVolume(environmentRoot, content.VisualProfile);
             ConfigureRenderSettings(content.SkyboxMaterial);
@@ -215,6 +218,79 @@ namespace Tanvir.SolarSystem.Editor.Import
             renderer.receiveShadows = false;
         }
 
+        private static void CreateEarthLayers(
+            CelestialBodyView earth,
+            SolarSystemSlice2Content content)
+        {
+            if (content.EarthLayerDefinition == null ||
+                content.EarthCloudMaterial == null ||
+                content.EarthAtmosphereMaterial == null)
+            {
+                throw new InvalidOperationException(
+                    "Earth layered presentation assets are incomplete.");
+            }
+
+            Transform visualRoot = earth.VisualRoot;
+            MeshRenderer surfaceRenderer =
+                visualRoot.GetComponent<MeshRenderer>();
+            surfaceRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            surfaceRenderer.receiveShadows = false;
+
+            Transform cloudShell = CreateLayerSphere(
+                "Cloud Layer",
+                visualRoot,
+                content.EarthCloudMaterial,
+                content.EarthLayerDefinition.CloudShellRadiusMultiplier);
+            Transform atmosphereShell = CreateLayerSphere(
+                "Atmosphere Layer",
+                visualRoot,
+                content.EarthAtmosphereMaterial,
+                content.EarthLayerDefinition.AtmosphereShellRadiusMultiplier);
+
+            CelestialLayeredBodyView layeredView =
+                earth.gameObject.AddComponent<CelestialLayeredBodyView>();
+            var serializedLayer = new SerializedObject(layeredView);
+            serializedLayer.FindProperty("definition").objectReferenceValue =
+                content.EarthLayerDefinition;
+            serializedLayer.FindProperty("cloudShell").objectReferenceValue =
+                cloudShell;
+            serializedLayer.FindProperty("atmosphereShell").objectReferenceValue =
+                atmosphereShell;
+            serializedLayer.FindProperty("surfaceRenderer").objectReferenceValue =
+                surfaceRenderer;
+            serializedLayer.FindProperty("cloudRenderer").objectReferenceValue =
+                cloudShell.GetComponent<MeshRenderer>();
+            serializedLayer.FindProperty("atmosphereRenderer").objectReferenceValue =
+                atmosphereShell.GetComponent<MeshRenderer>();
+            serializedLayer.ApplyModifiedPropertiesWithoutUndo();
+
+            var serializedBody = new SerializedObject(earth);
+            serializedBody.FindProperty("layeredBodyView").objectReferenceValue =
+                layeredView;
+            serializedBody.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static Transform CreateLayerSphere(
+            string name,
+            Transform parent,
+            Material material,
+            float radiusMultiplier)
+        {
+            GameObject layerObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            layerObject.name = name;
+            layerObject.transform.SetParent(parent, false);
+            layerObject.transform.localScale = Vector3.one * radiusMultiplier;
+            Object.DestroyImmediate(layerObject.GetComponent<Collider>());
+
+            MeshRenderer renderer = layerObject.GetComponent<MeshRenderer>();
+            renderer.sharedMaterial = material;
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            renderer.lightProbeUsage = LightProbeUsage.Off;
+            renderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            return layerObject.transform;
+        }
+
         private static CelestialOrbitPathView CreateOrbitPath(
             CelestialBodyDefinition definition,
             Material material,
@@ -277,7 +353,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             Camera camera,
             SolarSystemSimulationController simulationController,
             SolarSystemHudPresenter hudPresenter,
-            AudioDirector audioDirector)
+            AudioDirector audioDirector,
+            CelestialOrbitPathView[] orbitPaths)
         {
             UnityEngine.InputSystem.InputActionAsset inputActions =
                 AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>(
@@ -299,8 +376,16 @@ namespace Tanvir.SolarSystem.Editor.Import
                 interactionObject.AddComponent<GuidedScaleComparisonInputController>();
             SolarSystemCameraController cameraController =
                 camera.gameObject.AddComponent<SolarSystemCameraController>();
+            CelestialOrbitPathVisibilityController orbitVisibility =
+                interactionObject.AddComponent<CelestialOrbitPathVisibilityController>();
             SolarSystemInteractionCompositionRoot composition =
                 interactionObject.AddComponent<SolarSystemInteractionCompositionRoot>();
+
+            var serializedVisibility = new SerializedObject(orbitVisibility);
+            serializedVisibility.FindProperty("cameraController").objectReferenceValue =
+                cameraController;
+            SetArray(serializedVisibility.FindProperty("orbitPaths"), orbitPaths);
+            serializedVisibility.ApplyModifiedPropertiesWithoutUndo();
 
             var serialized = new SerializedObject(composition);
             serialized.FindProperty("inputActions").objectReferenceValue = inputActions;
@@ -410,6 +495,13 @@ namespace Tanvir.SolarSystem.Editor.Import
             light.colorTemperature = SolarRadialTemperature;
             light.shadows = LightShadows.None;
             light.bounceIntensity = 0f;
+            SolarShaderGlobals shaderGlobals =
+                light.GetComponent<SolarShaderGlobals>() ??
+                light.gameObject.AddComponent<SolarShaderGlobals>();
+            var serializedGlobals = new SerializedObject(shaderGlobals);
+            serializedGlobals.FindProperty("sunSource").objectReferenceValue = sun;
+            serializedGlobals.ApplyModifiedPropertiesWithoutUndo();
+            shaderGlobals.Publish();
             RenderSettings.sun = null;
         }
 

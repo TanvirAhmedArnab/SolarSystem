@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.9.0  
+**Version:** 0.10.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -36,6 +36,7 @@
 | 0.7.0 | 2026-07-24 | Codex, for Tanvir | Recorded the implemented licensed music, celestial ambience, and interaction-feedback baseline | Technical behavior validated; owner listening and final mix approval remain |
 | 0.8.0 | 2026-07-24 | Codex, for Tanvir | Approved exact Earth-relative body sizes, proportional signed rotation rates, readable orbital clearances, and the technical foundation for guided physical-scale comparison | Presentation-scale behavior implemented and validated; guided comparison presentation remains |
 | 0.9.0 | 2026-07-24 | Codex, for Tanvir | Implemented the approved three-stage guided physical-scale comparison with explicit transformations, controlled framing, cancellation, and explorer-state restoration | Product behavior implemented and validated |
+| 0.10.0 | 2026-07-24 | Codex, for Tanvir | Implemented the representative layered-Earth experience with readable day/night response, independent clouds and atmosphere, close-focus orbit suppression, and explicit shell-scale disclosure | Product behavior implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -385,6 +386,14 @@ clearly defined live-measurement presentation rather than static source facts.
 - Vignette is subtle or disabled when it interferes with UI and capture work.
 - Motion blur defaults off unless testing proves it improves the experience without discomfort.
 
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Earth now demonstrates the approved
+layered treatment: physically lit day color, ocean-specific response,
+nightside-only city lights, independently rotating clouds, and a restrained
+atmosphere rim. Close focus temporarily hides overview orbit guides so the
+surface remains readable and restores them when focus ends. The information
+panel explicitly states that cloud and atmosphere thickness are exaggerated;
+Earth's proportional surface radius remains unchanged.
+
 ### 11.4 Asset provenance
 
 Every external asset requires a recorded source URL, creator or organization, license, attribution text, download date, and any modification notes. “Free” is not an acceptable license description. Unverified assets cannot enter a public build.
@@ -544,8 +553,9 @@ Each rule should have one authoritative owner document; other documents link to 
 
 **Current progress:** The Sun, eight planets, and Earth's Moon are populated as
 the deterministic planetary baseline. Major moons beyond Earth's Moon,
-advanced per-body visual layers, labels/navigation, cinematic routing, and
-accessibility completion remain. The licensed music, Sun/Earth ambience, and
+unique visual layers beyond the representative Earth treatment,
+labels/navigation, cinematic routing, and accessibility completion remain.
+The licensed music, Sun/Earth ambience, and
 event-driven UI feedback baseline is implemented; final listening/mix approval
 and a settings UI remain.
 

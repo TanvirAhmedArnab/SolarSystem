@@ -7,6 +7,7 @@ using Tanvir.SolarSystem.Interaction;
 using Tanvir.SolarSystem.Mathematics;
 using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
+using Tanvir.SolarSystem.Presentation.Lighting;
 using Tanvir.SolarSystem.Presentation.Scale;
 using Tanvir.SolarSystem.Presentation.UI;
 using Tanvir.SolarSystem.Simulation;
@@ -141,6 +142,10 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Camera camera = Camera.main;
             CelestialSelectionController selection = interaction.SelectionController;
             SolarSystemCameraController cameraController = interaction.CameraController;
+            CelestialOrbitPathVisibilityController orbitVisibility =
+                Object.FindAnyObjectByType<CelestialOrbitPathVisibilityController>();
+            Assert.That(orbitVisibility, Is.Not.Null);
+            Assert.That(orbitVisibility.IsInitialized, Is.True);
             Physics.SyncTransforms();
             Vector3 earthScreen = camera.WorldToScreenPoint(earth.transform.position);
 
@@ -153,8 +158,14 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
 
             cameraController.Focus(earth);
             yield return WaitUntilFocused(cameraController);
+            yield return null;
             Assert.That(cameraController.FocusedTarget, Is.SameAs(earth));
             AssertCameraFaces(camera, earth);
+            Assert.That(orbitVisibility.ArePathsVisible, Is.False);
+            Assert.That(
+                Object.FindObjectsByType<CelestialOrbitPathView>(FindObjectsSortMode.None),
+                Has.All.Matches<CelestialOrbitPathView>(
+                    path => !path.GetComponent<LineRenderer>().enabled));
 
             cameraController.Focus(jupiter);
             yield return WaitUntilFocused(cameraController);
@@ -162,6 +173,7 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             AssertCameraFaces(camera, jupiter);
 
             cameraController.ReturnToFreeFlight();
+            yield return null;
             Vector3 beforeFlight = camera.transform.position;
             cameraController.StepFreeFlight(
                 Vector2.up,
@@ -172,6 +184,11 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
 
             Assert.That(cameraController.Mode, Is.EqualTo(SolarSystemCameraMode.FreeFlight));
             Assert.That(cameraController.FocusedTarget, Is.Null);
+            Assert.That(orbitVisibility.ArePathsVisible, Is.True);
+            Assert.That(
+                Object.FindObjectsByType<CelestialOrbitPathView>(FindObjectsSortMode.None),
+                Has.All.Matches<CelestialOrbitPathView>(
+                    path => path.GetComponent<LineRenderer>().enabled));
             Assert.That(
                 Vector3.Distance(beforeFlight, camera.transform.position),
                 Is.GreaterThan(0.01f));
@@ -217,6 +234,9 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(
                 hud.BodySourceText,
                 Is.EqualTo("NASA_NSSDC_EARTH_AND_JPL_APPROX_POS_J2000"));
+            Assert.That(
+                hud.BodyScaleNoteText,
+                Does.Contain("ATMOSPHERE THICKNESS"));
 
             timeControls.TogglePaused();
             Vector3 pausedPosition = earth.transform.position;
@@ -570,6 +590,95 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 Vector3.Distance(radialLight.transform.position, sun.transform.position),
                 Is.LessThan(0.00001f));
             Assert.That(RenderSettings.sun, Is.Null);
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_UsesLayeredEarthRenderingAndDeterministicCloudMotion()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+
+            CelestialLayeredBodyView layers = earth.LayeredBodyView;
+            Assert.That(layers, Is.Not.Null);
+            Assert.That(layers.IsInitialized, Is.True);
+            Assert.That(layers.CloudShell.parent, Is.SameAs(earth.VisualRoot));
+            Assert.That(layers.AtmosphereShell.parent, Is.SameAs(earth.VisualRoot));
+            Assert.That(
+                layers.CloudShell.localScale.x,
+                Is.EqualTo(EarthLayerRenderingContract.CloudShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                layers.AtmosphereShell.localScale.x,
+                Is.EqualTo(EarthLayerRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                layers.SurfaceRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Earth Surface"));
+            Assert.That(
+                layers.CloudRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Earth Cloud Layer"));
+            Assert.That(
+                layers.AtmosphereRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Atmosphere Rim"));
+            Assert.That(layers.CloudRenderer.shadowCastingMode, Is.EqualTo(
+                ShadowCastingMode.Off));
+            Assert.That(layers.AtmosphereRenderer.shadowCastingMode, Is.EqualTo(
+                ShadowCastingMode.Off));
+
+            SolarShaderGlobals globals =
+                Object.FindAnyObjectByType<SolarShaderGlobals>();
+            Assert.That(globals, Is.Not.Null);
+            Assert.That(globals.IsInitialized, Is.True);
+            Assert.That(globals.SunSource, Is.SameAs(sun.transform));
+            yield return null;
+            Vector4 shaderSun =
+                Shader.GetGlobalVector(SolarShaderGlobals.SunPositionProperty);
+            Assert.That(
+                Vector3.Distance(
+                    new Vector3(shaderSun.x, shaderSun.y, shaderSun.z),
+                    sun.transform.position),
+                Is.LessThan(0.0001f));
+
+            Assert.That(EarthLayerRenderingContract.EvaluateNightWeight(1f), Is.Zero);
+            Assert.That(
+                EarthLayerRenderingContract.EvaluateNightWeight(-1f),
+                Is.EqualTo(1f));
+            Assert.That(
+                layers.SurfaceRenderer.sharedMaterial.GetFloat("_NightFadeEnd"),
+                Is.GreaterThan(
+                    layers.SurfaceRenderer.sharedMaterial.GetFloat("_NightFadeStart")));
+
+            float cloudAngleBefore = layers.CloudRelativeRotationDeg;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(
+                Mathf.Abs(Mathf.DeltaAngle(
+                    cloudAngleBefore,
+                    layers.CloudRelativeRotationDeg)),
+                Is.GreaterThan(0.01f));
+
+            simulation.SimulationController.SetPaused(true);
+            yield return null;
+            float pausedCloudAngle = layers.CloudRelativeRotationDeg;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(
+                Mathf.Abs(Mathf.DeltaAngle(
+                    pausedCloudAngle,
+                    layers.CloudRelativeRotationDeg)),
+                Is.LessThan(0.0001f));
         }
 
         private static void AssertReceivesSunOriginLight(

@@ -63,6 +63,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   status, comparison audio feedback, and exact explorer-state restoration.
 - Edit Mode conversion/service/input/UI/audio coverage and a real-scene
   Play Mode journey across all comparison stages.
+- Project-owned URP Earth surface, cloud, and atmosphere shaders using the
+  approved day, normal, specular, night, and cloud source textures.
+- Immutable layered-body authoring, deterministic absolute cloud drift, and a
+  shared allocation-free live-Sun shader position.
+- Edit Mode layer/material/import contracts and a real-scene Play Mode journey
+  for hierarchy, shell scale, day/night policy, cloud motion, focus visibility,
+  and paused-state preservation.
 
 ### Changed
 
@@ -98,6 +105,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   body's signed spin remains proportional.
 - Enlarged only invisible selection colliders for sub-pixel bodies, preserving
   proportional rendered geometry while keeping the overview usable.
+- Replaced Earth's baseline Lit material with the representative layered
+  treatment and disclosed that cloud/atmosphere thickness is exaggerated
+  without changing the proportional surface radius.
+- Suppressed cached orbit guides only during close camera focus and restored
+  them in free flight so overview geometry cannot obscure hero views.
 - Paused simulation and temporarily locked selection, time, and navigation
   commands during the guided scale comparison, restoring their exact prior
   state when the sequence finishes or is cancelled.

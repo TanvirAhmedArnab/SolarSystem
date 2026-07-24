@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; guided physical-scale comparison validated  
-**Version:** 0.14.0  
+**Document status:** Living technical authority; layered-Earth representative slice validated  
+**Version:** 0.15.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -40,6 +40,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.12.0 | 2026-07-24 | Codex, for Tanvir | Added event-driven audio feedback, independent runtime channel levels and mute, deterministic clip-import contracts, and licensed scene ambience | Automated behavior validated; owner listening and final mix approval remain |
 | 0.13.0 | 2026-07-24 | Codex, for Tanvir | Replaced exaggerated body radii with exact Earth-relative proportions, calibrated readable orbit clearances, anchored `1x` to Earth's sidereal rotation, and added full-cycle regression coverage | Presentation-scale contract approved and validated; guided comparison UI remains |
 | 0.14.0 | 2026-07-24 | Codex, for Tanvir | Added the deterministic three-stage scale service, shared linear projections, Earth-relative render origin, guided camera state capture/restoration, input locking, UI/audio adapters, and full regression coverage | Guided physical-scale comparison implemented and validated |
+| 0.15.0 | 2026-07-24 | Codex, for Tanvir | Added project-owned URP Earth shaders, immutable layer authoring, deterministic cloud drift, Sun shader globals, close-focus orbit visibility policy, and complete asset/scene regression coverage | Representative layered-Earth architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -677,9 +678,11 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   chromatic aberration, and automatic exposure are excluded from the baseline.
 - The approved panoramic starfield is referenced by `M_SpaceSkybox`; the
   camera enables HDR, post-processing, NaN suppression, and dithering.
-- All required planet baseline materials enable GPU instancing. Earth's normal map imports
-  as linear normal data; specular data imports linear and remains deferred
-  until a reviewed channel-packing/custom-shader contract is available.
+- All required planet baseline materials enable GPU instancing. Earth's
+  project-owned surface shader consumes sRGB day/night color maps plus linear
+  normal and specular data. Its specular workflow preserves physically lit
+  albedo, separates land/ocean response, and computes nightside emission from
+  the live Sun position rather than a camera or directional-light assumption.
 - Low flat ambient fill and low sky reflection preserve silhouettes.
 - The scene has one realtime `Solar Radial Light`: a point light parented to
   the Sun at local origin. Its `165,000 cd`, `620`-unit, `5600 K` presentation
@@ -695,7 +698,26 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   annulus mesh and the audited CC BY 4.0 ring alpha strip. It is transparent,
   two-sided, non-shadow-casting, and parented to Saturn's tilted/spinning visual
   root. Advanced ring lighting, self-shadowing, and particle-scale effects are deferred.
-- Atmosphere and cloud components remain optional per body.
+- `CelestialLayerVisualDefinition` stores reviewed shell scale and cloud-rate
+  authoring; startup converts it to immutable `CelestialLayerVisualModel`
+  state. `CelestialLayeredBodyView` applies shell scale and deterministic
+  cloud drift from the body's evaluated signed rotation without accumulating
+  frame delta.
+- `SolarShaderGlobals` publishes one allocation-free
+  `_SolarSystemSunPositionWS` value in `LateUpdate`. The Earth surface, cloud,
+  and atmosphere shaders derive their day/night or rim response from that live
+  position.
+- Earth composes three renderers: the opaque surface, a transparent
+  non-shadow-casting cloud shell at `1.004` radius, and a transparent
+  non-shadow-casting atmosphere shell at `1.018` radius. The shell multipliers
+  are presentation values and never enter scientific radius or orbit state.
+- `CelestialOrbitPathVisibilityController` suppresses cached overview paths
+  during `FocusTransition` and `Focused`, then restores them in free flight.
+  It changes renderer visibility only; geometry, scale-mode data, and
+  simulation state remain intact.
+- Atmosphere and cloud components remain optional per body; Earth is the
+  representative pattern, not a requirement to duplicate one shader across
+  every planet.
 - Orbit paths use cached geometry and update only when scale/settings change.
 - Post-processing respects accessibility toggles; motion blur defaults off.
 - Quality tiers and LODs are introduced from measured screen-space need.
@@ -884,9 +906,17 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   origin, and exact explorer-state restoration.
 - Guided comparison evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Guided Physical Scale Comparison Validation.md`.
-- The broader proposed moon set, atmosphere/cloud layers, advanced planet and
-  ring shaders, labels/navigation, player-facing audio settings, final audio
-  mix approval, and accessibility options remain Slice 4 work.
+- **[IMPLEMENTED REPRESENTATIVE SLICE]** Earth now uses deterministic
+  surface/cloud/atmosphere composition with a custom URP surface shader,
+  nightside-only city emission, source-masked ocean response, Sun-aware
+  transparent layers, focus-safe orbit visibility, and explicit shell-scale
+  disclosure.
+- Layered-Earth evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Layered Earth Rendering Validation.md`.
+- The broader proposed moon set, unique atmosphere/advanced shaders for other
+  bodies, advanced ring shading, labels/navigation, player-facing audio
+  settings, final audio mix approval, and accessibility options remain Slice 4
+  work.
 
 ### Slice 5 - Portfolio release
 
@@ -945,6 +975,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-013 | 2026-07-24 | Size rendered bodies linearly from `Earth = 1`, compress only orbital distance, and protect overview usability with tested clearances and invisible hit areas | Approved and implemented | Tanvir | Presentation-scale calibration request and Slice 4 validation |
 | TDD-014 | 2026-07-24 | Define `1x` as one Earth sidereal rotation per real second and derive every body's direction and rate from its signed source period | Approved and implemented | Tanvir | Shared, scientifically proportional time reference |
 | TDD-015 | 2026-07-24 | Teach physical scale through three deterministic guided modes, use Earth as the literal render origin, and restore explorer state after completion or cancellation | Approved and implemented | Tanvir | GDD-007 and Slice 4 guided-comparison validation |
+| TDD-016 | 2026-07-24 | Prove layered rendering on Earth with project-owned URP shaders, immutable layer authoring, absolute deterministic cloud drift, a shared live-Sun global, and focus-only orbit suppression | Implemented candidate | Tanvir | Representative evidence before body-specific shader expansion |
 
 ## 19. Definition of Done for TDD Version 1.0
 
