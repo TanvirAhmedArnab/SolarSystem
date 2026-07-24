@@ -890,6 +890,110 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             AssertReceivesSunOriginLight(radialLight, sun, jupiter);
         }
 
+        [UnityTest]
+        public IEnumerator SolarSystemScene_UsesDeterministicSaturnHeroAndRings()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "saturn",
+                    out CelestialBodyView saturn),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+
+            GasGiantVisualView gasGiant = saturn.GasGiantVisualView;
+            Transform rings = saturn.VisualRoot.Find("Rings");
+            Assert.That(gasGiant, Is.Not.Null);
+            Assert.That(gasGiant.IsInitialized, Is.True);
+            Assert.That(rings, Is.Not.Null);
+            Assert.That(rings.parent, Is.SameAs(saturn.VisualRoot));
+            Assert.That(
+                gasGiant.AtmosphereShell.localScale.x,
+                Is.EqualTo(
+                    GasGiantVisualRenderingContract
+                        .SaturnAtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                saturn.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(58232f / 6371.0084f).Within(0.001f));
+
+            MeshRenderer ringRenderer = rings.GetComponent<MeshRenderer>();
+            MeshFilter ringFilter = rings.GetComponent<MeshFilter>();
+            Assert.That(ringRenderer, Is.Not.Null);
+            Assert.That(ringFilter, Is.Not.Null);
+            Assert.That(
+                ringRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Saturn Rings"));
+            Assert.That(ringRenderer.shadowCastingMode, Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(ringRenderer.receiveShadows, Is.False);
+            Assert.That(ringRenderer.lightProbeUsage, Is.EqualTo(LightProbeUsage.Off));
+            Assert.That(
+                ringRenderer.reflectionProbeUsage,
+                Is.EqualTo(ReflectionProbeUsage.Off));
+            Assert.That(ringFilter.sharedMesh.vertexCount, Is.EqualTo(258));
+            Assert.That(rings.localRotation, Is.EqualTo(Quaternion.identity));
+            Assert.That(
+                Vector3.Dot(rings.up, saturn.VisualRoot.up),
+                Is.GreaterThan(0.99999f));
+
+            Light radialLight =
+                GameObject.Find("Solar Radial Light")?.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            AssertReceivesSunOriginLight(radialLight, sun, saturn);
+
+            float phaseBefore = gasGiant.BandPhase;
+            yield return new WaitForSecondsRealtime(0.2f);
+            Assert.That(
+                PhaseDistance(phaseBefore, gasGiant.BandPhase),
+                Is.GreaterThan(0.00001f));
+            simulation.SimulationController.SetPaused(true);
+            yield return null;
+            float pausedPhase = gasGiant.BandPhase;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(
+                PhaseDistance(pausedPhase, gasGiant.BandPhase),
+                Is.LessThan(0.000001f));
+
+            interaction.SelectionController.Select(saturn);
+            interaction.CameraController.Focus(saturn);
+            yield return WaitUntilFocused(interaction.CameraController);
+            yield return null;
+            Assert.That(gasGiant.SurfaceRenderer.enabled, Is.True);
+            Assert.That(gasGiant.AtmosphereRenderer.enabled, Is.True);
+            Assert.That(ringRenderer.enabled, Is.True);
+            Assert.That(simulation.SimulationController.ClockSnapshot.IsPaused, Is.True);
+
+            var properties = new MaterialPropertyBlock();
+            gasGiant.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_SimulationPhase")),
+                Is.EqualTo(gasGiant.BandPhase).Within(0.000001f));
+
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+            Assert.That(
+                interaction.CameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.FreeFlight));
+            AssertReceivesSunOriginLight(radialLight, sun, saturn);
+        }
+
         private static void AssertReceivesSunOriginLight(
             Light radialLight,
             CelestialBodyView sun,

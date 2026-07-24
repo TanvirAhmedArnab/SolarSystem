@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, layered-Earth, solar-hero, and Jupiter-hero foundations  
-**Version:** 0.13.0  
+**Status:** Living authority with validated visual, audio, guided-scale, Earth, Sun, Jupiter, and Saturn hero foundations  
+**Version:** 0.14.0  
 **Last updated:** 2026-07-24  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -192,11 +192,22 @@ USGS browse mosaic; dark neutral base and bright impact structures, distinct fro
 ### Saturn
 Soft cream/gold bands. Ring alpha drives a dedicated flat mesh with tested two-sided rendering, transparency, and shadows.
 
-The implemented baseline uses the audited 2K planet map with `0.20`
-smoothness. Its CC BY 4.0 alpha strip maps across a generated 128-segment
-annulus with two-sided transparent rendering and shadow casting disabled.
-Advanced ring lighting, translucency, self-shadowing, and particle detail
-remain deferred.
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Saturn reuses the immutable gas-giant
+model/view architecture with a distinct, lower-amplitude presentation profile.
+The audited 2K surface map remains the anchored primary color source; shallow
+source-derived relief, `0.035` moving-detail contribution, and absolute-time
+phase preserve broad bands without claiming scientific fluid simulation. A
+thin atmosphere shell at `1.008` surface radius uses a restrained `0.14` rim
+intensity.
+
+The approved ring-alpha strip remains anchored radially across the generated
+128-segment annulus. A project-owned transparent shader renders both faces,
+uses one texture sample, premultiplied blending, and the live Sun direction.
+It adds a restrained grazing-angle visibility term but does not model particle
+scale, transmission through ring depth, ring self-shadowing, or exact
+photometry. Ring and atmosphere renderers cast no shadows and use no light or
+reflection probes. Saturn's physical radius, orbit, signed rotation, axial
+tilt, and generated ring geometry remain unchanged.
 
 ### Titan
 USGS near-global browse below a dense amber atmosphere. Surface detail remains subdued.
@@ -354,14 +365,15 @@ An asset is ready only when:
 1. **[OPEN] Font family:** decide after UI wireframes and license review.
 2. **[OPEN] Icon family:** project-authored or compatible open-license set.
 3. **[OPEN] Moon upgrades:** identify browse maps needing higher resolution after hero shots.
-4. **[OPEN] Remaining shader fidelity:** profile the validated Earth, Sun, and
-   Jupiter patterns, then select Saturn and other body-specific techniques.
+4. **[OPEN] Remaining shader fidelity:** profile the validated Earth, Sun,
+   Jupiter, and Saturn patterns, then select the next body-specific technique.
 5. **[OPEN] Audio mix:** approve music, Sun, Earth, and UI loudness after in-scene audition.
 
 ## Revision History
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.14.0 | 2026-07-24 | Added Saturn's anchored gas-giant surface, restrained limb, and two-sided Sun-aware radial ring treatment with explicit scientific limitations | Saturn hero slice implemented and visually validated |
 | 0.13.0 | 2026-07-24 | Added the validated anchored-texture Jupiter surface, restrained source-derived band relief, deterministic low-amplitude detail, Sun-aware limb, and scientific-limitation disclosure | Jupiter hero slice implemented and visually validated |
 | 0.12.0 | 2026-07-24 | Added the validated deterministic solar surface, separate restrained corona, exposure-safe overview/focus treatment, and evidence-based decision to omit lens flare | Solar hero slice implemented and visually validated |
 | 0.11.0 | 2026-07-24 | Added the validated layered-Earth surface, nightside emission, independent cloud shell, restrained atmosphere rim, focus readability, and explicit scale disclosure | Representative visual slice implemented and visually validated |

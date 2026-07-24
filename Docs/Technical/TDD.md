@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; layered-Earth, solar-hero, and Jupiter-hero representative slices validated  
-**Version:** 0.17.0  
+**Document status:** Living technical authority; Earth, Sun, Jupiter, and Saturn hero representative slices validated  
+**Version:** 0.18.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -43,6 +43,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.15.0 | 2026-07-24 | Codex, for Tanvir | Added project-owned URP Earth shaders, immutable layer authoring, deterministic cloud drift, Sun shader globals, close-focus orbit visibility policy, and complete asset/scene regression coverage | Representative layered-Earth architecture implemented and validated |
 | 0.16.0 | 2026-07-24 | Codex, for Tanvir | Added project-owned solar surface/corona shaders, immutable solar authoring, absolute-time phase evaluation, cached property blocks, reproducible scene wiring, and complete asset/scene regression coverage | Solar hero architecture implemented and validated |
 | 0.17.0 | 2026-07-24 | Codex, for Tanvir | Added reusable gas-giant authoring, anchored-texture Jupiter surface/atmosphere shaders, absolute-time band phase, cached property blocks, reproducible scene wiring, and complete asset/scene regression coverage | Jupiter hero architecture implemented and validated |
+| 0.18.0 | 2026-07-24 | Codex, for Tanvir | Extended the reusable gas-giant path to Saturn and added a project-owned one-sample, two-sided, Sun-aware ring shader with deterministic authoring and complete asset/scene regression coverage | Saturn hero architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -740,6 +741,13 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   adds bounded overdraw only around Jupiter. Both materials enable GPU
   instancing. None of these presentation values enter scientific radius,
   orbit, or signed spin state.
+- Saturn uses the same immutable gas-giant definition/model/view pipeline with
+  distinct authored constants: a `1.008` atmosphere shell, lower-amplitude
+  anchored band detail, and one cached absolute-time phase. Its generated
+  annulus uses a separate project-owned transparent shader with one source
+  texture sample, premultiplied blending, two-sided live-Sun response, no
+  shadows, and no light/reflection probes. Ring UVs remain radial; geometry and
+  tilt are inherited from the authored Saturn visual hierarchy.
 - `CelestialOrbitPathVisibilityController` suppresses cached overview paths
   during `FocusTransition` and `Focused`, then restores them in free flight.
   It changes renderer visibility only; geometry, scale-mode data, and
@@ -969,8 +977,13 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   orbit, selection, focus, and state restoration remain unchanged.
 - Jupiter hero evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Jupiter Hero Rendering Validation.md`.
+- **[IMPLEMENTED REPRESENTATIVE SLICE]** Saturn now extends the same immutable
+  gas-giant architecture and adds a bounded two-sided ring shader while
+  retaining exact scientific scale, orbit, signed spin, and axial tilt.
+- Saturn hero evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Saturn Hero Rendering Validation.md`.
 - The broader proposed moon set, unique atmosphere/advanced shaders for other
-  bodies, advanced ring shading, labels/navigation, player-facing audio
+  bodies, particle-scale ring simulation, labels/navigation, player-facing audio
   settings, final audio mix approval, and accessibility options remain Slice 4
   work.
 
@@ -1034,6 +1047,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-016 | 2026-07-24 | Prove layered rendering on Earth with project-owned URP shaders, immutable layer authoring, absolute deterministic cloud drift, a shared live-Sun global, and focus-only orbit suppression | Implemented candidate | Tanvir | Representative evidence before body-specific shader expansion |
 | TDD-017 | 2026-07-24 | Present the Sun with project-owned URP surface/corona shaders, absolute simulation-time phases, cached property blocks, and a visual/light separation; omit lens flare unless live evidence requires it | Implemented candidate | Tanvir | Deterministic, reusable hero treatment with controlled transparency and exposure cost |
 | TDD-018 | 2026-07-24 | Prove a reusable gas-giant contract on Jupiter with anchored source identity, source-derived band relief, low-amplitude absolute-time detail, one restrained atmosphere shell, and cached property-block updates | Implemented candidate | Tanvir | Preserves the Great Red Spot and scientific state while adding bounded hero fidelity and a reusable Saturn-facing architecture |
+| TDD-019 | 2026-07-24 | Extend the gas-giant contract to Saturn and render its generated annulus with anchored radial alpha, one-sample premultiplied transparency, symmetric live-Sun response, and no shadow/probe cost | Implemented candidate | Tanvir | Distinct Saturn identity and readable rings without duplicating runtime architecture or claiming particle-scale/self-shadow photometry |
 
 ## 19. Definition of Done for TDD Version 1.0
 

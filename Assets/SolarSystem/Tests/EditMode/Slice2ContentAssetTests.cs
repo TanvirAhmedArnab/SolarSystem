@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using Tanvir.SolarSystem.Authoring;
+using Tanvir.SolarSystem.Presentation.CelestialBodies;
 using Tanvir.SolarSystem.Simulation;
 using UnityEditor;
 using UnityEngine;
@@ -156,14 +157,35 @@ namespace Tanvir.SolarSystem.Tests.EditMode
 
             Assert.That(material, Is.Not.Null);
             Assert.That(texture, Is.Not.Null);
+            Assert.That(
+                material.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Saturn Rings"));
             Assert.That(material.GetTexture("_BaseMap"), Is.SameAs(texture));
             Assert.That(material.renderQueue, Is.EqualTo((int)RenderQueue.Transparent));
-            Assert.That(material.GetFloat("_Cull"), Is.EqualTo((float)CullMode.Off));
+            Assert.That(
+                material.GetFloat("_Opacity"),
+                Is.EqualTo(SaturnRingRenderingContract.Opacity).Within(0.0001f));
+            Assert.That(
+                material.GetFloat("_AmbientBrightness"),
+                Is.EqualTo(SaturnRingRenderingContract.AmbientBrightness)
+                    .Within(0.0001f));
+            Assert.That(
+                material.GetFloat("_DayBrightness"),
+                Is.EqualTo(SaturnRingRenderingContract.DayBrightness)
+                    .Within(0.0001f));
+            Assert.That(
+                material.GetFloat("_ScatteringStrength"),
+                Is.EqualTo(SaturnRingRenderingContract.ScatteringStrength)
+                    .Within(0.0001f));
+            Assert.That(material.enableInstancing, Is.True);
             Assert.That(mesh, Is.Not.Null);
             Assert.That(mesh.vertexCount, Is.EqualTo(258));
             Assert.That(mesh.triangles, Has.Length.EqualTo(768));
             Assert.That(mesh.bounds.extents.x, Is.EqualTo(1.15f).Within(0.001f));
             Assert.That(mesh.bounds.extents.z, Is.EqualTo(1.15f).Within(0.001f));
+            Assert.That(mesh.uv[0].x, Is.EqualTo(0f).Within(0.0001f));
+            Assert.That(mesh.uv[1].x, Is.EqualTo(1f).Within(0.0001f));
+            Assert.That(mesh.normals, Has.All.EqualTo(Vector3.up));
         }
 
         private static CelestialCatalogDefinition LoadCatalog()

@@ -31,6 +31,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string SunStableId = "sun";
         private const string EarthStableId = "earth";
         private const string JupiterStableId = "jupiter";
+        private const string SaturnStableId = "saturn";
         private const float EarthAmbienceMinimumDistance = 1.5f;
         private const float EarthAmbienceMaximumDistance = 12f;
         private const float SolarRadialIntensityCandela = 165000f;
@@ -65,6 +66,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialBodyView sunView = null;
             CelestialBodyView earthView = null;
             CelestialBodyView jupiterView = null;
+            CelestialBodyView saturnView = null;
             foreach (SolarSystemSlice2BodyContent body in content.Bodies)
             {
                 bool isSaturn = body.Definition.StableId == "saturn";
@@ -86,6 +88,10 @@ namespace Tanvir.SolarSystem.Editor.Import
                 else if (body.Definition.StableId == JupiterStableId)
                 {
                     jupiterView = view;
+                }
+                else if (body.Definition.StableId == SaturnStableId)
+                {
+                    saturnView = view;
                 }
 
                 if (body.Definition.HasOrbit)
@@ -114,9 +120,23 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Jupiter.");
             }
 
+            if (saturnView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Saturn.");
+            }
+
             CreateSunVisual(sunView, content);
             CreateEarthLayers(earthView, content);
-            CreateJupiterVisual(jupiterView, content);
+            CreateGasGiantVisual(
+                jupiterView,
+                content.JupiterVisualDefinition,
+                content.JupiterAtmosphereMaterial,
+                "Jupiter");
+            CreateGasGiantVisual(
+                saturnView,
+                content.SaturnVisualDefinition,
+                content.SaturnAtmosphereMaterial,
+                "Saturn");
             ConfigureSimulationComposition(
                 composition,
                 controller,
@@ -229,6 +249,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             renderer.sharedMaterial = material;
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             renderer.receiveShadows = false;
+            renderer.lightProbeUsage = LightProbeUsage.Off;
+            renderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
         }
 
         private static void CreateSunVisual(
@@ -327,34 +349,37 @@ namespace Tanvir.SolarSystem.Editor.Import
             serializedBody.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void CreateJupiterVisual(
-            CelestialBodyView jupiter,
-            SolarSystemSlice2Content content)
+        private static void CreateGasGiantVisual(
+            CelestialBodyView body,
+            GasGiantVisualDefinition definition,
+            Material atmosphereMaterial,
+            string displayName)
         {
-            if (content.JupiterVisualDefinition == null ||
-                content.JupiterAtmosphereMaterial == null)
+            if (definition == null || atmosphereMaterial == null)
             {
                 throw new InvalidOperationException(
-                    "Jupiter hero presentation assets are incomplete.");
+                    $"{displayName} hero presentation assets are incomplete.");
             }
 
-            Transform visualRoot = jupiter.VisualRoot;
+            Transform visualRoot = body.VisualRoot;
             MeshRenderer surfaceRenderer =
                 visualRoot.GetComponent<MeshRenderer>();
             surfaceRenderer.shadowCastingMode = ShadowCastingMode.Off;
             surfaceRenderer.receiveShadows = false;
+            surfaceRenderer.lightProbeUsage = LightProbeUsage.Off;
+            surfaceRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
 
             Transform atmosphereShell = CreateLayerSphere(
                 "Atmosphere Layer",
                 visualRoot,
-                content.JupiterAtmosphereMaterial,
-                content.JupiterVisualDefinition.AtmosphereShellRadiusMultiplier);
+                atmosphereMaterial,
+                definition.AtmosphereShellRadiusMultiplier);
 
             GasGiantVisualView gasGiantView =
-                jupiter.gameObject.AddComponent<GasGiantVisualView>();
+                body.gameObject.AddComponent<GasGiantVisualView>();
             var serializedGasGiant = new SerializedObject(gasGiantView);
             serializedGasGiant.FindProperty("definition").objectReferenceValue =
-                content.JupiterVisualDefinition;
+                definition;
             serializedGasGiant.FindProperty("atmosphereShell").objectReferenceValue =
                 atmosphereShell;
             serializedGasGiant.FindProperty("surfaceRenderer").objectReferenceValue =
@@ -363,7 +388,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 atmosphereShell.GetComponent<MeshRenderer>();
             serializedGasGiant.ApplyModifiedPropertiesWithoutUndo();
 
-            var serializedBody = new SerializedObject(jupiter);
+            var serializedBody = new SerializedObject(body);
             serializedBody.FindProperty("gasGiantVisualView").objectReferenceValue =
                 gasGiantView;
             serializedBody.ApplyModifiedPropertiesWithoutUndo();

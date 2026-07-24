@@ -32,6 +32,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialTextureRoot + "/Sun/T_Sun_Surface_2K.jpg";
         private const string JupiterTexturePath =
             CelestialTextureRoot + "/Jupiter/T_Jupiter_Surface_2K.jpg";
+        private const string SaturnTexturePath =
+            CelestialTextureRoot + "/Saturn/T_Saturn_Surface_2K.jpg";
         private const string SolarSurfaceShader =
             "SolarSystem/Celestial/Solar Surface";
         private const string SolarCoronaShader =
@@ -40,6 +42,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             "SolarSystem/Celestial/Gas Giant Surface";
         private const string GasGiantAtmosphereShader =
             "SolarSystem/Celestial/Gas Giant Atmosphere";
+        private const string SaturnRingShader =
+            "SolarSystem/Celestial/Saturn Rings";
         private const string EarthSurfaceShader =
             "SolarSystem/Celestial/Earth Surface";
         private const string EarthCloudShader =
@@ -74,7 +78,6 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const float SaturnSmoothness = 0.2f;
         private const float UranusSmoothness = 0.28f;
         private const float NeptuneSmoothness = 0.3f;
-        private const float SaturnRingSmoothness = 0.18f;
         private const int SaturnRingSegments = 128;
         private const float SaturnRingInnerRadius = 0.62f;
         private const float SaturnRingOuterRadius = 1.15f;
@@ -102,6 +105,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         private static readonly Color JupiterAtmosphereTint =
             new Color(0.76f, 0.58f, 0.42f, 1f);
         private static readonly Color SaturnTint = new Color(1f, 0.93f, 0.78f, 1f);
+        private static readonly Color SaturnAtmosphereTint =
+            new Color(0.82f, 0.7f, 0.5f, 1f);
         private static readonly Color UranusTint = new Color(0.78f, 0.95f, 1f, 1f);
         private static readonly Color NeptuneTint = new Color(0.72f, 0.84f, 1f, 1f);
         private static readonly Color OrbitTint = new Color(0.16f, 0.45f, 0.78f, 1f);
@@ -360,6 +365,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 EarthAtmosphereMaterial = CreateEarthAtmosphereMaterial(),
                 JupiterVisualDefinition = CreateJupiterVisualDefinition(),
                 JupiterAtmosphereMaterial = CreateJupiterAtmosphereMaterial(),
+                SaturnVisualDefinition = CreateSaturnVisualDefinition(),
+                SaturnAtmosphereMaterial = CreateSaturnAtmosphereMaterial(),
                 OrbitMaterial = orbitMaterial,
                 SkyboxMaterial = skyboxMaterial,
                 VisualProfile = visualProfile,
@@ -537,6 +544,15 @@ namespace Tanvir.SolarSystem.Editor.Import
                     GasGiantSurfaceShader);
                 ConfigureJupiterSurfaceMaterial(jupiterMaterial);
                 return jupiterMaterial;
+            }
+
+            if (bodyName == "Saturn")
+            {
+                Material saturnMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Saturn.mat",
+                    GasGiantSurfaceShader);
+                ConfigureSaturnSurfaceMaterial(saturnMaterial);
+                return saturnMaterial;
             }
 
             Material material = CreateMaterial(
@@ -789,6 +805,63 @@ namespace Tanvir.SolarSystem.Editor.Import
             return material;
         }
 
+        private static void ConfigureSaturnSurfaceMaterial(Material material)
+        {
+            material.SetTexture(
+                "_BaseMap",
+                LoadRequiredAsset<Texture2D>(SaturnTexturePath));
+            material.SetColor("_BaseColor", SaturnTint);
+            material.SetFloat(
+                "_BandNormalStrength",
+                GasGiantVisualRenderingContract.SaturnBandNormalStrength);
+            material.SetFloat("_BandSampleDistance", 1.5f);
+            material.SetFloat(
+                "_FlowStrength",
+                GasGiantVisualRenderingContract.SaturnBandFlowStrength);
+            material.SetFloat(
+                "_AnimatedDetailStrength",
+                GasGiantVisualRenderingContract.SaturnAnimatedDetailStrength);
+            material.SetFloat("_Specular", 0.06f);
+            material.SetFloat("_Smoothness", SaturnSmoothness);
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+        }
+
+        private static GasGiantVisualDefinition CreateSaturnVisualDefinition()
+        {
+            const string path =
+                DataRoot + "/VisualLayers/VisualLayers_Saturn.asset";
+            GasGiantVisualDefinition definition =
+                CreateOrLoad<GasGiantVisualDefinition>(path);
+            var serialized = new SerializedObject(definition);
+            serialized.FindProperty("bodyStableId").stringValue = "saturn";
+            serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =
+                GasGiantVisualRenderingContract.SaturnAtmosphereShellRadiusMultiplier;
+            serialized.FindProperty("bandFlowCyclesPerRotation").floatValue =
+                GasGiantVisualRenderingContract.SaturnBandFlowCyclesPerRotation;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+            return definition;
+        }
+
+        private static Material CreateSaturnAtmosphereMaterial()
+        {
+            const string path =
+                MaterialRoot + "/CelestialBodies/M_Saturn_Atmosphere.mat";
+            Material material =
+                CreateOrUpdateMaterial(path, GasGiantAtmosphereShader);
+            material.SetColor("_AtmosphereColor", SaturnAtmosphereTint);
+            material.SetFloat("_RimPower", 5.2f);
+            material.SetFloat(
+                "_RimIntensity",
+                GasGiantVisualRenderingContract.SaturnAtmosphereIntensity);
+            material.SetFloat("_NightsideVisibility", 0.035f);
+            material.renderQueue = (int)RenderQueue.Transparent + 11;
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
         private static CelestialLayerVisualDefinition CreateEarthLayerDefinition()
         {
             const string path =
@@ -873,23 +946,21 @@ namespace Tanvir.SolarSystem.Editor.Import
         private static Material CreateSaturnRingMaterial()
         {
             const string path = MaterialRoot + "/CelestialBodies/M_Saturn_Rings.mat";
-            Material material = CreateMaterial(
-                path,
-                "Universal Render Pipeline/Lit",
-                SaturnRingTexturePath,
-                Color.white,
-                SaturnRingSmoothness);
-            material.SetFloat("_Metallic", 0f);
-            material.SetFloat("_Surface", 1f);
-            material.SetFloat("_Blend", 0f);
-            material.SetFloat("_AlphaClip", 0f);
-            material.SetFloat("_Cull", (float)CullMode.Off);
-            material.SetFloat("_ZWrite", 0f);
-            material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-            material.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-            material.SetOverrideTag("RenderType", "Transparent");
-            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-            material.DisableKeyword("_ALPHATEST_ON");
+            Material material = CreateOrUpdateMaterial(path, SaturnRingShader);
+            material.SetTexture(
+                "_BaseMap",
+                LoadRequiredAsset<Texture2D>(SaturnRingTexturePath));
+            material.SetColor("_BaseColor", Color.white);
+            material.SetFloat("_Opacity", SaturnRingRenderingContract.Opacity);
+            material.SetFloat(
+                "_AmbientBrightness",
+                SaturnRingRenderingContract.AmbientBrightness);
+            material.SetFloat(
+                "_DayBrightness",
+                SaturnRingRenderingContract.DayBrightness);
+            material.SetFloat(
+                "_ScatteringStrength",
+                SaturnRingRenderingContract.ScatteringStrength);
             material.renderQueue = (int)RenderQueue.Transparent;
             material.doubleSidedGI = true;
             material.enableInstancing = true;

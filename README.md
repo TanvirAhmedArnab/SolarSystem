@@ -71,13 +71,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Layered Earth Rendering Validation](Docs/ProjectManagement/Slice%204%20Layered%20Earth%20Rendering%20Validation.md)
 - [Slice 4 Solar Surface and Corona Validation](Docs/ProjectManagement/Slice%204%20Solar%20Surface%20and%20Corona%20Validation.md)
 - [Slice 4 Jupiter Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Jupiter%20Hero%20Rendering%20Validation.md)
+- [Slice 4 Saturn Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Saturn%20Hero%20Rendering%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/Earth-Moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 126 Edit Mode cases and
-11 real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 127 Edit Mode cases and
+12 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -101,6 +102,9 @@ Jupiter now proves a reusable gas-giant pattern with an anchored source
 texture, source-derived band relief, deterministic low-amplitude detail, and a
 thin Sun-aware atmosphere while preserving its exact proportional radius,
 analytical orbit, signed rotation, and Great Red Spot identity.
+Saturn now extends that reusable pattern with a distinct restrained band
+profile, thin atmosphere, and a dedicated two-sided Sun-aware ring shader that
+keeps the approved radial alpha texture anchored to the generated annulus.
 Detailed evidence is recorded in `Docs/ProjectManagement`.
 
 ## License

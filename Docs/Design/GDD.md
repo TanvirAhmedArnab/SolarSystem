@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.12.0  
+**Version:** 0.13.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -39,6 +39,7 @@
 | 0.10.0 | 2026-07-24 | Codex, for Tanvir | Implemented the representative layered-Earth experience with readable day/night response, independent clouds and atmosphere, close-focus orbit suppression, and explicit shell-scale disclosure | Product behavior implemented and validated |
 | 0.11.0 | 2026-07-24 | Codex, for Tanvir | Implemented an exposure-safe solar hero treatment with subtle deterministic surface motion and a restrained corona while preserving the Sun as the scientific and lighting origin | Product behavior implemented and validated |
 | 0.12.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Jupiter hero treatment with stable source identity, readable cloud bands, subtle deterministic detail, a restrained atmospheric limb, and explicit non-scientific-fluid disclosure | Product behavior implemented and validated |
+| 0.13.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Saturn hero treatment with readable cream bands, a restrained limb, and two-sided Sun-aware rings while preserving approved scale and scientific motion | Product behavior implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -411,6 +412,14 @@ transition, and a thin warm limb. The detail freezes with simulation pause and
 does not alter Jupiter's proportional radius, analytical orbit, or signed
 rotation. It is an educational visual treatment, not a scientific
 fluid-dynamics simulation.
+
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Saturn now presents a distinct
+soft-band gas-giant surface, restrained atmospheric edge, and readable tilted
+rings in both overview and close focus. The approved surface and ring maps
+remain anchored, and motion freezes with simulation pause. This visual layer
+does not alter Saturn's proportional radius, analytical orbit, signed rotation,
+axial tilt, or generated annulus. Ring particle scale, self-shadowing,
+transmission, and exact photometry are not simulated and are not claimed.
 
 ### 11.4 Asset provenance
 

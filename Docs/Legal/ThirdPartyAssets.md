@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.6.0  
+**Version:** 0.7.0  
 **Last reviewed:** 2026-07-24
 
 **Live-source verification:** Rechecked 2026-07-22 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records.
@@ -132,6 +132,24 @@ The gas-giant authoring/model/view code, surface shader, atmosphere shader, and
 shell wiring are project-authored. They introduce no new third-party media or
 license. Their use of TEX-SSS-011 continues the existing Solar System Scope
 CC BY 4.0 attribution obligation.
+
+### Active Saturn hero texture records
+
+- Source IDs: `TEX-SSS-012` (surface) and `TEX-SSS-013` (ring alpha).
+- Unity derivatives:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Saturn/T_Saturn_Surface_2K.jpg`
+  and `T_Saturn_RingsAlpha_2K.png`.
+- Active materials: `M_Saturn.mat`, `M_Saturn_Atmosphere.mat`, and
+  `M_Saturn_Rings.mat`.
+- License: Solar System Scope, CC BY 4.0; release attribution remains required.
+- Modification status: texture pixels are unchanged. Project-authored shaders
+  keep the surface map anchored and the ring alpha radially anchored to the
+  generated annulus.
+
+The Saturn definition/profile, atmosphere material, ring shader, renderer
+policy, and annulus geometry are project-authored and introduce no new
+third-party media or license. The rendering changes do not alter the existing
+CC BY 4.0 attribution obligation for `TEX-SSS-012` and `TEX-SSS-013`.
 
 ### Active eight-planet material records
 

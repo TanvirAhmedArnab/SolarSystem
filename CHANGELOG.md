@@ -85,6 +85,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Edit Mode gas-giant authoring/material/import contracts and real-scene Play
   Mode coverage for hierarchy, exact proportional radius, deterministic phase,
   pause, Sun-origin lighting, focus, renderer policy, and state preservation.
+- Distinct Saturn gas-giant authoring and atmosphere assets built through the
+  reusable absolute-time gas-giant model/view architecture.
+- Project-owned two-sided Saturn ring shader with anchored radial alpha,
+  premultiplied transparency, live-Sun lighting, bounded one-sample cost, and
+  explicit non-shadow/probe renderer policy.
+- Edit Mode Saturn surface/atmosphere/ring contracts and real-scene Play Mode
+  coverage for exact scale, hierarchy, tilt alignment, deterministic phase,
+  Sun-origin lighting, focus visibility, and state preservation.
 
 ### Changed
 
@@ -129,6 +137,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Replaced Jupiter's generic Lit baseline with a reusable gas-giant hero
   treatment while retaining the existing texture pixels, Great Red Spot,
   scientific data, scale, orbit, and signed rotation.
+- Replaced Saturn's generic Lit surface and ring materials with a distinct
+  reusable gas-giant profile and project-owned ring presentation while
+  retaining both approved texture derivatives, geometry, scientific data,
+  proportional scale, orbit, tilt, and signed rotation.
 - Suppressed cached orbit guides only during close camera focus and restored
   them in free flight so overview geometry cannot obscure hero views.
 - Paused simulation and temporarily locked selection, time, and navigation

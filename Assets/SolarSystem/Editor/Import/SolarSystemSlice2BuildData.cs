@@ -21,6 +21,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal Material EarthAtmosphereMaterial { get; set; }
         internal GasGiantVisualDefinition JupiterVisualDefinition { get; set; }
         internal Material JupiterAtmosphereMaterial { get; set; }
+        internal GasGiantVisualDefinition SaturnVisualDefinition { get; set; }
+        internal Material SaturnAtmosphereMaterial { get; set; }
         internal Material OrbitMaterial { get; set; }
         internal Material SkyboxMaterial { get; set; }
         internal VolumeProfile VisualProfile { get; set; }
