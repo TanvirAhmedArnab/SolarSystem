@@ -17,6 +17,8 @@ MonoBehaviour:
   category: 1
   parentId: sun
   scientificSourceId: NASA_NSSDC_EARTH_AND_JPL_APPROX_POS_J2000
+  educationalSummary: A rocky world with global oceans and the only known environment
+    that supports life.
   meanRadiusKm: 6371
   hasMass: 1
   massKg: 5.9722e+24

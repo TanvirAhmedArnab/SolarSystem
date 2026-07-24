@@ -17,6 +17,8 @@ MonoBehaviour:
   category: 1
   parentId: sun
   scientificSourceId: JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_JUPITER_FACTS
+  educationalSummary: The Solar System's largest planet, a hydrogen-helium giant
+    with rapid rotation and powerful storms.
   meanRadiusKm: 69911
   hasMass: 1
   massKg: 1.898125e+27

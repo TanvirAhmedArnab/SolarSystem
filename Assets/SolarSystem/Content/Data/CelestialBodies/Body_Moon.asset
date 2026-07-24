@@ -17,6 +17,8 @@ MonoBehaviour:
   category: 2
   parentId: earth
   scientificSourceId: NASA_MOON_BY_NUMBERS_AND_JPL_DE405_LE405
+  educationalSummary: Earth's natural satellite; its gravity drives most ocean tides
+    and its orbit is shown around Earth.
   meanRadiusKm: 1737.4
   hasMass: 1
   massKg: 7.34767309245735e+22

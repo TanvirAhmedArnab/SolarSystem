@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.4.0  
-**Last updated:** 2026-07-22  
+**Version:** 0.5.0  
+**Last updated:** 2026-07-23  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
 
@@ -31,6 +31,7 @@
 | 0.2.0 | 2026-07-22 | Codex, for Tanvir | Recorded owner decisions for scientific scope, scale experience, input, audio, deliverables, target hardware category, and moon scope | Approved decisions incorporated; schedule pending clarification |
 | 0.3.0 | 2026-07-22 | Codex, for Tanvir | Preserved the complete portfolio scope and converted July 29 into an initial inspection and planning milestone | Schedule strategy approved; final release date pending project inspection |
 | 0.4.0 | 2026-07-22 | Codex, for Tanvir | Recorded approval of the GDD authority, URP, deterministic analytical orbits, and lightweight trunk-based development | Foundation decisions approved |
+| 0.5.0 | 2026-07-23 | Codex, for Tanvir | Recorded the validated selection-feedback and educational body-information experience that closes the interaction vertical slice | Implemented product behavior recorded; broader release interface remains |
 
 ### 1.3 Source hierarchy
 
@@ -233,10 +234,20 @@ Each selectable body provides, where applicable and source-verified:
 
 Values must include units and avoid unjustified precision.
 
+The implemented interaction vertical slice presents the selected body's name,
+classification, concise educational summary, parent, mean radius, mass,
+rotation period, axial tilt, average orbit distance, orbital period, and
+scientific source-record ID. It also carries an explicit notice that display
+sizes and distances are adjusted for readability. Additional current-distance
+and speed readouts remain release-level enhancements because they require a
+clearly defined live-measurement presentation rather than static source facts.
+
 ### 8.3 Selection behavior
 
 - A visible body, label, or navigator entry can select the same target.
 - Selection is clearly differentiated from camera focus.
+- A non-color-only screen-space reticle follows an on-screen selected body.
+- Selection immediately opens a consistent educational information panel.
 - Focus transitions can be cancelled or redirected.
 - Occluded or extremely distant bodies remain reachable through the navigator.
 - The selected state remains synchronized across world labels, navigator, and detail panel.
@@ -456,7 +467,8 @@ Each rule should have one authoritative owner document; other documents link to 
 
 ### Milestone 2 - Interaction vertical slice
 
-- Deliver system overview, selection, focus camera, time controls, scale controls, and representative UI.
+- Deliver system overview, selection, focus camera, time controls, visible
+  selection feedback, and a representative educational information panel.
 - Confirm the first-minute experience with an external observer if possible.
 
 ### Milestone 3 - Visual vertical slice

@@ -30,6 +30,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 CelestialBodyCategory.Star,
                 string.Empty,
                 "NASA_NSSDC_SUN_EARTH_FACT_SHEET",
+                "The star at the center of our Solar System and the source of nearly all its light and heat.",
                 695700d,
                 1.9884e30d,
                 609.12d * 3600d,
@@ -42,6 +43,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 CelestialBodyCategory.Planet,
                 "sun",
                 "NASA_NSSDC_EARTH_AND_JPL_APPROX_POS_J2000",
+                "A rocky world with global oceans and the only known environment that supports life.",
                 6371d,
                 5.9722e24d,
                 23.9345d * 3600d,
@@ -61,6 +63,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 CelestialBodyCategory.Moon,
                 "earth",
                 "NASA_MOON_BY_NUMBERS_AND_JPL_DE405_LE405",
+                "Earth's natural satellite; its gravity drives most ocean tides and its orbit is shown around Earth.",
                 1737.4d,
                 7.34767309245735e22d,
                 27.322d * SecondsPerDay,
@@ -80,6 +83,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 CelestialBodyCategory.Planet,
                 "sun",
                 "JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_JUPITER_FACTS",
+                "The Solar System's largest planet, a hydrogen-helium giant with rapid rotation and powerful storms.",
                 69911d,
                 1.898125e27d,
                 0.41354d * SecondsPerDay,
@@ -151,6 +155,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.FindProperty("category").enumValueIndex = (int)data.Category;
             serialized.FindProperty("parentId").stringValue = data.ParentId;
             serialized.FindProperty("scientificSourceId").stringValue = data.SourceId;
+            serialized.FindProperty("educationalSummary").stringValue = data.EducationalSummary;
             serialized.FindProperty("meanRadiusKm").doubleValue = data.RadiusKm;
             serialized.FindProperty("hasMass").boolValue = true;
             serialized.FindProperty("massKg").doubleValue = data.MassKg;

@@ -28,6 +28,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Bounded simulation pause/speed application service with a documented one-day-per-second baseline.
 - UI Toolkit explorer HUD showing run state, rate, selection, and contextual keyboard hints.
 - Edit Mode time/UI asset coverage and a real-scene HUD feedback and resumed-motion journey.
+- Authored educational summaries for the representative Sun, Earth, Moon, and Jupiter definitions.
+- Selected-body information card with verified physical/orbital values, explicit units, scale disclosure, and source-record provenance.
+- Screen-space four-corner selection reticle that follows the selected body's projected presentation radius.
+- Edit Mode fact-formatting and UI-contract coverage plus real-scene selected-body panel validation.
+- Color-coded quick-control keycaps with independently readable action labels and contextual pause/resume feedback.
 
 ### Changed
 

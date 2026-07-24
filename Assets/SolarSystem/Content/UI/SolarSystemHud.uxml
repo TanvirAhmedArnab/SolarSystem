@@ -2,13 +2,82 @@
     <ui:VisualElement name="hud-root" class="hud-root" picking-mode="Ignore">
         <ui:VisualElement class="status-panel" picking-mode="Ignore">
             <ui:Label text="SOLAR SYSTEM EXPLORER" class="eyebrow" />
-            <ui:Label name="selection-target" text="TARGET  ·  NONE" class="target" />
+            <ui:Label name="selection-target" text="TARGET / NONE" class="target" />
             <ui:VisualElement class="divider" />
-            <ui:Label name="simulation-state" text="SIMULATION  ·  RUNNING" class="status" />
-            <ui:Label name="simulation-rate" text="TIME RATE  ·  10x" class="rate" />
+            <ui:Label name="simulation-state" text="SIMULATION / RUNNING" class="status" />
+            <ui:Label name="simulation-rate" text="TIME RATE / 10x" class="rate" />
         </ui:VisualElement>
+
+        <ui:VisualElement name="body-information-panel" class="body-information-panel is-hidden" picking-mode="Ignore">
+            <ui:Label text="SELECTED BODY" class="eyebrow" />
+            <ui:Label name="body-name" text="Earth" class="body-name" />
+            <ui:Label name="body-category" text="PLANET" class="body-category" />
+            <ui:Label name="body-summary" text="" class="body-summary" />
+            <ui:VisualElement class="divider" />
+            <ui:VisualElement class="fact-row">
+                <ui:Label text="PARENT" class="fact-key" />
+                <ui:Label name="body-parent" text="" class="fact-value" />
+            </ui:VisualElement>
+            <ui:VisualElement class="fact-row">
+                <ui:Label text="MEAN RADIUS" class="fact-key" />
+                <ui:Label name="body-radius" text="" class="fact-value" />
+            </ui:VisualElement>
+            <ui:VisualElement class="fact-row">
+                <ui:Label text="MASS" class="fact-key" />
+                <ui:Label name="body-mass" text="" class="fact-value" />
+            </ui:VisualElement>
+            <ui:VisualElement class="fact-row">
+                <ui:Label text="ROTATION" class="fact-key" />
+                <ui:Label name="body-rotation" text="" class="fact-value" />
+            </ui:VisualElement>
+            <ui:VisualElement class="fact-row">
+                <ui:Label text="AXIAL TILT" class="fact-key" />
+                <ui:Label name="body-axial-tilt" text="" class="fact-value" />
+            </ui:VisualElement>
+            <ui:VisualElement class="fact-row">
+                <ui:Label text="AVG. ORBIT DISTANCE" class="fact-key" />
+                <ui:Label name="body-orbit-distance" text="" class="fact-value" />
+            </ui:VisualElement>
+            <ui:VisualElement class="fact-row">
+                <ui:Label text="ORBITAL PERIOD" class="fact-key" />
+                <ui:Label name="body-orbit-period" text="" class="fact-value" />
+            </ui:VisualElement>
+            <ui:Label text="SCALE NOTE / BODY SIZES AND DISTANCES ARE ADJUSTED FOR READABILITY." class="scale-note" />
+            <ui:Label text="SOURCE RECORD" class="source-key" />
+            <ui:Label name="body-source" text="" class="source-value" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="selection-reticle" class="selection-reticle is-hidden" picking-mode="Ignore">
+            <ui:VisualElement class="reticle-corner reticle-top-left" />
+            <ui:VisualElement class="reticle-corner reticle-top-right" />
+            <ui:VisualElement class="reticle-corner reticle-bottom-left" />
+            <ui:VisualElement class="reticle-corner reticle-bottom-right" />
+        </ui:VisualElement>
+
         <ui:VisualElement class="hint-panel" picking-mode="Ignore">
-            <ui:Label name="control-hints" text="SPACE  PAUSE / RESUME     [  SLOWER     ]  FASTER     F  FOCUS" class="hints" />
+            <ui:Label text="QUICK CONTROLS" class="hint-title" />
+            <ui:VisualElement name="control-hints" class="control-hints">
+                <ui:VisualElement class="control-group">
+                    <ui:Label name="control-key-click" text="CLICK" class="control-key key-click" />
+                    <ui:Label text="SELECT" class="control-action" />
+                </ui:VisualElement>
+                <ui:VisualElement class="control-group">
+                    <ui:Label name="control-key-focus" text="F" class="control-key key-focus" />
+                    <ui:Label text="FOCUS" class="control-action" />
+                </ui:VisualElement>
+                <ui:VisualElement class="control-group control-group-wide">
+                    <ui:Label name="control-key-wheel" text="WHEEL" class="control-key key-wheel" />
+                    <ui:Label text="ZOOM" class="control-action" />
+                </ui:VisualElement>
+                <ui:VisualElement class="control-group control-group-wide">
+                    <ui:Label name="control-key-space" text="SPACE" class="control-key key-space" />
+                    <ui:Label name="pause-action" text="PAUSE" class="control-action" />
+                </ui:VisualElement>
+                <ui:VisualElement class="control-group control-group-last">
+                    <ui:Label name="control-key-speed" text="[ / ]" class="control-key key-speed" />
+                    <ui:Label text="SPEED" class="control-action" />
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

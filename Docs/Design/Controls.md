@@ -2,7 +2,7 @@
 
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
-**Status:** Implemented Slice 3 interaction and time-control proof  
+**Status:** Implemented Slice 3 interaction vertical slice  
 **Last updated:** 2026-07-23  
 **Input asset:** `Assets/SolarSystem/Settings/Input/IA_SolarSystem.asset`
 
@@ -37,7 +37,10 @@ celestial simulation does not disable exploration.
 | Return to free flight | Escape | Keep the current camera pose and resume free flight |
 
 Selection and focus are intentionally separate. Clicking a body changes
-selection; it does not move the camera until the user presses F.
+selection; it does not move the camera until the user presses F. Successful
+selection is confirmed by the target name, a four-corner reticle around the
+on-screen body, and an educational information panel. If the selected body
+moves off-screen, the reticle hides while the selection remains active.
 
 ## Simulation Time
 
@@ -53,10 +56,16 @@ the scene starts at `10x`. The values and default remain provisional product
 tuning decisions, but the command boundary, units, bounds, and display contract
 are implemented and tested. Speed changes do not resume a paused simulation.
 
+The bottom-left quick-control strip presents each key and action as a separate
+visual group rather than a sentence. Distinct keycap colors support rapid
+scanning, while the adjacent action text preserves meaning without relying on
+color alone. The `SPACE` action changes from `PAUSE` to `RESUME` when the
+simulation is paused.
+
 ## Deferred Controls
 
-The following approved product capabilities are not part of this bounded proof
-and remain pending for later Slice 3 candidates:
+The following approved product capabilities remain pending for later release
+slices:
 
 - guided scale-comparison controls;
 - complete Help, settings, and contextual onboarding;

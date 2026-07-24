@@ -29,7 +29,26 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(root.Q<Label>("simulation-state"), Is.Not.Null);
             Assert.That(root.Q<Label>("simulation-rate"), Is.Not.Null);
             Assert.That(root.Q<Label>("selection-target"), Is.Not.Null);
-            Assert.That(root.Q<Label>("control-hints"), Is.Not.Null);
+            Assert.That(root.Q<VisualElement>("control-hints"), Is.Not.Null);
+            Assert.That(root.Q<Label>("control-key-click"), Is.Not.Null);
+            Assert.That(root.Q<Label>("control-key-focus"), Is.Not.Null);
+            Assert.That(root.Q<Label>("control-key-wheel"), Is.Not.Null);
+            Assert.That(root.Q<Label>("control-key-space"), Is.Not.Null);
+            Assert.That(root.Q<Label>("control-key-speed"), Is.Not.Null);
+            Assert.That(root.Q<Label>("pause-action"), Is.Not.Null);
+            Assert.That(root.Q<VisualElement>("body-information-panel"), Is.Not.Null);
+            Assert.That(root.Q<VisualElement>("selection-reticle"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-name"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-category"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-summary"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-parent"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-radius"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-mass"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-rotation"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-axial-tilt"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-orbit-distance"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-orbit-period"), Is.Not.Null);
+            Assert.That(root.Q<Label>("body-source"), Is.Not.Null);
         }
 
         [Test]

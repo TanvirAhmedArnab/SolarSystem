@@ -75,7 +75,7 @@ namespace Tanvir.SolarSystem.Application
             cameraController.Initialize(inputAdapter, selectionController);
             var timeControls = new SimulationTimeControlService(simulationController);
             timeInputController.Initialize(inputAdapter, timeControls);
-            hudPresenter.Initialize(timeControls, selectionService);
+            hudPresenter.Initialize(timeControls, selectionController, explorerCamera);
         }
     }
 }

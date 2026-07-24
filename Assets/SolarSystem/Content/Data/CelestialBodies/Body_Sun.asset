@@ -17,6 +17,8 @@ MonoBehaviour:
   category: 0
   parentId: 
   scientificSourceId: NASA_NSSDC_SUN_EARTH_FACT_SHEET
+  educationalSummary: The star at the center of our Solar System and the source of
+    nearly all its light and heat.
   meanRadiusKm: 695700
   hasMass: 1
   massKg: 1.9884e+30

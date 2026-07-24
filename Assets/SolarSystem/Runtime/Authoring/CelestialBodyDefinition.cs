@@ -15,6 +15,8 @@ namespace Tanvir.SolarSystem.Authoring
         [SerializeField] private CelestialBodyCategory category;
         [SerializeField] private string parentId;
         [SerializeField] private string scientificSourceId;
+        [TextArea(2, 4)]
+        [SerializeField] private string educationalSummary;
 
         [Header("Physical properties")]
         [SerializeField] private double meanRadiusKm;
@@ -41,6 +43,9 @@ namespace Tanvir.SolarSystem.Authoring
 
         /// <summary>Gets the scientific provenance record ID.</summary>
         public string ScientificSourceId => scientificSourceId;
+
+        /// <summary>Gets the concise educational description shown in the explorer UI.</summary>
+        public string EducationalSummary => educationalSummary;
 
         /// <summary>Gets the mean radius in kilometers.</summary>
         public double MeanRadiusKm => meanRadiusKm;

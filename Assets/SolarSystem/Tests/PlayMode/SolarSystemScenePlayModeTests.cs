@@ -165,6 +165,7 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(timeControls.CurrentMultiplier, Is.EqualTo(10));
             Assert.That(hud.SimulationStateText, Does.Contain("RUNNING"));
             Assert.That(hud.SimulationRateText, Does.Contain("10x"));
+            Assert.That(hud.PauseActionText, Is.EqualTo("PAUSE"));
 
             Assert.That(
                 simulation.SimulationController.TryGetView(
@@ -173,12 +174,21 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 Is.True);
             interaction.SelectionController.Select(earth);
             Assert.That(hud.SelectionText, Does.Contain("EARTH"));
+            yield return null;
+            Assert.That(hud.IsBodyInformationVisible, Is.True);
+            Assert.That(hud.IsSelectionReticleVisible, Is.True);
+            Assert.That(hud.BodyNameText, Is.EqualTo("Earth"));
+            Assert.That(hud.BodyRadiusText, Is.EqualTo("6,371.0 km"));
+            Assert.That(
+                hud.BodySourceText,
+                Is.EqualTo("NASA_NSSDC_EARTH_AND_JPL_APPROX_POS_J2000"));
 
             timeControls.TogglePaused();
             Vector3 pausedPosition = earth.transform.position;
             yield return new WaitForSecondsRealtime(0.1f);
             Assert.That(timeControls.IsPaused, Is.True);
             Assert.That(hud.SimulationStateText, Does.Contain("PAUSED"));
+            Assert.That(hud.PauseActionText, Is.EqualTo("RESUME"));
             Assert.That(
                 Vector3.Distance(pausedPosition, earth.transform.position),
                 Is.LessThan(0.00001f));
@@ -191,6 +201,7 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Vector3 resumedPosition = earth.transform.position;
             yield return new WaitForSecondsRealtime(0.1f);
             Assert.That(timeControls.IsPaused, Is.False);
+            Assert.That(hud.PauseActionText, Is.EqualTo("PAUSE"));
             Assert.That(
                 Vector3.Distance(resumedPosition, earth.transform.position),
                 Is.GreaterThan(0.001f));

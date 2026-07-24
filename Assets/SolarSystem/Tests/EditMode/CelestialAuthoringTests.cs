@@ -123,6 +123,8 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             serialized.FindProperty("category").enumValueIndex = (int)category;
             serialized.FindProperty("parentId").stringValue = parentId;
             serialized.FindProperty("scientificSourceId").stringValue = "TEST-SOURCE";
+            serialized.FindProperty("educationalSummary").stringValue =
+                "A concise educational summary.";
             serialized.FindProperty("meanRadiusKm").doubleValue = 6371d;
             serialized.FindProperty("hasMass").boolValue = true;
             serialized.FindProperty("massKg").doubleValue = 5.9722e24d;

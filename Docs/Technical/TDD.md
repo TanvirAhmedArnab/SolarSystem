@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Slice 3 time-control and HUD proof implemented  
-**Version:** 0.7.0  
+**Document status:** Living technical authority; Slice 3 interaction vertical slice complete  
+**Version:** 0.8.0  
 **Last updated:** 2026-07-23  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -33,6 +33,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.5.0 | 2026-07-23 | Codex, for Tanvir | Added verified Jupiter authoring and presentation, gas-giant scale acceptance tests, camera-range evidence, and complete Slice 2 validation | Representative graybox slice validated; final guided-comparison tuning remains open |
 | 0.6.0 | 2026-07-23 | Codex, for Tanvir | Added the project-owned input map, stable-ID selection, raycast adapters, explicit interaction composition, and validated free/focus camera state machine | First Slice 3 interaction proof validated; time, scale-comparison, and UI work remain |
 | 0.7.0 | 2026-07-23 | Codex, for Tanvir | Added bounded time-control commands, read-only presentation state, the first runtime UI Toolkit HUD, reproducible UI authoring, and complete behavioral/visual validation | Time-control and HUD proof validated; scale comparison and broader interface remain |
+| 0.8.0 | 2026-07-23 | Codex, for Tanvir | Added authored educational summaries, display-only fact formatting, a selected-body information card, and a screen-space selection reticle | Slice 3 interaction vertical slice complete; visual/content production may begin |
 
 ### 1.3 Status vocabulary
 
@@ -349,6 +350,12 @@ it raycasts from the current pointer through the explorer camera, resolves a
 
 Focus may follow selection but remains a separate command so cinematic mode can move without changing informational selection.
 
+`SolarSystemHudPresenter` consumes the controller's selected view only as a
+presentation adapter: it projects the selected body's world position into
+panel space and sizes a four-corner reticle from the projected display radius.
+The selection service remains the sole owner of selected identity. Off-screen
+or invalid targets hide the reticle without clearing selection.
+
 ### 6.7 Camera
 
 **[IMPLEMENTED/PARTIAL]** `SolarSystemCameraController` currently supports:
@@ -391,8 +398,16 @@ while a project-owned UXML/USS pair defines the status and control-hint layout.
 units, and reacts only to effective settings/selection changes. UI never
 performs orbital math or writes simulation state. The proof displays running or
 paused state, the labeled multiplier and baseline meaning, current selection,
-and concise keyboard hints. Broader body data, navigator, settings, Help,
-scale-mode display, and licensed typography remain pending.
+and concise keyboard hints.
+
+`CelestialBodyInformation` is a display-only formatter. It converts the selected
+definition's verified authoring values into consistent, culture-invariant
+strings with units and bounded precision. Concise educational summaries are
+authored beside each definition; the formatter does not invent facts. The
+right-side card exposes the source-record ID and a scale-adjustment disclosure.
+The presenter owns visibility and UI element binding, not scientific data or
+selection state. Navigator, settings, Help, live current-distance/speed fields,
+scale-mode controls, and licensed typography remain release work.
 
 ### 6.10 Audio
 
@@ -673,7 +688,7 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
 
 ### Slice 3 - Interaction vertical slice
 
-**Status: In progress; interaction and time/HUD proofs implemented and validated on 2026-07-23.**
+**Status: Complete; validated on 2026-07-23.**
 
 - A project-owned Input System asset, explicit interaction composition root,
   stable-ID selection, raycast body adapters, and the free/focus camera state
@@ -685,14 +700,21 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   simulation internals to input or presentation.
 - The first runtime UI Toolkit HUD shows pause state, time rate, selected body,
   and keyboard hints through read-only application state.
-- Unity compilation completed with zero Console errors or warnings; all 64 Edit
+- A selected-body information card presents authored educational context,
+  verified physical/orbital values, units, scale disclosure, and the source
+  record. A screen-space four-corner reticle provides non-color-only selection
+  feedback while keeping selection separate from camera focus.
+- Unity compilation completed with zero Console errors; all 66 Edit
   Mode cases and all three real-scene Play Mode cases passed.
-- Guided scale mode, full body information/help/settings, selection
-  highlighting, licensed typography, and reduced-motion behavior remain pending.
+- Guided scale mode, navigator, Help/settings, licensed typography, and
+  reduced-motion behavior remain release work and do not block the start of
+  the visual/content production slice.
 - Detailed evidence is recorded in
   `Docs/ProjectManagement/Slice 3 Interaction Proof Validation.md`.
 - Time-control and HUD evidence is recorded in
   `Docs/ProjectManagement/Slice 3 Simulation Time and HUD Validation.md`.
+- Selection-feedback and educational-panel evidence is recorded in
+  `Docs/ProjectManagement/Slice 3 Selection and Body Information Validation.md`.
 
 ### Slice 4 - Visual/content completion
 

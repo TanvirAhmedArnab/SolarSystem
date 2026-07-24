@@ -31,6 +31,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialBodyCategory category,
             string parentId,
             string sourceId,
+            string educationalSummary,
             double radiusKm,
             double massKg,
             double rotationPeriodSeconds,
@@ -43,6 +44,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             Category = category;
             ParentId = parentId;
             SourceId = sourceId;
+            EducationalSummary = educationalSummary;
             RadiusKm = radiusKm;
             MassKg = massKg;
             RotationPeriodSeconds = rotationPeriodSeconds;
@@ -56,6 +58,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal CelestialBodyCategory Category { get; }
         internal string ParentId { get; }
         internal string SourceId { get; }
+        internal string EducationalSummary { get; }
         internal double RadiusKm { get; }
         internal double MassKg { get; }
         internal double RotationPeriodSeconds { get; }
