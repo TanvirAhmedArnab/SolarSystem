@@ -30,10 +30,16 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialTextureRoot + "/Earth/T_Earth_Clouds_2K.jpg";
         private const string SunTexturePath =
             CelestialTextureRoot + "/Sun/T_Sun_Surface_2K.jpg";
+        private const string JupiterTexturePath =
+            CelestialTextureRoot + "/Jupiter/T_Jupiter_Surface_2K.jpg";
         private const string SolarSurfaceShader =
             "SolarSystem/Celestial/Solar Surface";
         private const string SolarCoronaShader =
             "SolarSystem/Celestial/Solar Corona";
+        private const string GasGiantSurfaceShader =
+            "SolarSystem/Celestial/Gas Giant Surface";
+        private const string GasGiantAtmosphereShader =
+            "SolarSystem/Celestial/Gas Giant Atmosphere";
         private const string EarthSurfaceShader =
             "SolarSystem/Celestial/Earth Surface";
         private const string EarthCloudShader =
@@ -93,6 +99,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         private static readonly Color MoonTint = new Color(0.82f, 0.82f, 0.8f, 1f);
         private static readonly Color MarsTint = new Color(1f, 0.78f, 0.68f, 1f);
         private static readonly Color JupiterTint = new Color(0.96f, 0.9f, 0.84f, 1f);
+        private static readonly Color JupiterAtmosphereTint =
+            new Color(0.76f, 0.58f, 0.42f, 1f);
         private static readonly Color SaturnTint = new Color(1f, 0.93f, 0.78f, 1f);
         private static readonly Color UranusTint = new Color(0.78f, 0.95f, 1f, 1f);
         private static readonly Color NeptuneTint = new Color(0.72f, 0.84f, 1f, 1f);
@@ -350,6 +358,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 EarthLayerDefinition = CreateEarthLayerDefinition(),
                 EarthCloudMaterial = CreateEarthCloudMaterial(),
                 EarthAtmosphereMaterial = CreateEarthAtmosphereMaterial(),
+                JupiterVisualDefinition = CreateJupiterVisualDefinition(),
+                JupiterAtmosphereMaterial = CreateJupiterAtmosphereMaterial(),
                 OrbitMaterial = orbitMaterial,
                 SkyboxMaterial = skyboxMaterial,
                 VisualProfile = visualProfile,
@@ -518,6 +528,15 @@ namespace Tanvir.SolarSystem.Editor.Import
                         $"{CelestialTextureRoot}/Earth/{textureName}"));
                 earthMaterial.SetColor("_BaseColor", tint);
                 return earthMaterial;
+            }
+
+            if (bodyName == "Jupiter")
+            {
+                Material jupiterMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Jupiter.mat",
+                    GasGiantSurfaceShader);
+                ConfigureJupiterSurfaceMaterial(jupiterMaterial);
+                return jupiterMaterial;
             }
 
             Material material = CreateMaterial(
@@ -711,6 +730,63 @@ namespace Tanvir.SolarSystem.Editor.Import
                 EarthLayerRenderingContract.NightFadeEnd);
             material.enableInstancing = true;
             EditorUtility.SetDirty(material);
+        }
+
+        private static void ConfigureJupiterSurfaceMaterial(Material material)
+        {
+            material.SetTexture(
+                "_BaseMap",
+                LoadRequiredAsset<Texture2D>(JupiterTexturePath));
+            material.SetColor("_BaseColor", JupiterTint);
+            material.SetFloat(
+                "_BandNormalStrength",
+                GasGiantVisualRenderingContract.BandNormalStrength);
+            material.SetFloat("_BandSampleDistance", 1.5f);
+            material.SetFloat(
+                "_FlowStrength",
+                GasGiantVisualRenderingContract.BandFlowStrength);
+            material.SetFloat(
+                "_AnimatedDetailStrength",
+                GasGiantVisualRenderingContract.AnimatedDetailStrength);
+            material.SetFloat("_Specular", 0.08f);
+            material.SetFloat("_Smoothness", JupiterSmoothness);
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+        }
+
+        private static GasGiantVisualDefinition CreateJupiterVisualDefinition()
+        {
+            const string path =
+                DataRoot + "/VisualLayers/VisualLayers_Jupiter.asset";
+            GasGiantVisualDefinition definition =
+                CreateOrLoad<GasGiantVisualDefinition>(path);
+            var serialized = new SerializedObject(definition);
+            serialized.FindProperty("bodyStableId").stringValue = "jupiter";
+            serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =
+                GasGiantVisualRenderingContract.AtmosphereShellRadiusMultiplier;
+            serialized.FindProperty("bandFlowCyclesPerRotation").floatValue =
+                GasGiantVisualRenderingContract.BandFlowCyclesPerRotation;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+            return definition;
+        }
+
+        private static Material CreateJupiterAtmosphereMaterial()
+        {
+            const string path =
+                MaterialRoot + "/CelestialBodies/M_Jupiter_Atmosphere.mat";
+            Material material =
+                CreateOrUpdateMaterial(path, GasGiantAtmosphereShader);
+            material.SetColor("_AtmosphereColor", JupiterAtmosphereTint);
+            material.SetFloat("_RimPower", 4.8f);
+            material.SetFloat(
+                "_RimIntensity",
+                GasGiantVisualRenderingContract.AtmosphereIntensity);
+            material.SetFloat("_NightsideVisibility", 0.04f);
+            material.renderQueue = (int)RenderQueue.Transparent + 12;
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
         }
 
         private static CelestialLayerVisualDefinition CreateEarthLayerDefinition()

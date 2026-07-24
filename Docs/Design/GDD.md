@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.11.0  
+**Version:** 0.12.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -38,6 +38,7 @@
 | 0.9.0 | 2026-07-24 | Codex, for Tanvir | Implemented the approved three-stage guided physical-scale comparison with explicit transformations, controlled framing, cancellation, and explorer-state restoration | Product behavior implemented and validated |
 | 0.10.0 | 2026-07-24 | Codex, for Tanvir | Implemented the representative layered-Earth experience with readable day/night response, independent clouds and atmosphere, close-focus orbit suppression, and explicit shell-scale disclosure | Product behavior implemented and validated |
 | 0.11.0 | 2026-07-24 | Codex, for Tanvir | Implemented an exposure-safe solar hero treatment with subtle deterministic surface motion and a restrained corona while preserving the Sun as the scientific and lighting origin | Product behavior implemented and validated |
+| 0.12.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Jupiter hero treatment with stable source identity, readable cloud bands, subtle deterministic detail, a restrained atmospheric limb, and explicit non-scientific-fluid disclosure | Product behavior implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -403,6 +404,14 @@ solar convection. Its visual treatment does not move or replace the Sun's
 scientific transform or radial lighting origin. Live review did not justify a
 lens flare, so the release baseline omits one.
 
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Jupiter now preserves its approved
+source-map identity and Great Red Spot while presenting clearer cloud-band
+depth, subtle deterministic atmospheric detail, a readable day/night
+transition, and a thin warm limb. The detail freezes with simulation pause and
+does not alter Jupiter's proportional radius, analytical orbit, or signed
+rotation. It is an educational visual treatment, not a scientific
+fluid-dynamics simulation.
+
 ### 11.4 Asset provenance
 
 Every external asset requires a recorded source URL, creator or organization, license, attribution text, download date, and any modification notes. “Free” is not an acceptable license description. Unverified assets cannot enter a public build.
@@ -562,7 +571,7 @@ Each rule should have one authoritative owner document; other documents link to 
 
 **Current progress:** The Sun, eight planets, and Earth's Moon are populated as
 the deterministic planetary baseline. Major moons beyond Earth's Moon,
-unique visual layers beyond the representative Earth and Sun treatments,
+unique visual layers beyond the representative Earth, Sun, and Jupiter treatments,
 labels/navigation, cinematic routing, and accessibility completion remain.
 The licensed music, Sun/Earth ambience, and
 event-driven UI feedback baseline is implemented; final listening/mix approval

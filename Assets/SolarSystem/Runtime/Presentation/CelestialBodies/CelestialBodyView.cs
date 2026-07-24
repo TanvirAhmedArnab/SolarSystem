@@ -15,6 +15,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         [SerializeField] private SphereCollider selectionCollider;
         [SerializeField] private CelestialLayeredBodyView layeredBodyView;
         [SerializeField] private SolarVisualView solarVisualView;
+        [SerializeField] private GasGiantVisualView gasGiantVisualView;
 
         private CelestialBodyModel model;
         private float currentDisplayRadius;
@@ -39,6 +40,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Gets the optional deterministic solar presentation adapter.</summary>
         public SolarVisualView SolarVisualView => solarVisualView;
+
+        /// <summary>Gets the optional deterministic gas-giant presentation adapter.</summary>
+        public GasGiantVisualView GasGiantVisualView => gasGiantVisualView;
 
         /// <summary>Initializes the view against its immutable runtime model.</summary>
         public void Initialize(CelestialBodyModel runtimeModel)
@@ -72,6 +76,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             model = runtimeModel;
             layeredBodyView?.Initialize(runtimeModel);
             solarVisualView?.Initialize(runtimeModel);
+            gasGiantVisualView?.Initialize(runtimeModel);
         }
 
         /// <summary>Applies one projected snapshot to the transform hierarchy.</summary>
@@ -108,6 +113,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             visualRoot.localRotation = axialTilt * siderealSpin;
             layeredBodyView?.Apply(state.RotationAngleDeg);
             solarVisualView?.Apply(simulationTimeSeconds);
+            gasGiantVisualView?.Apply(simulationTimeSeconds);
         }
     }
 }

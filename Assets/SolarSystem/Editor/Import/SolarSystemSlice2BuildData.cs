@@ -19,6 +19,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal CelestialLayerVisualDefinition EarthLayerDefinition { get; set; }
         internal Material EarthCloudMaterial { get; set; }
         internal Material EarthAtmosphereMaterial { get; set; }
+        internal GasGiantVisualDefinition JupiterVisualDefinition { get; set; }
+        internal Material JupiterAtmosphereMaterial { get; set; }
         internal Material OrbitMaterial { get; set; }
         internal Material SkyboxMaterial { get; set; }
         internal VolumeProfile VisualProfile { get; set; }

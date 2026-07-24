@@ -1,0 +1,24 @@
+namespace Tanvir.SolarSystem.Presentation.CelestialBodies
+{
+    /// <summary>Reviewed numeric contract for reusable gas-giant presentation.</summary>
+    public static class GasGiantVisualRenderingContract
+    {
+        /// <summary>Atmosphere-shell radius relative to the physical surface.</summary>
+        public const float AtmosphereShellRadiusMultiplier = 1.01f;
+
+        /// <summary>Animated band-detail cycles completed per signed body rotation.</summary>
+        public const float BandFlowCyclesPerRotation = 0.0015f;
+
+        /// <summary>Maximum periodic longitudinal sample displacement.</summary>
+        public const float BandFlowStrength = 0.0035f;
+
+        /// <summary>Contribution of the moving detail sample to anchored source color.</summary>
+        public const float AnimatedDetailStrength = 0.08f;
+
+        /// <summary>Source-derived latitudinal normal strength.</summary>
+        public const float BandNormalStrength = 0.42f;
+
+        /// <summary>Restrained atmospheric limb intensity.</summary>
+        public const float AtmosphereIntensity = 0.2f;
+    }
+}

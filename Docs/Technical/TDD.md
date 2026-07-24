@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; layered-Earth and solar-hero representative slices validated  
-**Version:** 0.16.0  
+**Document status:** Living technical authority; layered-Earth, solar-hero, and Jupiter-hero representative slices validated  
+**Version:** 0.17.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -42,6 +42,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.14.0 | 2026-07-24 | Codex, for Tanvir | Added the deterministic three-stage scale service, shared linear projections, Earth-relative render origin, guided camera state capture/restoration, input locking, UI/audio adapters, and full regression coverage | Guided physical-scale comparison implemented and validated |
 | 0.15.0 | 2026-07-24 | Codex, for Tanvir | Added project-owned URP Earth shaders, immutable layer authoring, deterministic cloud drift, Sun shader globals, close-focus orbit visibility policy, and complete asset/scene regression coverage | Representative layered-Earth architecture implemented and validated |
 | 0.16.0 | 2026-07-24 | Codex, for Tanvir | Added project-owned solar surface/corona shaders, immutable solar authoring, absolute-time phase evaluation, cached property blocks, reproducible scene wiring, and complete asset/scene regression coverage | Solar hero architecture implemented and validated |
+| 0.17.0 | 2026-07-24 | Codex, for Tanvir | Added reusable gas-giant authoring, anchored-texture Jupiter surface/atmosphere shaders, absolute-time band phase, cached property blocks, reproducible scene wiring, and complete asset/scene regression coverage | Jupiter hero architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -725,6 +726,20 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   non-shadow-casting cloud shell at `1.004` radius, and a transparent
   non-shadow-casting atmosphere shell at `1.018` radius. The shell multipliers
   are presentation values and never enter scientific radius or orbit state.
+- `GasGiantVisualDefinition` stores a stable body ID, reviewed atmosphere-shell
+  multiplier, and band-detail cycles per signed rotation. Startup converts it
+  to immutable `GasGiantVisualModel` state. `GasGiantVisualView` evaluates one
+  wrapping band phase from authoritative absolute simulation time and writes
+  it through a cached `MaterialPropertyBlock`; it does not accumulate frame
+  delta, instantiate materials, or allocate during steady-state updates.
+- Jupiter composes an opaque project-owned PBR surface plus one transparent
+  atmosphere shell at `1.01` radius. The surface keeps the approved texture
+  anchored, derives shallow latitudinal normal variation from the texture, and
+  limits the moving sample to an `0.08` detail contribution. The atmosphere
+  is Sun-aware, non-shadow-casting, excluded from light/reflection probes, and
+  adds bounded overdraw only around Jupiter. Both materials enable GPU
+  instancing. None of these presentation values enter scientific radius,
+  orbit, or signed spin state.
 - `CelestialOrbitPathVisibilityController` suppresses cached overview paths
   during `FocusTransition` and `Focused`, then restores them in free flight.
   It changes renderer visibility only; geometry, scale-mode data, and
@@ -776,6 +791,9 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Solar authoring conversion, finite parameter validation, deterministic
   absolute-time phases, shell scale, property-block updates, and renderer
   policy.
+- Gas-giant authoring conversion, finite parameter validation, signed
+  absolute-time phase evaluation, atmosphere scale, property-block updates,
+  and renderer policy.
 
 ### 12.3 Play Mode tests
 
@@ -794,6 +812,10 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - The real scene validates the solar surface/corona hierarchy, deterministic
   phase progression and pause behavior, light-origin separation, close focus,
   renderer policy, and preserved camera/simulation state.
+- The real scene validates Jupiter's surface/atmosphere hierarchy, exact
+  Earth-relative radius, deterministic band phase and pause behavior,
+  Sun-origin lighting, focus/overview presentation, renderer policy, and
+  preserved camera/simulation state.
 
 ### 12.4 Manual validation
 
@@ -940,6 +962,13 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   overview and close-focus evidence did not justify adding a lens flare.
 - Solar surface/corona evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Solar Surface and Corona Validation.md`.
+- **[IMPLEMENTED REPRESENTATIVE SLICE]** Jupiter now uses a reusable
+  gas-giant contract, an anchored-texture project-owned PBR surface, restrained
+  source-derived band relief, absolute-time low-amplitude detail, and a
+  separate Sun-aware atmosphere limb. Scientific scale, signed rotation,
+  orbit, selection, focus, and state restoration remain unchanged.
+- Jupiter hero evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Jupiter Hero Rendering Validation.md`.
 - The broader proposed moon set, unique atmosphere/advanced shaders for other
   bodies, advanced ring shading, labels/navigation, player-facing audio
   settings, final audio mix approval, and accessibility options remain Slice 4
@@ -1004,6 +1033,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-015 | 2026-07-24 | Teach physical scale through three deterministic guided modes, use Earth as the literal render origin, and restore explorer state after completion or cancellation | Approved and implemented | Tanvir | GDD-007 and Slice 4 guided-comparison validation |
 | TDD-016 | 2026-07-24 | Prove layered rendering on Earth with project-owned URP shaders, immutable layer authoring, absolute deterministic cloud drift, a shared live-Sun global, and focus-only orbit suppression | Implemented candidate | Tanvir | Representative evidence before body-specific shader expansion |
 | TDD-017 | 2026-07-24 | Present the Sun with project-owned URP surface/corona shaders, absolute simulation-time phases, cached property blocks, and a visual/light separation; omit lens flare unless live evidence requires it | Implemented candidate | Tanvir | Deterministic, reusable hero treatment with controlled transparency and exposure cost |
+| TDD-018 | 2026-07-24 | Prove a reusable gas-giant contract on Jupiter with anchored source identity, source-derived band relief, low-amplitude absolute-time detail, one restrained atmosphere shell, and cached property-block updates | Implemented candidate | Tanvir | Preserves the Great Red Spot and scientific state while adding bounded hero fidelity and a reusable Saturn-facing architecture |
 
 ## 19. Definition of Done for TDD Version 1.0
 

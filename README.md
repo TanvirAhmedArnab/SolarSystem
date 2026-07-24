@@ -70,13 +70,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Guided Physical Scale Comparison Validation](Docs/ProjectManagement/Slice%204%20Guided%20Physical%20Scale%20Comparison%20Validation.md)
 - [Slice 4 Layered Earth Rendering Validation](Docs/ProjectManagement/Slice%204%20Layered%20Earth%20Rendering%20Validation.md)
 - [Slice 4 Solar Surface and Corona Validation](Docs/ProjectManagement/Slice%204%20Solar%20Surface%20and%20Corona%20Validation.md)
+- [Slice 4 Jupiter Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Jupiter%20Hero%20Rendering%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/Earth-Moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 121 Edit Mode cases and
-10 real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 126 Edit Mode cases and
+11 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -96,6 +97,10 @@ a restrained atmosphere rim, and close-focus orbit-guide suppression.
 The Sun now provides a second representative hero treatment with a
 project-owned deterministic surface shader, a thin separate corona, preserved
 radial-light origin, and exposure-safe overview and close-focus presentation.
+Jupiter now proves a reusable gas-giant pattern with an anchored source
+texture, source-derived band relief, deterministic low-amplitude detail, and a
+thin Sun-aware atmosphere while preserving its exact proportional radius,
+analytical orbit, signed rotation, and Great Red Spot identity.
 Detailed evidence is recorded in `Docs/ProjectManagement`.
 
 ## License

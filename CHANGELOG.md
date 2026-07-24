@@ -77,6 +77,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Edit Mode solar authoring/material/shader contracts and real-scene Play Mode
   coverage for hierarchy, phase progression, pause, focus, renderer policy,
   and separation from the Sun-origin radial light.
+- Reusable immutable gas-giant authoring plus an allocation-free runtime
+  property-block adapter driven by authoritative absolute simulation time.
+- Project-owned URP Jupiter surface and atmosphere shaders that preserve the
+  anchored approved texture, add restrained source-derived band relief, and
+  keep transparent limb overdraw bounded to one shell.
+- Edit Mode gas-giant authoring/material/import contracts and real-scene Play
+  Mode coverage for hierarchy, exact proportional radius, deterministic phase,
+  pause, Sun-origin lighting, focus, renderer policy, and state preservation.
 
 ### Changed
 
@@ -118,6 +126,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Replaced the Sun's static baseline material with an exposure-safe hero
   treatment and a restrained non-shadow-casting corona; live evidence did not
   justify adding a lens flare.
+- Replaced Jupiter's generic Lit baseline with a reusable gas-giant hero
+  treatment while retaining the existing texture pixels, Great Red Spot,
+  scientific data, scale, orbit, and signed rotation.
 - Suppressed cached orbit guides only during close camera focus and restored
   them in free flight so overview geometry cannot obscure hero views.
 - Paused simulation and temporarily locked selection, time, and navigation

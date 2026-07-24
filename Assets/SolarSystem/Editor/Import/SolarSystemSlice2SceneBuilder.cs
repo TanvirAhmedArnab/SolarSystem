@@ -30,6 +30,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string LegacySolarKeyLightName = "Sun Key Light";
         private const string SunStableId = "sun";
         private const string EarthStableId = "earth";
+        private const string JupiterStableId = "jupiter";
         private const float EarthAmbienceMinimumDistance = 1.5f;
         private const float EarthAmbienceMaximumDistance = 12f;
         private const float SolarRadialIntensityCandela = 165000f;
@@ -63,6 +64,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             var orbitPaths = new List<CelestialOrbitPathView>(content.Bodies.Length - 1);
             CelestialBodyView sunView = null;
             CelestialBodyView earthView = null;
+            CelestialBodyView jupiterView = null;
             foreach (SolarSystemSlice2BodyContent body in content.Bodies)
             {
                 bool isSaturn = body.Definition.StableId == "saturn";
@@ -80,6 +82,10 @@ namespace Tanvir.SolarSystem.Editor.Import
                 else if (body.Definition.StableId == EarthStableId)
                 {
                     earthView = view;
+                }
+                else if (body.Definition.StableId == JupiterStableId)
+                {
+                    jupiterView = view;
                 }
 
                 if (body.Definition.HasOrbit)
@@ -103,8 +109,14 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Earth.");
             }
 
+            if (jupiterView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Jupiter.");
+            }
+
             CreateSunVisual(sunView, content);
             CreateEarthLayers(earthView, content);
+            CreateJupiterVisual(jupiterView, content);
             ConfigureSimulationComposition(
                 composition,
                 controller,
@@ -312,6 +324,48 @@ namespace Tanvir.SolarSystem.Editor.Import
             var serializedBody = new SerializedObject(earth);
             serializedBody.FindProperty("layeredBodyView").objectReferenceValue =
                 layeredView;
+            serializedBody.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void CreateJupiterVisual(
+            CelestialBodyView jupiter,
+            SolarSystemSlice2Content content)
+        {
+            if (content.JupiterVisualDefinition == null ||
+                content.JupiterAtmosphereMaterial == null)
+            {
+                throw new InvalidOperationException(
+                    "Jupiter hero presentation assets are incomplete.");
+            }
+
+            Transform visualRoot = jupiter.VisualRoot;
+            MeshRenderer surfaceRenderer =
+                visualRoot.GetComponent<MeshRenderer>();
+            surfaceRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            surfaceRenderer.receiveShadows = false;
+
+            Transform atmosphereShell = CreateLayerSphere(
+                "Atmosphere Layer",
+                visualRoot,
+                content.JupiterAtmosphereMaterial,
+                content.JupiterVisualDefinition.AtmosphereShellRadiusMultiplier);
+
+            GasGiantVisualView gasGiantView =
+                jupiter.gameObject.AddComponent<GasGiantVisualView>();
+            var serializedGasGiant = new SerializedObject(gasGiantView);
+            serializedGasGiant.FindProperty("definition").objectReferenceValue =
+                content.JupiterVisualDefinition;
+            serializedGasGiant.FindProperty("atmosphereShell").objectReferenceValue =
+                atmosphereShell;
+            serializedGasGiant.FindProperty("surfaceRenderer").objectReferenceValue =
+                surfaceRenderer;
+            serializedGasGiant.FindProperty("atmosphereRenderer").objectReferenceValue =
+                atmosphereShell.GetComponent<MeshRenderer>();
+            serializedGasGiant.ApplyModifiedPropertiesWithoutUndo();
+
+            var serializedBody = new SerializedObject(jupiter);
+            serializedBody.FindProperty("gasGiantVisualView").objectReferenceValue =
+                gasGiantView;
             serializedBody.ApplyModifiedPropertiesWithoutUndo();
         }
 

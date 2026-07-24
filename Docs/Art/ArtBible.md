@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, layered-Earth, and solar-hero foundations  
-**Version:** 0.12.0  
+**Status:** Living authority with validated visual, audio, guided-scale, layered-Earth, solar-hero, and Jupiter-hero foundations  
+**Version:** 0.13.0  
 **Last updated:** 2026-07-24  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -159,6 +159,23 @@ The baseline uses the audited 2K surface map with `0.10` smoothness.
 
 ### Jupiter
 Cloud bands and Great Red Spot define identity. Use soft broad response; optional band motion must preserve features.
+
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Jupiter uses a project-owned URP
+surface shader that keeps the approved 2K Solar System Scope map anchored as
+its primary color source. The Great Red Spot and large cloud structures
+therefore rotate only with the authored planet rather than sliding across its
+surface. Source-derived north/south luminance differences add restrained
+latitudinal relief, while one low-amplitude periodic detail sample contributes
+only `0.08` of the final color. The detail phase comes from absolute simulation
+time and Jupiter's signed rotation period; it freezes when the simulation is
+paused and is not a claim of scientific atmospheric-fluid simulation.
+
+A separate warm atmosphere shell at `1.01` surface radius adds a thin
+Sun-aware limb. It is transparent, non-shadow-casting, excluded from light and
+reflection probes, and tuned to `0.20` rim intensity. Live overview and close
+focus preserve the Great Red Spot, readable bands, a legible nightside,
+selection feedback, and UI exposure without turning Jupiter into a glowing
+sphere.
 
 ### Io
 USGS browse mosaic; sulfur yellow, orange, white, and dark volcanic markings. Animated eruptions are out of minimum scope.
@@ -337,14 +354,15 @@ An asset is ready only when:
 1. **[OPEN] Font family:** decide after UI wireframes and license review.
 2. **[OPEN] Icon family:** project-authored or compatible open-license set.
 3. **[OPEN] Moon upgrades:** identify browse maps needing higher resolution after hero shots.
-4. **[OPEN] Remaining shader fidelity:** profile the validated Earth and Sun
-   patterns, then select other body-specific atmosphere techniques.
+4. **[OPEN] Remaining shader fidelity:** profile the validated Earth, Sun, and
+   Jupiter patterns, then select Saturn and other body-specific techniques.
 5. **[OPEN] Audio mix:** approve music, Sun, Earth, and UI loudness after in-scene audition.
 
 ## Revision History
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.13.0 | 2026-07-24 | Added the validated anchored-texture Jupiter surface, restrained source-derived band relief, deterministic low-amplitude detail, Sun-aware limb, and scientific-limitation disclosure | Jupiter hero slice implemented and visually validated |
 | 0.12.0 | 2026-07-24 | Added the validated deterministic solar surface, separate restrained corona, exposure-safe overview/focus treatment, and evidence-based decision to omit lens flare | Solar hero slice implemented and visually validated |
 | 0.11.0 | 2026-07-24 | Added the validated layered-Earth surface, nightside emission, independent cloud shell, restrained atmosphere rim, focus readability, and explicit scale disclosure | Representative visual slice implemented and visually validated |
 | 0.10.0 | 2026-07-24 | Added the validated three-stage scale-comparison card, visual-density rules, transformation disclosures, and linear-stage honesty requirements | Approved behavior implemented and visually validated |

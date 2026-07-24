@@ -24,6 +24,14 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Sun_Corona.mat";
         private const string SunVisualDefinitionPath =
             "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Sun.asset";
+        private const string JupiterTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Jupiter/T_Jupiter_Surface_2K.jpg";
+        private const string JupiterMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Jupiter.mat";
+        private const string JupiterAtmosphereMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Jupiter_Atmosphere.mat";
+        private const string JupiterVisualDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Jupiter.asset";
         private const string EarthMaterialPath =
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Earth.mat";
         private const string EarthNormalPath =
@@ -176,6 +184,69 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(
                 definition.CoronaShellRadiusMultiplier,
                 Is.EqualTo(SolarVisualRenderingContract.CoronaShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(importer, Is.Not.Null);
+            Assert.That(importer.sRGBTexture, Is.True);
+            Assert.That(importer.mipmapEnabled, Is.True);
+            Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Repeat));
+        }
+
+        [Test]
+        public void JupiterMaterials_UseAnchoredTextureAndGasGiantContract()
+        {
+            Texture2D texture =
+                AssetDatabase.LoadAssetAtPath<Texture2D>(JupiterTexturePath);
+            Material surface =
+                AssetDatabase.LoadAssetAtPath<Material>(JupiterMaterialPath);
+            Material atmosphere =
+                AssetDatabase.LoadAssetAtPath<Material>(
+                    JupiterAtmosphereMaterialPath);
+            GasGiantVisualDefinition definition =
+                AssetDatabase.LoadAssetAtPath<GasGiantVisualDefinition>(
+                    JupiterVisualDefinitionPath);
+            var importer =
+                AssetImporter.GetAtPath(JupiterTexturePath) as TextureImporter;
+
+            Assert.That(texture, Is.Not.Null);
+            Assert.That(surface, Is.Not.Null);
+            Assert.That(
+                surface.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Gas Giant Surface"));
+            Assert.That(surface.GetTexture("_BaseMap"), Is.SameAs(texture));
+            Assert.That(
+                surface.GetFloat("_FlowStrength"),
+                Is.EqualTo(GasGiantVisualRenderingContract.BandFlowStrength)
+                    .Within(0.0001f));
+            Assert.That(
+                surface.GetFloat("_AnimatedDetailStrength"),
+                Is.EqualTo(
+                    GasGiantVisualRenderingContract.AnimatedDetailStrength)
+                    .Within(0.0001f));
+            Assert.That(
+                surface.GetFloat("_BandNormalStrength"),
+                Is.EqualTo(GasGiantVisualRenderingContract.BandNormalStrength)
+                    .Within(0.0001f));
+            Assert.That(surface.enableInstancing, Is.True);
+
+            Assert.That(atmosphere, Is.Not.Null);
+            Assert.That(
+                atmosphere.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Gas Giant Atmosphere"));
+            Assert.That(
+                atmosphere.GetFloat("_RimIntensity"),
+                Is.EqualTo(GasGiantVisualRenderingContract.AtmosphereIntensity)
+                    .Within(0.0001f));
+            Assert.That(
+                atmosphere.renderQueue,
+                Is.EqualTo((int)RenderQueue.Transparent + 12));
+            Assert.That(atmosphere.enableInstancing, Is.True);
+
+            Assert.That(definition, Is.Not.Null);
+            Assert.That(definition.BodyStableId, Is.EqualTo("jupiter"));
+            Assert.That(
+                definition.AtmosphereShellRadiusMultiplier,
+                Is.EqualTo(
+                    GasGiantVisualRenderingContract.AtmosphereShellRadiusMultiplier)
                     .Within(0.0001f));
             Assert.That(importer, Is.Not.Null);
             Assert.That(importer.sRGBTexture, Is.True);

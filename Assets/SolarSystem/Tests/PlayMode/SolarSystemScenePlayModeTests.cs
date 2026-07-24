@@ -163,7 +163,7 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             AssertCameraFaces(camera, earth);
             Assert.That(orbitVisibility.ArePathsVisible, Is.False);
             Assert.That(
-                Object.FindObjectsByType<CelestialOrbitPathView>(FindObjectsSortMode.None),
+                Object.FindObjectsByType<CelestialOrbitPathView>(),
                 Has.All.Matches<CelestialOrbitPathView>(
                     path => !path.GetComponent<LineRenderer>().enabled));
 
@@ -186,7 +186,7 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(cameraController.FocusedTarget, Is.Null);
             Assert.That(orbitVisibility.ArePathsVisible, Is.True);
             Assert.That(
-                Object.FindObjectsByType<CelestialOrbitPathView>(FindObjectsSortMode.None),
+                Object.FindObjectsByType<CelestialOrbitPathView>(),
                 Has.All.Matches<CelestialOrbitPathView>(
                     path => path.GetComponent<LineRenderer>().enabled));
             Assert.That(
@@ -783,6 +783,111 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(
                 properties.GetFloat(Shader.PropertyToID("_SimulationPhase")),
                 Is.EqualTo(solar.CoronaPhase).Within(0.000001f));
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_UsesDeterministicJupiterHeroRendering()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "jupiter",
+                    out CelestialBodyView jupiter),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+
+            GasGiantVisualView gasGiant = jupiter.GasGiantVisualView;
+            Assert.That(gasGiant, Is.Not.Null);
+            Assert.That(gasGiant.IsInitialized, Is.True);
+            Assert.That(
+                gasGiant.AtmosphereShell.parent,
+                Is.SameAs(jupiter.VisualRoot));
+            Assert.That(
+                gasGiant.AtmosphereShell.localScale.x,
+                Is.EqualTo(
+                    GasGiantVisualRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                gasGiant.SurfaceRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Gas Giant Surface"));
+            Assert.That(
+                gasGiant.AtmosphereRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Gas Giant Atmosphere"));
+            Assert.That(
+                gasGiant.SurfaceRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(
+                gasGiant.AtmosphereRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(gasGiant.AtmosphereRenderer.receiveShadows, Is.False);
+            Assert.That(
+                gasGiant.AtmosphereRenderer.lightProbeUsage,
+                Is.EqualTo(LightProbeUsage.Off));
+            Assert.That(
+                gasGiant.AtmosphereRenderer.reflectionProbeUsage,
+                Is.EqualTo(ReflectionProbeUsage.Off));
+            Assert.That(
+                jupiter.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(69911f / 6371.0084f).Within(0.001f));
+
+            Light radialLight =
+                GameObject.Find("Solar Radial Light")?.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            AssertReceivesSunOriginLight(radialLight, sun, jupiter);
+
+            float phaseBefore = gasGiant.BandPhase;
+            yield return new WaitForSecondsRealtime(0.2f);
+            Assert.That(
+                PhaseDistance(phaseBefore, gasGiant.BandPhase),
+                Is.GreaterThan(0.00001f));
+
+            simulation.SimulationController.SetPaused(true);
+            yield return null;
+            float pausedPhase = gasGiant.BandPhase;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(
+                PhaseDistance(pausedPhase, gasGiant.BandPhase),
+                Is.LessThan(0.000001f));
+
+            interaction.SelectionController.Select(jupiter);
+            interaction.CameraController.Focus(jupiter);
+            yield return WaitUntilFocused(interaction.CameraController);
+            yield return null;
+            Assert.That(gasGiant.SurfaceRenderer.enabled, Is.True);
+            Assert.That(gasGiant.AtmosphereRenderer.enabled, Is.True);
+            Assert.That(
+                simulation.SimulationController.ClockSnapshot.IsPaused,
+                Is.True);
+
+            var properties = new MaterialPropertyBlock();
+            gasGiant.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_SimulationPhase")),
+                Is.EqualTo(gasGiant.BandPhase).Within(0.000001f));
+
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+            Assert.That(
+                interaction.CameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.FreeFlight));
+            AssertReceivesSunOriginLight(radialLight, sun, jupiter);
         }
 
         private static void AssertReceivesSunOriginLight(
