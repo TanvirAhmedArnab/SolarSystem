@@ -4,6 +4,7 @@ using Tanvir.SolarSystem.Audio;
 using Tanvir.SolarSystem.Interaction;
 using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
+using Tanvir.SolarSystem.Presentation.Scale;
 using Tanvir.SolarSystem.Simulation;
 using UnityEditor;
 using UnityEngine;
@@ -21,9 +22,11 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         private AudioClip selectionClip;
         private AudioClip focusClip;
         private AudioClip timeClip;
+        private AudioClip scaleClip;
         private SelectionService selection;
         private SimulationTimeControlService timeControls;
         private SolarSystemCameraController cameraController;
+        private GuidedScaleComparisonService scaleComparison;
 
         [SetUp]
         public void SetUp()
@@ -37,6 +40,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             selectionClip = AudioClip.Create("Selection", 64, 1, 8000, false);
             focusClip = AudioClip.Create("Focus", 64, 1, 8000, false);
             timeClip = AudioClip.Create("Time", 64, 1, 8000, false);
+            scaleClip = AudioClip.Create("Scale", 64, 1, 8000, false);
 
             var serialized = new SerializedObject(director);
             serialized.FindProperty("musicSource").objectReferenceValue = music;
@@ -46,13 +50,22 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             serialized.FindProperty("selectionClip").objectReferenceValue = selectionClip;
             serialized.FindProperty("focusClip").objectReferenceValue = focusClip;
             serialized.FindProperty("timeControlClip").objectReferenceValue = timeClip;
+            serialized.FindProperty("scaleComparisonClip").objectReferenceValue =
+                scaleClip;
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
             selection = new SelectionService();
             timeControls = new SimulationTimeControlService(new FakeTimeController());
             cameraController = new GameObject("Camera Controller")
                 .AddComponent<SolarSystemCameraController>();
-            director.Initialize(selection, timeControls, cameraController);
+            scaleComparison = new GuidedScaleComparisonService(
+                new FakeScaleController(),
+                timeControls);
+            director.Initialize(
+                selection,
+                timeControls,
+                cameraController,
+                scaleComparison);
         }
 
         [TearDown]
@@ -61,6 +74,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Object.DestroyImmediate(selectionClip);
             Object.DestroyImmediate(focusClip);
             Object.DestroyImmediate(timeClip);
+            Object.DestroyImmediate(scaleClip);
             Object.DestroyImmediate(cameraController.gameObject);
             Object.DestroyImmediate(root);
         }
@@ -96,8 +110,14 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                     Is.EqualTo(AudioFeedbackCue.TimeControl));
                 Assert.That(director.FeedbackCueCount, Is.EqualTo(3));
 
+                scaleComparison.Advance();
+                Assert.That(
+                    director.LastFeedbackCue,
+                    Is.EqualTo(AudioFeedbackCue.ScaleComparison));
+                Assert.That(director.FeedbackCueCount, Is.EqualTo(4));
+
                 selection.Clear();
-                Assert.That(director.FeedbackCueCount, Is.EqualTo(3));
+                Assert.That(director.FeedbackCueCount, Is.EqualTo(4));
             }
             finally
             {
@@ -154,6 +174,17 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             public void SetSpeedMultiplier(double speedMultiplier)
             {
                 speed = speedMultiplier;
+            }
+        }
+
+        private sealed class FakeScaleController : IScaleModeController
+        {
+            public CelestialScaleMode ScaleMode { get; private set; } =
+                CelestialScaleMode.ReadableOverview;
+
+            public void SetScaleMode(CelestialScaleMode mode)
+            {
+                ScaleMode = mode;
             }
         }
     }

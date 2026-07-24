@@ -10,7 +10,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string InputFolder = "Assets/SolarSystem/Settings/Input";
         private const string InputAssetPath = InputFolder + "/IA_SolarSystem.asset";
         private const string AssetName = "IA_SolarSystem";
-        private const string ContractLabel = "SolarSystemInputContract-v2";
+        private const string ContractLabel = "SolarSystemInputContract-v3";
 
         internal static InputActionAsset Build()
         {
@@ -108,6 +108,10 @@ namespace Tanvir.SolarSystem.Editor.Import
             explorer.AddAction("Focus", InputActionType.Button, "<Keyboard>/f");
             explorer.AddAction("Cancel", InputActionType.Button, "<Keyboard>/escape");
             explorer.AddAction("TogglePause", InputActionType.Button, "<Keyboard>/space");
+            explorer.AddAction(
+                "ScaleComparison",
+                InputActionType.Button,
+                "<Keyboard>/c");
             explorer.AddAction(
                 "DecreaseTimeSpeed",
                 InputActionType.Button,

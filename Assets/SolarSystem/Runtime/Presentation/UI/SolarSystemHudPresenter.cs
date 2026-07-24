@@ -17,6 +17,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
         [SerializeField] private StyleSheet styleSheet;
 
         private SimulationTimeControlService timeControls;
+        private GuidedScaleComparisonService scaleComparison;
         private SelectionService selection;
         private CelestialSelectionController selectionController;
         private UnityEngine.Camera explorerCamera;
@@ -26,7 +27,14 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private Label simulationState;
         private Label simulationRate;
         private Label selectionTarget;
+        private Label scaleMode;
         private Label pauseAction;
+        private VisualElement comparisonPanel;
+        private Label comparisonProgress;
+        private Label comparisonTitle;
+        private Label comparisonMetric;
+        private Label comparisonDescription;
+        private Label comparisonNextAction;
         private Label bodyName;
         private Label bodyCategory;
         private Label bodySummary;
@@ -69,11 +77,24 @@ namespace Tanvir.SolarSystem.Presentation.UI
         /// <summary>Gets the contextual action shown beneath the Space keycap.</summary>
         public string PauseActionText => pauseAction?.text ?? string.Empty;
 
+        /// <summary>Gets the active scale-mode disclosure.</summary>
+        public string ScaleModeText => scaleMode?.text ?? string.Empty;
+
+        /// <summary>Gets whether the guided educational card is visible.</summary>
+        public bool IsScaleComparisonVisible { get; private set; }
+
+        /// <summary>Gets the guided comparison's current title.</summary>
+        public string ScaleComparisonTitleText => comparisonTitle?.text ?? string.Empty;
+
+        /// <summary>Gets the guided comparison's primary numeric explanation.</summary>
+        public string ScaleComparisonMetricText => comparisonMetric?.text ?? string.Empty;
+
         /// <summary>Initializes the HUD against read-only application services.</summary>
         public void Initialize(
             SimulationTimeControlService simulationTimeControls,
             CelestialSelectionController celestialSelectionController,
-            UnityEngine.Camera camera)
+            UnityEngine.Camera camera,
+            GuidedScaleComparisonService guidedScaleComparison)
         {
             Release();
             timeControls = simulationTimeControls ??
@@ -86,6 +107,8 @@ namespace Tanvir.SolarSystem.Presentation.UI
             explorerCamera = camera != null
                 ? camera
                 : throw new ArgumentNullException(nameof(camera));
+            scaleComparison = guidedScaleComparison ??
+                throw new ArgumentNullException(nameof(guidedScaleComparison));
 
             if (document == null || styleSheet == null)
             {
@@ -95,6 +118,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
             timeControls.Changed += Refresh;
             selection.SelectionChanged += OnSelectionChanged;
+            scaleComparison.Changed += Refresh;
             TryConnectDocument();
         }
 
@@ -136,7 +160,16 @@ namespace Tanvir.SolarSystem.Presentation.UI
             selectionTarget.text = selection.SelectedId.HasValue
                 ? $"TARGET / {selection.SelectedId.Value.Value.ToUpperInvariant()}"
                 : "TARGET / NONE";
+            scaleMode.text = scaleComparison.Stage switch
+            {
+                GuidedScaleComparisonStage.NormalizedOrbits =>
+                    "SCALE / LINEAR ORBITS / 1 UNIT = 37.659 MILLION KM",
+                GuidedScaleComparisonStage.LiteralEarthReference =>
+                    "SCALE / LITERAL / EARTH RADIUS = 1",
+                _ => "SCALE / READABLE OVERVIEW / ORBITS COMPRESSED"
+            };
             pauseAction.text = snapshot.IsPaused ? "RESUME" : "PAUSE";
+            RefreshScaleComparison();
             RefreshBodyInformation();
         }
 
@@ -158,20 +191,34 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 selection.SelectionChanged -= OnSelectionChanged;
             }
 
+            if (scaleComparison != null)
+            {
+                scaleComparison.Changed -= Refresh;
+            }
+
             timeControls = null;
             selection = null;
             selectionController = null;
             explorerCamera = null;
+            scaleComparison = null;
             IsInitialized = false;
             IsBodyInformationVisible = false;
             IsSelectionReticleVisible = false;
+            IsScaleComparisonVisible = false;
             hudRoot = null;
             bodyInformationPanel = null;
             selectionReticle = null;
+            comparisonPanel = null;
             simulationState = null;
             simulationRate = null;
             selectionTarget = null;
+            scaleMode = null;
             pauseAction = null;
+            comparisonProgress = null;
+            comparisonTitle = null;
+            comparisonMetric = null;
+            comparisonDescription = null;
+            comparisonNextAction = null;
             bodyName = null;
             bodyCategory = null;
             bodySummary = null;
@@ -206,10 +253,17 @@ namespace Tanvir.SolarSystem.Presentation.UI
             hudRoot = RequireElement(root, "hud-root");
             bodyInformationPanel = RequireElement(root, "body-information-panel");
             selectionReticle = RequireElement(root, "selection-reticle");
+            comparisonPanel = RequireElement(root, "scale-comparison-panel");
             simulationState = RequireLabel(root, "simulation-state");
             simulationRate = RequireLabel(root, "simulation-rate");
             selectionTarget = RequireLabel(root, "selection-target");
+            scaleMode = RequireLabel(root, "scale-mode");
             pauseAction = RequireLabel(root, "pause-action");
+            comparisonProgress = RequireLabel(root, "comparison-progress");
+            comparisonTitle = RequireLabel(root, "comparison-title");
+            comparisonMetric = RequireLabel(root, "comparison-metric");
+            comparisonDescription = RequireLabel(root, "comparison-description");
+            comparisonNextAction = RequireLabel(root, "comparison-next-action");
             bodyName = RequireLabel(root, "body-name");
             bodyCategory = RequireLabel(root, "body-category");
             bodySummary = RequireLabel(root, "body-summary");
@@ -227,6 +281,12 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         private void RefreshBodyInformation()
         {
+            if (scaleComparison?.IsActive == true)
+            {
+                SetBodyInformationVisible(false);
+                return;
+            }
+
             CelestialBodyView selectedView = selectionController?.SelectedView;
             if (selectedView == null || selectedView.Definition == null)
             {
@@ -254,6 +314,12 @@ namespace Tanvir.SolarSystem.Presentation.UI
         {
             if (!IsInitialized || hudRoot == null || selectionReticle == null)
             {
+                return;
+            }
+
+            if (scaleComparison?.IsActive == true)
+            {
+                SetSelectionReticleVisible(false);
                 return;
             }
 
@@ -304,6 +370,55 @@ namespace Tanvir.SolarSystem.Presentation.UI
         {
             IsSelectionReticleVisible = visible;
             selectionReticle.EnableInClassList("is-hidden", !visible);
+        }
+
+        private void RefreshScaleComparison()
+        {
+            bool visible = scaleComparison.IsActive;
+            IsScaleComparisonVisible = visible;
+            comparisonPanel.EnableInClassList("is-hidden", !visible);
+            hudRoot.EnableInClassList("comparison-active", visible);
+            if (!visible)
+            {
+                return;
+            }
+
+            comparisonProgress.text =
+                $"GUIDED SCALE COMPARISON / STEP {scaleComparison.CurrentStep} " +
+                $"OF {scaleComparison.StepCount}";
+            switch (scaleComparison.Stage)
+            {
+                case GuidedScaleComparisonStage.ReadableOverview:
+                    comparisonTitle.text = "READABLE OVERVIEW";
+                    comparisonMetric.text =
+                        "BODY RADII: EARTH-PROPORTIONAL / ORBITS: LOGARITHMIC";
+                    comparisonDescription.text =
+                        "The whole system fits because empty orbital distance is " +
+                        "compressed. Planet-to-planet size ratios remain honest.";
+                    comparisonNextAction.text = "NEXT";
+                    break;
+                case GuidedScaleComparisonStage.NormalizedOrbits:
+                    comparisonTitle.text = "LINEAR ORBIT SPACING";
+                    comparisonMetric.text =
+                        "1 ORBIT UNIT = 37.659 MILLION KM";
+                    comparisonDescription.text =
+                        "Sizes and distances now share one linear scale. Real bodies " +
+                        "shrink below a pixel; the visible orbit lines are guides.";
+                    comparisonNextAction.text = "NEXT";
+                    break;
+                case GuidedScaleComparisonStage.LiteralEarthReference:
+                    comparisonTitle.text = "LITERAL EARTH-RADIUS REFERENCE";
+                    comparisonMetric.text =
+                        "EARTH RADIUS = 1 / EARTH-SUN ≈ 23,481";
+                    comparisonDescription.text =
+                        "Earth is effectively invisible beside the Sun, and Neptune " +
+                        "lies far outside this Sun-Earth frame. This is the real scale problem.";
+                    comparisonNextAction.text = "FINISH";
+                    break;
+                default:
+                    throw new InvalidOperationException(
+                        $"Unsupported comparison stage '{scaleComparison.Stage}'.");
+            }
         }
 
         private static Label RequireLabel(VisualElement root, string name)

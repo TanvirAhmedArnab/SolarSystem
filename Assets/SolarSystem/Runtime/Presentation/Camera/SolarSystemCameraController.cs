@@ -18,6 +18,7 @@ namespace Tanvir.SolarSystem.Presentation.Camera
         private const float FocusDistanceMultiplier = 3.5f;
         private const float MinimumFocusDistance = 1.5f;
         private const float ZoomSensitivity = 0.004f;
+        private const float GuidedTransitionDuration = 0.8f;
 
         private SolarSystemInputAdapter input;
         private CelestialSelectionController selection;
@@ -28,12 +29,24 @@ namespace Tanvir.SolarSystem.Presentation.Camera
         private float transitionElapsed;
         private float yaw;
         private float pitch;
+        private UnityEngine.Camera controlledCamera;
+        private Vector3 guidedTransitionStartPosition;
+        private Quaternion guidedTransitionStartRotation;
+        private float guidedTransitionStartNear;
+        private float guidedTransitionStartFar;
+        private GuidedCameraPose guidedTargetPose;
+        private float guidedTransitionElapsed;
+        private bool guidedRestorePending;
+        private CameraSnapshot cameraSnapshot;
 
         /// <summary>Gets the current camera interaction state.</summary>
         public SolarSystemCameraMode Mode { get; private set; }
 
         /// <summary>Gets the current focus target, including during transition.</summary>
         public CelestialBodyView FocusedTarget { get; private set; }
+
+        /// <summary>Gets whether the comparison currently owns camera navigation.</summary>
+        public bool IsGuidedComparisonActive { get; private set; }
 
         /// <summary>Gets whether dependencies have been assigned.</summary>
         public bool IsInitialized => input != null && selection != null;
@@ -58,8 +71,15 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             selection = selectionController != null
                 ? selectionController
                 : throw new ArgumentNullException(nameof(selectionController));
+            controlledCamera = GetComponent<UnityEngine.Camera>();
+            if (controlledCamera == null)
+            {
+                throw new InvalidOperationException(
+                    "SolarSystemCameraController must share a GameObject with a Camera.");
+            }
+
             input.FocusPerformed += OnFocusPerformed;
-            input.CancelPerformed += ReturnToFreeFlight;
+            input.CancelPerformed += OnCancelPerformed;
             Vector3 euler = transform.eulerAngles;
             yaw = euler.y;
             pitch = NormalizePitch(euler.x);
@@ -72,6 +92,11 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             if (target == null)
             {
                 throw new ArgumentNullException(nameof(target));
+            }
+
+            if (IsGuidedComparisonActive)
+            {
+                return;
             }
 
             FocusedTarget = target;
@@ -94,12 +119,75 @@ namespace Tanvir.SolarSystem.Presentation.Camera
         /// <summary>Cancels focus without snapping or changing the current camera pose.</summary>
         public void ReturnToFreeFlight()
         {
+            if (IsGuidedComparisonActive)
+            {
+                return;
+            }
+
             FocusedTarget = null;
             velocity = Vector3.zero;
             Vector3 euler = transform.eulerAngles;
             yaw = euler.y;
             pitch = NormalizePitch(euler.x);
             Mode = SolarSystemCameraMode.FreeFlight;
+        }
+
+        /// <summary>Captures explorer state and transitions into guided framing.</summary>
+        public void BeginGuidedComparison(GuidedCameraPose pose)
+        {
+            if (!IsInitialized)
+            {
+                throw new InvalidOperationException("Camera controller is not initialized.");
+            }
+
+            if (!IsGuidedComparisonActive)
+            {
+                cameraSnapshot = new CameraSnapshot(
+                    transform.position,
+                    transform.rotation,
+                    controlledCamera.nearClipPlane,
+                    controlledCamera.farClipPlane,
+                    Mode,
+                    FocusedTarget,
+                    focusDirection,
+                    focusDistance,
+                    yaw,
+                    pitch);
+                IsGuidedComparisonActive = true;
+            }
+
+            guidedRestorePending = false;
+            StartGuidedTransition(pose);
+        }
+
+        /// <summary>Transitions between guided stages without replacing the saved explorer state.</summary>
+        public void SetGuidedComparisonPose(GuidedCameraPose pose)
+        {
+            if (!IsGuidedComparisonActive)
+            {
+                throw new InvalidOperationException(
+                    "Guided comparison must begin before changing its pose.");
+            }
+
+            guidedRestorePending = false;
+            StartGuidedTransition(pose);
+        }
+
+        /// <summary>Transitions back to the exact explorer state captured at entry.</summary>
+        public void EndGuidedComparison()
+        {
+            if (!IsGuidedComparisonActive)
+            {
+                return;
+            }
+
+            guidedRestorePending = true;
+            StartGuidedTransition(new GuidedCameraPose(
+                cameraSnapshot.Position,
+                cameraSnapshot.Position +
+                    (cameraSnapshot.Rotation * Vector3.forward),
+                cameraSnapshot.NearClipPlane,
+                cameraSnapshot.FarClipPlane));
         }
 
         /// <summary>Advances free flight with explicit values for deterministic validation.</summary>
@@ -140,6 +228,21 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             }
 
             float deltaTime = Time.unscaledDeltaTime;
+            if (Mode == SolarSystemCameraMode.GuidedTransition)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                StepGuidedTransition(deltaTime);
+                return;
+            }
+
+            if (Mode == SolarSystemCameraMode.GuidedComparison)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                return;
+            }
+
             if (Mode == SolarSystemCameraMode.FreeFlight)
             {
                 StepFreeFlight(
@@ -157,6 +260,74 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             StepFocus(deltaTime);
+        }
+
+        private void StartGuidedTransition(GuidedCameraPose pose)
+        {
+            guidedTransitionStartPosition = transform.position;
+            guidedTransitionStartRotation = transform.rotation;
+            guidedTransitionStartNear = controlledCamera.nearClipPlane;
+            guidedTransitionStartFar = controlledCamera.farClipPlane;
+            guidedTargetPose = pose;
+            guidedTransitionElapsed = 0f;
+            velocity = Vector3.zero;
+            Mode = SolarSystemCameraMode.GuidedTransition;
+        }
+
+        private void StepGuidedTransition(float deltaTime)
+        {
+            guidedTransitionElapsed += deltaTime;
+            float progress =
+                Mathf.Clamp01(guidedTransitionElapsed / GuidedTransitionDuration);
+            float eased = progress * progress * (3f - (2f * progress));
+            transform.position = Vector3.Lerp(
+                guidedTransitionStartPosition,
+                guidedTargetPose.Position,
+                eased);
+            transform.rotation = Quaternion.Slerp(
+                guidedTransitionStartRotation,
+                guidedTargetPose.Rotation,
+                eased);
+            controlledCamera.nearClipPlane = Mathf.Lerp(
+                guidedTransitionStartNear,
+                guidedTargetPose.NearClipPlane,
+                eased);
+            controlledCamera.farClipPlane = Mathf.Lerp(
+                guidedTransitionStartFar,
+                guidedTargetPose.FarClipPlane,
+                eased);
+
+            if (progress < 1f)
+            {
+                return;
+            }
+
+            if (guidedRestorePending)
+            {
+                RestoreExplorerState();
+            }
+            else
+            {
+                Mode = SolarSystemCameraMode.GuidedComparison;
+            }
+        }
+
+        private void RestoreExplorerState()
+        {
+            transform.position = cameraSnapshot.Position;
+            transform.rotation = cameraSnapshot.Rotation;
+            controlledCamera.nearClipPlane = cameraSnapshot.NearClipPlane;
+            controlledCamera.farClipPlane = cameraSnapshot.FarClipPlane;
+            FocusedTarget = cameraSnapshot.FocusedTarget;
+            focusDirection = cameraSnapshot.FocusDirection;
+            focusDistance = cameraSnapshot.FocusDistance;
+            yaw = cameraSnapshot.Yaw;
+            pitch = cameraSnapshot.Pitch;
+            Mode = cameraSnapshot.Mode == SolarSystemCameraMode.FocusTransition
+                ? SolarSystemCameraMode.Focused
+                : cameraSnapshot.Mode;
+            guidedRestorePending = false;
+            IsGuidedComparisonActive = false;
         }
 
         private void StepFocus(float deltaTime)
@@ -215,7 +386,7 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             if (input != null)
             {
                 input.FocusPerformed -= OnFocusPerformed;
-                input.CancelPerformed -= ReturnToFreeFlight;
+                input.CancelPerformed -= OnCancelPerformed;
             }
 
             Cursor.lockState = CursorLockMode.None;
@@ -224,12 +395,58 @@ namespace Tanvir.SolarSystem.Presentation.Camera
 
         private void OnFocusPerformed()
         {
-            if (selection.SelectedView != null)
+            if (!IsGuidedComparisonActive && selection.SelectedView != null)
             {
                 Focus(selection.SelectedView);
             }
         }
 
+        private void OnCancelPerformed()
+        {
+            if (!IsGuidedComparisonActive)
+            {
+                ReturnToFreeFlight();
+            }
+        }
+
         private static float NormalizePitch(float value) => value > 180f ? value - 360f : value;
+
+        private readonly struct CameraSnapshot
+        {
+            internal CameraSnapshot(
+                Vector3 position,
+                Quaternion rotation,
+                float nearClipPlane,
+                float farClipPlane,
+                SolarSystemCameraMode mode,
+                CelestialBodyView focusedTarget,
+                Vector3 savedFocusDirection,
+                float savedFocusDistance,
+                float savedYaw,
+                float savedPitch)
+            {
+                Position = position;
+                Rotation = rotation;
+                NearClipPlane = nearClipPlane;
+                FarClipPlane = farClipPlane;
+                Mode = mode;
+                FocusedTarget = focusedTarget;
+                FocusDirection = savedFocusDirection;
+                FocusDistance = savedFocusDistance;
+                Yaw = savedYaw;
+                Pitch = savedPitch;
+            }
+
+            internal Vector3 Position { get; }
+            internal Quaternion Rotation { get; }
+            internal float NearClipPlane { get; }
+            internal float FarClipPlane { get; }
+            internal SolarSystemCameraMode Mode { get; }
+            internal CelestialBodyView FocusedTarget { get; }
+            internal Vector3 FocusDirection { get; }
+            internal float FocusDistance { get; }
+            internal float Yaw { get; }
+            internal float Pitch { get; }
+        }
     }
 }

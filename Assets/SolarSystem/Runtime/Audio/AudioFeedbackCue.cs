@@ -6,6 +6,7 @@ namespace Tanvir.SolarSystem.Audio
         None,
         Selection,
         Focus,
-        TimeControl
+        TimeControl,
+        ScaleComparison
     }
 }

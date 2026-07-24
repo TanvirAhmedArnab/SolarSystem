@@ -2,7 +2,7 @@
 
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
-**Status:** Implemented Slice 3 interaction vertical slice  
+**Status:** Implemented exploration and guided scale-comparison controls  
 **Last updated:** 2026-07-24  
 **Input asset:** `Assets/SolarSystem/Settings/Input/IA_SolarSystem.asset`
 
@@ -64,12 +64,35 @@ scanning, while the adjacent action text preserves meaning without relying on
 color alone. The `SPACE` action changes from `PAUSE` to `RESUME` when the
 simulation is paused.
 
+## Guided Scale Comparison
+
+| Intent | Binding | Behavior |
+|---|---|---|
+| Start or advance | C | Enter the comparison or advance to its next deterministic stage |
+| Finish | C on stage 3 | Return to the exact prior explorer camera, selection, and simulation state |
+| Exit early | Escape | Cancel from any stage and restore the exact prior explorer state |
+
+The three stages are:
+
+1. **Readable overview:** exact Earth-relative body radii with logarithmically
+   compressed orbital distance.
+2. **Linear orbit spacing:** body radii and distances share one scale, where
+   one unit equals the conservative Mercury-Venus envelope gap of
+   `37.659 million km`.
+3. **Literal Earth-radius reference:** Earth radius equals one unit and the
+   average Earth-Sun distance is approximately `23,481` units.
+
+The simulation pauses for comparison. Selection, focus, free-flight, zoom, and
+time commands are temporarily locked so the educational framing cannot be
+accidentally broken. The guide is cancellable and does not discard the user's
+previous selection, camera pose, focus mode, time rate, or paused/running
+state.
+
 ## Deferred Controls
 
 The following approved product capabilities remain pending for later release
 slices:
 
-- guided scale-comparison controls;
 - complete Help, settings, and contextual onboarding;
 - reduced-motion or instant-transition setting;
 - gamepad bindings, which are outside the first public-release baseline.

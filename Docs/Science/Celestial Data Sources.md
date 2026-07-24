@@ -294,9 +294,21 @@ asset and shared constants:
 
 Body-size ratios are physically proportional; orbital distance is intentionally
 compressed for legibility and must not be presented as literal physical scale.
-For the approved guided comparison, the exact linear reference makes the
-average Earth-Moon distance about `60.34` Earth radii and the average Earth-Sun
-distance about `23,481.13` Earth radii.
+The guided comparison adds two explicitly labeled linear transformations:
+
+- **Linear orbit spacing:** radii and distances both divide by
+  `37,658,725.03012079 km`. This reference is the conservative gap between
+  Venus perihelion and Mercury aphelion, derived from the authored JPL orbital
+  elements. It provides a memorable `1 orbit unit` standard without changing
+  the scientific data.
+- **Literal Earth-radius reference:** radii and distances both divide by
+  Earth's adopted mean radius of `6,371 km`. The average Earth-Moon distance is
+  about `60.34` Earth radii and the average Earth-Sun distance is about
+  `23,481.13` Earth radii.
+
+The literal view renders relative to Earth as its temporary float-space origin.
+This precision strategy changes only the presentation coordinate origin; it
+does not alter the physical positions or the displayed Sun-Earth separation.
 
 ## Known Scientific Limitations
 

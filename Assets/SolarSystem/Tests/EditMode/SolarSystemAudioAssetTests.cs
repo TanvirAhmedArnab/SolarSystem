@@ -26,6 +26,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         [TestCase("SFX/UI/A_UI_Select.ogg")]
         [TestCase("SFX/UI/A_UI_FocusConfirmation.ogg")]
         [TestCase("SFX/UI/A_UI_TimeTick.ogg")]
+        [TestCase("SFX/UI/A_UI_ToggleScale.ogg")]
         public void InterfaceCue_UsesPreloadedMonoImportPolicy(string relativePath)
         {
             AssertImporter(

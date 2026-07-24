@@ -39,6 +39,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             "Assets/SolarSystem/Content/Audio/SFX/UI/A_UI_FocusConfirmation.ogg";
         private const string TimeControlClipPath =
             "Assets/SolarSystem/Content/Audio/SFX/UI/A_UI_TimeTick.ogg";
+        private const string ScaleComparisonClipPath =
+            "Assets/SolarSystem/Content/Audio/SFX/UI/A_UI_ToggleScale.ogg";
         private const float EarthNormalStrength = 0.28f;
         private const float SunSmoothness = 0f;
         private const float MercurySmoothness = 0.08f;
@@ -332,7 +334,9 @@ namespace Tanvir.SolarSystem.Editor.Import
                 EarthAmbienceClip = LoadRequiredAsset<AudioClip>(EarthAmbienceClipPath),
                 SelectionClip = LoadRequiredAsset<AudioClip>(SelectionClipPath),
                 FocusClip = LoadRequiredAsset<AudioClip>(FocusClipPath),
-                TimeControlClip = LoadRequiredAsset<AudioClip>(TimeControlClipPath)
+                TimeControlClip = LoadRequiredAsset<AudioClip>(TimeControlClipPath),
+                ScaleComparisonClip =
+                    LoadRequiredAsset<AudioClip>(ScaleComparisonClipPath)
             };
         }
 
@@ -344,6 +348,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             ConfigureAudioImporter(SelectionClipPath, false, true);
             ConfigureAudioImporter(FocusClipPath, false, true);
             ConfigureAudioImporter(TimeControlClipPath, false, true);
+            ConfigureAudioImporter(ScaleComparisonClipPath, false, true);
         }
 
         private static void ConfigureAudioImporter(

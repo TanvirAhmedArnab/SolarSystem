@@ -9,7 +9,10 @@ namespace Tanvir.SolarSystem.Application
 {
     /// <summary>Owns the single ordered per-frame simulation and presentation update.</summary>
     [DisallowMultipleComponent]
-    public sealed class SolarSystemSimulationController : MonoBehaviour, ISimulationTimeController
+    public sealed class SolarSystemSimulationController :
+        MonoBehaviour,
+        ISimulationTimeController,
+        IScaleModeController
     {
         private readonly Dictionary<CelestialBodyId, int> bodyIndices =
             new Dictionary<CelestialBodyId, int>();
@@ -32,6 +35,10 @@ namespace Tanvir.SolarSystem.Application
 
         /// <summary>Gets the number of explicitly registered views.</summary>
         public int ViewCount => views.Count;
+
+        /// <summary>Gets the active presentation scale.</summary>
+        public CelestialScaleMode ScaleMode =>
+            projector?.CurrentMode ?? CelestialScaleMode.ReadableOverview;
 
         /// <summary>Gets the current immutable clock snapshot.</summary>
         public SimulationClockSnapshot ClockSnapshot
@@ -127,6 +134,41 @@ namespace Tanvir.SolarSystem.Application
         {
             RequireInitialized();
             clock.SetSpeedMultiplier(simulationSecondsPerRealSecond);
+        }
+
+        /// <summary>Changes only presentation projection and rerenders current state.</summary>
+        public void SetScaleMode(CelestialScaleMode mode)
+        {
+            RequireInitialized();
+            if (projector.CurrentMode == mode)
+            {
+                return;
+            }
+
+            projector.SetMode(mode);
+            foreach (CelestialOrbitPathView orbitPath in orbitPaths)
+            {
+                CelestialBodyModel model =
+                    catalog.GetBody(new CelestialBodyId(orbitPath.StableId));
+                orbitPath.Initialize(model, evaluator, projector);
+            }
+
+            RenderCurrentState();
+        }
+
+        /// <summary>Gets the largest body-or-position extent from the render origin.</summary>
+        public float GetMaximumPresentationExtent()
+        {
+            RequireInitialized();
+            float maximum = 0f;
+            foreach (CelestialBodyView view in views.Values)
+            {
+                maximum = Mathf.Max(
+                    maximum,
+                    view.transform.position.magnitude + view.CurrentDisplayRadius);
+            }
+
+            return maximum;
         }
 
         /// <summary>Attempts to obtain a registered body view by stable ID.</summary>

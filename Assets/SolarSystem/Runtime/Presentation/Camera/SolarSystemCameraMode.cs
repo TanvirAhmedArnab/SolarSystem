@@ -5,6 +5,8 @@ namespace Tanvir.SolarSystem.Presentation.Camera
     {
         FreeFlight,
         FocusTransition,
-        Focused
+        Focused,
+        GuidedTransition,
+        GuidedComparison
     }
 }

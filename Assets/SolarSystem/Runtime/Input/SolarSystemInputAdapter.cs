@@ -35,6 +35,9 @@ namespace Tanvir.SolarSystem.Input
         /// <summary>Raised when the user requests the next faster simulation rate.</summary>
         public event Action IncreaseTimeSpeedPerformed;
 
+        /// <summary>Raised when the user advances the guided scale comparison.</summary>
+        public event Action ScaleComparisonPerformed;
+
         /// <summary>Gets planar movement intent.</summary>
         public Vector2 Move => move?.ReadValue<Vector2>() ?? Vector2.zero;
 
@@ -83,6 +86,7 @@ namespace Tanvir.SolarSystem.Input
             explorer.FindAction("TogglePause", true).performed += OnTogglePause;
             explorer.FindAction("DecreaseTimeSpeed", true).performed += OnDecreaseTimeSpeed;
             explorer.FindAction("IncreaseTimeSpeed", true).performed += OnIncreaseTimeSpeed;
+            explorer.FindAction("ScaleComparison", true).performed += OnScaleComparison;
             explorer.Enable();
         }
 
@@ -106,6 +110,9 @@ namespace Tanvir.SolarSystem.Input
         private void OnIncreaseTimeSpeed(InputAction.CallbackContext context) =>
             IncreaseTimeSpeedPerformed?.Invoke();
 
+        private void OnScaleComparison(InputAction.CallbackContext context) =>
+            ScaleComparisonPerformed?.Invoke();
+
         private void Release()
         {
             if (explorer == null)
@@ -119,6 +126,7 @@ namespace Tanvir.SolarSystem.Input
             explorer.FindAction("TogglePause", true).performed -= OnTogglePause;
             explorer.FindAction("DecreaseTimeSpeed", true).performed -= OnDecreaseTimeSpeed;
             explorer.FindAction("IncreaseTimeSpeed", true).performed -= OnIncreaseTimeSpeed;
+            explorer.FindAction("ScaleComparison", true).performed -= OnScaleComparison;
             explorer.Disable();
             explorer = null;
         }

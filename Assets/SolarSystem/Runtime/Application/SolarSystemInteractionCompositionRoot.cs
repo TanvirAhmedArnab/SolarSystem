@@ -21,6 +21,8 @@ namespace Tanvir.SolarSystem.Application
         [SerializeField] private SolarSystemCameraController cameraController;
         [SerializeField] private SolarSystemSimulationController simulationController;
         [SerializeField] private SimulationTimeInputController timeInputController;
+        [SerializeField] private GuidedScaleComparisonInputController
+            scaleComparisonController;
         [SerializeField] private SolarSystemHudPresenter hudPresenter;
         [SerializeField] private AudioDirector audioDirector;
 
@@ -32,6 +34,10 @@ namespace Tanvir.SolarSystem.Application
 
         /// <summary>Gets the active simulation-time command service.</summary>
         public SimulationTimeControlService TimeControls => timeInputController?.Service;
+
+        /// <summary>Gets the active guided scale-comparison service.</summary>
+        public GuidedScaleComparisonService ScaleComparison =>
+            scaleComparisonController?.Service;
 
         /// <summary>Gets the runtime HUD presenter.</summary>
         public SolarSystemHudPresenter HudPresenter => hudPresenter;
@@ -49,6 +55,8 @@ namespace Tanvir.SolarSystem.Application
             cameraController.IsInitialized &&
             timeInputController != null &&
             timeInputController.IsInitialized &&
+            scaleComparisonController != null &&
+            scaleComparisonController.IsInitialized &&
             hudPresenter != null &&
             hudPresenter.IsInitialized &&
             audioDirector != null &&
@@ -70,6 +78,7 @@ namespace Tanvir.SolarSystem.Application
                 cameraController == null ||
                 simulationController == null ||
                 timeInputController == null ||
+                scaleComparisonController == null ||
                 hudPresenter == null ||
                 audioDirector == null)
             {
@@ -83,8 +92,27 @@ namespace Tanvir.SolarSystem.Application
             cameraController.Initialize(inputAdapter, selectionController);
             var timeControls = new SimulationTimeControlService(simulationController);
             timeInputController.Initialize(inputAdapter, timeControls);
-            hudPresenter.Initialize(timeControls, selectionController, explorerCamera);
-            audioDirector.Initialize(selectionService, timeControls, cameraController);
+            var scaleComparison = new GuidedScaleComparisonService(
+                simulationController,
+                timeControls);
+            scaleComparisonController.Initialize(
+                inputAdapter,
+                simulationController,
+                timeInputController,
+                selectionController,
+                cameraController,
+                explorerCamera,
+                scaleComparison);
+            hudPresenter.Initialize(
+                timeControls,
+                selectionController,
+                explorerCamera,
+                scaleComparison);
+            audioDirector.Initialize(
+                selectionService,
+                timeControls,
+                cameraController,
+                scaleComparison);
         }
     }
 }

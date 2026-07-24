@@ -73,6 +73,71 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         }
 
         [Test]
+        public void NormalizedOrbitMode_UsesOneCommonJplEnvelopeGapUnit()
+        {
+            projector.SetMode(CelestialScaleMode.NormalizedOrbits);
+
+            Assert.That(
+                projector.ProjectRelativePosition(
+                    new Double3(
+                        GuidedScaleComparisonContract.MercuryVenusEnvelopeGapKm,
+                        0d,
+                        0d)).magnitude,
+                Is.EqualTo(1f).Within(0.000001f));
+            Assert.That(
+                projector.ProjectRadius(CelestialReferenceUnits.EarthMeanRadiusKm),
+                Is.EqualTo(
+                    CelestialReferenceUnits.EarthMeanRadiusKm /
+                    GuidedScaleComparisonContract.MercuryVenusEnvelopeGapKm)
+                    .Within(0.000000001d));
+        }
+
+        [Test]
+        public void LiteralMode_UsesEarthRadiusForBothSizeAndDistance()
+        {
+            projector.SetMode(CelestialScaleMode.LiteralEarthReference);
+
+            Assert.That(
+                projector.ProjectRadius(CelestialReferenceUnits.EarthMeanRadiusKm),
+                Is.EqualTo(1f).Within(0.000001f));
+            Assert.That(
+                projector.ProjectRelativePosition(
+                    new Double3(149598261.1504425d, 0d, 0d)).magnitude,
+                Is.EqualTo(149598261.1504425d / 6371d).Within(0.01d));
+        }
+
+        [Test]
+        public void LiteralCatalogProjection_UsesEarthAsRenderOrigin()
+        {
+            CelestialCatalog catalog = CelestialTestFactory.BuildCatalog(
+                CelestialTestFactory.CreateSun(),
+                CelestialTestFactory.CreateOrbitingBody(
+                    "earth",
+                    "sun",
+                    semiMajorAxisKm: 149598261.1504425d),
+                CelestialTestFactory.CreateOrbitingBody(
+                    "moon",
+                    "earth",
+                    CelestialBodyCategory.Moon,
+                    semiMajorAxisKm: 384400d));
+            var evaluator = new KeplerOrbitEvaluator();
+            var physical = new CelestialState[catalog.Count];
+            var presentation = new CelestialPresentationState[catalog.Count];
+            evaluator.Evaluate(catalog, 0d, physical);
+            projector.SetMode(CelestialScaleMode.LiteralEarthReference);
+
+            projector.Project(catalog, physical, presentation);
+
+            Assert.That(presentation[1].Position, Is.EqualTo(Vector3.zero));
+            Assert.That(
+                (presentation[2].Position - presentation[1].Position).magnitude,
+                Is.EqualTo(384400d / 6371d).Within(0.001d));
+            Assert.That(
+                presentation[0].Position.magnitude,
+                Is.GreaterThan(23000f));
+        }
+
+        [Test]
         public void GasGiantProjection_PreservesScientificRadiusRatioAndDistanceOrdering()
         {
             float earthRadius = projector.ProjectRadius(6371d);

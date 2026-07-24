@@ -57,6 +57,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   conversion, and a compressed-overview clearance contract.
 - Complete deterministic synodic-cycle sampling for every adjacent planet pair,
   plus Sun-Mercury, Earth-Moon, signed-spin, and scene-integration coverage.
+- Cancellable three-stage guided scale comparison covering the readable
+  overview, one shared linear orbit unit, and literal Earth-radius scale.
+- Guided camera framing, explicit transformation captions, scale-mode HUD
+  status, comparison audio feedback, and exact explorer-state restoration.
+- Edit Mode conversion/service/input/UI/audio coverage and a real-scene
+  Play Mode journey across all comparison stages.
 
 ### Changed
 
@@ -92,6 +98,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   body's signed spin remains proportional.
 - Enlarged only invisible selection colliders for sub-pixel bodies, preserving
   proportional rendered geometry while keeping the overview usable.
+- Paused simulation and temporarily locked selection, time, and navigation
+  commands during the guided scale comparison, restoring their exact prior
+  state when the sequence finishes or is cancelled.
 
 ### Removed
 

@@ -406,6 +406,115 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator SolarSystemScene_GuidesScaleComparisonAndRestoresExplorerState()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot composition =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(composition, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(interaction.IsInitialized, Is.True);
+
+            SolarSystemSimulationController simulation =
+                composition.SimulationController;
+            GuidedScaleComparisonService comparison = interaction.ScaleComparison;
+            SolarSystemCameraController cameraController =
+                interaction.CameraController;
+            SolarSystemHudPresenter hud = interaction.HudPresenter;
+            Camera camera = Camera.main;
+            Assert.That(comparison, Is.Not.Null);
+            Assert.That(camera, Is.Not.Null);
+            Assert.That(
+                simulation.TryGetView("earth", out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.TryGetView("sun", out CelestialBodyView sun),
+                Is.True);
+
+            interaction.SelectionController.Select(earth);
+            Vector3 savedPosition = camera.transform.position;
+            Quaternion savedRotation = camera.transform.rotation;
+            float savedNear = camera.nearClipPlane;
+            float savedFar = camera.farClipPlane;
+
+            comparison.Advance();
+            yield return WaitUntilGuided(cameraController);
+            Assert.That(comparison.Stage, Is.EqualTo(
+                GuidedScaleComparisonStage.ReadableOverview));
+            Assert.That(interaction.TimeControls.IsPaused, Is.True);
+            Assert.That(hud.IsScaleComparisonVisible, Is.True);
+            Assert.That(hud.ScaleComparisonTitleText, Is.EqualTo("READABLE OVERVIEW"));
+            Assert.That(hud.ScaleModeText, Does.Contain("ORBITS COMPRESSED"));
+            Assert.That(hud.IsBodyInformationVisible, Is.False);
+            Assert.That(
+                interaction.SelectionController.SelectedView,
+                Is.SameAs(earth));
+
+            comparison.Advance();
+            yield return WaitUntilGuided(cameraController);
+            Assert.That(simulation.ScaleMode, Is.EqualTo(
+                CelestialScaleMode.NormalizedOrbits));
+            Assert.That(hud.ScaleComparisonTitleText, Is.EqualTo(
+                "LINEAR ORBIT SPACING"));
+            Assert.That(hud.ScaleComparisonMetricText, Does.Contain(
+                "37.659 MILLION KM"));
+            Assert.That(
+                earth.CurrentDisplayRadius,
+                Is.EqualTo(
+                    CelestialReferenceUnits.EarthMeanRadiusKm /
+                    GuidedScaleComparisonContract.MercuryVenusEnvelopeGapKm)
+                    .Within(0.000000001d));
+            foreach (CelestialOrbitPathView path in
+                     Object.FindObjectsByType<CelestialOrbitPathView>())
+            {
+                Assert.That(
+                    path.GetComponent<LineRenderer>().widthMultiplier,
+                    Is.EqualTo(
+                        GuidedScaleComparisonContract.NormalizedOrbitLineWidth)
+                        .Within(0.0001f));
+            }
+
+            comparison.Advance();
+            yield return WaitUntilGuided(cameraController);
+            Assert.That(simulation.ScaleMode, Is.EqualTo(
+                CelestialScaleMode.LiteralEarthReference));
+            Assert.That(hud.ScaleComparisonTitleText, Is.EqualTo(
+                "LITERAL EARTH-RADIUS REFERENCE"));
+            Assert.That(hud.ScaleComparisonMetricText, Does.Contain("23,481"));
+            Assert.That(earth.transform.position, Is.EqualTo(Vector3.zero));
+            Assert.That(earth.CurrentDisplayRadius, Is.EqualTo(1f).Within(0.0001f));
+            Assert.That(sun.transform.position.magnitude, Is.GreaterThan(23000f));
+            AssertWithinViewport(camera, earth);
+            AssertWithinViewport(camera, sun);
+
+            Assert.That(comparison.Cancel(), Is.True);
+            yield return WaitUntilExplorerRestored(cameraController);
+            yield return null;
+
+            Assert.That(comparison.IsActive, Is.False);
+            Assert.That(simulation.ScaleMode, Is.EqualTo(
+                CelestialScaleMode.ReadableOverview));
+            Assert.That(interaction.TimeControls.IsPaused, Is.False);
+            Assert.That(hud.IsScaleComparisonVisible, Is.False);
+            Assert.That(hud.IsBodyInformationVisible, Is.True);
+            Assert.That(
+                interaction.SelectionController.SelectedView,
+                Is.SameAs(earth));
+            Assert.That(
+                Vector3.Distance(camera.transform.position, savedPosition),
+                Is.LessThan(0.001f));
+            Assert.That(
+                Quaternion.Angle(camera.transform.rotation, savedRotation),
+                Is.LessThan(0.001f));
+            Assert.That(camera.nearClipPlane, Is.EqualTo(savedNear).Within(0.001f));
+            Assert.That(camera.farClipPlane, Is.EqualTo(savedFar).Within(0.001f));
+        }
+
+        [UnityTest]
         public IEnumerator SolarSystemScene_UsesSunOriginRadialIllumination()
         {
             SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
@@ -498,6 +607,38 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 cameraController.Mode,
                 Is.EqualTo(SolarSystemCameraMode.Focused),
                 $"Camera did not finish focusing within {FocusTransitionTimeoutSeconds:F1} seconds.");
+        }
+
+        private static IEnumerator WaitUntilGuided(
+            SolarSystemCameraController cameraController)
+        {
+            float deadline = Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
+            while (cameraController.Mode == SolarSystemCameraMode.GuidedTransition &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+
+            Assert.That(
+                cameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.GuidedComparison),
+                "Guided camera did not settle within the transition timeout.");
+        }
+
+        private static IEnumerator WaitUntilExplorerRestored(
+            SolarSystemCameraController cameraController)
+        {
+            float deadline = Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
+            while (cameraController.IsGuidedComparisonActive &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+
+            Assert.That(
+                cameraController.IsGuidedComparisonActive,
+                Is.False,
+                "Explorer camera was not restored within the transition timeout.");
         }
 
         private static void AssertWithinViewport(Camera camera, CelestialBodyView view)

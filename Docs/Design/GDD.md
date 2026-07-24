@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.8.0  
+**Version:** 0.9.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -35,6 +35,7 @@
 | 0.6.0 | 2026-07-23 | Codex, for Tanvir | Recorded the implemented eight-planet content baseline, full-system overview framing, and first Saturn ring presentation | Required planetary roster implemented; final fidelity and selected moon set remain |
 | 0.7.0 | 2026-07-24 | Codex, for Tanvir | Recorded the implemented licensed music, celestial ambience, and interaction-feedback baseline | Technical behavior validated; owner listening and final mix approval remain |
 | 0.8.0 | 2026-07-24 | Codex, for Tanvir | Approved exact Earth-relative body sizes, proportional signed rotation rates, readable orbital clearances, and the technical foundation for guided physical-scale comparison | Presentation-scale behavior implemented and validated; guided comparison presentation remains |
+| 0.9.0 | 2026-07-24 | Codex, for Tanvir | Implemented the approved three-stage guided physical-scale comparison with explicit transformations, controlled framing, cancellation, and explorer-state restoration | Product behavior implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -202,11 +203,19 @@ rendering architecture allows without claiming that raw astronomical
 coordinates are rendered directly in single-precision Unity transforms. Free
 navigation in this mode is not required for the minimum release.
 
-**[IMPLEMENTED FOUNDATION]** The comparison now has one exact linear reference:
-`Earth radius = 1`. On that scale, the average Earth-Moon distance is about
-`60.34` Earth radii and the average Earth-Sun distance is about `23,481.13`
-Earth radii. These values establish the intended educational reveal; the
-guided transition, captions, and final camera choreography remain to be built.
+**[APPROVED/IMPLEMENTED]** The comparison is a three-stage guided sequence:
+
+1. The readable overview identifies exact Earth-relative body radii and
+   logarithmically compressed orbital distance.
+2. The linear-orbit view uses one shared physical scale for radii and
+   distances. One unit equals the conservative Mercury-Venus orbital-envelope
+   gap: approximately `37.659 million km`.
+3. The literal reference defines `Earth radius = 1`. On that scale, the average
+   Earth-Moon distance is about `60.34` units and the average Earth-Sun
+   distance is about `23,481.13` units.
+
+The sequence deliberately allows bodies to become sub-pixel or invisible. Its
+captions explain that result instead of visually exaggerating them.
 
 #### Transition behavior
 
@@ -214,6 +223,9 @@ guided transition, captions, and final camera choreography remain to be built.
 - Camera framing remains valid throughout the transition.
 - Labels, orbit paths, and focus targets do not visibly detach from their bodies.
 - The interface always identifies the active scale mode.
+- Comparison temporarily pauses simulation and locks conflicting exploration
+  commands, then restores the exact previous selection, camera, focus mode,
+  time rate, and paused/running state.
 
 ### 7.3 Simulation time
 

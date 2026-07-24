@@ -25,7 +25,7 @@ namespace Tanvir.SolarSystem.Presentation.Scale
         /// <summary>Gets the projected Unity-world position.</summary>
         public Vector3 Position { get; }
 
-        /// <summary>Gets the exaggerated readable radius in Unity units.</summary>
+        /// <summary>Gets the radius in the active, explicitly disclosed scale.</summary>
         public float DisplayRadius { get; }
 
         /// <summary>Gets the deterministic sidereal rotation angle.</summary>

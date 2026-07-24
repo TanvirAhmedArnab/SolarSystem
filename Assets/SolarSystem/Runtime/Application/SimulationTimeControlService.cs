@@ -45,8 +45,20 @@ namespace Tanvir.SolarSystem.Application
         /// <summary>Toggles pause while preserving the current speed preset.</summary>
         public void TogglePaused()
         {
-            controller.SetPaused(!IsPaused);
+            SetPaused(!IsPaused);
+        }
+
+        /// <summary>Applies an explicit pause state and reports only effective changes.</summary>
+        public bool SetPaused(bool paused)
+        {
+            if (IsPaused == paused)
+            {
+                return false;
+            }
+
+            controller.SetPaused(paused);
             Changed?.Invoke();
+            return true;
         }
 
         /// <summary>Moves to the next slower preset without wrapping.</summary>

@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, and proportional-scale foundations  
-**Version:** 0.9.0  
+**Status:** Living authority with validated visual, audio, and guided-scale foundations  
+**Version:** 0.10.0  
 **Last updated:** 2026-07-24  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -207,6 +207,24 @@ uses UI Toolkit scaling from a 1920x1080 reference. Unity's default runtime
 sans-serif remains temporary until the open font decision and license review
 are complete.
 
+**[IMPLEMENTED GUIDED COMPARISON]** A wide bottom-center teaching card replaces
+the normal quick-control strip and selected-body card while scale comparison is
+active. It presents stage progress, a plain-language title, the current numeric
+reference, one concise explanation, and separate `C / NEXT` and `ESC / EXIT`
+keycaps. The normal top-left status card remains visible so paused state, time
+rate, and active scale transformation stay auditable.
+
+The comparison deliberately changes visual density:
+
+- Readable overview retains the normal body hierarchy and thin orbit lines.
+- Linear orbit spacing makes real bodies sub-pixel while orbit guides remain
+  visible at restrained contrast.
+- Literal Earth-radius scale frames the Earth-Sun relationship and allows Earth
+  to become effectively invisible beside the Sun.
+
+Do not add minimum visible body sizes, glow markers, or decorative substitutes
+in the two linear stages; the apparent disappearance is the educational point.
+
 ## 7. Audio Direction
 
 ### Music
@@ -304,6 +322,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.10.0 | 2026-07-24 | Added the validated three-stage scale-comparison card, visual-density rules, transformation disclosures, and linear-stage honesty requirements | Approved behavior implemented and visually validated |
 | 0.9.0 | 2026-07-24 | Established exact Earth-relative rendered radii, selection-only accessibility accommodation, and readable compressed-overview composition rules | Approved and implementation validated |
 | 0.8.0 | 2026-07-24 | Recorded the implemented licensed music, 2D Sun ambience, 3D Earth ambience, UI cues, and deterministic import contracts | Technical baseline validated; owner listening approval pending |
 | 0.7.0 | 2026-07-23 | Recorded the eight-planet material baseline, deterministic Saturn annulus, and deferred atmosphere/cloud/ring fidelity layers | Pending owner review |

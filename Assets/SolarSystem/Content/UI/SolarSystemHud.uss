@@ -59,6 +59,14 @@
     font-size: 12px;
 }
 
+.scale-mode {
+    margin-top: 7px;
+    color: rgb(111, 210, 235);
+    font-size: 10px;
+    -unity-font-style: bold;
+    white-space: normal;
+}
+
 .hint-panel {
     position: absolute;
     left: 0;
@@ -157,6 +165,18 @@
     border-color: rgb(202, 83, 123);
 }
 
+.key-compare {
+    color: rgb(116, 222, 239);
+    background-color: rgba(19, 78, 94, 0.68);
+    border-color: rgb(63, 173, 196);
+}
+
+.key-exit {
+    color: rgb(207, 219, 229);
+    background-color: rgba(55, 66, 82, 0.72);
+    border-color: rgb(116, 136, 158);
+}
+
 .body-information-panel {
     position: absolute;
     top: 0;
@@ -242,6 +262,78 @@
 
 .selection-reticle {
     position: absolute;
+}
+
+.scale-comparison-panel {
+    position: absolute;
+    left: 18%;
+    right: 18%;
+    bottom: 0;
+    min-height: 190px;
+    padding: 20px 24px 18px 24px;
+    background-color: rgba(6, 13, 25, 0.95);
+    border-top-width: 2px;
+    border-top-color: rgb(77, 193, 225);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.comparison-progress {
+    color: rgb(111, 210, 235);
+    font-size: 10px;
+    -unity-font-style: bold;
+    letter-spacing: 1.4px;
+}
+
+.comparison-title {
+    margin-top: 7px;
+    color: rgb(243, 247, 251);
+    font-size: 24px;
+    -unity-font-style: bold;
+}
+
+.comparison-metric {
+    margin-top: 8px;
+    color: rgb(255, 198, 116);
+    font-size: 11px;
+    -unity-font-style: bold;
+    white-space: normal;
+}
+
+.comparison-description {
+    margin-top: 8px;
+    margin-right: 150px;
+    color: rgb(207, 219, 229);
+    font-size: 12px;
+    white-space: normal;
+}
+
+.comparison-controls {
+    position: absolute;
+    right: 22px;
+    bottom: 18px;
+    flex-direction: row;
+}
+
+.comparison-control-group {
+    min-width: 58px;
+    margin-left: 12px;
+    align-items: center;
+}
+
+.comparison-control-action {
+    margin-top: 4px;
+    color: rgb(183, 201, 217);
+    font-size: 8px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.hud-root.comparison-active .body-information-panel,
+.hud-root.comparison-active .hint-panel {
+    display: none;
 }
 
 .reticle-corner {

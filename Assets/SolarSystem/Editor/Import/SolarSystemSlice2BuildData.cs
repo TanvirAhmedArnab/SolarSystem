@@ -23,6 +23,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal AudioClip SelectionClip { get; set; }
         internal AudioClip FocusClip { get; set; }
         internal AudioClip TimeControlClip { get; set; }
+        internal AudioClip ScaleComparisonClip { get; set; }
     }
 
     /// <summary>Pairs one authored body with its scene presentation assets.</summary>

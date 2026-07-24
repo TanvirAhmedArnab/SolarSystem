@@ -295,6 +295,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 interactionObject.AddComponent<CelestialSelectionController>();
             SimulationTimeInputController timeInput =
                 interactionObject.AddComponent<SimulationTimeInputController>();
+            GuidedScaleComparisonInputController scaleComparison =
+                interactionObject.AddComponent<GuidedScaleComparisonInputController>();
             SolarSystemCameraController cameraController =
                 camera.gameObject.AddComponent<SolarSystemCameraController>();
             SolarSystemInteractionCompositionRoot composition =
@@ -309,6 +311,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.FindProperty("simulationController").objectReferenceValue =
                 simulationController;
             serialized.FindProperty("timeInputController").objectReferenceValue = timeInput;
+            serialized.FindProperty("scaleComparisonController").objectReferenceValue =
+                scaleComparison;
             serialized.FindProperty("hudPresenter").objectReferenceValue = hudPresenter;
             serialized.FindProperty("audioDirector").objectReferenceValue = audioDirector;
             serialized.ApplyModifiedPropertiesWithoutUndo();
@@ -359,6 +363,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.FindProperty("focusClip").objectReferenceValue = content.FocusClip;
             serialized.FindProperty("timeControlClip").objectReferenceValue =
                 content.TimeControlClip;
+            serialized.FindProperty("scaleComparisonClip").objectReferenceValue =
+                content.ScaleComparisonClip;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             return director;
         }

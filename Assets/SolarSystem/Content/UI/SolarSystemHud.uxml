@@ -6,6 +6,7 @@
             <ui:VisualElement class="divider" />
             <ui:Label name="simulation-state" text="SIMULATION / RUNNING" class="status" />
             <ui:Label name="simulation-rate" text="TIME RATE / 10x" class="rate" />
+            <ui:Label name="scale-mode" text="SCALE / READABLE OVERVIEW / ORBITS COMPRESSED" class="scale-mode" />
         </ui:VisualElement>
 
         <ui:VisualElement name="body-information-panel" class="body-information-panel is-hidden" picking-mode="Ignore">
@@ -54,6 +55,23 @@
             <ui:VisualElement class="reticle-corner reticle-bottom-right" />
         </ui:VisualElement>
 
+        <ui:VisualElement name="scale-comparison-panel" class="scale-comparison-panel is-hidden" picking-mode="Ignore">
+            <ui:Label name="comparison-progress" text="GUIDED SCALE COMPARISON / STEP 1 OF 3" class="comparison-progress" />
+            <ui:Label name="comparison-title" text="READABLE OVERVIEW" class="comparison-title" />
+            <ui:Label name="comparison-metric" text="" class="comparison-metric" />
+            <ui:Label name="comparison-description" text="" class="comparison-description" />
+            <ui:VisualElement class="comparison-controls">
+                <ui:VisualElement class="comparison-control-group">
+                    <ui:Label text="C" class="control-key key-compare" />
+                    <ui:Label name="comparison-next-action" text="NEXT" class="comparison-control-action" />
+                </ui:VisualElement>
+                <ui:VisualElement class="comparison-control-group">
+                    <ui:Label text="ESC" class="control-key key-exit" />
+                    <ui:Label text="EXIT" class="comparison-control-action" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
         <ui:VisualElement class="hint-panel" picking-mode="Ignore">
             <ui:Label text="QUICK CONTROLS" class="hint-title" />
             <ui:VisualElement name="control-hints" class="control-hints">
@@ -73,9 +91,13 @@
                     <ui:Label name="control-key-space" text="SPACE" class="control-key key-space" />
                     <ui:Label name="pause-action" text="PAUSE" class="control-action" />
                 </ui:VisualElement>
-                <ui:VisualElement class="control-group control-group-last">
+                <ui:VisualElement class="control-group control-group-wide">
                     <ui:Label name="control-key-speed" text="[ / ]" class="control-key key-speed" />
                     <ui:Label text="SPEED" class="control-action" />
+                </ui:VisualElement>
+                <ui:VisualElement class="control-group control-group-last">
+                    <ui:Label name="control-key-compare" text="C" class="control-key key-compare" />
+                    <ui:Label text="COMPARE" class="control-action" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

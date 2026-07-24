@@ -23,6 +23,9 @@ namespace Tanvir.SolarSystem.Interaction
         /// <summary>Gets whether dependencies have been assigned.</summary>
         public bool IsInitialized => selectionCamera != null && input != null && service != null;
 
+        /// <summary>Gets whether pointer selection commands are accepted.</summary>
+        public bool IsInteractionEnabled { get; private set; } = true;
+
         /// <summary>Initializes raycast selection and subscribes to input intent.</summary>
         public void Initialize(
             Camera camera,
@@ -42,7 +45,14 @@ namespace Tanvir.SolarSystem.Interaction
                 : throw new ArgumentNullException(nameof(inputAdapter));
             service = selectionService ??
                 throw new ArgumentNullException(nameof(selectionService));
+            IsInteractionEnabled = true;
             input.SelectPerformed += OnSelectPerformed;
+        }
+
+        /// <summary>Enables or suppresses pointer selection without clearing state.</summary>
+        public void SetInteractionEnabled(bool enabled)
+        {
+            IsInteractionEnabled = enabled;
         }
 
         /// <summary>Raycasts from a screen position and selects the first celestial body hit.</summary>
@@ -100,7 +110,10 @@ namespace Tanvir.SolarSystem.Interaction
 
         private void OnSelectPerformed()
         {
-            SelectAtScreenPosition(input.PointerPosition);
+            if (IsInteractionEnabled)
+            {
+                SelectAtScreenPosition(input.PointerPosition);
+            }
         }
     }
 }

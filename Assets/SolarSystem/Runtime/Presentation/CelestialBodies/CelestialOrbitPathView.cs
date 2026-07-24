@@ -17,6 +17,8 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         [SerializeField] private CelestialBodyDefinition definition;
         [SerializeField] private LineRenderer lineRenderer;
         [SerializeField] private int sampleCount = 128;
+        private bool hasReadableWidth;
+        private float readableWidth;
 
         /// <summary>Gets the stable ID whose orbit this path represents.</summary>
         public string StableId => definition == null ? string.Empty : definition.StableId;
@@ -60,6 +62,22 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
                 return;
             }
 
+            if (!hasReadableWidth)
+            {
+                readableWidth = lineRenderer.widthMultiplier;
+                hasReadableWidth = true;
+            }
+
+            lineRenderer.widthMultiplier = projector.CurrentMode switch
+            {
+                CelestialScaleMode.ReadableOverview => readableWidth,
+                CelestialScaleMode.NormalizedOrbits =>
+                    GuidedScaleComparisonContract.NormalizedOrbitLineWidth,
+                CelestialScaleMode.LiteralEarthReference =>
+                    GuidedScaleComparisonContract.LiteralOrbitLineWidth,
+                _ => throw new InvalidOperationException(
+                    $"Unsupported scale mode '{projector.CurrentMode}'.")
+            };
             lineRenderer.enabled = true;
             lineRenderer.useWorldSpace = false;
             int resolvedSampleCount = Math.Max(MinimumSampleCount, sampleCount);

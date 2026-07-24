@@ -75,6 +75,25 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         }
 
         [Test]
+        public void NormalizedOrbitUnit_MatchesAuthoredJplMercuryVenusEnvelope()
+        {
+            CelestialBodyModel mercury = Find("mercury");
+            CelestialBodyModel venus = Find("venus");
+            double mercuryApoapsis =
+                mercury.Orbit.Value.SemiMajorAxisKm *
+                (1d + mercury.Orbit.Value.Eccentricity);
+            double venusPeriapsis =
+                venus.Orbit.Value.SemiMajorAxisKm *
+                (1d - venus.Orbit.Value.Eccentricity);
+
+            Assert.That(
+                venusPeriapsis - mercuryApoapsis,
+                Is.EqualTo(
+                    GuidedScaleComparisonContract.MercuryVenusEnvelopeGapKm)
+                    .Within(0.001d));
+        }
+
+        [Test]
         public void AdjacentPlanetPairs_RemainClearAcrossCompleteSynodicCycles()
         {
             for (int pairIndex = 0; pairIndex < PlanetOrder.Length - 1; pairIndex++)

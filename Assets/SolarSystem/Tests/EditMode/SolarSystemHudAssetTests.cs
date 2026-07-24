@@ -29,12 +29,14 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(root.Q<Label>("simulation-state"), Is.Not.Null);
             Assert.That(root.Q<Label>("simulation-rate"), Is.Not.Null);
             Assert.That(root.Q<Label>("selection-target"), Is.Not.Null);
+            Assert.That(root.Q<Label>("scale-mode"), Is.Not.Null);
             Assert.That(root.Q<VisualElement>("control-hints"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-click"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-focus"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-wheel"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-space"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-speed"), Is.Not.Null);
+            Assert.That(root.Q<Label>("control-key-compare"), Is.Not.Null);
             Assert.That(root.Q<Label>("pause-action"), Is.Not.Null);
             Assert.That(root.Q<VisualElement>("body-information-panel"), Is.Not.Null);
             Assert.That(root.Q<VisualElement>("selection-reticle"), Is.Not.Null);
@@ -49,6 +51,14 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(root.Q<Label>("body-orbit-distance"), Is.Not.Null);
             Assert.That(root.Q<Label>("body-orbit-period"), Is.Not.Null);
             Assert.That(root.Q<Label>("body-source"), Is.Not.Null);
+            Assert.That(
+                root.Q<VisualElement>("scale-comparison-panel"),
+                Is.Not.Null);
+            Assert.That(root.Q<Label>("comparison-progress"), Is.Not.Null);
+            Assert.That(root.Q<Label>("comparison-title"), Is.Not.Null);
+            Assert.That(root.Q<Label>("comparison-metric"), Is.Not.Null);
+            Assert.That(root.Q<Label>("comparison-description"), Is.Not.Null);
+            Assert.That(root.Q<Label>("comparison-next-action"), Is.Not.Null);
         }
 
         [Test]

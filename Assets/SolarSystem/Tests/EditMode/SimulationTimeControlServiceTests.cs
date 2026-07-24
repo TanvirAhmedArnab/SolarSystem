@@ -45,6 +45,23 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         }
 
         [Test]
+        public void SetPaused_AppliesOnlyEffectiveStateChanges()
+        {
+            var controller = new FakeTimeController(
+                SimulationTimeControlService.BaselineSecondsPerRealSecond);
+            var service = new SimulationTimeControlService(controller);
+            int changeCount = 0;
+            service.Changed += () => changeCount++;
+
+            Assert.That(service.SetPaused(true), Is.True);
+            Assert.That(service.SetPaused(true), Is.False);
+            Assert.That(service.SetPaused(false), Is.True);
+
+            Assert.That(service.IsPaused, Is.False);
+            Assert.That(changeCount, Is.EqualTo(2));
+        }
+
+        [Test]
         public void IncreaseAndDecreaseSpeed_ApplyAdjacentPresets()
         {
             var controller = new FakeTimeController(

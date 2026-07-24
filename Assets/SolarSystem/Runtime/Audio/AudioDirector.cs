@@ -25,6 +25,7 @@ namespace Tanvir.SolarSystem.Audio
         [SerializeField] private AudioClip selectionClip;
         [SerializeField] private AudioClip focusClip;
         [SerializeField] private AudioClip timeControlClip;
+        [SerializeField] private AudioClip scaleComparisonClip;
 
         [Header("Default Mix")]
         [SerializeField, Range(0f, 1f)] private float masterVolume = 0.65f;
@@ -35,12 +36,14 @@ namespace Tanvir.SolarSystem.Audio
         private SelectionService selection;
         private SimulationTimeControlService timeControls;
         private SolarSystemCameraController cameraController;
+        private GuidedScaleComparisonService scaleComparison;
 
         /// <summary>Gets whether all serialized channels and event sources are ready.</summary>
         public bool IsInitialized =>
             selection != null &&
             timeControls != null &&
             cameraController != null &&
+            scaleComparison != null &&
             HasCompleteConfiguration;
 
         /// <summary>Gets whether all required sources and clips are assigned.</summary>
@@ -51,7 +54,8 @@ namespace Tanvir.SolarSystem.Audio
             uiSource != null &&
             selectionClip != null &&
             focusClip != null &&
-            timeControlClip != null;
+            timeControlClip != null &&
+            scaleComparisonClip != null;
 
         /// <summary>Gets the independently adjustable master level.</summary>
         public float MasterVolume => masterVolume;
@@ -90,7 +94,8 @@ namespace Tanvir.SolarSystem.Audio
         public void Initialize(
             SelectionService selectionService,
             SimulationTimeControlService simulationTimeControls,
-            SolarSystemCameraController explorerCameraController)
+            SolarSystemCameraController explorerCameraController,
+            GuidedScaleComparisonService guidedScaleComparison)
         {
             if (!HasCompleteConfiguration)
             {
@@ -105,10 +110,13 @@ namespace Tanvir.SolarSystem.Audio
                 throw new ArgumentNullException(nameof(simulationTimeControls));
             cameraController = explorerCameraController ??
                 throw new ArgumentNullException(nameof(explorerCameraController));
+            scaleComparison = guidedScaleComparison ??
+                throw new ArgumentNullException(nameof(guidedScaleComparison));
 
             selection.SelectionChanged += OnSelectionChanged;
             timeControls.Changed += OnTimeControlsChanged;
             cameraController.FocusStarted += OnFocusStarted;
+            scaleComparison.Changed += OnScaleComparisonChanged;
             ApplyMix();
         }
 
@@ -186,7 +194,17 @@ namespace Tanvir.SolarSystem.Audio
 
         private void OnTimeControlsChanged()
         {
-            PlayFeedback(timeControlClip, AudioFeedbackCue.TimeControl);
+            if (scaleComparison?.IsActive != true)
+            {
+                PlayFeedback(timeControlClip, AudioFeedbackCue.TimeControl);
+            }
+        }
+
+        private void OnScaleComparisonChanged()
+        {
+            PlayFeedback(
+                scaleComparisonClip,
+                AudioFeedbackCue.ScaleComparison);
         }
 
         private void PlayFeedback(AudioClip clip, AudioFeedbackCue cue)
@@ -218,9 +236,15 @@ namespace Tanvir.SolarSystem.Audio
                 cameraController.FocusStarted -= OnFocusStarted;
             }
 
+            if (scaleComparison != null)
+            {
+                scaleComparison.Changed -= OnScaleComparisonChanged;
+            }
+
             selection = null;
             timeControls = null;
             cameraController = null;
+            scaleComparison = null;
         }
     }
 }

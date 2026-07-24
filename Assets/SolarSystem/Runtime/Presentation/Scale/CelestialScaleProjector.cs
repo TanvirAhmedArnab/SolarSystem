@@ -15,7 +15,11 @@ namespace Tanvir.SolarSystem.Presentation.Scale
         public CelestialScaleProjector(PresentationScaleParameters parameters)
         {
             this.parameters = parameters;
+            CurrentMode = CelestialScaleMode.ReadableOverview;
         }
+
+        /// <summary>Gets the active, explicitly disclosed presentation scale.</summary>
+        public CelestialScaleMode CurrentMode { get; private set; }
 
         /// <summary>
         /// Gets the proportional reference used by body radii and future guided comparison.
@@ -25,7 +29,18 @@ namespace Tanvir.SolarSystem.Presentation.Scale
         /// <summary>Gets the conservative minimum surface-clearance target.</summary>
         public double MinimumSurfaceClearance => parameters.MinimumSurfaceClearance;
 
-        /// <summary>Projects one parent-relative physical offset using monotonic logarithmic compression.</summary>
+        /// <summary>Changes projection policy without mutating physical state.</summary>
+        public void SetMode(CelestialScaleMode mode)
+        {
+            if (!Enum.IsDefined(typeof(CelestialScaleMode), mode))
+            {
+                throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+            }
+
+            CurrentMode = mode;
+        }
+
+        /// <summary>Projects one parent-relative physical offset in the active scale.</summary>
         public Vector3 ProjectRelativePosition(Double3 parentRelativePositionKm)
         {
             if (!parentRelativePositionKm.IsFinite)
@@ -41,9 +56,19 @@ namespace Tanvir.SolarSystem.Presentation.Scale
                 return Vector3.zero;
             }
 
-            double displayDistance =
-                Math.Log10(1d + (physicalDistanceKm / parameters.DistanceReferenceKm)) *
-                parameters.UnitsPerDistanceDecade;
+            double displayDistance = CurrentMode switch
+            {
+                CelestialScaleMode.ReadableOverview =>
+                    Math.Log10(1d + (physicalDistanceKm / parameters.DistanceReferenceKm)) *
+                    parameters.UnitsPerDistanceDecade,
+                CelestialScaleMode.NormalizedOrbits =>
+                    physicalDistanceKm /
+                    GuidedScaleComparisonContract.MercuryVenusEnvelopeGapKm,
+                CelestialScaleMode.LiteralEarthReference =>
+                    parameters.PhysicalReference.ToDisplayUnits(physicalDistanceKm),
+                _ => throw new InvalidOperationException(
+                    $"Unsupported scale mode '{CurrentMode}'.")
+            };
             var coreDirection = new Double3(
                 parentRelativePositionKm.X / physicalDistanceKm,
                 parentRelativePositionKm.Y / physicalDistanceKm,
@@ -51,7 +76,7 @@ namespace Tanvir.SolarSystem.Presentation.Scale
             return UnityCoordinateAdapter.ToUnityVector(coreDirection) * ToFiniteFloat(displayDistance);
         }
 
-        /// <summary>Projects one physical radius proportionally to the Earth reference.</summary>
+        /// <summary>Projects one physical radius in the active common scale.</summary>
         public float ProjectRadius(double physicalRadiusKm)
         {
             if (double.IsNaN(physicalRadiusKm) ||
@@ -64,8 +89,19 @@ namespace Tanvir.SolarSystem.Presentation.Scale
                     "Physical radius must be positive and finite.");
             }
 
-            return ToFiniteFloat(
-                parameters.PhysicalReference.ToDisplayUnits(physicalRadiusKm));
+            double displayRadius = CurrentMode switch
+            {
+                CelestialScaleMode.ReadableOverview =>
+                    parameters.PhysicalReference.ToDisplayUnits(physicalRadiusKm),
+                CelestialScaleMode.NormalizedOrbits =>
+                    physicalRadiusKm /
+                    GuidedScaleComparisonContract.MercuryVenusEnvelopeGapKm,
+                CelestialScaleMode.LiteralEarthReference =>
+                    parameters.PhysicalReference.ToDisplayUnits(physicalRadiusKm),
+                _ => throw new InvalidOperationException(
+                    $"Unsupported scale mode '{CurrentMode}'.")
+            };
+            return ToFiniteFloat(displayRadius);
         }
 
         /// <summary>Projects a complete parent-first catalog into a caller-owned allocation-free buffer.</summary>
@@ -117,6 +153,46 @@ namespace Tanvir.SolarSystem.Presentation.Scale
                     ProjectRadius(body.MeanRadiusKm),
                     ToFiniteFloat(physicalState.RotationAngleDeg));
             }
+
+            if (CurrentMode == CelestialScaleMode.LiteralEarthReference)
+            {
+                ApplyLiteralRenderOrigin(catalog, destination);
+            }
+        }
+
+        private static void ApplyLiteralRenderOrigin(
+            CelestialCatalog catalog,
+            CelestialPresentationState[] destination)
+        {
+            var originId = new CelestialBodyId(
+                GuidedScaleComparisonContract.LiteralRenderOriginStableId);
+            int originIndex = FindBodyIndex(catalog, originId);
+            Vector3 renderOrigin = destination[originIndex].Position;
+            for (int index = 0; index < catalog.Count; index++)
+            {
+                CelestialPresentationState state = destination[index];
+                destination[index] = new CelestialPresentationState(
+                    state.Id,
+                    state.Position - renderOrigin,
+                    state.DisplayRadius,
+                    state.RotationAngleDeg);
+            }
+        }
+
+        private static int FindBodyIndex(
+            CelestialCatalog catalog,
+            CelestialBodyId bodyId)
+        {
+            for (int index = 0; index < catalog.Count; index++)
+            {
+                if (catalog.OrderedBodies[index].Id == bodyId)
+                {
+                    return index;
+                }
+            }
+
+            throw new InvalidOperationException(
+                $"Render-origin body '{bodyId}' is not present in the catalog.");
         }
 
         private static int FindPriorBodyIndex(

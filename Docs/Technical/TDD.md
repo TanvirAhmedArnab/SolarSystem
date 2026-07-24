@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; proportional presentation-scale calibration validated  
-**Version:** 0.13.0  
+**Document status:** Living technical authority; guided physical-scale comparison validated  
+**Version:** 0.14.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -39,6 +39,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.11.0 | 2026-07-23 | Codex, for Tanvir | Expanded the deterministic authoring pipeline to all eight planets, added a generated Saturn annulus, and reframed the initial camera for the complete planetary envelope | Required planetary baseline validated; advanced atmosphere, cloud, and ring shading remain deferred |
 | 0.12.0 | 2026-07-24 | Codex, for Tanvir | Added event-driven audio feedback, independent runtime channel levels and mute, deterministic clip-import contracts, and licensed scene ambience | Automated behavior validated; owner listening and final mix approval remain |
 | 0.13.0 | 2026-07-24 | Codex, for Tanvir | Replaced exaggerated body radii with exact Earth-relative proportions, calibrated readable orbit clearances, anchored `1x` to Earth's sidereal rotation, and added full-cycle regression coverage | Presentation-scale contract approved and validated; guided comparison UI remains |
+| 0.14.0 | 2026-07-24 | Codex, for Tanvir | Added the deterministic three-stage scale service, shared linear projections, Earth-relative render origin, guided camera state capture/restoration, input locking, UI/audio adapters, and full regression coverage | Guided physical-scale comparison implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -346,15 +347,20 @@ The initial body count does not justify one `Update` per body, Jobs, Burst, or E
 
 ### 6.5 Scale projection
 
-`ScaleModeService` separates physical state from display state.
+`GuidedScaleComparisonService` owns the deterministic comparison sequence and
+coordinates it through the `IScaleModeController` application boundary.
 
 Scale experiences:
 
-- `Presentation`: compressed distances with exact Earth-relative body radii.
-- `GuidedComparison`: controlled transition showing why a single true scale is impractical.
+- `ReadableOverview`: compressed distances with exact Earth-relative body radii.
+- `NormalizedOrbits`: one shared linear scale where one unit is
+  `37,658,725.03012079 km`, the conservative authored Mercury-Venus envelope
+  gap.
+- `LiteralEarthReference`: one shared linear scale where one unit is Earth's
+  adopted `6,371 km` mean radius.
 
-`ScaleProjector` receives physical positions/radii, focus origin, and scale
-settings; it returns float-space positions and display radii. Radius projection
+`CelestialScaleProjector` receives physical positions/radii and the active
+mode; it returns float-space positions and display radii. Radius projection
 is linear and uses one shared physical reference. Distance projection remains
 separate because literal astronomical distance and visible body size cannot be
 shown together usefully in the initial overview.
@@ -374,13 +380,21 @@ covered separately; Saturn clearance includes its `2.3`-body-radius ring
 envelope. Sub-pixel bodies receive an invisible selection radius of at least
 `1.5` units, but their rendered geometry remains proportional.
 
-`PhysicalScaleReference` exposes the literal conversion needed by the approved
-guided comparison. At `Earth = 1`, the average Earth-Moon distance is about
-`60.34` units and the average Earth-Sun distance is about `23,481.13` units.
-The comparison UI and transition choreography remain release work; the
-underlying physical reference is implemented and tested.
+`GuidedScaleComparisonContract` owns both linear references and their orbit-line
+widths. The normalized stage applies the same divisor to distance and radius;
+the literal stage delegates to `PhysicalScaleReference`. At `Earth = 1`, the
+average Earth-Moon distance is about `60.34` units and the average Earth-Sun
+distance is about `23,481.13` units.
 
-Render positions are relative to an explicit render origin, normally the current focus anchor, preventing large float magnitudes. Physical positions remain unchanged.
+Literal positions are translated relative to Earth after hierarchy composition,
+making Earth the temporary render origin and keeping the Sun-Earth teaching
+frame numerically stable. Physical state remains unchanged. Orbit geometry is
+rebuilt only when the active scale mode changes.
+
+`GuidedScaleComparisonService` pauses on entry, records the prior paused state,
+publishes exactly one change per effective transition, and restores the prior
+state on completion or cancellation. It never owns selection, camera, or audio
+state.
 
 ### 6.6 Selection and focus
 
@@ -409,6 +423,8 @@ or invalid targets hide the reticle without clearing selection.
 - focus and pointer orbit around a selected body;
 - body-relative zoom limits;
 - smooth transitions that can be cancelled or redirected.
+- guided comparison poses with exact pre-guide camera/focus/clip-plane capture
+  and restoration.
 
 Camera transitions and movement use unscaled time so pausing the simulation
 does not trap the camera. Focus distance and zoom limits respond to the target's
@@ -427,10 +443,13 @@ The implemented map covers:
 - WASD/arrow movement, Q/E elevation, right-mouse look, and Shift boost;
 - left-click selection, F focus, Escape cancellation, and mouse-wheel zoom;
 - Space pause/resume plus bracket-key slower/faster commands.
+- C start/advance/finish for guided scale comparison.
 
 `SimulationTimeInputController` translates the three time intents into an
 application service. Input code does not access the clock or simulation
-controller. Scale comparison and complete UI/help actions remain pending.
+controller. During comparison, the application adapter temporarily disables
+selection, focus, free-flight, zoom, and time commands; Escape remains active
+for cancellation. Complete UI/help actions remain pending.
 
 ### 6.9 UI
 
@@ -451,8 +470,13 @@ strings with units and bounded precision. Concise educational summaries are
 authored beside each definition; the formatter does not invent facts. The
 right-side card exposes the source-record ID and a scale-adjustment disclosure.
 The presenter owns visibility and UI element binding, not scientific data or
-selection state. Navigator, settings, Help, live current-distance/speed fields,
-scale-mode controls, and licensed typography remain release work.
+selection state.
+
+During scale comparison, the presenter hides the quick-control and body
+information cards, retains the status card, and shows a bottom-center teaching
+card with stage progress, the numeric transformation, a concise explanation,
+and separate next/exit keycaps. Navigator, settings, Help, live
+current-distance/speed fields, and licensed typography remain release work.
 
 ### 6.10 Audio
 
@@ -465,6 +489,9 @@ gameplay state.
   the focus-confirmation cue.
 - `SimulationTimeControlService.Changed` maps pause and speed changes to the
   time cue.
+- `GuidedScaleComparisonService.Changed` maps effective stage changes to the
+  scale-comparison cue while suppressing the automatic pause cue generated by
+  comparison entry.
 - Master, music, UI, and celestial gains are normalized, independently
   adjustable, and applied without changing the source assets. Master mute
   preserves the chosen channel gains.
@@ -698,6 +725,10 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Pause/speed clock transitions.
 - Retrograde rotation convention.
 - Scale projection monotonicity and finite float outputs.
+- Normalized-orbit and literal Earth-radius conversion equality for positions
+  and radii.
+- Guided stage ordering, cancellation, event count, and paused-state
+  restoration.
 
 ### 12.2 Edit Mode authoring tests
 
@@ -714,6 +745,9 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Pause and speed commands affect all body motion consistently.
 - Selection updates focus and UI without invalid state.
 - Scale transition can be interrupted safely.
+- The real scene traverses all three guided scale stages, verifies numeric
+  projection and camera framing, and restores selection, time, and camera
+  state.
 - Reduced-motion mode completes camera transitions immediately or within its defined bound.
 - Asynchronous camera transitions are awaited by observable state with a
   bounded timeout; tests do not rely on fixed sleeps near the nominal
@@ -814,9 +848,8 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   added scene test asserts point-light type and units, Sun parenting and
   co-location, representative-body range coverage, and the absence of the
   obsolete directional-Sun reference.
-- Guided scale mode, navigator, Help/settings, licensed typography, and
-  reduced-motion behavior remain release work and do not block the start of
-  the visual/content production slice.
+- Navigator, Help/settings, licensed typography, and reduced-motion behavior
+  remain release work and do not block continued visual/content production.
 - Detailed evidence is recorded in
   `Docs/ProjectManagement/Slice 3 Interaction Proof Validation.md`.
 - Time-control and HUD evidence is recorded in
@@ -844,10 +877,13 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   proportions. The readable overview uses a documented logarithmic distance
   compression, verified minimum clearances, proportional signed rotation
   rates, and selection-only hit-area accommodation for very small bodies.
-- **[IMPLEMENTED FOUNDATION]** The literal Earth-radius conversion and
-  representative physical distances required by the approved guided scale
-  comparison are implemented and tested; the player-facing transition,
-  narration, and captions remain.
+- **[IMPLEMENTED BASELINE]** The approved three-stage guided comparison now
+  moves from the readable overview through normalized linear orbit spacing to
+  literal Earth-radius scale. It supplies deterministic captions, guided
+  camera framing, cancellation, input locking, audio feedback, an Earth render
+  origin, and exact explorer-state restoration.
+- Guided comparison evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Guided Physical Scale Comparison Validation.md`.
 - The broader proposed moon set, atmosphere/cloud layers, advanced planet and
   ring shaders, labels/navigation, player-facing audio settings, final audio
   mix approval, and accessibility options remain Slice 4 work.
@@ -902,12 +938,13 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-006 | 2026-07-22 | Use one build scene until additive loading solves a measured need | Approved | Tanvir | Minimal scene complexity for current scope |
 | TDD-007 | 2026-07-22 | Keep ScriptableObjects as authoring definitions, not mutable runtime state | Approved | Tanvir | Testability and Play Mode safety |
 | TDD-008 | 2026-07-22 | Use `Tanvir.SolarSystem` as the root namespace and assembly prefix | Approved | Tanvir | Stable project identity and conventional namespace hierarchy |
-| TDD-009 | 2026-07-24 | Size rendered bodies linearly from `Earth = 1`, compress only orbital distance, and protect overview usability with tested clearances and invisible hit areas | Approved and implemented | Tanvir | Presentation-scale calibration request and Slice 4 validation |
-| TDD-010 | 2026-07-24 | Define `1x` as one Earth sidereal rotation per real second and derive every body's direction and rate from its signed source period | Approved and implemented | Tanvir | Shared, scientifically proportional time reference |
 | TDD-009 | 2026-07-22 | Use Core, Runtime, Editor, Edit Mode test, and Play Mode test assembly boundaries | Approved | Tanvir | Efficient Unity Level 2 architecture |
 | TDD-010 | 2026-07-23 | Use a project-owned, fixed-exposure URP visual profile and an in-place visual builder; defer unique high-cost shaders until representative evidence justifies them | Implemented candidate | Tanvir | Stable portfolio presentation, reproducibility, and controlled shader scope |
 | TDD-011 | 2026-07-23 | Use one Sun-parented realtime point light for radial day/night illumination; keep its calibrated presentation range/intensity explicit and defer point shadows/eclipses | Implemented candidate | Tanvir | Correct source geometry across moving bodies without a custom shader or misleading compressed-scale eclipses |
 | TDD-012 | 2026-07-23 | Author required bodies through one ordered editor content collection and generate Saturn's baseline annulus deterministically | Implemented candidate | Tanvir | Removes per-planet scene wiring, preserves reproducibility, and keeps advanced ring effects outside the baseline |
+| TDD-013 | 2026-07-24 | Size rendered bodies linearly from `Earth = 1`, compress only orbital distance, and protect overview usability with tested clearances and invisible hit areas | Approved and implemented | Tanvir | Presentation-scale calibration request and Slice 4 validation |
+| TDD-014 | 2026-07-24 | Define `1x` as one Earth sidereal rotation per real second and derive every body's direction and rate from its signed source period | Approved and implemented | Tanvir | Shared, scientifically proportional time reference |
+| TDD-015 | 2026-07-24 | Teach physical scale through three deterministic guided modes, use Earth as the literal render origin, and restore explorer state after completion or cancellation | Approved and implemented | Tanvir | GDD-007 and Slice 4 guided-comparison validation |
 
 ## 19. Definition of Done for TDD Version 1.0
 
