@@ -63,17 +63,18 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 3 Simulation Time and HUD Validation](Docs/ProjectManagement/Slice%203%20Simulation%20Time%20and%20HUD%20Validation.md)
 - [Slice 3 Selection and Body Information Validation](Docs/ProjectManagement/Slice%203%20Selection%20and%20Body%20Information%20Validation.md)
 - [Slice 4 Visual Foundation Validation](Docs/ProjectManagement/Slice%204%20Visual%20Foundation%20Validation.md)
+- [Slice 4 Sun-Origin Illumination Validation](Docs/ProjectManagement/Slice%204%20Sun-Origin%20Illumination%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, representative Sun-Earth-Moon-Jupiter scene,
 Slice 3 interaction vertical slice, and first visual-production foundation
 compile with a clean Console. The project currently passes 69 Edit Mode cases
-and four real-scene Play Mode cases. Coverage includes orbital behavior,
+and five real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, texture import intent, camera post-processing, environment settings,
-lighting, tuned materials, and preserved real-scene behavior. Detailed evidence
-is recorded in `Docs/ProjectManagement`.
+Sun-origin radial illumination, tuned materials, and preserved real-scene
+behavior. Detailed evidence is recorded in `Docs/ProjectManagement`.
 
 ## License
 

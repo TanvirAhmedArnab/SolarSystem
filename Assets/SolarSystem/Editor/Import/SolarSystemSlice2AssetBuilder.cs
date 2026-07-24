@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Tanvir.SolarSystem.Authoring;
 using Tanvir.SolarSystem.Simulation;
 using UnityEditor;
@@ -312,38 +313,46 @@ namespace Tanvir.SolarSystem.Editor.Import
         {
             const string path = RenderingSettingsRoot + "/VP_SolarSystem.asset";
             VolumeProfile profile = CreateOrLoad<VolumeProfile>(path);
-            for (int index = profile.components.Count - 1; index >= 0; index--)
-            {
-                Object.DestroyImmediate(profile.components[index], true);
-            }
+            RemoveUnexpectedOrDuplicateVolumeComponents(profile);
 
-            profile.components.Clear();
-
-            Tonemapping tonemapping = AddVolumeComponent<Tonemapping>(profile);
+            Tonemapping tonemapping = GetOrAddVolumeComponent<Tonemapping>(profile);
             tonemapping.mode.Override(TonemappingMode.ACES);
 
-            Bloom bloom = AddVolumeComponent<Bloom>(profile);
+            Bloom bloom = GetOrAddVolumeComponent<Bloom>(profile);
             bloom.threshold.Override(BloomThreshold);
             bloom.intensity.Override(BloomIntensity);
             bloom.scatter.Override(BloomScatter);
             bloom.highQualityFiltering.Override(false);
 
-            ColorAdjustments color = AddVolumeComponent<ColorAdjustments>(profile);
+            ColorAdjustments color = GetOrAddVolumeComponent<ColorAdjustments>(profile);
             color.postExposure.Override(PostExposure);
             color.contrast.Override(ColorContrast);
             color.colorFilter.Override(ColorFilter);
             color.hueShift.Override(0f);
             color.saturation.Override(ColorSaturation);
 
-            Vignette vignette = AddVolumeComponent<Vignette>(profile);
+            Vignette vignette = GetOrAddVolumeComponent<Vignette>(profile);
             vignette.color.Override(VignetteColor);
             vignette.center.Override(new Vector2(0.5f, 0.5f));
             vignette.intensity.Override(VignetteIntensity);
             vignette.smoothness.Override(VignetteSmoothness);
             vignette.rounded.Override(false);
 
+            profile.components.Clear();
+            profile.components.Add(tonemapping);
+            profile.components.Add(bloom);
+            profile.components.Add(color);
+            profile.components.Add(vignette);
             EditorUtility.SetDirty(profile);
             return profile;
+        }
+
+        private static T GetOrAddVolumeComponent<T>(VolumeProfile profile)
+            where T : VolumeComponent
+        {
+            return profile.TryGet(out T component)
+                ? component
+                : AddVolumeComponent<T>(profile);
         }
 
         private static T AddVolumeComponent<T>(VolumeProfile profile)
@@ -354,6 +363,32 @@ namespace Tanvir.SolarSystem.Editor.Import
             component.hideFlags = HideFlags.HideInInspector | HideFlags.HideInHierarchy;
             AssetDatabase.AddObjectToAsset(component, profile);
             return component;
+        }
+
+        private static void RemoveUnexpectedOrDuplicateVolumeComponents(
+            VolumeProfile profile)
+        {
+            var retainedTypes = new HashSet<Type>();
+            for (int index = profile.components.Count - 1; index >= 0; index--)
+            {
+                VolumeComponent component = profile.components[index];
+                Type componentType = component != null ? component.GetType() : null;
+                bool expectedType =
+                    componentType == typeof(Tonemapping) ||
+                    componentType == typeof(Bloom) ||
+                    componentType == typeof(ColorAdjustments) ||
+                    componentType == typeof(Vignette);
+                if (expectedType && retainedTypes.Add(componentType))
+                {
+                    continue;
+                }
+
+                profile.components.RemoveAt(index);
+                if (component != null)
+                {
+                    Object.DestroyImmediate(component, true);
+                }
+            }
         }
 
         private static CelestialBodyDefinition CreateBody(SolarSystemSlice2BodyData data)

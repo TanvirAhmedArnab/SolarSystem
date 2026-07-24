@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living authority with validated representative visual foundation  
-**Version:** 0.5.0  
+**Version:** 0.6.0  
 **Last updated:** 2026-07-23  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -38,7 +38,10 @@ Color is never the sole state indicator. Use clean panels, small corner radii, f
 
 ## 3. Rendering Direction
 
-URP is the production pipeline. The Sun is the dominant motivated source and planetary terminators must read clearly. A low environment contribution may preserve silhouettes. A shader-driven solar-light vector may replace a literal point light if extreme scale makes it more stable.
+URP is the production pipeline. The Sun is the dominant motivated source and
+planetary terminators must read clearly. A low environment contribution may
+preserve silhouettes. Sun-facing hemispheres must be illuminated and opposing
+hemispheres must read as night at every orbital position.
 
 Post-processing baseline:
 
@@ -56,11 +59,19 @@ threshold, `0.32` bloom intensity, `-0.10 EV` post exposure, `+6` contrast,
 `-2` saturation, and `0.12` vignette intensity. These values preserve solar
 surface detail and UI legibility at the 1080p mid-range-PC baseline.
 
-The scene uses a warm `5600 K` directional presentation light at intensity
-`1.35`, low flat ambient fill, and `0.18` sky reflection intensity. This is a
-stable overview approximation, not a claim that parallel directional light is
-physically radial from the Sun. A body-to-Sun shader vector remains the
-preferred later upgrade if profiling and hero shots justify it.
+**[IMPLEMENTED]** A warm `5600 K` point light is parented to the authored Sun
+at local origin. Its `1450 cd` intensity and `80`-unit range are presentation
+values calibrated for the compressed-distance scene; they are not literal
+astronomical photometry. The point source supplies a radial light vector to
+Earth, Moon, Jupiter, and future bodies, so the day hemisphere always faces the
+live Sun position. Low flat ambient fill and `0.18` sky reflection preserve
+some silhouette information without erasing the terminator.
+
+Realtime point-light shadows are disabled in this baseline. Cubemap shadows
+would add material GPU cost and the exaggerated body radii plus compressed
+distances would produce misleading eclipses. A custom body-to-Sun shader
+remains an evidence-gated fallback only if later profiling or hero shots expose
+attenuation or precision limitations.
 
 ## 4. Texture Sources and Policy
 
@@ -245,6 +256,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.6.0 | 2026-07-23 | Replaced the fixed directional approximation with validated Sun-origin radial illumination and explicit day/night readability | Pending owner review |
 | 0.5.0 | 2026-07-23 | Recorded the validated project-owned skybox, URP volume, lighting, and representative material foundation | Pending owner review |
 | 0.4.0 | 2026-07-23 | Recorded the visually validated UI Toolkit explorer HUD proof and retained the licensed-font gate | Pending owner review |
 | 0.3.0 | 2026-07-22 | Replaced restricted music with CC0 audio and defined Sun 2D and Earth 3D ambience direction | Pending owner review |

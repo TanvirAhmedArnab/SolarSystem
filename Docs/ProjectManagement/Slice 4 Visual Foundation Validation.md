@@ -7,6 +7,11 @@
 **Render pipeline:** URP 17.5.0  
 **Result:** Passed
 
+> **Historical baseline note:** This record captures the first visual-foundation
+> candidate. Its fixed directional-light approximation was superseded by the
+> validated Sun-origin point-light contract recorded in
+> `Slice 4 Sun-Origin Illumination Validation.md`.
+
 ## Validated Scope
 
 - Project-owned panoramic skybox using the approved Solar System Scope 2K
@@ -111,7 +116,8 @@ the visual-foundation scope.
 ## Remaining Visual Work
 
 - Atmosphere, cloud, ring, and nightside-emission presentation.
-- Evidence-gated custom solar and radial body-to-Sun lighting techniques.
+- Evidence-gated custom solar shaders if the validated point-source approach
+  later exposes measured precision, attenuation, or performance limitations.
 - Final licensed typography and accessibility presentation settings.
 - Full eight-planet and selected-moon material production.
 - Representative-PC profiling and final quality-tier tuning.

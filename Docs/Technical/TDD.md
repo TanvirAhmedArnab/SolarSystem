@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; first visual-production foundation validated  
-**Version:** 0.9.0  
+**Document status:** Living technical authority; Sun-origin illumination validated  
+**Version:** 0.10.0  
 **Last updated:** 2026-07-23  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -35,6 +35,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.7.0 | 2026-07-23 | Codex, for Tanvir | Added bounded time-control commands, read-only presentation state, the first runtime UI Toolkit HUD, reproducible UI authoring, and complete behavioral/visual validation | Time-control and HUD proof validated; scale comparison and broader interface remain |
 | 0.8.0 | 2026-07-23 | Codex, for Tanvir | Added authored educational summaries, display-only fact formatting, a selected-body information card, and a screen-space selection reticle | Slice 3 interaction vertical slice complete; visual/content production may begin |
 | 0.9.0 | 2026-07-23 | Codex, for Tanvir | Added the project-owned panoramic skybox, deterministic visual asset authoring, focused URP volume profile, camera post-processing contract, tuned representative materials, and visual validation | First visual-production foundation validated; unique atmosphere/cloud/solar shaders remain evidence-gated |
+| 0.10.0 | 2026-07-23 | Codex, for Tanvir | Replaced the fixed directional-light approximation with a Sun-parented point source, explicit radial-illumination constraints, and real-scene regression coverage | Sun-facing day hemispheres and opposing night hemispheres validated for the representative scene |
 
 ### 1.3 Status vocabulary
 
@@ -279,12 +280,15 @@ Avoid generic `Manager`, `Helper`, or `Utils` names.
 - `SolarSystemSlice2SceneBuilder` constructs, initializes, saves, and registers the visible scene.
 - `SolarSystemVisualFoundationBuilder` updates rendering assets and the existing
   scene in place, preserving stable scene identities during visual iteration.
+- Volume-profile authoring reuses valid component subassets, removes only
+  unexpected or duplicate components, and restores the intended component
+  order without replacing stable local file IDs.
 
 The full command remains `Tools > Solar System > Rebuild Project Graybox`; the
 focused visual command is `Tools > Solar System > Apply Visual Foundation`.
 A full rebuild may assign new Unity local file IDs because it creates a fresh
 scene. Focused visual iteration uses the in-place command to avoid unrelated
-scene churn.
+scene and rendering-subasset churn.
 
 ## 6. Runtime Systems
 
@@ -597,9 +601,16 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Representative materials enable GPU instancing. Earth's normal map imports
   as linear normal data; specular data imports linear and remains deferred
   until a reviewed channel-packing/custom-shader contract is available.
-- Low flat ambient fill and low sky reflection preserve silhouettes. The
-  directional Sun key is an explicit stable overview approximation pending
-  evidence for a radial body-to-Sun lighting shader.
+- Low flat ambient fill and low sky reflection preserve silhouettes.
+- The scene has one realtime `Solar Radial Light`: a point light parented to
+  the Sun at local origin. Its `1450 cd`, `80`-unit, `5600 K` presentation
+  contract covers the compressed planetary envelope and allows URP Lit
+  materials to derive their incident direction from the live Sun position.
+- `RenderSettings.sun` remains unset because the scene has no directional Sun.
+  Realtime point-light shadows remain disabled: six-face shadow rendering is
+  unjustified for the baseline, and exaggerated radii plus compressed
+  distances would create misleading eclipses. Eclipse presentation requires a
+  separately reviewed scientific and performance contract.
 - Atmosphere/ring/cloud components remain optional per body.
 - Orbit paths use cached geometry and update only when scale/settings change.
 - Post-processing respects accessibility toggles; motion blur defaults off.
@@ -645,6 +656,9 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Selection updates focus and UI without invalid state.
 - Scale transition can be interrupted safely.
 - Reduced-motion mode completes camera transitions immediately or within its defined bound.
+- Asynchronous camera transitions are awaited by observable state with a
+  bounded timeout; tests do not rely on fixed sleeps near the nominal
+  transition duration.
 
 ### 12.4 Manual validation
 
@@ -732,6 +746,11 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   69 Edit Mode cases, and four real-scene Play Mode cases. Its visual profile,
   texture import, skybox, camera, environment, lighting, and material contracts
   are covered explicitly.
+- The Sun-origin illumination correction completes with zero Console
+  warnings/errors, 69 Edit Mode cases, and five real-scene Play Mode cases. The
+  added scene test asserts point-light type and units, Sun parenting and
+  co-location, representative-body range coverage, and the absence of the
+  obsolete directional-Sun reference.
 - Guided scale mode, navigator, Help/settings, licensed typography, and
   reduced-motion behavior remain release work and do not block the start of
   the visual/content production slice.
@@ -743,6 +762,8 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   `Docs/ProjectManagement/Slice 3 Selection and Body Information Validation.md`.
 - Visual-foundation evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Visual Foundation Validation.md`.
+- Sun-origin illumination evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Sun-Origin Illumination Validation.md`.
 
 ### Slice 4 - Visual/content completion
 
@@ -800,6 +821,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-008 | 2026-07-22 | Use `Tanvir.SolarSystem` as the root namespace and assembly prefix | Approved | Tanvir | Stable project identity and conventional namespace hierarchy |
 | TDD-009 | 2026-07-22 | Use Core, Runtime, Editor, Edit Mode test, and Play Mode test assembly boundaries | Approved | Tanvir | Efficient Unity Level 2 architecture |
 | TDD-010 | 2026-07-23 | Use a project-owned, fixed-exposure URP visual profile and an in-place visual builder; defer unique high-cost shaders until representative evidence justifies them | Implemented candidate | Tanvir | Stable portfolio presentation, reproducibility, and controlled shader scope |
+| TDD-011 | 2026-07-23 | Use one Sun-parented realtime point light for radial day/night illumination; keep its calibrated presentation range/intensity explicit and defer point shadows/eclipses | Implemented candidate | Tanvir | Correct source geometry across moving bodies without a custom shader or misleading compressed-scale eclipses |
 
 ## 19. Definition of Done for TDD Version 1.0
 

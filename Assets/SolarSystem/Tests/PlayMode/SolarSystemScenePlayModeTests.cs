@@ -15,6 +15,8 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
 {
     public sealed class SolarSystemScenePlayModeTests
     {
+        private const float FocusTransitionTimeoutSeconds = 2f;
+
         [UnityTest]
         public IEnumerator SolarSystemScene_BootstrapsMovesAndPausesAllBodies()
         {
@@ -118,14 +120,12 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(selection.Service.SelectedId.Value.Value, Is.EqualTo("earth"));
 
             cameraController.Focus(earth);
-            yield return new WaitForSecondsRealtime(0.75f);
-            Assert.That(cameraController.Mode, Is.EqualTo(SolarSystemCameraMode.Focused));
+            yield return WaitUntilFocused(cameraController);
             Assert.That(cameraController.FocusedTarget, Is.SameAs(earth));
             AssertCameraFaces(camera, earth);
 
             cameraController.Focus(jupiter);
-            yield return new WaitForSecondsRealtime(0.75f);
-            Assert.That(cameraController.Mode, Is.EqualTo(SolarSystemCameraMode.Focused));
+            yield return WaitUntilFocused(cameraController);
             Assert.That(cameraController.FocusedTarget, Is.SameAs(jupiter));
             AssertCameraFaces(camera, jupiter);
 
@@ -237,11 +237,100 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(RenderSettings.ambientMode, Is.EqualTo(AmbientMode.Flat));
             Assert.That(RenderSettings.reflectionIntensity, Is.EqualTo(0.18f).Within(0.001f));
 
-            Light keyLight = RenderSettings.sun;
-            Assert.That(keyLight, Is.Not.Null);
-            Assert.That(keyLight.name, Is.EqualTo("Sun Key Light"));
-            Assert.That(keyLight.intensity, Is.EqualTo(1.35f).Within(0.001f));
-            Assert.That(keyLight.shadows, Is.EqualTo(LightShadows.Soft));
+            Assert.That(RenderSettings.sun, Is.Null);
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_UsesSunOriginRadialIllumination()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "moon",
+                    out CelestialBodyView moon),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "jupiter",
+                    out CelestialBodyView jupiter),
+                Is.True);
+
+            GameObject radialLightObject = GameObject.Find("Solar Radial Light");
+            Assert.That(radialLightObject, Is.Not.Null);
+            Light radialLight = radialLightObject.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            Assert.That(radialLight.name, Is.EqualTo("Solar Radial Light"));
+            Assert.That(radialLight.type, Is.EqualTo(LightType.Point));
+            Assert.That(radialLight.lightUnit, Is.EqualTo(LightUnit.Candela));
+            Assert.That(radialLight.intensity, Is.EqualTo(1450f).Within(0.001f));
+            Assert.That(radialLight.range, Is.EqualTo(80f).Within(0.001f));
+            Assert.That(radialLight.shadows, Is.EqualTo(LightShadows.None));
+            Assert.That(radialLight.transform.parent, Is.SameAs(sun.transform));
+            Assert.That(
+                Vector3.Distance(radialLight.transform.position, sun.transform.position),
+                Is.LessThan(0.00001f));
+
+            AssertReceivesSunOriginLight(radialLight, sun, earth);
+            AssertReceivesSunOriginLight(radialLight, sun, moon);
+            AssertReceivesSunOriginLight(radialLight, sun, jupiter);
+
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(
+                Vector3.Distance(radialLight.transform.position, sun.transform.position),
+                Is.LessThan(0.00001f));
+            Assert.That(RenderSettings.sun, Is.Null);
+        }
+
+        private static void AssertReceivesSunOriginLight(
+            Light radialLight,
+            CelestialBodyView sun,
+            CelestialBodyView receiver)
+        {
+            Vector3 receiverToLight =
+                (radialLight.transform.position - receiver.transform.position).normalized;
+            Vector3 receiverToSun =
+                (sun.transform.position - receiver.transform.position).normalized;
+            Assert.That(
+                Vector3.Dot(receiverToLight, receiverToSun),
+                Is.GreaterThan(0.99999f),
+                $"{receiver.name} must receive light from the live Sun direction.");
+            Assert.That(
+                Vector3.Distance(
+                    radialLight.transform.position,
+                    receiver.transform.position) + receiver.CurrentDisplayRadius,
+                Is.LessThan(radialLight.range),
+                $"{receiver.name}'s complete visible sphere must remain inside the light range.");
+        }
+
+        private static IEnumerator WaitUntilFocused(
+            SolarSystemCameraController cameraController)
+        {
+            float deadline = Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
+            while (cameraController.Mode == SolarSystemCameraMode.FocusTransition &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+
+            Assert.That(
+                cameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.Focused),
+                $"Camera did not finish focusing within {FocusTransitionTimeoutSeconds:F1} seconds.");
         }
 
         private static void AssertWithinViewport(Camera camera, CelestialBodyView view)

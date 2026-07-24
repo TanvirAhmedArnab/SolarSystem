@@ -37,6 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Focused `VP_SolarSystem` URP profile with ACES, restrained bloom, fixed color/exposure shaping, and subtle vignette.
 - In-place visual-foundation builder that preserves scene identities during rendering iteration.
 - Edit Mode visual-asset contracts and a real-scene Play Mode rendering-foundation test.
+- Real-scene regression coverage for Sun parenting, radial-light units,
+  co-location, range, and shadow policy.
 
 ### Changed
 
@@ -53,6 +55,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   project-owned skybox, post-processing, ambient-light, reflection, and solar-key settings.
 - Tuned the representative Sun, Earth, Moon, Jupiter, and orbit materials;
   enabled instancing and added subtle linear normal detail to Earth.
+- Replaced the fixed directional presentation light with a Sun-parented
+  realtime point source so every lit body derives its day hemisphere from the
+  live Sun position.
+- Made volume-profile authoring idempotent by reusing valid component
+  subassets instead of replacing their stable local file IDs on every run.
+- Replaced fixed camera-test sleeps with bounded state-based waits to prevent
+  false failures under variable editor load.
 
 ### Removed
 

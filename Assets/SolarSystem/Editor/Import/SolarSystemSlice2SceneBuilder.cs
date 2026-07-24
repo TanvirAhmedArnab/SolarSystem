@@ -28,11 +28,12 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const float EarthOrbitWidth = 0.055f;
         private const float MoonOrbitWidth = 0.025f;
         private const float JupiterOrbitWidth = 0.065f;
-        private const float SolarKeyIntensity = 1.35f;
-        private const float SolarKeyTemperature = 5600f;
-        private const float SolarKeyShadowStrength = 0.82f;
-        private const float SolarKeyShadowBias = 0.04f;
-        private const float SolarKeyShadowNormalBias = 0.3f;
+        private const string SolarRadialLightName = "Solar Radial Light";
+        private const string LegacySolarKeyLightName = "Sun Key Light";
+        private const string SunStableId = "sun";
+        private const float SolarRadialIntensityCandela = 1450f;
+        private const float SolarRadialRange = 80f;
+        private const float SolarRadialTemperature = 5600f;
         private const float ReflectionIntensity = 0.18f;
         private static readonly Color AmbientFill =
             new Color(0.012f, 0.017f, 0.03f, 1f);
@@ -102,7 +103,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 camera,
                 controller,
                 hudPresenter);
-            CreateLighting(environmentRoot);
+            CreateLighting(sunView.transform);
             CreateGlobalVolume(environmentRoot, content.VisualProfile);
             ConfigureRenderSettings(content.SkyboxMaterial);
 
@@ -124,15 +125,18 @@ namespace Tanvir.SolarSystem.Editor.Import
 
             ConfigureCamera(camera);
 
-            GameObject lightObject = GameObject.Find("Sun Key Light");
-            Light keyLight = lightObject != null ? lightObject.GetComponent<Light>() : null;
-            if (keyLight == null)
+            GameObject lightObject =
+                GameObject.Find(SolarRadialLightName) ??
+                GameObject.Find(LegacySolarKeyLightName);
+            Light radialLight = lightObject != null ? lightObject.GetComponent<Light>() : null;
+            if (radialLight == null)
             {
                 throw new InvalidOperationException(
-                    "The SolarSystem scene requires the Sun Key Light.");
+                    "The SolarSystem scene requires its project-owned solar light.");
             }
 
-            ConfigureLighting(keyLight);
+            CelestialBodyView sunView = FindBodyView(SunStableId);
+            ConfigureLighting(radialLight, sunView.transform);
 
             GameObject volumeObject = GameObject.Find("Global Volume");
             Volume volume = volumeObject != null ? volumeObject.GetComponent<Volume>() : null;
@@ -268,27 +272,45 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void CreateLighting(Transform parent)
+        private static void CreateLighting(Transform sun)
         {
-            GameObject lightObject = new GameObject("Sun Key Light");
-            lightObject.transform.SetParent(parent, false);
+            GameObject lightObject = new GameObject(SolarRadialLightName);
             Light light = lightObject.AddComponent<Light>();
-            ConfigureLighting(light);
+            ConfigureLighting(light, sun);
         }
 
-        private static void ConfigureLighting(Light light)
+        private static void ConfigureLighting(Light light, Transform sun)
         {
-            light.transform.rotation = Quaternion.Euler(38f, -32f, 0f);
-            light.type = LightType.Directional;
-            light.intensity = SolarKeyIntensity;
+            light.gameObject.name = SolarRadialLightName;
+            light.transform.SetParent(sun, false);
+            light.transform.localPosition = Vector3.zero;
+            light.transform.localRotation = Quaternion.identity;
+            light.type = LightType.Point;
+            light.lightUnit = LightUnit.Candela;
+            light.intensity = SolarRadialIntensityCandela;
+            light.range = SolarRadialRange;
             light.color = Color.white;
             light.useColorTemperature = true;
-            light.colorTemperature = SolarKeyTemperature;
-            light.shadows = LightShadows.Soft;
-            light.shadowStrength = SolarKeyShadowStrength;
-            light.shadowBias = SolarKeyShadowBias;
-            light.shadowNormalBias = SolarKeyShadowNormalBias;
-            RenderSettings.sun = light;
+            light.colorTemperature = SolarRadialTemperature;
+            light.shadows = LightShadows.None;
+            light.bounceIntensity = 0f;
+            RenderSettings.sun = null;
+        }
+
+        private static CelestialBodyView FindBodyView(string stableId)
+        {
+            CelestialBodyView[] views =
+                Object.FindObjectsByType<CelestialBodyView>(FindObjectsSortMode.None);
+            foreach (CelestialBodyView view in views)
+            {
+                if (view.StableId == stableId)
+                {
+                    return view;
+                }
+            }
+
+            throw new InvalidOperationException(
+                $"The SolarSystem scene requires celestial body '{stableId}'.");
         }
 
         private static void CreateGlobalVolume(
