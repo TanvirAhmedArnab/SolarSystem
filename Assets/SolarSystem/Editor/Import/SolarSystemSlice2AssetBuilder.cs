@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Tanvir.SolarSystem.Authoring;
+using Tanvir.SolarSystem.Presentation.Scale;
 using Tanvir.SolarSystem.Simulation;
 using UnityEditor;
 using UnityEngine;
@@ -155,7 +156,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                     "earth",
                     "NASA_NSSDC_EARTH_AND_JPL_APPROX_POS_J2000",
                     "A rocky world with global oceans and the only known environment that supports life.",
-                    6371d,
+                    CelestialReferenceUnits.EarthMeanRadiusKm,
                     5.9722e24d,
                     23.9345d / 24d,
                     23.44d,
@@ -834,13 +835,16 @@ namespace Tanvir.SolarSystem.Editor.Import
         private static void ConfigureScale(PresentationScaleDefinition scale)
         {
             var serialized = new SerializedObject(scale);
-            serialized.FindProperty("distanceReferenceKm").doubleValue = 1000000d;
-            serialized.FindProperty("unitsPerDistanceDecade").doubleValue = 15d;
-            serialized.FindProperty("radiusReferenceKm").doubleValue = 6371d;
-            serialized.FindProperty("referenceDisplayRadius").doubleValue = 0.8d;
-            serialized.FindProperty("radiusExponent").doubleValue = 0.4d;
-            serialized.FindProperty("minimumDisplayRadius").doubleValue = 0.18d;
-            serialized.FindProperty("maximumDisplayRadius").doubleValue = 4.8d;
+            serialized.FindProperty("distanceReferenceKm").doubleValue =
+                ReadableOverviewScaleContract.DistanceReferenceKm;
+            serialized.FindProperty("unitsPerDistanceDecade").doubleValue =
+                ReadableOverviewScaleContract.UnitsPerDistanceDecade;
+            serialized.FindProperty("radiusReferenceKm").doubleValue =
+                CelestialReferenceUnits.EarthMeanRadiusKm;
+            serialized.FindProperty("referenceDisplayRadius").doubleValue =
+                ReadableOverviewScaleContract.EarthDisplayRadius;
+            serialized.FindProperty("minimumSurfaceClearance").doubleValue =
+                ReadableOverviewScaleContract.MinimumSurfaceClearance;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(scale);
         }

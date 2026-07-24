@@ -277,15 +277,26 @@ Primary sources:
 
 ## Presentation Transformations
 
-Physical values remain unchanged in the authoring assets and immutable runtime models. The graybox presentation uses a separate provisional scale asset:
+Physical values remain unchanged in the authoring assets and immutable runtime
+models. The reviewed readable-overview presentation uses a separate scale
+asset and shared constants:
 
 - Parent-relative distance is projected with  
-  `displayDistance = 15 × log10(1 + physicalDistanceKm / 1,000,000)`.
+  `displayDistance = 160 × log10(1 + physicalDistanceKm / 1,000,000)`.
 - Radius is projected with  
-  `displayRadius = 0.8 × (physicalRadiusKm / 6,371)^0.4`.
-- Display radius is clamped to `[0.18, 4.8]` Unity units.
+  `displayRadius = physicalRadiusKm / 6,371`.
+- Earth therefore has radius `1`; every other visible body uses the same linear
+  ratio with no exponent, clamp, or per-body exaggeration.
+- Adjacent planet orbit envelopes retain at least `2.5` Earth-radius display
+  units of tested surface clearance. Saturn's ring envelope is included.
+- Sub-pixel bodies may use an invisible selection radius of `1.5` units. This
+  affects raycast accessibility, not rendered size.
 
-These values are intentionally transformed for legibility. They remain a tunable graybox proposal under `TDD-OPEN-004` and must not be presented as literal physical scale.
+Body-size ratios are physically proportional; orbital distance is intentionally
+compressed for legibility and must not be presented as literal physical scale.
+For the approved guided comparison, the exact linear reference makes the
+average Earth-Moon distance about `60.34` Earth radii and the average Earth-Sun
+distance about `23,481.13` Earth radii.
 
 ## Known Scientific Limitations
 

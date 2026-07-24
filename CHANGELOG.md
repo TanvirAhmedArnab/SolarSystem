@@ -25,7 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Stable-ID selection service and celestial-body raycast selection colliders.
 - Damped free-flight camera plus smooth, redirectable focus/orbit behavior using unscaled time.
 - Interaction composition root with Edit Mode contract tests and a real-scene Play Mode journey.
-- Bounded simulation pause/speed application service with a documented one-day-per-second baseline.
+- Bounded simulation pause/speed application service with a documented one-Earth-sidereal-rotation-per-real-second baseline.
 - UI Toolkit explorer HUD showing run state, rate, selection, and contextual keyboard hints.
 - Edit Mode time/UI asset coverage and a real-scene HUD feedback and resumed-motion journey.
 - Authored educational summaries for the representative Sun, Earth, Moon, and Jupiter definitions.
@@ -51,6 +51,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   selection, focus, and simulation-time changes.
 - Deterministic audio import policies and Edit/Play Mode regression coverage for
   routing, spatialization, event mapping, and scene wiring.
+- Shared Earth radius and sidereal-rotation reference units for presentation
+  scale and simulation-time calibration.
+- Exact Earth-relative body radii, a reusable literal physical-length
+  conversion, and a compressed-overview clearance contract.
+- Complete deterministic synodic-cycle sampling for every adjacent planet pair,
+  plus Sun-Mercury, Earth-Moon, signed-spin, and scene-integration coverage.
 
 ### Changed
 
@@ -78,6 +84,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   catalog, material, view, and orbit authoring scale together.
 - Reframed the initial camera from the representative four-body view to the
   complete eight-planet presentation envelope.
+- Replaced radius exponentiation and clamping with strict proportional sizing
+  from an `Earth = 1` reference; retained compressed orbital spacing with a
+  disclosed minimum readable surface gap.
+- Changed the `1x` time reference to Earth's `86,164.2`-second sidereal
+  rotation, so one real second produces one Earth rotation and every other
+  body's signed spin remains proportional.
+- Enlarged only invisible selection colliders for sub-pixel bodies, preserving
+  proportional rendered geometry while keeping the overview usable.
 
 ### Removed
 

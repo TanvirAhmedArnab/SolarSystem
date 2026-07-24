@@ -2,10 +2,14 @@ using System.Collections;
 using NUnit.Framework;
 using Tanvir.SolarSystem.Application;
 using Tanvir.SolarSystem.Audio;
+using Tanvir.SolarSystem.Authoring;
 using Tanvir.SolarSystem.Interaction;
+using Tanvir.SolarSystem.Mathematics;
 using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
+using Tanvir.SolarSystem.Presentation.Scale;
 using Tanvir.SolarSystem.Presentation.UI;
+using Tanvir.SolarSystem.Simulation;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -192,9 +196,10 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(timeControls, Is.Not.Null);
             Assert.That(hud, Is.Not.Null);
             Assert.That(hud.IsInitialized, Is.True);
-            Assert.That(timeControls.CurrentMultiplier, Is.EqualTo(10));
+            Assert.That(timeControls.CurrentMultiplier, Is.EqualTo(1));
             Assert.That(hud.SimulationStateText, Does.Contain("RUNNING"));
-            Assert.That(hud.SimulationRateText, Does.Contain("10x"));
+            Assert.That(hud.SimulationRateText, Does.Contain("1x"));
+            Assert.That(hud.SimulationRateText, Does.Contain("EARTH ROTATION"));
             Assert.That(hud.PauseActionText, Is.EqualTo("PAUSE"));
 
             Assert.That(
@@ -224,8 +229,8 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 Is.LessThan(0.00001f));
 
             Assert.That(timeControls.IncreaseSpeed(), Is.True);
-            Assert.That(timeControls.CurrentMultiplier, Is.EqualTo(100));
-            Assert.That(hud.SimulationRateText, Does.Contain("100x"));
+            Assert.That(timeControls.CurrentMultiplier, Is.EqualTo(10));
+            Assert.That(hud.SimulationRateText, Does.Contain("10x"));
 
             timeControls.TogglePaused();
             Vector3 resumedPosition = earth.transform.position;
@@ -335,6 +340,72 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator SolarSystemScene_UsesEarthReferencedSizesAndSignedSiderealSpin()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot composition =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            Assert.That(composition, Is.Not.Null);
+            Assert.That(composition.IsInitialized, Is.True);
+            Assert.That(
+                composition.SimulationController.ClockSnapshot.SpeedMultiplier,
+                Is.EqualTo(CelestialReferenceUnits.EarthSiderealRotationPeriodSeconds)
+                    .Within(0.000001d));
+
+            double simulationTime = composition.SimulationController
+                .ClockSnapshot.ElapsedSimulationTimeSeconds;
+            var evaluator = new KeplerOrbitEvaluator();
+            foreach (string stableId in ExpectedBodyIds)
+            {
+                Assert.That(
+                    composition.SimulationController.TryGetView(
+                        stableId,
+                        out CelestialBodyView view),
+                    Is.True);
+                CelestialBodyDefinition definition = view.Definition;
+                Assert.That(definition, Is.Not.Null);
+                double expectedRadius =
+                    definition.MeanRadiusKm / CelestialReferenceUnits.EarthMeanRadiusKm;
+                Assert.That(
+                    view.CurrentDisplayRadius,
+                    Is.EqualTo(expectedRadius).Within(0.0001d),
+                    $"{definition.DisplayName} must retain its Earth-relative mean-radius ratio.");
+                SphereCollider selectionCollider = view.GetComponent<SphereCollider>();
+                Assert.That(selectionCollider, Is.Not.Null);
+                Assert.That(
+                    selectionCollider.radius,
+                    Is.EqualTo(
+                        Mathf.Max(
+                            view.CurrentDisplayRadius,
+                            ReadableOverviewScaleContract.MinimumSelectionRadius))
+                        .Within(0.0001f),
+                    $"{definition.DisplayName}'s accessible hit area must not change its visual size.");
+
+                CelestialBodyModel model = definition.ToModel();
+                CelestialState state =
+                    evaluator.Evaluate(model, Double3.Zero, simulationTime);
+                Quaternion expectedRotation =
+                    Quaternion.AngleAxis((float)model.AxialTiltDeg, Vector3.forward) *
+                    Quaternion.AngleAxis(-(float)state.RotationAngleDeg, Vector3.up);
+                Transform visual = view.transform.Find("Visual");
+                Assert.That(visual, Is.Not.Null);
+                Assert.That(
+                    Quaternion.Angle(visual.localRotation, expectedRotation),
+                    Is.LessThan(0.001f),
+                    $"{definition.DisplayName} must apply its signed sidereal spin direction.");
+            }
+
+            Assert.That(
+                composition.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(earth.CurrentDisplayRadius, Is.EqualTo(1f).Within(0.0001f));
+        }
+
+        [UnityTest]
         public IEnumerator SolarSystemScene_UsesSunOriginRadialIllumination()
         {
             SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
@@ -355,8 +426,8 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(radialLight.name, Is.EqualTo("Solar Radial Light"));
             Assert.That(radialLight.type, Is.EqualTo(LightType.Point));
             Assert.That(radialLight.lightUnit, Is.EqualTo(LightUnit.Candela));
-            Assert.That(radialLight.intensity, Is.EqualTo(1450f).Within(0.001f));
-            Assert.That(radialLight.range, Is.EqualTo(80f).Within(0.001f));
+            Assert.That(radialLight.intensity, Is.EqualTo(165000f).Within(0.001f));
+            Assert.That(radialLight.range, Is.EqualTo(620f).Within(0.001f));
             Assert.That(radialLight.shadows, Is.EqualTo(LightShadows.None));
             Assert.That(radialLight.transform.parent, Is.SameAs(sun.transform));
             Assert.That(

@@ -126,12 +126,13 @@ namespace Tanvir.SolarSystem.Presentation.UI
             simulationState.EnableInClassList("is-paused", snapshot.IsPaused);
 
             int multiplier = timeControls.CurrentMultiplier;
-            string dayUnit = multiplier == 1 ? "day" : "days";
+            string rotationUnit =
+                multiplier == 1 ? "EARTH ROTATION" : "EARTH ROTATIONS";
             simulationRate.text = string.Format(
                 CultureInfo.InvariantCulture,
                 "TIME RATE / {0:N0}x / {0:N0} {1} PER REAL SECOND",
                 multiplier,
-                dayUnit);
+                rotationUnit);
             selectionTarget.text = selection.SelectedId.HasValue
                 ? $"TARGET / {selection.SelectedId.Value.Value.ToUpperInvariant()}"
                 : "TARGET / NONE";

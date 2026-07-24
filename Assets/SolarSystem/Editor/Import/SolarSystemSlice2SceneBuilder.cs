@@ -7,6 +7,7 @@ using Tanvir.SolarSystem.Input;
 using Tanvir.SolarSystem.Interaction;
 using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
+using Tanvir.SolarSystem.Presentation.Scale;
 using Tanvir.SolarSystem.Presentation.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -30,8 +31,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string EarthStableId = "earth";
         private const float EarthAmbienceMinimumDistance = 1.5f;
         private const float EarthAmbienceMaximumDistance = 12f;
-        private const float SolarRadialIntensityCandela = 1450f;
-        private const float SolarRadialRange = 80f;
+        private const float SolarRadialIntensityCandela = 165000f;
+        private const float SolarRadialRange = 620f;
         private const float SolarRadialTemperature = 5600f;
         private const float ReflectionIntensity = 0.18f;
         private static readonly Color AmbientFill =
@@ -225,7 +226,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             orbitObject.transform.SetParent(parent, false);
             LineRenderer line = orbitObject.AddComponent<LineRenderer>();
             line.sharedMaterial = material;
-            line.widthMultiplier = width;
+            line.widthMultiplier =
+                width * ReadableOverviewScaleContract.OrbitPathWidthMultiplier;
             line.numCornerVertices = 2;
             line.numCapVertices = 0;
             line.shadowCastingMode = ShadowCastingMode.Off;
@@ -245,7 +247,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             GameObject cameraObject = new GameObject("Main Camera");
             cameraObject.tag = "MainCamera";
             cameraObject.transform.SetParent(parent, false);
-            cameraObject.transform.position = new Vector3(0f, 72f, -108f);
+            cameraObject.transform.position = new Vector3(0f, 600f, -900f);
             cameraObject.transform.LookAt(Vector3.zero);
             Camera camera = cameraObject.AddComponent<Camera>();
             ConfigureCamera(camera);
@@ -258,7 +260,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             camera.clearFlags = CameraClearFlags.Skybox;
             camera.backgroundColor = new Color(0.001f, 0.003f, 0.01f, 1f);
             camera.nearClipPlane = 0.05f;
-            camera.farClipPlane = 250f;
+            camera.farClipPlane = 2000f;
             camera.fieldOfView = 50f;
             camera.allowHDR = true;
             camera.allowMSAA = true;
@@ -468,7 +470,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             SetArray(serialized.FindProperty("bodyViews"), views);
             SetArray(serialized.FindProperty("orbitPaths"), paths);
             serialized.FindProperty("simulationSecondsPerRealSecond").doubleValue =
-                SimulationTimeControlService.BaselineSecondsPerRealSecond * 10d;
+                SimulationTimeControlService.BaselineSecondsPerRealSecond;
             serialized.FindProperty("beginPaused").boolValue = false;
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }

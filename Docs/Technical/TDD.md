@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; event-driven audio baseline validated  
-**Version:** 0.12.0  
+**Document status:** Living technical authority; proportional presentation-scale calibration validated  
+**Version:** 0.13.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -38,6 +38,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.10.0 | 2026-07-23 | Codex, for Tanvir | Replaced the fixed directional-light approximation with a Sun-parented point source, explicit radial-illumination constraints, and real-scene regression coverage | Sun-facing day hemispheres and opposing night hemispheres validated for the representative scene |
 | 0.11.0 | 2026-07-23 | Codex, for Tanvir | Expanded the deterministic authoring pipeline to all eight planets, added a generated Saturn annulus, and reframed the initial camera for the complete planetary envelope | Required planetary baseline validated; advanced atmosphere, cloud, and ring shading remain deferred |
 | 0.12.0 | 2026-07-24 | Codex, for Tanvir | Added event-driven audio feedback, independent runtime channel levels and mute, deterministic clip-import contracts, and licensed scene ambience | Automated behavior validated; owner listening and final mix approval remain |
+| 0.13.0 | 2026-07-24 | Codex, for Tanvir | Replaced exaggerated body radii with exact Earth-relative proportions, calibrated readable orbit clearances, anchored `1x` to Earth's sidereal rotation, and added full-cycle regression coverage | Presentation-scale contract approved and validated; guided comparison UI remains |
 
 ### 1.3 Status vocabulary
 
@@ -347,14 +348,37 @@ The initial body count does not justify one `Update` per body, Jobs, Burst, or E
 
 `ScaleModeService` separates physical state from display state.
 
-Initial modes:
+Scale experiences:
 
-- `Presentation`: compressed distances and exaggerated radii for readable exploration.
+- `Presentation`: compressed distances with exact Earth-relative body radii.
 - `GuidedComparison`: controlled transition showing why a single true scale is impractical.
 
-`ScaleProjector` receives physical positions/radii, focus origin, and scale settings; it returns float-space positions and display radii. The exact monotonic distance function and radius clamps remain configurable and must be validated against the guided experience.
+`ScaleProjector` receives physical positions/radii, focus origin, and scale
+settings; it returns float-space positions and display radii. Radius projection
+is linear and uses one shared physical reference. Distance projection remains
+separate because literal astronomical distance and visible body size cannot be
+shown together usefully in the initial overview.
 
-**[IMPLEMENTED/PROVISIONAL]** The first graybox projects each parent-relative offset with `15 * log10(1 + distanceKm / 1,000,000)` and projects radius with `0.8 * (radiusKm / 6,371)^0.4`, clamped to `[0.18, 4.8]` Unity units. Hierarchy-relative projection preserves a readable Moon offset while parent-first composition keeps relationships deterministic. These values are evidence-producing defaults, not an approval of `TDD-OPEN-004`.
+**[IMPLEMENTED/VALIDATED]** `ReadableOverviewScaleContract` owns the reviewed
+numeric policy. Each parent-relative offset uses
+`160 * log10(1 + distanceKm / 1,000,000)`. Each rendered radius uses
+`radiusKm / 6,371`, making Earth exactly one display-radius unit with no
+exponent, clamp, or body-specific exaggeration. Hierarchy-relative projection
+preserves the Moon relationship while parent-first composition remains
+deterministic.
+
+Every adjacent planet pair must retain at least `2.5` Earth-radius display
+units of surface clearance across both its conservative orbital envelope and
+4,096 samples over a complete synodic cycle. Sun-Mercury and Earth-Moon are
+covered separately; Saturn clearance includes its `2.3`-body-radius ring
+envelope. Sub-pixel bodies receive an invisible selection radius of at least
+`1.5` units, but their rendered geometry remains proportional.
+
+`PhysicalScaleReference` exposes the literal conversion needed by the approved
+guided comparison. At `Earth = 1`, the average Earth-Moon distance is about
+`60.34` units and the average Earth-Sun distance is about `23,481.13` units.
+The comparison UI and transition choreography remain release work; the
+underlying physical reference is implemented and tested.
 
 Render positions are relative to an explicit render origin, normally the current focus anchor, preventing large float magnitudes. Physical positions remain unchanged.
 
@@ -365,7 +389,9 @@ Selection changes publish one C# event and duplicate selections do not produce
 duplicate notifications. `CelestialSelectionController` is the Unity adapter:
 it raycasts from the current pointer through the explorer camera, resolves a
 `CelestialBodyView`, and updates the service. Each body owns one root-level
-`SphereCollider` whose radius follows the projected visual radius.
+`SphereCollider` whose radius follows the projected visual radius or the
+documented minimum invisible selection radius, whichever is larger. Collider
+inflation is an interaction affordance and never changes rendered size.
 
 Focus may follow selection but remains a separate command so cinematic mode can move without changing informational selection.
 
@@ -629,14 +655,15 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   until a reviewed channel-packing/custom-shader contract is available.
 - Low flat ambient fill and low sky reflection preserve silhouettes.
 - The scene has one realtime `Solar Radial Light`: a point light parented to
-  the Sun at local origin. Its `1450 cd`, `80`-unit, `5600 K` presentation
+  the Sun at local origin. Its `165,000 cd`, `620`-unit, `5600 K` presentation
   contract covers the compressed planetary envelope and allows URP Lit
   materials to derive their incident direction from the live Sun position.
 - `RenderSettings.sun` remains unset because the scene has no directional Sun.
   Realtime point-light shadows remain disabled: six-face shadow rendering is
-  unjustified for the baseline, and exaggerated radii plus compressed
-  distances would create misleading eclipses. Eclipse presentation requires a
-  separately reviewed scientific and performance contract.
+  unjustified for the baseline, and compressed distances would create
+  misleading eclipses even though body radii are proportional. Eclipse
+  presentation requires a separately reviewed scientific and performance
+  contract.
 - Saturn's first ring presentation uses a deterministically generated 128-segment
   annulus mesh and the audited CC BY 4.0 ring alpha strip. It is transparent,
   two-sided, non-shadow-casting, and parented to Saturn's tilted/spinning visual
@@ -751,7 +778,8 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
 - Serialized Sun, Earth, Moon, and Jupiter definitions, scientific source records, scale projection, centralized views, cached paths, and the `SolarSystem` scene are implemented.
 - Jupiter proves the terrestrial-to-gas-giant radius range and the broader heliocentric camera range without changing the established projection parameters.
 - Unity compilation completed with zero Console errors or warnings; all 43 Edit Mode cases and the real-scene Play Mode case passed.
-- The exact presentation-scale curve remains a tunable proposal under `TDD-OPEN-004`; the representative architecture and range proof no longer depend on resolving that final UX choice.
+- The original provisional radius exaggeration has been replaced by the
+  validated proportional scale contract recorded in TDD 0.13.0.
 - Detailed evidence is recorded in `Docs/ProjectManagement/Slice 2 Sun Earth Moon Validation.md` and `Docs/ProjectManagement/Slice 2 Jupiter Scale Validation.md`.
 
 ### Slice 3 - Interaction vertical slice
@@ -763,9 +791,12 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   machine are implemented.
 - Focus transitions use unscaled time, can redirect to another body, and return
   to free flight without snapping.
-- A bounded `SimulationTimeControlService` defines a provisional one-day-per-
-  real-second baseline and the `1x` through `10,000x` presets without exposing
-  simulation internals to input or presentation.
+- A bounded `SimulationTimeControlService` defines `1x` as one Earth sidereal
+  rotation (`86,164.2` simulated seconds) per real second and exposes the
+  `1x` through `10,000x` presets without exposing simulation internals to
+  input or presentation. Every body's spin uses its signed sidereal period, so
+  relative rates and the retrograde directions of Venus and Uranus are
+  preserved.
 - The first runtime UI Toolkit HUD shows pause state, time rate, selected body,
   and keyboard hints through read-only application state.
 - A selected-body information card presents authored educational context,
@@ -809,6 +840,14 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
 - **[IMPLEMENTED BASELINE]** Licensed music, 2D Sun ambience, 3D Earth
   ambience, selection/focus/time cues, and independent runtime levels/mute are
   integrated through application events and reproducible import policies.
+- **[IMPLEMENTED BASELINE]** All rendered body radii are exact Earth-relative
+  proportions. The readable overview uses a documented logarithmic distance
+  compression, verified minimum clearances, proportional signed rotation
+  rates, and selection-only hit-area accommodation for very small bodies.
+- **[IMPLEMENTED FOUNDATION]** The literal Earth-radius conversion and
+  representative physical distances required by the approved guided scale
+  comparison are implemented and tested; the player-facing transition,
+  narration, and captions remain.
 - The broader proposed moon set, atmosphere/cloud layers, advanced planet and
   ring shaders, labels/navigation, player-facing audio settings, final audio
   mix approval, and accessibility options remain Slice 4 work.
@@ -848,7 +887,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | ID | Decision needed | Recommendation | Owner | Gate | Status |
 |---|---|---|---|---|---|
 | TDD-OPEN-003 | Runtime UI technology | Runtime UI Toolkit proof passed with project-owned UXML, USS, PanelSettings, presenter, and real-scene validation | Tanvir | Slice 3 | Resolved by 0.7.0 implementation evidence |
-| TDD-OPEN-004 | Exact distance-compression and radius-exaggeration curves | Tune ScriptableObject presets during graybox usability testing | Tanvir | Slice 2 | Open |
+| TDD-OPEN-004 | Exact readable-overview distance and body-radius contract | Use strict Earth-relative radii, separate logarithmic distance compression, and tested minimum clearances | Tanvir | Slice 4 | Resolved by 0.13.0 implementation evidence |
 | TDD-OPEN-005 | Exact reference PC | Record actual CPU, GPU, RAM, storage, and display before formal profiling | Tanvir | Slice 4 | Open |
 
 ## 18. Technical Decision Log
@@ -863,6 +902,8 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-006 | 2026-07-22 | Use one build scene until additive loading solves a measured need | Approved | Tanvir | Minimal scene complexity for current scope |
 | TDD-007 | 2026-07-22 | Keep ScriptableObjects as authoring definitions, not mutable runtime state | Approved | Tanvir | Testability and Play Mode safety |
 | TDD-008 | 2026-07-22 | Use `Tanvir.SolarSystem` as the root namespace and assembly prefix | Approved | Tanvir | Stable project identity and conventional namespace hierarchy |
+| TDD-009 | 2026-07-24 | Size rendered bodies linearly from `Earth = 1`, compress only orbital distance, and protect overview usability with tested clearances and invisible hit areas | Approved and implemented | Tanvir | Presentation-scale calibration request and Slice 4 validation |
+| TDD-010 | 2026-07-24 | Define `1x` as one Earth sidereal rotation per real second and derive every body's direction and rate from its signed source period | Approved and implemented | Tanvir | Shared, scientifically proportional time reference |
 | TDD-009 | 2026-07-22 | Use Core, Runtime, Editor, Edit Mode test, and Play Mode test assembly boundaries | Approved | Tanvir | Efficient Unity Level 2 architecture |
 | TDD-010 | 2026-07-23 | Use a project-owned, fixed-exposure URP visual profile and an in-place visual builder; defer unique high-cost shaders until representative evidence justifies them | Implemented candidate | Tanvir | Stable portfolio presentation, reproducibility, and controlled shader scope |
 | TDD-011 | 2026-07-23 | Use one Sun-parented realtime point light for radial day/night illumination; keep its calibrated presentation range/intensity explicit and defer point shadows/eclipses | Implemented candidate | Tanvir | Correct source geometry across moving bodies without a custom shader or misleading compressed-scale eclipses |

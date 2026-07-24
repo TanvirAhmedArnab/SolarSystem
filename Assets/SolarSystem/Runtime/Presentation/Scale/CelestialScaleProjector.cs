@@ -17,6 +17,14 @@ namespace Tanvir.SolarSystem.Presentation.Scale
             this.parameters = parameters;
         }
 
+        /// <summary>
+        /// Gets the proportional reference used by body radii and future guided comparison.
+        /// </summary>
+        public PhysicalScaleReference PhysicalReference => parameters.PhysicalReference;
+
+        /// <summary>Gets the conservative minimum surface-clearance target.</summary>
+        public double MinimumSurfaceClearance => parameters.MinimumSurfaceClearance;
+
         /// <summary>Projects one parent-relative physical offset using monotonic logarithmic compression.</summary>
         public Vector3 ProjectRelativePosition(Double3 parentRelativePositionKm)
         {
@@ -43,7 +51,7 @@ namespace Tanvir.SolarSystem.Presentation.Scale
             return UnityCoordinateAdapter.ToUnityVector(coreDirection) * ToFiniteFloat(displayDistance);
         }
 
-        /// <summary>Projects one physical radius with monotonic power scaling and explicit clamps.</summary>
+        /// <summary>Projects one physical radius proportionally to the Earth reference.</summary>
         public float ProjectRadius(double physicalRadiusKm)
         {
             if (double.IsNaN(physicalRadiusKm) ||
@@ -56,13 +64,8 @@ namespace Tanvir.SolarSystem.Presentation.Scale
                     "Physical radius must be positive and finite.");
             }
 
-            double projected =
-                parameters.ReferenceDisplayRadius *
-                Math.Pow(physicalRadiusKm / parameters.RadiusReferenceKm, parameters.RadiusExponent);
-            double clamped = Math.Max(
-                parameters.MinimumDisplayRadius,
-                Math.Min(parameters.MaximumDisplayRadius, projected));
-            return ToFiniteFloat(clamped);
+            return ToFiniteFloat(
+                parameters.PhysicalReference.ToDisplayUnits(physicalRadiusKm));
         }
 
         /// <summary>Projects a complete parent-first catalog into a caller-owned allocation-free buffer.</summary>

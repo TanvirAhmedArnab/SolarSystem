@@ -16,12 +16,10 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             projector = new CelestialScaleProjector(
                 new PresentationScaleParameters(
                     1000000d,
-                    15d,
+                    160d,
                     6371d,
-                    0.8d,
-                    0.4d,
-                    0.18d,
-                    4.8d));
+                    1d,
+                    2.5d));
         }
 
         [Test]
@@ -46,15 +44,36 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         }
 
         [Test]
-        public void RadiusProjection_UsesReferenceAndExplicitClamps()
+        public void RadiusProjection_UsesEarthReferenceWithoutExaggeration()
         {
-            Assert.That(projector.ProjectRadius(6371d), Is.EqualTo(0.8f).Within(0.0001f));
-            Assert.That(projector.ProjectRadius(1d), Is.EqualTo(0.18f).Within(0.0001f));
-            Assert.That(projector.ProjectRadius(695700d), Is.EqualTo(4.8f).Within(0.0001f));
+            Assert.That(projector.ProjectRadius(6371d), Is.EqualTo(1f).Within(0.0001f));
+            Assert.That(
+                projector.ProjectRadius(1737.4d),
+                Is.EqualTo(1737.4d / 6371d).Within(0.0001d));
+            Assert.That(
+                projector.ProjectRadius(69911d),
+                Is.EqualTo(69911d / 6371d).Within(0.0001d));
+            Assert.That(
+                projector.ProjectRadius(695700d),
+                Is.EqualTo(695700d / 6371d).Within(0.0001d));
         }
 
         [Test]
-        public void GasGiantProjection_PreservesReadableSizeAndDistanceOrdering()
+        public void PhysicalReference_PreparesExactGuidedComparisonRatios()
+        {
+            Assert.That(
+                projector.PhysicalReference.ToDisplayUnits(6371d),
+                Is.EqualTo(1d).Within(0.000000001d));
+            Assert.That(
+                projector.PhysicalReference.ToDisplayUnits(384400d),
+                Is.EqualTo(384400d / 6371d).Within(0.000000001d));
+            Assert.That(
+                projector.PhysicalReference.ToDisplayUnits(149598261.1504425d),
+                Is.EqualTo(149598261.1504425d / 6371d).Within(0.000000001d));
+        }
+
+        [Test]
+        public void GasGiantProjection_PreservesScientificRadiusRatioAndDistanceOrdering()
         {
             float earthRadius = projector.ProjectRadius(6371d);
             float jupiterRadius = projector.ProjectRadius(69911d);
@@ -68,9 +87,11 @@ namespace Tanvir.SolarSystem.Tests.EditMode
 
             Assert.That(jupiterRadius, Is.GreaterThan(earthRadius));
             Assert.That(jupiterRadius, Is.LessThan(sunRadius));
-            Assert.That(jupiterRadius / earthRadius, Is.InRange(2.5f, 2.7f));
-            Assert.That(jupiterPeriapsisDistance, Is.GreaterThan(earthDistance + 10f));
-            Assert.That(jupiterApoapsisDistance, Is.LessThan(45f));
+            Assert.That(
+                jupiterRadius / earthRadius,
+                Is.EqualTo(69911f / 6371f).Within(0.0001f));
+            Assert.That(jupiterPeriapsisDistance, Is.GreaterThan(earthDistance + 100f));
+            Assert.That(jupiterApoapsisDistance, Is.LessThan(480f));
         }
 
         [Test]

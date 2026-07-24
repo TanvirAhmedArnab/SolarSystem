@@ -1,4 +1,5 @@
 using Tanvir.SolarSystem.Presentation.Scale;
+using Tanvir.SolarSystem.Simulation;
 using UnityEngine;
 
 namespace Tanvir.SolarSystem.Authoring
@@ -11,16 +12,24 @@ namespace Tanvir.SolarSystem.Authoring
     {
         [Header("Distance compression")]
         [Tooltip("Physical kilometers represented by the first logarithmic interval.")]
-        [SerializeField] private double distanceReferenceKm = 1000000d;
+        [SerializeField] private double distanceReferenceKm =
+            ReadableOverviewScaleContract.DistanceReferenceKm;
         [Tooltip("Unity units allocated to each base-10 distance interval.")]
-        [SerializeField] private double unitsPerDistanceDecade = 15d;
+        [SerializeField] private double unitsPerDistanceDecade =
+            ReadableOverviewScaleContract.UnitsPerDistanceDecade;
 
-        [Header("Radius exaggeration")]
-        [SerializeField] private double radiusReferenceKm = 6371d;
-        [SerializeField] private double referenceDisplayRadius = 0.8d;
-        [SerializeField] private double radiusExponent = 0.4d;
-        [SerializeField] private double minimumDisplayRadius = 0.18d;
-        [SerializeField] private double maximumDisplayRadius = 4.8d;
+        [Header("Earth-referenced proportional size")]
+        [Tooltip("Verified Earth mean radius used as the shared size reference.")]
+        [SerializeField] private double radiusReferenceKm =
+            CelestialReferenceUnits.EarthMeanRadiusKm;
+        [Tooltip("Earth display radius. Every other body uses the same linear ratio.")]
+        [SerializeField] private double referenceDisplayRadius =
+            ReadableOverviewScaleContract.EarthDisplayRadius;
+
+        [Header("Readable-overview acceptance")]
+        [Tooltip("Minimum conservative surface gap, measured in Earth-radius display units.")]
+        [SerializeField] private double minimumSurfaceClearance =
+            ReadableOverviewScaleContract.MinimumSurfaceClearance;
 
         /// <summary>Creates immutable, validated runtime scale parameters.</summary>
         public PresentationScaleParameters ToParameters()
@@ -30,9 +39,7 @@ namespace Tanvir.SolarSystem.Authoring
                 unitsPerDistanceDecade,
                 radiusReferenceKm,
                 referenceDisplayRadius,
-                radiusExponent,
-                minimumDisplayRadius,
-                maximumDisplayRadius);
+                minimumSurfaceClearance);
         }
     }
 }

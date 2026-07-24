@@ -3,7 +3,7 @@
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
 **Status:** Implemented Slice 3 interaction vertical slice  
-**Last updated:** 2026-07-23  
+**Last updated:** 2026-07-24  
 **Input asset:** `Assets/SolarSystem/Settings/Input/IA_SolarSystem.asset`
 
 This document is the readable control contract for the project-owned `Explorer`
@@ -50,11 +50,13 @@ moves off-screen, the reticle hides while the selection remains active.
 | Slower | Left bracket `[` | Move to the next slower supported preset |
 | Faster | Right bracket `]` | Move to the next faster supported preset |
 
-The current proof defines `1x` as one simulated day per real second. The
-supported bounded presets are `1x`, `10x`, `100x`, `1,000x`, and `10,000x`;
-the scene starts at `10x`. The values and default remain provisional product
-tuning decisions, but the command boundary, units, bounds, and display contract
-are implemented and tested. Speed changes do not resume a paused simulation.
+The calibrated scene defines `1x` as one Earth sidereal rotation per real
+second: `86,164.2` simulated seconds for each real second. The supported
+bounded presets are `1x`, `10x`, `100x`, `1,000x`, and `10,000x`, and the
+scene starts at `1x`. Every body derives its spin rate and direction from its
+signed sidereal period, so relative speeds and the retrograde rotations of
+Venus and Uranus remain intact. Speed changes do not resume a paused
+simulation.
 
 The bottom-left quick-control strip presents each key and action as a separate
 visual group rather than a sentence. Distinct keycap colors support rapid

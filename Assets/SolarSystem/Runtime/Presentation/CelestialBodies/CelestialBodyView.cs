@@ -78,7 +78,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             transform.position = state.Position;
             currentDisplayRadius = state.DisplayRadius;
             visualRoot.localScale = Vector3.one * (currentDisplayRadius * 2f);
-            selectionCollider.radius = currentDisplayRadius;
+            selectionCollider.radius = Mathf.Max(
+                currentDisplayRadius,
+                ReadableOverviewScaleContract.MinimumSelectionRadius);
 
             Quaternion axialTilt = Quaternion.AngleAxis((float)model.AxialTiltDeg, Vector3.forward);
             Quaternion siderealSpin = Quaternion.AngleAxis(-state.RotationAngleDeg, Vector3.up);

@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual and audio foundations  
-**Version:** 0.8.0  
+**Status:** Living authority with validated visual, audio, and proportional-scale foundations  
+**Version:** 0.9.0  
 **Last updated:** 2026-07-24  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -179,6 +179,20 @@ USGS color browse mosaic with pale pink, cream, and gray. Disclose incomplete an
 
 Use the Solar System Scope Stars + Milky Way 2K map initially. Keep it dim and independent of focus-body rotation. Orbit lines remain thin and subordinate.
 
+**[IMPLEMENTED SCALE RULE]** Earth is the visual-radius reference at one unit,
+and every other rendered celestial body uses its exact mean-radius ratio to
+Earth. Do not enlarge individual planets or moons to make them easier to click.
+Use invisible selection hit areas, focus transitions, labels, and navigator
+entries for accessibility. Orbital distance remains logarithmically compressed
+and must be disclosed separately from the proportional body-size rule.
+
+At system overview, the Sun should read as dominant, the giant planets should
+remain visibly larger than the terrestrial planets, and small rocky bodies may
+be genuinely tiny. Orbit lines can be widened enough to survive the expanded
+overview envelope, but remain lower contrast than bodies and selection
+feedback. Focused compositions reveal surface materials without changing the
+body's scale ratio.
+
 **[IMPLEMENTED BASELINE]** `M_SpaceSkybox` presents the approved 2K
 equirectangular map with a restrained cool tint and `0.62` exposure. The camera
 uses skybox clearing, HDR, post-processing, NaN suppression, and dithering.
@@ -290,6 +304,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.9.0 | 2026-07-24 | Established exact Earth-relative rendered radii, selection-only accessibility accommodation, and readable compressed-overview composition rules | Approved and implementation validated |
 | 0.8.0 | 2026-07-24 | Recorded the implemented licensed music, 2D Sun ambience, 3D Earth ambience, UI cues, and deterministic import contracts | Technical baseline validated; owner listening approval pending |
 | 0.7.0 | 2026-07-23 | Recorded the eight-planet material baseline, deterministic Saturn annulus, and deferred atmosphere/cloud/ring fidelity layers | Pending owner review |
 | 0.6.0 | 2026-07-23 | Replaced the fixed directional approximation with validated Sun-origin radial illumination and explicit day/night readability | Pending owner review |

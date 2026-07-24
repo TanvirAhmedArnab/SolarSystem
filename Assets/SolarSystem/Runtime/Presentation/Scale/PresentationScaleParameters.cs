@@ -11,33 +11,22 @@ namespace Tanvir.SolarSystem.Presentation.Scale
             double unitsPerDistanceDecade,
             double radiusReferenceKm,
             double referenceDisplayRadius,
-            double radiusExponent,
-            double minimumDisplayRadius,
-            double maximumDisplayRadius)
+            double minimumSurfaceClearance)
         {
             RequirePositiveFinite(distanceReferenceKm, nameof(distanceReferenceKm));
             RequirePositiveFinite(unitsPerDistanceDecade, nameof(unitsPerDistanceDecade));
             RequirePositiveFinite(radiusReferenceKm, nameof(radiusReferenceKm));
             RequirePositiveFinite(referenceDisplayRadius, nameof(referenceDisplayRadius));
-            RequirePositiveFinite(radiusExponent, nameof(radiusExponent));
-            RequirePositiveFinite(minimumDisplayRadius, nameof(minimumDisplayRadius));
-            RequirePositiveFinite(maximumDisplayRadius, nameof(maximumDisplayRadius));
-
-            if (maximumDisplayRadius < minimumDisplayRadius)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(maximumDisplayRadius),
-                    maximumDisplayRadius,
-                    "Maximum display radius cannot be smaller than the minimum.");
-            }
+            RequirePositiveFinite(minimumSurfaceClearance, nameof(minimumSurfaceClearance));
 
             DistanceReferenceKm = distanceReferenceKm;
             UnitsPerDistanceDecade = unitsPerDistanceDecade;
             RadiusReferenceKm = radiusReferenceKm;
             ReferenceDisplayRadius = referenceDisplayRadius;
-            RadiusExponent = radiusExponent;
-            MinimumDisplayRadius = minimumDisplayRadius;
-            MaximumDisplayRadius = maximumDisplayRadius;
+            MinimumSurfaceClearance = minimumSurfaceClearance;
+            PhysicalReference = new PhysicalScaleReference(
+                radiusReferenceKm,
+                referenceDisplayRadius);
         }
 
         /// <summary>Gets the physical distance represented by the first logarithmic interval.</summary>
@@ -52,14 +41,11 @@ namespace Tanvir.SolarSystem.Presentation.Scale
         /// <summary>Gets the display radius assigned to the reference body.</summary>
         public double ReferenceDisplayRadius { get; }
 
-        /// <summary>Gets the exponent used for monotonic radius exaggeration.</summary>
-        public double RadiusExponent { get; }
+        /// <summary>Gets the required conservative surface clearance in display units.</summary>
+        public double MinimumSurfaceClearance { get; }
 
-        /// <summary>Gets the smallest visible display radius.</summary>
-        public double MinimumDisplayRadius { get; }
-
-        /// <summary>Gets the largest allowed display radius.</summary>
-        public double MaximumDisplayRadius { get; }
+        /// <summary>Gets the shared proportional reference for body size and guided comparison.</summary>
+        public PhysicalScaleReference PhysicalReference { get; }
 
         private static void RequirePositiveFinite(double value, string parameterName)
         {

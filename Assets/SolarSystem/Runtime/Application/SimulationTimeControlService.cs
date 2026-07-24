@@ -6,8 +6,11 @@ namespace Tanvir.SolarSystem.Application
     /// <summary>Owns the bounded, user-facing simulation-time control policy.</summary>
     public sealed class SimulationTimeControlService
     {
-        /// <summary>Defines one user-facing 1x rate as one simulated day per real second.</summary>
-        public const double BaselineSecondsPerRealSecond = 86400d;
+        /// <summary>
+        /// Defines 1x as one verified Earth sidereal rotation per real second.
+        /// </summary>
+        public const double BaselineSecondsPerRealSecond =
+            CelestialReferenceUnits.EarthSiderealRotationPeriodSeconds;
 
         private static readonly int[] PresetMultipliers = { 1, 10, 100, 1000, 10000 };
         private readonly ISimulationTimeController controller;

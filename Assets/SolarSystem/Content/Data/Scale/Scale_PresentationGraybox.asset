@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: Scale_PresentationGraybox
   m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.PresentationScaleDefinition
   distanceReferenceKm: 1000000
-  unitsPerDistanceDecade: 15
+  unitsPerDistanceDecade: 160
   radiusReferenceKm: 6371
-  referenceDisplayRadius: 0.8
-  radiusExponent: 0.4
-  minimumDisplayRadius: 0.18
-  maximumDisplayRadius: 4.8
+  referenceDisplayRadius: 1
+  minimumSurfaceClearance: 2.5

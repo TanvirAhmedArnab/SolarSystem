@@ -66,20 +66,25 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Sun-Origin Illumination Validation](Docs/ProjectManagement/Slice%204%20Sun-Origin%20Illumination%20Validation.md)
 - [Slice 4 Eight-Planet Content Validation](Docs/ProjectManagement/Slice%204%20Eight-Planet%20Content%20Validation.md)
 - [Slice 4 Audio Baseline Validation](Docs/ProjectManagement/Slice%204%20Audio%20Baseline%20Validation.md)
+- [Slice 4 Proportional Scale Calibration Validation](Docs/ProjectManagement/Slice%204%20Proportional%20Scale%20Calibration%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/Earth-Moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile with a clean Console. The project currently passes 94 Edit Mode cases
-and six real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 101 Edit Mode cases and
+seven real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
-real-scene behavior. The scene also includes licensed event-driven music,
-spatial celestial ambience, and UI feedback with independent runtime levels
-and mute. Detailed evidence is recorded in
-`Docs/ProjectManagement`.
+real-scene behavior. Every rendered body radius is now a strict multiple of
+Earth's mean radius (`Earth = 1`), while orbital distances use a disclosed
+readability compression with tested adjacent-orbit clearances. At `1x`, one
+real second advances exactly one Earth sidereal rotation; all bodies derive
+their spin rate and direction from signed source periods. The scene also
+includes licensed event-driven music, spatial celestial ambience, and UI
+feedback with independent runtime levels and mute. Detailed evidence is
+recorded in `Docs/ProjectManagement`.
 
 ## License
 

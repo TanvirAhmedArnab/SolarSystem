@@ -8,6 +8,15 @@ namespace Tanvir.SolarSystem.Tests.EditMode
     public sealed class SimulationTimeControlServiceTests
     {
         [Test]
+        public void Baseline_UsesOneEarthSiderealRotationPerRealSecond()
+        {
+            Assert.That(
+                SimulationTimeControlService.BaselineSecondsPerRealSecond,
+                Is.EqualTo(CelestialReferenceUnits.EarthSiderealRotationPeriodSeconds)
+                    .Within(0.000001d));
+        }
+
+        [Test]
         public void Constructor_ReadsSupportedInitialPreset()
         {
             var controller = new FakeTimeController(

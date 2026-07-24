@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.7.0  
+**Version:** 0.8.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -34,6 +34,7 @@
 | 0.5.0 | 2026-07-23 | Codex, for Tanvir | Recorded the validated selection-feedback and educational body-information experience that closes the interaction vertical slice | Implemented product behavior recorded; broader release interface remains |
 | 0.6.0 | 2026-07-23 | Codex, for Tanvir | Recorded the implemented eight-planet content baseline, full-system overview framing, and first Saturn ring presentation | Required planetary roster implemented; final fidelity and selected moon set remain |
 | 0.7.0 | 2026-07-24 | Codex, for Tanvir | Recorded the implemented licensed music, celestial ambience, and interaction-feedback baseline | Technical behavior validated; owner listening and final mix approval remain |
+| 0.8.0 | 2026-07-24 | Codex, for Tanvir | Approved exact Earth-relative body sizes, proportional signed rotation rates, readable orbital clearances, and the technical foundation for guided physical-scale comparison | Presentation-scale behavior implemented and validated; guided comparison presentation remains |
 
 ### 1.3 Source hierarchy
 
@@ -65,7 +66,10 @@ The experience allows a visitor to explore the system freely, focus on a celesti
 
 ### 3.1 Scientific integrity
 
-The simulation clearly distinguishes verified source data from presentation transformations. It must never imply that exaggerated radii, compressed distances, or accelerated time are literal.
+The simulation clearly distinguishes verified source data from presentation
+transformations. It must never imply that compressed distances or accelerated
+time are literal, and it must identify body-size ratios as proportional rather
+than implying that the combined overview is one literal physical scale.
 
 ### 3.2 Legibility across extreme scale
 
@@ -178,11 +182,31 @@ This choice produces more credible motion than circular transform rotation while
 
 #### Presentation scale
 
-**[PROPOSED]** The default mode uses monotonic distance compression and controlled radius exaggeration. Ordering and parent-child relationships remain correct, while the UI clearly labels the mode as visually adjusted.
+**[APPROVED/IMPLEMENTED]** The default mode keeps every rendered celestial
+radius in strict proportion to Earth's verified mean radius, with Earth defined
+as one display-radius unit. Orbital distances alone use monotonic logarithmic
+compression so the system can be seen together. Ordering and parent-child
+relationships remain correct, and adjacent orbit envelopes retain a tested
+minimum readable clearance. Very small bodies may use larger invisible
+selection hit areas, but their visible geometry is not enlarged.
+
+The interface must distinguish these facts clearly: body-size ratios are
+scientifically proportional; orbital spacing is compressed for readability.
 
 #### Physical comparison scale
 
-**[APPROVED]** Physical scale is presented through a controlled guided comparison explaining why realistic distances and body sizes are difficult to view together. It communicates relative physical scale as faithfully as the rendering architecture allows without claiming that raw astronomical coordinates are rendered directly in single-precision Unity transforms. Free navigation in this mode is not required for the minimum release.
+**[APPROVED]** Physical scale is presented through a controlled guided
+comparison explaining why realistic distances and body sizes are difficult to
+view together. It communicates relative physical scale as faithfully as the
+rendering architecture allows without claiming that raw astronomical
+coordinates are rendered directly in single-precision Unity transforms. Free
+navigation in this mode is not required for the minimum release.
+
+**[IMPLEMENTED FOUNDATION]** The comparison now has one exact linear reference:
+`Earth radius = 1`. On that scale, the average Earth-Moon distance is about
+`60.34` Earth radii and the average Earth-Sun distance is about `23,481.13`
+Earth radii. These values establish the intended educational reveal; the
+guided transition, captions, and final camera choreography remain to be built.
 
 #### Transition behavior
 
@@ -193,7 +217,13 @@ This choice produces more credible motion than circular transform rotation while
 
 ### 7.3 Simulation time
 
-**[PROPOSED]** Controls include pause and the following labeled multipliers: `1x`, `10x`, `100x`, `1,000x`, and `10,000x`, with meanings defined relative to a documented baseline simulation rate. A scrubber is excluded from the first release unless backward-time behavior is designed and tested.
+**[APPROVED/IMPLEMENTED]** Controls include pause and the labeled multipliers
+`1x`, `10x`, `100x`, `1,000x`, and `10,000x`. At `1x`, one real second
+advances `86,164.2` simulated seconds: exactly one verified Earth sidereal
+rotation. Every other body's spin remains proportional to its signed sidereal
+period. Venus and Uranus therefore rotate in the retrograde direction. A
+scrubber is excluded from the first release unless backward-time behavior is
+designed and tested.
 
 ### 7.4 Initial conditions and determinism
 
@@ -565,6 +595,8 @@ Record owner decisions here at the time they are made. Link to a separate ADR or
 | GDD-011 | 2026-07-22 | Include the Moon, Io, Europa, Ganymede, Callisto, Titan, and Triton in the minimum moon set | Approved | Tanvir |
 | GDD-012 | 2026-07-22 | Treat 2026-07-29 as the desired date, pending a decision between a 10-hour vertical slice and the full release scope | Superseded by GDD-013 | Tanvir |
 | GDD-013 | 2026-07-22 | Retain the complete portfolio-release scope, use 2026-07-29 as the initial inspection and planning milestone, and set the final schedule after project inspection | Approved | Tanvir |
+| GDD-014 | 2026-07-24 | Make visible body radii exact Earth-relative proportions, compress only orbital distance, and enforce readable orbit clearances | Approved and implemented | Tanvir |
+| GDD-015 | 2026-07-24 | Use one Earth sidereal rotation per real second as the `1x` reference and preserve signed proportional spin directions | Approved and implemented | Tanvir |
 
 ## 22. Definition of Done for GDD Version 1.0
 
