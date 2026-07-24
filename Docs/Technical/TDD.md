@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Slice 3 interaction vertical slice complete  
-**Version:** 0.8.0  
+**Document status:** Living technical authority; first visual-production foundation validated  
+**Version:** 0.9.0  
 **Last updated:** 2026-07-23  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -34,6 +34,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.6.0 | 2026-07-23 | Codex, for Tanvir | Added the project-owned input map, stable-ID selection, raycast adapters, explicit interaction composition, and validated free/focus camera state machine | First Slice 3 interaction proof validated; time, scale-comparison, and UI work remain |
 | 0.7.0 | 2026-07-23 | Codex, for Tanvir | Added bounded time-control commands, read-only presentation state, the first runtime UI Toolkit HUD, reproducible UI authoring, and complete behavioral/visual validation | Time-control and HUD proof validated; scale comparison and broader interface remain |
 | 0.8.0 | 2026-07-23 | Codex, for Tanvir | Added authored educational summaries, display-only fact formatting, a selected-body information card, and a screen-space selection reticle | Slice 3 interaction vertical slice complete; visual/content production may begin |
+| 0.9.0 | 2026-07-23 | Codex, for Tanvir | Added the project-owned panoramic skybox, deterministic visual asset authoring, focused URP volume profile, camera post-processing contract, tuned representative materials, and visual validation | First visual-production foundation validated; unique atmosphere/cloud/solar shaders remain evidence-gated |
 
 ### 1.3 Status vocabulary
 
@@ -108,7 +109,9 @@ In priority order:
 - Unity UI/uGUI 2.5.0.
 - Timeline 1.8.12.
 
-The project now contains the project-authored assembly and test foundation, but no production runtime behavior yet constrains this architecture. The Unity template scene remains only as a temporary validation scene.
+The project contains validated deterministic runtime, interaction, UI, and
+visual-foundation slices. The project-owned `SolarSystem` scene is the sole
+enabled build scene; Unity template content is not a runtime dependency.
 
 ### 3.3 Package policy
 
@@ -235,7 +238,7 @@ Create folders only when the first file needs them. Original downloaded sources 
 
 - `Tanvir.SolarSystem.Core`: deterministic value types, validation rules, orbital/rotation math, no MonoBehaviours or ScriptableObjects.
 - `Tanvir.SolarSystem.Runtime`: application services, authoring adapters, views, camera, input, UI, and audio; references Core and necessary Unity packages.
-- `Tanvir.SolarSystem.Editor`: catalog validators/import tools; editor-only; references Core, Runtime, and URP Core where editor scene generation requires those types.
+- `Tanvir.SolarSystem.Editor`: catalog validators/import tools; editor-only; references Core, Runtime, URP Core, and URP Runtime where editor scene generation requires those types.
 - `Tanvir.SolarSystem.Tests.EditMode`: formula, data, catalog, and service tests.
 - `Tanvir.SolarSystem.Tests.PlayMode`: bootstrap and representative interaction flows.
 
@@ -274,8 +277,14 @@ Avoid generic `Manager`, `Helper`, or `Utils` names.
 - `SolarSystemSlice2AssetBuilder` creates or updates scientific definitions, the catalog, presentation scale, and materials.
 - `SolarSystemSlice2BuildData` carries editor-only build inputs between focused stages.
 - `SolarSystemSlice2SceneBuilder` constructs, initializes, saves, and registers the visible scene.
+- `SolarSystemVisualFoundationBuilder` updates rendering assets and the existing
+  scene in place, preserving stable scene identities during visual iteration.
 
-The public command remains `Tools > Solar System > Rebuild Slice 2 Graybox`. A rebuild may assign new Unity local file IDs because it creates a fresh scene; validation therefore compares the serialized authoring assets and the complete scene contract rather than treating local file IDs as domain data.
+The full command remains `Tools > Solar System > Rebuild Project Graybox`; the
+focused visual command is `Tools > Solar System > Apply Visual Foundation`.
+A full rebuild may assign new Unity local file IDs because it creates a fresh
+scene. Focused visual iteration uses the in-place command to avoid unrelated
+scene churn.
 
 ## 6. Runtime Systems
 
@@ -578,6 +587,19 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - URP asset changes are deliberate and diff-reviewed.
 - The Sun is the motivated light source; emissive appearance and actual scene lighting are separate controls.
 - Materials reference Unity-ready derivatives, never files directly from `SourceAssets`.
+- The runtime scene references the project-owned `VP_SolarSystem` profile,
+  never Unity's template `SampleSceneProfile`.
+- The profile owns exactly ACES tonemapping, restrained bloom, fixed post
+  exposure/color adjustment, and a subtle vignette. Motion blur, film grain,
+  chromatic aberration, and automatic exposure are excluded from the baseline.
+- The approved panoramic starfield is referenced by `M_SpaceSkybox`; the
+  camera enables HDR, post-processing, NaN suppression, and dithering.
+- Representative materials enable GPU instancing. Earth's normal map imports
+  as linear normal data; specular data imports linear and remains deferred
+  until a reviewed channel-packing/custom-shader contract is available.
+- Low flat ambient fill and low sky reflection preserve silhouettes. The
+  directional Sun key is an explicit stable overview approximation pending
+  evidence for a radial body-to-Sun lighting shader.
 - Atmosphere/ring/cloud components remain optional per body.
 - Orbit paths use cached geometry and update only when scale/settings change.
 - Post-processing respects accessibility toggles; motion blur defaults off.
@@ -705,7 +727,11 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   record. A screen-space four-corner reticle provides non-color-only selection
   feedback while keeping selection separate from camera focus.
 - Unity compilation completed with zero Console errors; all 66 Edit
-  Mode cases and all three real-scene Play Mode cases passed.
+  Mode cases and all three real-scene Play Mode cases passed for Slice 3.
+- The visual-foundation candidate completes with zero Console warnings/errors,
+  69 Edit Mode cases, and four real-scene Play Mode cases. Its visual profile,
+  texture import, skybox, camera, environment, lighting, and material contracts
+  are covered explicitly.
 - Guided scale mode, navigator, Help/settings, licensed typography, and
   reduced-motion behavior remain release work and do not block the start of
   the visual/content production slice.
@@ -715,6 +741,8 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   `Docs/ProjectManagement/Slice 3 Simulation Time and HUD Validation.md`.
 - Selection-feedback and educational-panel evidence is recorded in
   `Docs/ProjectManagement/Slice 3 Selection and Body Information Validation.md`.
+- Visual-foundation evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Visual Foundation Validation.md`.
 
 ### Slice 4 - Visual/content completion
 
@@ -771,6 +799,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-007 | 2026-07-22 | Keep ScriptableObjects as authoring definitions, not mutable runtime state | Approved | Tanvir | Testability and Play Mode safety |
 | TDD-008 | 2026-07-22 | Use `Tanvir.SolarSystem` as the root namespace and assembly prefix | Approved | Tanvir | Stable project identity and conventional namespace hierarchy |
 | TDD-009 | 2026-07-22 | Use Core, Runtime, Editor, Edit Mode test, and Play Mode test assembly boundaries | Approved | Tanvir | Efficient Unity Level 2 architecture |
+| TDD-010 | 2026-07-23 | Use a project-owned, fixed-exposure URP visual profile and an in-place visual builder; defer unique high-cost shaders until representative evidence justifies them | Implemented candidate | Tanvir | Stable portfolio presentation, reproducibility, and controlled shader scope |
 
 ## 19. Definition of Done for TDD Version 1.0
 

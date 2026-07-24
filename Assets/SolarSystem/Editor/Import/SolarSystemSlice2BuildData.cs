@@ -2,6 +2,7 @@ using Tanvir.SolarSystem.Authoring;
 using Tanvir.SolarSystem.Simulation;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Tanvir.SolarSystem.Editor.Import
 {
@@ -19,6 +20,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal Material MoonMaterial { get; set; }
         internal Material JupiterMaterial { get; set; }
         internal Material OrbitMaterial { get; set; }
+        internal Material SkyboxMaterial { get; set; }
+        internal VolumeProfile VisualProfile { get; set; }
     }
 
     /// <summary>Describes one celestial-body asset for deterministic editor authoring.</summary>

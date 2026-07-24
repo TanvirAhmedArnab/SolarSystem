@@ -62,10 +62,18 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 3 Interaction Proof Validation](Docs/ProjectManagement/Slice%203%20Interaction%20Proof%20Validation.md)
 - [Slice 3 Simulation Time and HUD Validation](Docs/ProjectManagement/Slice%203%20Simulation%20Time%20and%20HUD%20Validation.md)
 - [Slice 3 Selection and Body Information Validation](Docs/ProjectManagement/Slice%203%20Selection%20and%20Body%20Information%20Validation.md)
+- [Slice 4 Visual Foundation Validation](Docs/ProjectManagement/Slice%204%20Visual%20Foundation%20Validation.md)
 
 ## Current validation state
 
-The approved foundation, deterministic simulation, representative Sun-Earth-Moon-Jupiter graybox, and Slice 3 interaction vertical slice compile with a clean Console. The project currently passes 66 Edit Mode cases and three real-scene Play Mode cases. Coverage includes assembly boundaries, immutable authoring conversion, catalog validation, elliptical motion, hierarchy composition, coordinate mapping, presentation scaling, centralized view updates, project-owned input bindings, raycast selection, redirectable focus, damped free flight, bounded pause/speed commands, UI Toolkit contracts, selected-body facts, non-color-only selection feedback, live HUD updates, and camera framing. Detailed evidence is recorded in `Docs/ProjectManagement` and will be refreshed at each material baseline change.
+The deterministic simulation, representative Sun-Earth-Moon-Jupiter scene,
+Slice 3 interaction vertical slice, and first visual-production foundation
+compile with a clean Console. The project currently passes 69 Edit Mode cases
+and four real-scene Play Mode cases. Coverage includes orbital behavior,
+interaction, UI, selected-body facts, project-owned skybox and URP profile
+contracts, texture import intent, camera post-processing, environment settings,
+lighting, tuned materials, and preserved real-scene behavior. Detailed evidence
+is recorded in `Docs/ProjectManagement`.
 
 ## License
 

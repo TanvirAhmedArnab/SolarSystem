@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living draft with approved source-asset direction  
-**Version:** 0.4.0  
+**Status:** Living authority with validated representative visual foundation  
+**Version:** 0.5.0  
 **Last updated:** 2026-07-23  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -43,11 +43,24 @@ URP is the production pipeline. The Sun is the dominant motivated source and pla
 Post-processing baseline:
 
 - Restrained bloom, primarily for the Sun.
-- ACES as the starting tonemapping candidate.
+- ACES tonemapping.
 - Subtle color correction only.
-- Vignette and motion blur off by default.
+- A subtle edge vignette; motion blur remains off by default.
 - Film grain and chromatic aberration excluded unless evidence later justifies them.
 - No exposure pumping during focus transitions.
+
+**[IMPLEMENTED BASELINE]** The project-owned `VP_SolarSystem` profile replaces
+the runtime scene's Unity template profile. It contains only ACES, Bloom,
+Color Adjustments, and Vignette. The candidate baseline values are `1.10` bloom
+threshold, `0.32` bloom intensity, `-0.10 EV` post exposure, `+6` contrast,
+`-2` saturation, and `0.12` vignette intensity. These values preserve solar
+surface detail and UI legibility at the 1080p mid-range-PC baseline.
+
+The scene uses a warm `5600 K` directional presentation light at intensity
+`1.35`, low flat ambient fill, and `0.18` sky reflection intensity. This is a
+stable overview approximation, not a claim that parallel directional light is
+physically radial from the Sun. A body-to-Sun shader vector remains the
+preferred later upgrade if profiling and hero shots justify it.
 
 ## 4. Texture Sources and Policy
 
@@ -79,6 +92,10 @@ These 512-1024 pixel files are evaluation sources. Hero shots may require later 
 ### Sun
 Emissive/unlit custom material using the 2K solar map for large-scale patterning. Optional subtle layered motion must avoid obvious texture sliding. Use a separate restrained corona; lens flare is optional.
 
+The validated foundation uses URP Unlit with HDR tint and restrained bloom.
+Custom solar motion, corona geometry, and lens flare remain later fidelity
+options rather than baseline dependencies.
+
 ### Mercury
 Neutral gray-brown, high roughness, restrained normals, no metallic response.
 
@@ -87,6 +104,11 @@ Separate surface and atmosphere/cloud spheres. Warm cream and sulfur yellow, not
 
 ### Earth
 Separate surface, cloud, and atmosphere layers. Day map drives albedo, specular differentiates oceans, normal detail stays subtle, night lights appear only on the unlit hemisphere, and clouds rotate independently.
+
+The foundation surface uses the audited day map plus the imported linear normal
+map at `0.28` strength. Specular, night emission, clouds, and atmosphere remain
+separate later layers; the standard Lit shader is not allowed to fake
+nightside-only emission.
 
 ### Moon
 Use Solar System Scope 2K initially. NASA CGI Moon Kit is the upgrade candidate if hero shots justify it. Keep saturation and normal intensity low.
@@ -127,6 +149,10 @@ USGS color browse mosaic with pale pink, cream, and gray. Disclose incomplete an
 ## 6. Background, UI, and Motion
 
 Use the Solar System Scope Stars + Milky Way 2K map initially. Keep it dim and independent of focus-body rotation. Orbit lines remain thin and subordinate.
+
+**[IMPLEMENTED BASELINE]** `M_SpaceSkybox` presents the approved 2K
+equirectangular map with a restrained cool tint and `0.62` exposure. The camera
+uses skybox clearing, HDR, post-processing, NaN suppression, and dithering.
 
 Use an open-source sans-serif with tabular numerals after license review. Icons use a single consistent line family or project-authored SVG. UI transitions use short fades and translations; reduced-motion mode uses brief fades or cuts.
 
@@ -219,6 +245,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.5.0 | 2026-07-23 | Recorded the validated project-owned skybox, URP volume, lighting, and representative material foundation | Pending owner review |
 | 0.4.0 | 2026-07-23 | Recorded the visually validated UI Toolkit explorer HUD proof and retained the licensed-font gate | Pending owner review |
 | 0.3.0 | 2026-07-22 | Replaced restricted music with CC0 audio and defined Sun 2D and Earth 3D ambience direction | Pending owner review |
 | 0.2.0 | 2026-07-22 | Reconciled the Unity content root and recorded the imported texture and UI-audio working set | Pending owner review |

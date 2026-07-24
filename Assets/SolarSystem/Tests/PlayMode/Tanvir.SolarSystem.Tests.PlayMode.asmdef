@@ -3,7 +3,9 @@
   "rootNamespace": "Tanvir.SolarSystem.Tests.PlayMode",
   "references": [
     "Tanvir.SolarSystem.Core",
-    "Tanvir.SolarSystem.Runtime"
+    "Tanvir.SolarSystem.Runtime",
+    "Unity.RenderPipelines.Core.Runtime",
+    "Unity.RenderPipelines.Universal.Runtime"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

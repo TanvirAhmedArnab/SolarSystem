@@ -49,7 +49,7 @@ Every file shown in the supplied screenshot was traced by `.meta` GUID rather th
 | `Mobile_RPAsset.asset` | Its only settings reference was the `Mobile` quality tier | Removed with the Mobile tier for the approved Windows-only release. |
 | `PC_Renderer.asset` | Referenced by `PC_RPAsset.asset` | Keep. |
 | `PC_RPAsset.asset` | Referenced by the `PC` quality tier, which is the `Standalone` default | Keep. |
-| `SampleSceneProfile.asset` | Referenced by both RP assets and `SampleScene.unity` | Keep until a project-authored volume profile replaces it. |
+| `SampleSceneProfile.asset` | Referenced by template `SampleScene.unity`, not by the project-owned build scene | No runtime dependency; retain as an unstaged deletion candidate until Tanvir explicitly approves template-asset removal. |
 | `UniversalRenderPipelineGlobalSettings.asset` | Registered in `ProjectSettings/GraphicsSettings.asset` | Keep. |
 
 `QualitySettings.asset` now contains one quality tier, `PC`, at index 0. The current quality and Standalone default both resolve to index 0, and the active pipeline is `PC_RPAsset`.

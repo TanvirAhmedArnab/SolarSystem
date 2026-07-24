@@ -33,6 +33,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Screen-space four-corner selection reticle that follows the selected body's projected presentation radius.
 - Edit Mode fact-formatting and UI-contract coverage plus real-scene selected-body panel validation.
 - Color-coded quick-control keycaps with independently readable action labels and contextual pause/resume feedback.
+- Project-owned panoramic space skybox using the approved 2K Milky Way texture.
+- Focused `VP_SolarSystem` URP profile with ACES, restrained bloom, fixed color/exposure shaping, and subtle vignette.
+- In-place visual-foundation builder that preserves scene identities during rendering iteration.
+- Edit Mode visual-asset contracts and a real-scene Play Mode rendering-foundation test.
 
 ### Changed
 
@@ -45,6 +49,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Expanded the reproducible graybox builder to author and wire the Slice 3 interaction graph.
 - Advanced the project input contract to include Space and bracket-key time commands.
 - Set the provisional scene default to the documented `10x` rate preset.
+- Replaced the runtime scene's Unity template volume dependency with
+  project-owned skybox, post-processing, ambient-light, reflection, and solar-key settings.
+- Tuned the representative Sun, Earth, Moon, Jupiter, and orbit materials;
+  enabled instancing and added subtle linear normal detail to Earth.
 
 ### Removed
 

@@ -6,6 +6,8 @@ using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
 using Tanvir.SolarSystem.Presentation.UI;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
@@ -205,6 +207,41 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(
                 Vector3.Distance(resumedPosition, earth.transform.position),
                 Is.GreaterThan(0.001f));
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_UsesProjectOwnedVisualFoundation()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            Camera camera = Camera.main;
+            Assert.That(camera, Is.Not.Null);
+            Assert.That(camera.clearFlags, Is.EqualTo(CameraClearFlags.Skybox));
+            Assert.That(camera.allowHDR, Is.True);
+
+            UniversalAdditionalCameraData cameraData =
+                camera.GetUniversalAdditionalCameraData();
+            Assert.That(cameraData.renderPostProcessing, Is.True);
+            Assert.That(cameraData.stopNaN, Is.True);
+            Assert.That(cameraData.dithering, Is.True);
+
+            Volume volume = Object.FindAnyObjectByType<Volume>();
+            Assert.That(volume, Is.Not.Null);
+            Assert.That(volume.isGlobal, Is.True);
+            Assert.That(volume.sharedProfile, Is.Not.Null);
+            Assert.That(volume.sharedProfile.name, Is.EqualTo("VP_SolarSystem"));
+
+            Assert.That(RenderSettings.skybox, Is.Not.Null);
+            Assert.That(RenderSettings.skybox.name, Is.EqualTo("M_SpaceSkybox"));
+            Assert.That(RenderSettings.ambientMode, Is.EqualTo(AmbientMode.Flat));
+            Assert.That(RenderSettings.reflectionIntensity, Is.EqualTo(0.18f).Within(0.001f));
+
+            Light keyLight = RenderSettings.sun;
+            Assert.That(keyLight, Is.Not.Null);
+            Assert.That(keyLight.name, Is.EqualTo("Sun Key Light"));
+            Assert.That(keyLight.intensity, Is.EqualTo(1.35f).Within(0.001f));
+            Assert.That(keyLight.shadows, Is.EqualTo(LightShadows.Soft));
         }
 
         private static void AssertWithinViewport(Camera camera, CelestialBodyView view)

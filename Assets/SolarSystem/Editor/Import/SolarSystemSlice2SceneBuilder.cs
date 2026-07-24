@@ -10,6 +10,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -27,6 +28,14 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const float EarthOrbitWidth = 0.055f;
         private const float MoonOrbitWidth = 0.025f;
         private const float JupiterOrbitWidth = 0.065f;
+        private const float SolarKeyIntensity = 1.35f;
+        private const float SolarKeyTemperature = 5600f;
+        private const float SolarKeyShadowStrength = 0.82f;
+        private const float SolarKeyShadowBias = 0.04f;
+        private const float SolarKeyShadowNormalBias = 0.3f;
+        private const float ReflectionIntensity = 0.18f;
+        private static readonly Color AmbientFill =
+            new Color(0.012f, 0.017f, 0.03f, 1f);
 
         internal static GameObject Build(SolarSystemSlice2Content content)
         {
@@ -94,13 +103,48 @@ namespace Tanvir.SolarSystem.Editor.Import
                 controller,
                 hudPresenter);
             CreateLighting(environmentRoot);
-            CreateGlobalVolume(environmentRoot);
+            CreateGlobalVolume(environmentRoot, content.VisualProfile);
+            ConfigureRenderSettings(content.SkyboxMaterial);
 
             composition.RebuildRuntimeGraph();
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
             return sceneRoot;
+        }
+
+        internal static void ApplyVisualFoundation(SolarSystemSlice2Content content)
+        {
+            Camera camera = Camera.main;
+            if (camera == null)
+            {
+                throw new InvalidOperationException(
+                    "The SolarSystem scene requires a Main Camera.");
+            }
+
+            ConfigureCamera(camera);
+
+            GameObject lightObject = GameObject.Find("Sun Key Light");
+            Light keyLight = lightObject != null ? lightObject.GetComponent<Light>() : null;
+            if (keyLight == null)
+            {
+                throw new InvalidOperationException(
+                    "The SolarSystem scene requires the Sun Key Light.");
+            }
+
+            ConfigureLighting(keyLight);
+
+            GameObject volumeObject = GameObject.Find("Global Volume");
+            Volume volume = volumeObject != null ? volumeObject.GetComponent<Volume>() : null;
+            if (volume == null)
+            {
+                throw new InvalidOperationException(
+                    "The SolarSystem scene requires the Global Volume.");
+            }
+
+            ConfigureGlobalVolume(volume, content.VisualProfile);
+            ConfigureRenderSettings(content.SkyboxMaterial);
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         }
 
         private static CelestialBodyView CreateBodyView(
@@ -162,13 +206,26 @@ namespace Tanvir.SolarSystem.Editor.Import
             cameraObject.transform.position = new Vector3(0f, 38f, -55f);
             cameraObject.transform.LookAt(new Vector3(0f, 0f, 15f));
             Camera camera = cameraObject.AddComponent<Camera>();
-            camera.clearFlags = CameraClearFlags.SolidColor;
+            ConfigureCamera(camera);
+            cameraObject.AddComponent<AudioListener>();
+            return camera;
+        }
+
+        private static void ConfigureCamera(Camera camera)
+        {
+            camera.clearFlags = CameraClearFlags.Skybox;
             camera.backgroundColor = new Color(0.001f, 0.003f, 0.01f, 1f);
             camera.nearClipPlane = 0.05f;
             camera.farClipPlane = 250f;
             camera.fieldOfView = 50f;
-            cameraObject.AddComponent<AudioListener>();
-            return camera;
+            camera.allowHDR = true;
+            camera.allowMSAA = true;
+
+            UniversalAdditionalCameraData cameraData =
+                camera.GetUniversalAdditionalCameraData();
+            cameraData.renderPostProcessing = true;
+            cameraData.stopNaN = true;
+            cameraData.dithering = true;
         }
 
         private static void CreateInteractionComposition(
@@ -215,23 +272,56 @@ namespace Tanvir.SolarSystem.Editor.Import
         {
             GameObject lightObject = new GameObject("Sun Key Light");
             lightObject.transform.SetParent(parent, false);
-            lightObject.transform.rotation = Quaternion.Euler(42f, -35f, 0f);
             Light light = lightObject.AddComponent<Light>();
-            light.type = LightType.Directional;
-            light.intensity = 1.6f;
-            light.color = new Color(1f, 0.94f, 0.84f);
-            light.shadows = LightShadows.Soft;
+            ConfigureLighting(light);
         }
 
-        private static void CreateGlobalVolume(Transform parent)
+        private static void ConfigureLighting(Light light)
+        {
+            light.transform.rotation = Quaternion.Euler(38f, -32f, 0f);
+            light.type = LightType.Directional;
+            light.intensity = SolarKeyIntensity;
+            light.color = Color.white;
+            light.useColorTemperature = true;
+            light.colorTemperature = SolarKeyTemperature;
+            light.shadows = LightShadows.Soft;
+            light.shadowStrength = SolarKeyShadowStrength;
+            light.shadowBias = SolarKeyShadowBias;
+            light.shadowNormalBias = SolarKeyShadowNormalBias;
+            RenderSettings.sun = light;
+        }
+
+        private static void CreateGlobalVolume(
+            Transform parent,
+            VolumeProfile profile)
         {
             GameObject volumeObject = new GameObject("Global Volume");
             volumeObject.transform.SetParent(parent, false);
             Volume volume = volumeObject.AddComponent<Volume>();
+            ConfigureGlobalVolume(volume, profile);
+        }
+
+        private static void ConfigureGlobalVolume(
+            Volume volume,
+            VolumeProfile profile)
+        {
             volume.isGlobal = true;
             volume.priority = 0f;
-            volume.sharedProfile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(
-                "Assets/Settings/SampleSceneProfile.asset");
+            volume.weight = 1f;
+            volume.sharedProfile = profile;
+        }
+
+        private static void ConfigureRenderSettings(Material skybox)
+        {
+            RenderSettings.skybox = skybox;
+            RenderSettings.ambientMode = AmbientMode.Flat;
+            RenderSettings.ambientLight = AmbientFill;
+            RenderSettings.ambientIntensity = 1f;
+            RenderSettings.defaultReflectionMode = DefaultReflectionMode.Skybox;
+            RenderSettings.defaultReflectionResolution = 128;
+            RenderSettings.reflectionIntensity = ReflectionIntensity;
+            RenderSettings.fog = false;
+            DynamicGI.UpdateEnvironment();
         }
 
         private static void ConfigureSimulationComposition(

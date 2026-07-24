@@ -59,7 +59,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         }
 
         [Test]
-        public void JupiterMaterial_UsesAuditedTexture()
+        public void JupiterMaterial_UsesAuditedTextureAndVisualBaseline()
         {
             Material material = AssetDatabase.LoadAssetAtPath<Material>(JupiterMaterialPath);
             Texture expectedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(JupiterTexturePath);
@@ -67,7 +67,8 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(material, Is.Not.Null);
             Assert.That(expectedTexture, Is.Not.Null);
             Assert.That(material.GetTexture("_BaseMap"), Is.SameAs(expectedTexture));
-            Assert.That(material.GetFloat("_Smoothness"), Is.EqualTo(0.35f).Within(0.0001f));
+            Assert.That(material.GetFloat("_Smoothness"), Is.EqualTo(0.18f).Within(0.0001f));
+            Assert.That(material.enableInstancing, Is.True);
         }
     }
 }
