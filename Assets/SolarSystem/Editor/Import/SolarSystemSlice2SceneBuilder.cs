@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Tanvir.SolarSystem.Application;
 using Tanvir.SolarSystem.Authoring;
 using Tanvir.SolarSystem.Input;
@@ -22,12 +23,6 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string ScenePath = "Assets/SolarSystem/Scenes/SolarSystem.unity";
         private const string InputAssetPath =
             "Assets/SolarSystem/Settings/Input/IA_SolarSystem.asset";
-        private const int EarthOrbitSampleCount = 192;
-        private const int MoonOrbitSampleCount = 128;
-        private const int JupiterOrbitSampleCount = 256;
-        private const float EarthOrbitWidth = 0.055f;
-        private const float MoonOrbitWidth = 0.025f;
-        private const float JupiterOrbitWidth = 0.065f;
         private const string SolarRadialLightName = "Solar Radial Light";
         private const string LegacySolarKeyLightName = "Sun Key Light";
         private const string SunStableId = "sun";
@@ -57,43 +52,47 @@ namespace Tanvir.SolarSystem.Editor.Import
             SolarSystemCompositionRoot composition =
                 compositionObject.AddComponent<SolarSystemCompositionRoot>();
 
-            CelestialBodyView sunView =
-                CreateBodyView(content.Sun, content.SunMaterial, bodyRoot);
-            CelestialBodyView earthView =
-                CreateBodyView(content.Earth, content.EarthMaterial, bodyRoot);
-            CelestialBodyView moonView =
-                CreateBodyView(content.Moon, content.MoonMaterial, bodyRoot);
-            CelestialBodyView jupiterView =
-                CreateBodyView(content.Jupiter, content.JupiterMaterial, bodyRoot);
-            CelestialOrbitPathView earthOrbit =
-                CreateOrbitPath(
-                    content.Earth,
-                    content.OrbitMaterial,
-                    orbitRoot,
-                    EarthOrbitSampleCount,
-                    EarthOrbitWidth);
-            CelestialOrbitPathView moonOrbit =
-                CreateOrbitPath(
-                    content.Moon,
-                    content.OrbitMaterial,
-                    orbitRoot,
-                    MoonOrbitSampleCount,
-                    MoonOrbitWidth);
-            CelestialOrbitPathView jupiterOrbit =
-                CreateOrbitPath(
-                    content.Jupiter,
-                    content.OrbitMaterial,
-                    orbitRoot,
-                    JupiterOrbitSampleCount,
-                    JupiterOrbitWidth);
+            var bodyViews = new List<CelestialBodyView>(content.Bodies.Length);
+            var orbitPaths = new List<CelestialOrbitPathView>(content.Bodies.Length - 1);
+            CelestialBodyView sunView = null;
+            foreach (SolarSystemSlice2BodyContent body in content.Bodies)
+            {
+                bool isSaturn = body.Definition.StableId == "saturn";
+                CelestialBodyView view = CreateBodyView(
+                    body.Definition,
+                    body.Material,
+                    bodyRoot,
+                    isSaturn ? content.SaturnRingMesh : null,
+                    isSaturn ? content.SaturnRingMaterial : null);
+                bodyViews.Add(view);
+                if (body.Definition.StableId == SunStableId)
+                {
+                    sunView = view;
+                }
+
+                if (body.Definition.HasOrbit)
+                {
+                    orbitPaths.Add(CreateOrbitPath(
+                        body.Definition,
+                        content.OrbitMaterial,
+                        orbitRoot,
+                        body.OrbitSampleCount,
+                        body.OrbitWidth));
+                }
+            }
+
+            if (sunView == null)
+            {
+                throw new InvalidOperationException("The authored content requires the Sun root.");
+            }
 
             ConfigureSimulationComposition(
                 composition,
                 controller,
                 content.Catalog,
                 content.Scale,
-                new[] { sunView, earthView, moonView, jupiterView },
-                new[] { earthOrbit, moonOrbit, jupiterOrbit });
+                bodyViews.ToArray(),
+                orbitPaths.ToArray());
 
             Camera camera = CreateCamera(environmentRoot);
             SolarSystemHudPresenter hudPresenter =
@@ -154,7 +153,9 @@ namespace Tanvir.SolarSystem.Editor.Import
         private static CelestialBodyView CreateBodyView(
             CelestialBodyDefinition definition,
             Material material,
-            Transform parent)
+            Transform parent,
+            Mesh ringMesh,
+            Material ringMaterial)
         {
             GameObject bodyObject = new GameObject(definition.DisplayName);
             bodyObject.transform.SetParent(parent, false);
@@ -166,6 +167,10 @@ namespace Tanvir.SolarSystem.Editor.Import
             visual.transform.SetParent(bodyObject.transform, false);
             Object.DestroyImmediate(visual.GetComponent<Collider>());
             visual.GetComponent<MeshRenderer>().sharedMaterial = material;
+            if (ringMesh != null && ringMaterial != null)
+            {
+                CreateRingView(visual.transform, ringMesh, ringMaterial);
+            }
 
             var serializedView = new SerializedObject(view);
             serializedView.FindProperty("definition").objectReferenceValue = definition;
@@ -174,6 +179,21 @@ namespace Tanvir.SolarSystem.Editor.Import
                 selectionCollider;
             serializedView.ApplyModifiedPropertiesWithoutUndo();
             return view;
+        }
+
+        private static void CreateRingView(
+            Transform visualRoot,
+            Mesh mesh,
+            Material material)
+        {
+            GameObject ringObject = new GameObject("Rings");
+            ringObject.transform.SetParent(visualRoot, false);
+            MeshFilter filter = ringObject.AddComponent<MeshFilter>();
+            filter.sharedMesh = mesh;
+            MeshRenderer renderer = ringObject.AddComponent<MeshRenderer>();
+            renderer.sharedMaterial = material;
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
         }
 
         private static CelestialOrbitPathView CreateOrbitPath(
@@ -207,8 +227,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             GameObject cameraObject = new GameObject("Main Camera");
             cameraObject.tag = "MainCamera";
             cameraObject.transform.SetParent(parent, false);
-            cameraObject.transform.position = new Vector3(0f, 38f, -55f);
-            cameraObject.transform.LookAt(new Vector3(0f, 0f, 15f));
+            cameraObject.transform.position = new Vector3(0f, 72f, -108f);
+            cameraObject.transform.LookAt(Vector3.zero);
             Camera camera = cameraObject.AddComponent<Camera>();
             ConfigureCamera(camera);
             cameraObject.AddComponent<AudioListener>();
@@ -299,8 +319,7 @@ namespace Tanvir.SolarSystem.Editor.Import
 
         private static CelestialBodyView FindBodyView(string stableId)
         {
-            CelestialBodyView[] views =
-                Object.FindObjectsByType<CelestialBodyView>(FindObjectsSortMode.None);
+            CelestialBodyView[] views = Object.FindObjectsByType<CelestialBodyView>();
             foreach (CelestialBodyView view in views)
             {
                 if (view.StableId == stableId)

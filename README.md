@@ -2,7 +2,7 @@
 
 Solar System Simulation is a polished Unity portfolio project that turns verified planetary data and deterministic analytical orbital motion into an accessible, cinematic exploration of our Solar System.
 
-The project is currently in foundation development. Its product, engineering, art, licensing, and repository decisions are maintained as living, reviewable documents rather than being left implicit in scenes or code.
+The project is currently in visual/content development. Its product, engineering, art, licensing, and repository decisions are maintained as living, reviewable documents rather than being left implicit in scenes or code.
 
 ## Portfolio goals
 
@@ -64,17 +64,19 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 3 Selection and Body Information Validation](Docs/ProjectManagement/Slice%203%20Selection%20and%20Body%20Information%20Validation.md)
 - [Slice 4 Visual Foundation Validation](Docs/ProjectManagement/Slice%204%20Visual%20Foundation%20Validation.md)
 - [Slice 4 Sun-Origin Illumination Validation](Docs/ProjectManagement/Slice%204%20Sun-Origin%20Illumination%20Validation.md)
+- [Slice 4 Eight-Planet Content Validation](Docs/ProjectManagement/Slice%204%20Eight-Planet%20Content%20Validation.md)
 
 ## Current validation state
 
-The deterministic simulation, representative Sun-Earth-Moon-Jupiter scene,
+The deterministic simulation, full Sun/eight-planet/Earth-Moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile with a clean Console. The project currently passes 69 Edit Mode cases
+compile with a clean Console. The project currently passes 85 Edit Mode cases
 and five real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
-contracts, texture import intent, camera post-processing, environment settings,
-Sun-origin radial illumination, tuned materials, and preserved real-scene
-behavior. Detailed evidence is recorded in `Docs/ProjectManagement`.
+contracts, audited planet textures and materials, generated Saturn rings,
+full-system overview framing, Sun-origin radial illumination, and preserved
+real-scene behavior. Detailed evidence is recorded in
+`Docs/ProjectManagement`.
 
 ## License
 

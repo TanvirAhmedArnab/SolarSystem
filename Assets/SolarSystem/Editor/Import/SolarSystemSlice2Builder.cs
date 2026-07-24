@@ -9,7 +9,7 @@ namespace Tanvir.SolarSystem.Editor.Import
     public static class SolarSystemSlice2Builder
     {
         /// <summary>Rebuilds project-authored assets and the visible scene.</summary>
-        [MenuItem("Tools/Solar System/Rebuild Project Graybox")]
+        [MenuItem("Tools/Solar System/Rebuild Project Content")]
         public static void Build()
         {
             SolarSystemSlice2Content content = SolarSystemSlice2AssetBuilder.Build();
@@ -28,7 +28,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             Selection.activeGameObject = sceneRoot;
             SceneView.lastActiveSceneView?.FrameSelected();
             Debug.Log(
-                "PROJECT_BUILD_COMPLETE|scene=SolarSystem|bodies=4|orbits=3|interaction=ready");
+                "PROJECT_BUILD_COMPLETE|scene=SolarSystem|bodies=10|planets=8|orbits=9|interaction=ready");
         }
     }
 }

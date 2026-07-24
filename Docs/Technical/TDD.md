@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Sun-origin illumination validated  
-**Version:** 0.10.0  
+**Document status:** Living technical authority; eight-planet baseline validated  
+**Version:** 0.11.0  
 **Last updated:** 2026-07-23  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -36,6 +36,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.8.0 | 2026-07-23 | Codex, for Tanvir | Added authored educational summaries, display-only fact formatting, a selected-body information card, and a screen-space selection reticle | Slice 3 interaction vertical slice complete; visual/content production may begin |
 | 0.9.0 | 2026-07-23 | Codex, for Tanvir | Added the project-owned panoramic skybox, deterministic visual asset authoring, focused URP volume profile, camera post-processing contract, tuned representative materials, and visual validation | First visual-production foundation validated; unique atmosphere/cloud/solar shaders remain evidence-gated |
 | 0.10.0 | 2026-07-23 | Codex, for Tanvir | Replaced the fixed directional-light approximation with a Sun-parented point source, explicit radial-illumination constraints, and real-scene regression coverage | Sun-facing day hemispheres and opposing night hemispheres validated for the representative scene |
+| 0.11.0 | 2026-07-23 | Codex, for Tanvir | Expanded the deterministic authoring pipeline to all eight planets, added a generated Saturn annulus, and reframed the initial camera for the complete planetary envelope | Required planetary baseline validated; advanced atmosphere, cloud, and ring shading remain deferred |
 
 ### 1.3 Status vocabulary
 
@@ -275,16 +276,20 @@ Avoid generic `Manager`, `Helper`, or `Utils` names.
 **[IMPLEMENTED]** The reproducible Slice 2 builder follows the same separation-of-concerns standard as runtime code:
 
 - `SolarSystemSlice2Builder` exposes the public menu command and orchestrates the build.
-- `SolarSystemSlice2AssetBuilder` creates or updates scientific definitions, the catalog, presentation scale, and materials.
-- `SolarSystemSlice2BuildData` carries editor-only build inputs between focused stages.
-- `SolarSystemSlice2SceneBuilder` constructs, initializes, saves, and registers the visible scene.
+- `SolarSystemSlice2AssetBuilder` creates or updates scientific definitions,
+  the catalog, presentation scale, materials, and generated presentation meshes.
+- `SolarSystemSlice2BuildData` carries an ordered collection of body definition,
+  material, and orbit-presentation records between focused stages.
+- `SolarSystemSlice2SceneBuilder` iterates that collection to construct,
+  initialize, save, and register body views and orbit paths without per-planet
+  scene-construction branches.
 - `SolarSystemVisualFoundationBuilder` updates rendering assets and the existing
   scene in place, preserving stable scene identities during visual iteration.
 - Volume-profile authoring reuses valid component subassets, removes only
   unexpected or duplicate components, and restores the intended component
   order without replacing stable local file IDs.
 
-The full command remains `Tools > Solar System > Rebuild Project Graybox`; the
+The full command is `Tools > Solar System > Rebuild Project Content`; the
 focused visual command is `Tools > Solar System > Apply Visual Foundation`.
 A full rebuild may assign new Unity local file IDs because it creates a fresh
 scene. Focused visual iteration uses the in-place command to avoid unrelated
@@ -598,7 +603,7 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   chromatic aberration, and automatic exposure are excluded from the baseline.
 - The approved panoramic starfield is referenced by `M_SpaceSkybox`; the
   camera enables HDR, post-processing, NaN suppression, and dithering.
-- Representative materials enable GPU instancing. Earth's normal map imports
+- All required planet baseline materials enable GPU instancing. Earth's normal map imports
   as linear normal data; specular data imports linear and remains deferred
   until a reviewed channel-packing/custom-shader contract is available.
 - Low flat ambient fill and low sky reflection preserve silhouettes.
@@ -611,7 +616,11 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   unjustified for the baseline, and exaggerated radii plus compressed
   distances would create misleading eclipses. Eclipse presentation requires a
   separately reviewed scientific and performance contract.
-- Atmosphere/ring/cloud components remain optional per body.
+- Saturn's first ring presentation uses a deterministically generated 128-segment
+  annulus mesh and the audited CC BY 4.0 ring alpha strip. It is transparent,
+  two-sided, non-shadow-casting, and parented to Saturn's tilted/spinning visual
+  root. Advanced ring lighting, self-shadowing, and particle-scale effects are deferred.
+- Atmosphere and cloud components remain optional per body.
 - Orbit paths use cached geometry and update only when scale/settings change.
 - Post-processing respects accessibility toggles; motion blur defaults off.
 - Quality tiers and LODs are introduced from measured screen-space need.
@@ -768,6 +777,13 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
 ### Slice 4 - Visual/content completion
 
 - Integrate reviewed materials, required planets/moons, lighting, atmosphere/ring variants, audio, and accessibility options.
+- **[IMPLEMENTED BASELINE]** The required eight planets now use serialized,
+  source-linked definitions, deterministic orbits, audited 2K textures, Lit
+  materials, selectable views, and cached orbit paths. Saturn adds a generated
+  ring mesh. The initial camera frames the complete authored system.
+- The broader proposed moon set, atmosphere/cloud layers, advanced planet and
+  ring shaders, audio integration, labels/navigation, and accessibility options
+  remain Slice 4 work.
 
 ### Slice 5 - Portfolio release
 
@@ -822,6 +838,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-009 | 2026-07-22 | Use Core, Runtime, Editor, Edit Mode test, and Play Mode test assembly boundaries | Approved | Tanvir | Efficient Unity Level 2 architecture |
 | TDD-010 | 2026-07-23 | Use a project-owned, fixed-exposure URP visual profile and an in-place visual builder; defer unique high-cost shaders until representative evidence justifies them | Implemented candidate | Tanvir | Stable portfolio presentation, reproducibility, and controlled shader scope |
 | TDD-011 | 2026-07-23 | Use one Sun-parented realtime point light for radial day/night illumination; keep its calibrated presentation range/intensity explicit and defer point shadows/eclipses | Implemented candidate | Tanvir | Correct source geometry across moving bodies without a custom shader or misleading compressed-scale eclipses |
+| TDD-012 | 2026-07-23 | Author required bodies through one ordered editor content collection and generate Saturn's baseline annulus deterministically | Implemented candidate | Tanvir | Removes per-planet scene wiring, preserves reproducibility, and keeps advanced ring effects outside the baseline |
 
 ## 19. Definition of Done for TDD Version 1.0
 

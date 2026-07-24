@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f0c39ba5e8a744c8533815ee975f4a, type: 3}
+  m_Name: Body_Neptune
+  m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.CelestialBodyDefinition
+  stableId: neptune
+  displayName: Neptune
+  category: 1
+  parentId: sun
+  scientificSourceId: JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_NEPTUNE_FACTS
+  educationalSummary: A distant blue ice giant with supersonic winds and a long,
+    season-bearing orbit.
+  meanRadiusKm: 24622
+  hasMass: 1
+  massKg: 1.024092e+26
+  rotationPeriodSeconds: 57996
+  axialTiltDeg: 28
+  hasOrbit: 1
+  orbit:
+    semiMajorAxisKm: 4498396417.009467
+    eccentricity: 0.00859048
+    inclinationDeg: 1.77004347
+    longitudeAscendingNodeDeg: 131.78422574
+    argumentPeriapsisDeg: -86.81946347000002
+    meanAnomalyAtEpochDeg: -100.08479196
+    orbitalPeriodSeconds: 5200418560.032001

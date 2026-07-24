@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f0c39ba5e8a744c8533815ee975f4a, type: 3}
+  m_Name: Body_Mercury
+  m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.CelestialBodyDefinition
+  stableId: mercury
+  displayName: Mercury
+  category: 1
+  parentId: sun
+  scientificSourceId: JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_MERCURY_FACTS
+  educationalSummary: The smallest and fastest planet, a cratered rocky world closest
+    to the Sun.
+  meanRadiusKm: 2439.4
+  hasMass: 1
+  massKg: 3.30103e+23
+  rotationPeriodSeconds: 5067031.68
+  axialTiltDeg: 2
+  hasOrbit: 1
+  orbit:
+    semiMajorAxisKm: 57909226.54152438
+    eccentricity: 0.20563593
+    inclinationDeg: 7.00497902
+    longitudeAscendingNodeDeg: 48.33076593
+    argumentPeriapsisDeg: 29.12703035
+    meanAnomalyAtEpochDeg: 174.79252722
+    orbitalPeriodSeconds: 7600543.81992

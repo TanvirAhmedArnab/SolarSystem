@@ -9,19 +9,23 @@ namespace Tanvir.SolarSystem.Editor.Import
     /// <summary>Groups authored assets consumed by the Slice 2 scene builder.</summary>
     internal sealed class SolarSystemSlice2Content
     {
-        internal CelestialBodyDefinition Sun { get; set; }
-        internal CelestialBodyDefinition Earth { get; set; }
-        internal CelestialBodyDefinition Moon { get; set; }
-        internal CelestialBodyDefinition Jupiter { get; set; }
+        internal SolarSystemSlice2BodyContent[] Bodies { get; set; }
         internal CelestialCatalogDefinition Catalog { get; set; }
         internal PresentationScaleDefinition Scale { get; set; }
-        internal Material SunMaterial { get; set; }
-        internal Material EarthMaterial { get; set; }
-        internal Material MoonMaterial { get; set; }
-        internal Material JupiterMaterial { get; set; }
+        internal Mesh SaturnRingMesh { get; set; }
+        internal Material SaturnRingMaterial { get; set; }
         internal Material OrbitMaterial { get; set; }
         internal Material SkyboxMaterial { get; set; }
         internal VolumeProfile VisualProfile { get; set; }
+    }
+
+    /// <summary>Pairs one authored body with its scene presentation assets.</summary>
+    internal sealed class SolarSystemSlice2BodyContent
+    {
+        internal CelestialBodyDefinition Definition { get; set; }
+        internal Material Material { get; set; }
+        internal int OrbitSampleCount { get; set; }
+        internal float OrbitWidth { get; set; }
     }
 
     /// <summary>Describes one celestial-body asset for deterministic editor authoring.</summary>

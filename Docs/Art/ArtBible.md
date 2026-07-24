@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living authority with validated representative visual foundation  
-**Version:** 0.6.0  
+**Version:** 0.7.0  
 **Last updated:** 2026-07-23  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -110,8 +110,14 @@ options rather than baseline dependencies.
 ### Mercury
 Neutral gray-brown, high roughness, restrained normals, no metallic response.
 
+The baseline uses the audited 2K surface map with `0.08` smoothness.
+
 ### Venus
 Separate surface and atmosphere/cloud spheres. Warm cream and sulfur yellow, not emissive orange. Cloud motion is slow and independent.
+
+The baseline uses the audited 2K surface map with `0.24` smoothness. The
+already imported atmosphere map remains deferred until the separate cloud-shell
+contract is implemented.
 
 ### Earth
 Separate surface, cloud, and atmosphere layers. Day map drives albedo, specular differentiates oceans, normal detail stays subtle, night lights appear only on the unlit hemisphere, and clouds rotate independently.
@@ -126,6 +132,8 @@ Use Solar System Scope 2K initially. NASA CGI Moon Kit is the upgrade candidate 
 
 ### Mars
 Restrained rust, ochre, and basalt. Preserve polar contrast without clipping.
+
+The baseline uses the audited 2K surface map with `0.10` smoothness.
 
 ### Jupiter
 Cloud bands and Great Red Spot define identity. Use soft broad response; optional band motion must preserve features.
@@ -145,14 +153,24 @@ USGS browse mosaic; dark neutral base and bright impact structures, distinct fro
 ### Saturn
 Soft cream/gold bands. Ring alpha drives a dedicated flat mesh with tested two-sided rendering, transparency, and shadows.
 
+The implemented baseline uses the audited 2K planet map with `0.20`
+smoothness. Its CC BY 4.0 alpha strip maps across a generated 128-segment
+annulus with two-sided transparent rendering and shadow casting disabled.
+Advanced ring lighting, translucency, self-shadowing, and particle detail
+remain deferred.
+
 ### Titan
 USGS near-global browse below a dense amber atmosphere. Surface detail remains subdued.
 
 ### Uranus
 Pale cyan-blue, low-contrast bands, never neon. Rings remain conditional.
 
+The baseline uses the audited 2K surface map with `0.28` smoothness.
+
 ### Neptune
 Controlled deep blue with subtle bands; nightside must not become electric blue.
+
+The baseline uses the audited 2K surface map with `0.30` smoothness.
 
 ### Triton
 USGS color browse mosaic with pale pink, cream, and gray. Disclose incomplete and gap-filled regions.
@@ -256,6 +274,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.7.0 | 2026-07-23 | Recorded the eight-planet material baseline, deterministic Saturn annulus, and deferred atmosphere/cloud/ring fidelity layers | Pending owner review |
 | 0.6.0 | 2026-07-23 | Replaced the fixed directional approximation with validated Sun-origin radial illumination and explicit day/night readability | Pending owner review |
 | 0.5.0 | 2026-07-23 | Recorded the validated project-owned skybox, URP volume, lighting, and representative material foundation | Pending owner review |
 | 0.4.0 | 2026-07-23 | Recorded the visually validated UI Toolkit explorer HUD proof and retained the licensed-font gate | Pending owner review |

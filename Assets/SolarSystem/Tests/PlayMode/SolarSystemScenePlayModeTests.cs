@@ -16,6 +16,19 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
     public sealed class SolarSystemScenePlayModeTests
     {
         private const float FocusTransitionTimeoutSeconds = 2f;
+        private static readonly string[] ExpectedBodyIds =
+        {
+            "sun",
+            "mercury",
+            "venus",
+            "earth",
+            "moon",
+            "mars",
+            "jupiter",
+            "saturn",
+            "uranus",
+            "neptune"
+        };
 
         [UnityTest]
         public IEnumerator SolarSystemScene_BootstrapsMovesAndPausesAllBodies()
@@ -27,8 +40,17 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
             Assert.That(composition, Is.Not.Null);
             Assert.That(composition.IsInitialized, Is.True);
-            Assert.That(composition.SimulationController.CatalogCount, Is.EqualTo(4));
-            Assert.That(composition.SimulationController.ViewCount, Is.EqualTo(4));
+            Assert.That(composition.SimulationController.CatalogCount, Is.EqualTo(10));
+            Assert.That(composition.SimulationController.ViewCount, Is.EqualTo(10));
+            foreach (string stableId in ExpectedBodyIds)
+            {
+                Assert.That(
+                    composition.SimulationController.TryGetView(
+                        stableId,
+                        out CelestialBodyView _),
+                    Is.True,
+                    $"The scene should contain the authored '{stableId}' view.");
+            }
 
             Assert.That(
                 composition.SimulationController.TryGetView("sun", out CelestialBodyView sun),
@@ -70,14 +92,19 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 Is.LessThan(0.00001f));
             Assert.That(
                 Object.FindObjectsByType<CelestialOrbitPathView>().Length,
-                Is.EqualTo(3));
+                Is.EqualTo(9));
 
             Camera camera = Camera.main;
             Assert.That(camera, Is.Not.Null);
-            AssertWithinViewport(camera, sun);
-            AssertWithinViewport(camera, earth);
-            AssertWithinViewport(camera, moon);
-            AssertWithinViewport(camera, jupiter);
+            foreach (string stableId in ExpectedBodyIds)
+            {
+                Assert.That(
+                    composition.SimulationController.TryGetView(
+                        stableId,
+                        out CelestialBodyView framedView),
+                    Is.True);
+                AssertWithinViewport(camera, framedView);
+            }
         }
 
         [UnityTest]
@@ -254,22 +281,6 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                     "sun",
                     out CelestialBodyView sun),
                 Is.True);
-            Assert.That(
-                simulation.SimulationController.TryGetView(
-                    "earth",
-                    out CelestialBodyView earth),
-                Is.True);
-            Assert.That(
-                simulation.SimulationController.TryGetView(
-                    "moon",
-                    out CelestialBodyView moon),
-                Is.True);
-            Assert.That(
-                simulation.SimulationController.TryGetView(
-                    "jupiter",
-                    out CelestialBodyView jupiter),
-                Is.True);
-
             GameObject radialLightObject = GameObject.Find("Solar Radial Light");
             Assert.That(radialLightObject, Is.Not.Null);
             Light radialLight = radialLightObject.GetComponent<Light>();
@@ -285,9 +296,27 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 Vector3.Distance(radialLight.transform.position, sun.transform.position),
                 Is.LessThan(0.00001f));
 
-            AssertReceivesSunOriginLight(radialLight, sun, earth);
-            AssertReceivesSunOriginLight(radialLight, sun, moon);
-            AssertReceivesSunOriginLight(radialLight, sun, jupiter);
+            foreach (string stableId in ExpectedBodyIds)
+            {
+                if (stableId == "sun")
+                {
+                    continue;
+                }
+
+                Assert.That(
+                    simulation.SimulationController.TryGetView(
+                        stableId,
+                        out CelestialBodyView receiver),
+                    Is.True);
+                AssertReceivesSunOriginLight(radialLight, sun, receiver);
+            }
+
+            Transform saturnRings = GameObject.Find("Saturn")?.transform.Find("Visual/Rings");
+            Assert.That(saturnRings, Is.Not.Null);
+            Assert.That(saturnRings.GetComponent<MeshFilter>().sharedMesh.name, Is.EqualTo("SM_Saturn_Rings"));
+            Assert.That(
+                saturnRings.GetComponent<MeshRenderer>().sharedMaterial.name,
+                Is.EqualTo("M_Saturn_Rings"));
 
             yield return new WaitForSecondsRealtime(0.1f);
             Assert.That(

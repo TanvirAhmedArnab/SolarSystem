@@ -16,17 +16,31 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string DataRoot = "Assets/SolarSystem/Content/Data";
         private const string MaterialRoot = "Assets/SolarSystem/Content/Materials";
         private const string RenderingSettingsRoot = "Assets/SolarSystem/Settings/Rendering";
+        private const string CelestialTextureRoot =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies";
         private const string EarthNormalPath =
-            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Earth/T_Earth_Normal_2K.tif";
+            CelestialTextureRoot + "/Earth/T_Earth_Normal_2K.tif";
         private const string EarthSpecularPath =
-            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Earth/T_Earth_Specular_2K.tif";
+            CelestialTextureRoot + "/Earth/T_Earth_Specular_2K.tif";
+        private const string SaturnRingTexturePath =
+            CelestialTextureRoot + "/Saturn/T_Saturn_RingsAlpha_2K.png";
         private const string SpaceTexturePath =
             "Assets/SolarSystem/Content/Art/Textures/Environment/T_Space_MilkyWay_2K.jpg";
         private const float EarthNormalStrength = 0.28f;
         private const float SunSmoothness = 0f;
+        private const float MercurySmoothness = 0.08f;
+        private const float VenusSmoothness = 0.24f;
         private const float EarthSmoothness = 0.22f;
         private const float MoonSmoothness = 0.08f;
+        private const float MarsSmoothness = 0.1f;
         private const float JupiterSmoothness = 0.18f;
+        private const float SaturnSmoothness = 0.2f;
+        private const float UranusSmoothness = 0.28f;
+        private const float NeptuneSmoothness = 0.3f;
+        private const float SaturnRingSmoothness = 0.18f;
+        private const int SaturnRingSegments = 128;
+        private const float SaturnRingInnerRadius = 0.62f;
+        private const float SaturnRingOuterRadius = 1.15f;
         private const float OrbitSmoothness = 0f;
         private const float SkyboxExposure = 0.62f;
         private const float BloomThreshold = 1.1f;
@@ -40,9 +54,15 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const double SecondsPerDay = 86400d;
         private const double AstronomicalUnitKm = 149597870.7d;
         private static readonly Color SunTint = new Color(2.6f, 1.55f, 0.5f, 1f);
+        private static readonly Color MercuryTint = new Color(0.9f, 0.88f, 0.84f, 1f);
+        private static readonly Color VenusTint = new Color(1f, 0.9f, 0.72f, 1f);
         private static readonly Color EarthTint = new Color(0.9f, 0.94f, 1f, 1f);
         private static readonly Color MoonTint = new Color(0.82f, 0.82f, 0.8f, 1f);
+        private static readonly Color MarsTint = new Color(1f, 0.78f, 0.68f, 1f);
         private static readonly Color JupiterTint = new Color(0.96f, 0.9f, 0.84f, 1f);
+        private static readonly Color SaturnTint = new Color(1f, 0.93f, 0.78f, 1f);
+        private static readonly Color UranusTint = new Color(0.78f, 0.95f, 1f, 1f);
+        private static readonly Color NeptuneTint = new Color(0.72f, 0.84f, 1f, 1f);
         private static readonly Color OrbitTint = new Color(0.16f, 0.45f, 0.78f, 1f);
         private static readonly Color SkyboxTint = new Color(0.72f, 0.78f, 0.9f, 1f);
         private static readonly Color ColorFilter = new Color(0.98f, 0.99f, 1f, 1f);
@@ -59,117 +79,221 @@ namespace Tanvir.SolarSystem.Editor.Import
             EnsureFolder("Assets/SolarSystem/Scenes");
             ConfigureTextureImports();
 
-            CelestialBodyDefinition sun = CreateBody(new SolarSystemSlice2BodyData(
-                "Body_Sun",
-                "sun",
-                "Sun",
-                CelestialBodyCategory.Star,
-                string.Empty,
-                "NASA_NSSDC_SUN_EARTH_FACT_SHEET",
-                "The star at the center of our Solar System and the source of nearly all its light and heat.",
-                695700d,
-                1.9884e30d,
-                609.12d * 3600d,
-                7.25d,
-                null));
-            CelestialBodyDefinition earth = CreateBody(new SolarSystemSlice2BodyData(
-                "Body_Earth",
-                "earth",
-                "Earth",
-                CelestialBodyCategory.Planet,
-                "sun",
-                "NASA_NSSDC_EARTH_AND_JPL_APPROX_POS_J2000",
-                "A rocky world with global oceans and the only known environment that supports life.",
-                6371d,
-                5.9722e24d,
-                23.9345d * 3600d,
-                23.44d,
-                new SolarSystemSlice2OrbitData(
-                    AstronomicalUnitKm * 1.00000261d,
+            SolarSystemSlice2BodyContent[] bodies =
+            {
+                CreateBodyContent(
+                    CreateBody(new SolarSystemSlice2BodyData(
+                        "Body_Sun",
+                        "sun",
+                        "Sun",
+                        CelestialBodyCategory.Star,
+                        string.Empty,
+                        "NASA_NSSDC_SUN_EARTH_FACT_SHEET",
+                        "The star at the center of our Solar System and the source of nearly all its light and heat.",
+                        695700d,
+                        1.9884e30d,
+                        609.12d * 3600d,
+                        7.25d,
+                        null)),
+                    CreateBodyMaterial("Sun", "T_Sun_Surface_2K.jpg", SunTint, SunSmoothness, true),
+                    0,
+                    0f),
+                CreatePlanetContent(
+                    "Mercury",
+                    "mercury",
+                    "JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_MERCURY_FACTS",
+                    "The smallest and fastest planet, a cratered rocky world closest to the Sun.",
+                    2439.4d,
+                    3.30103e23d,
+                    58.6462d,
+                    2d,
+                    0.38709927d,
+                    0.20563593d,
+                    7.00497902d,
+                    48.33076593d,
+                    77.45779628d,
+                    252.25032350d,
+                    0.2408467d,
+                    MercuryTint,
+                    MercurySmoothness,
+                    192,
+                    0.035f),
+                CreatePlanetContent(
+                    "Venus",
+                    "venus",
+                    "JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_VENUS_FACTS",
+                    "A cloud-covered rocky planet with extreme surface heat and slow retrograde rotation.",
+                    6051.8d,
+                    4.86731e24d,
+                    -243.018d,
+                    3d,
+                    0.72333566d,
+                    0.00677672d,
+                    3.39467605d,
+                    76.67984255d,
+                    131.60246718d,
+                    181.97909950d,
+                    0.61519726d,
+                    VenusTint,
+                    VenusSmoothness,
+                    192,
+                    0.045f),
+                CreatePlanetContent(
+                    "Earth",
+                    "earth",
+                    "NASA_NSSDC_EARTH_AND_JPL_APPROX_POS_J2000",
+                    "A rocky world with global oceans and the only known environment that supports life.",
+                    6371d,
+                    5.9722e24d,
+                    23.9345d / 24d,
+                    23.44d,
+                    1.00000261d,
                     0.01671123d,
                     -0.00001531d,
                     0d,
                     102.93768193d,
-                    100.46457166d - 102.93768193d,
-                    365.256363004d * SecondsPerDay)));
-            CelestialBodyDefinition moon = CreateBody(new SolarSystemSlice2BodyData(
-                "Body_Moon",
-                "moon",
-                "Moon",
-                CelestialBodyCategory.Moon,
-                "earth",
-                "NASA_MOON_BY_NUMBERS_AND_JPL_DE405_LE405",
-                "Earth's natural satellite; its gravity drives most ocean tides and its orbit is shown around Earth.",
-                1737.4d,
-                7.34767309245735e22d,
-                27.322d * SecondsPerDay,
-                6.68d,
-                new SolarSystemSlice2OrbitData(
-                    384400d,
-                    0.0554d,
-                    5.16d,
-                    125.08d,
-                    318.15d,
-                    135.27d,
-                    27.322d * SecondsPerDay)));
-            CelestialBodyDefinition jupiter = CreateBody(new SolarSystemSlice2BodyData(
-                "Body_Jupiter",
-                "jupiter",
-                "Jupiter",
-                CelestialBodyCategory.Planet,
-                "sun",
-                "JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_JUPITER_FACTS",
-                "The Solar System's largest planet, a hydrogen-helium giant with rapid rotation and powerful storms.",
-                69911d,
-                1.898125e27d,
-                0.41354d * SecondsPerDay,
-                3d,
-                new SolarSystemSlice2OrbitData(
-                    AstronomicalUnitKm * 5.202887d,
+                    100.46457166d,
+                    365.256363004d / 365.25d,
+                    EarthTint,
+                    EarthSmoothness,
+                    192,
+                    0.055f),
+                CreateBodyContent(
+                    CreateBody(new SolarSystemSlice2BodyData(
+                        "Body_Moon",
+                        "moon",
+                        "Moon",
+                        CelestialBodyCategory.Moon,
+                        "earth",
+                        "NASA_MOON_BY_NUMBERS_AND_JPL_DE405_LE405",
+                        "Earth's natural satellite; its gravity drives most ocean tides and its orbit is shown around Earth.",
+                        1737.4d,
+                        7.34767309245735e22d,
+                        27.322d * SecondsPerDay,
+                        6.68d,
+                        new SolarSystemSlice2OrbitData(
+                            384400d,
+                            0.0554d,
+                            5.16d,
+                            125.08d,
+                            318.15d,
+                            135.27d,
+                            27.322d * SecondsPerDay))),
+                    CreateBodyMaterial(
+                        "Moon",
+                        "T_Moon_Surface_2K.jpg",
+                        MoonTint,
+                        MoonSmoothness),
+                    128,
+                    0.025f),
+                CreatePlanetContent(
+                    "Mars",
+                    "mars",
+                    "JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_MARS_FACTS",
+                    "A cold desert world whose iron-rich surface, giant volcanoes, and ancient river valleys record a dynamic past.",
+                    3389.5d,
+                    6.41691e23d,
+                    1.02595676d,
+                    25.2d,
+                    1.52371034d,
+                    0.09339410d,
+                    1.84969142d,
+                    49.55953891d,
+                    -23.94362959d,
+                    -4.55343205d,
+                    1.8808476d,
+                    MarsTint,
+                    MarsSmoothness,
+                    224,
+                    0.055f),
+                CreatePlanetContent(
+                    "Jupiter",
+                    "jupiter",
+                    "JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_JUPITER_FACTS",
+                    "The Solar System's largest planet, a hydrogen-helium giant with rapid rotation and powerful storms.",
+                    69911d,
+                    1.898125e27d,
+                    0.41354d,
+                    3d,
+                    5.202887d,
                     0.04838624d,
                     1.30439695d,
                     100.47390909d,
-                    14.72847983d - 100.47390909d,
-                    34.39644051d - 14.72847983d,
-                    11.862615d * 365.25d * SecondsPerDay)));
+                    14.72847983d,
+                    34.39644051d,
+                    11.862615d,
+                    JupiterTint,
+                    JupiterSmoothness,
+                    256,
+                    0.065f),
+                CreatePlanetContent(
+                    "Saturn",
+                    "saturn",
+                    "JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_SATURN_FACTS",
+                    "A low-density gas giant encircled by an extensive system of ice-rich rings.",
+                    58232d,
+                    5.68317e26d,
+                    0.44401d,
+                    26.73d,
+                    9.53667594d,
+                    0.05386179d,
+                    2.48599187d,
+                    113.66242448d,
+                    92.59887831d,
+                    49.95424423d,
+                    29.447498d,
+                    SaturnTint,
+                    SaturnSmoothness,
+                    288,
+                    0.07f),
+                CreatePlanetContent(
+                    "Uranus",
+                    "uranus",
+                    "JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_URANUS_FACTS",
+                    "An ice giant with a blue-green atmosphere and an extreme sideways axial tilt.",
+                    25362d,
+                    8.68099e25d,
+                    -0.71833d,
+                    97.77d,
+                    19.18916464d,
+                    0.04725744d,
+                    0.77263783d,
+                    74.01692503d,
+                    170.95427630d,
+                    313.23810451d,
+                    84.016846d,
+                    UranusTint,
+                    UranusSmoothness,
+                    320,
+                    0.075f),
+                CreatePlanetContent(
+                    "Neptune",
+                    "neptune",
+                    "JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_NEPTUNE_FACTS",
+                    "A distant blue ice giant with supersonic winds and a long, season-bearing orbit.",
+                    24622d,
+                    1.024092e26d,
+                    0.67125d,
+                    28d,
+                    30.06992276d,
+                    0.00859048d,
+                    1.77004347d,
+                    131.78422574d,
+                    44.96476227d,
+                    -55.12002969d,
+                    164.79132d,
+                    NeptuneTint,
+                    NeptuneSmoothness,
+                    352,
+                    0.08f)
+            };
 
             CelestialCatalogDefinition catalog = CreateOrLoad<CelestialCatalogDefinition>(
                 $"{DataRoot}/Catalog_SolarSystem.asset");
-            SetObjectArray(catalog, "bodies", sun, earth, moon, jupiter);
+            SetCatalogBodies(catalog, bodies);
             PresentationScaleDefinition scale = CreateOrLoad<PresentationScaleDefinition>(
                 $"{DataRoot}/Scale/Scale_PresentationGraybox.asset");
             ConfigureScale(scale);
-            Material sunMaterial = CreateMaterial(
-                $"{MaterialRoot}/CelestialBodies/M_Sun.mat",
-                "Universal Render Pipeline/Unlit",
-                "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Sun/T_Sun_Surface_2K.jpg",
-                SunTint,
-                SunSmoothness);
-            ConfigureSunMaterial(sunMaterial);
-            Material earthMaterial = CreateMaterial(
-                $"{MaterialRoot}/CelestialBodies/M_Earth.mat",
-                "Universal Render Pipeline/Lit",
-                "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Earth/T_Earth_DayAlbedo_2K.jpg",
-                EarthTint,
-                EarthSmoothness);
-            ConfigureLitMaterial(
-                earthMaterial,
-                AssetDatabase.LoadAssetAtPath<Texture2D>(EarthNormalPath),
-                EarthNormalStrength);
-            Material moonMaterial = CreateMaterial(
-                $"{MaterialRoot}/CelestialBodies/M_Moon.mat",
-                "Universal Render Pipeline/Lit",
-                "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Moon/T_Moon_Surface_2K.jpg",
-                MoonTint,
-                MoonSmoothness);
-            ConfigureLitMaterial(moonMaterial, null, 0f);
-            Material jupiterMaterial = CreateMaterial(
-                $"{MaterialRoot}/CelestialBodies/M_Jupiter.mat",
-                "Universal Render Pipeline/Lit",
-                "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Jupiter/T_Jupiter_Surface_2K.jpg",
-                JupiterTint,
-                JupiterSmoothness);
-            ConfigureLitMaterial(jupiterMaterial, null, 0f);
             Material orbitMaterial = CreateMaterial(
                 $"{MaterialRoot}/Environment/M_OrbitPath.mat",
                 "Universal Render Pipeline/Unlit",
@@ -181,24 +305,147 @@ namespace Tanvir.SolarSystem.Editor.Import
 
             return new SolarSystemSlice2Content
             {
-                Sun = sun,
-                Earth = earth,
-                Moon = moon,
-                Jupiter = jupiter,
+                Bodies = bodies,
                 Catalog = catalog,
                 Scale = scale,
-                SunMaterial = sunMaterial,
-                EarthMaterial = earthMaterial,
-                MoonMaterial = moonMaterial,
-                JupiterMaterial = jupiterMaterial,
+                SaturnRingMesh = CreateSaturnRingMesh(),
+                SaturnRingMaterial = CreateSaturnRingMaterial(),
                 OrbitMaterial = orbitMaterial,
                 SkyboxMaterial = skyboxMaterial,
                 VisualProfile = visualProfile
             };
         }
 
+        private static SolarSystemSlice2BodyContent CreatePlanetContent(
+            string displayName,
+            string stableId,
+            string sourceId,
+            string educationalSummary,
+            double radiusKm,
+            double massKg,
+            double rotationPeriodDays,
+            double axialTiltDeg,
+            double semiMajorAxisAu,
+            double eccentricity,
+            double inclinationDeg,
+            double ascendingNodeDeg,
+            double longitudePerihelionDeg,
+            double meanLongitudeDeg,
+            double orbitalPeriodYears,
+            Color tint,
+            float smoothness,
+            int orbitSampleCount,
+            float orbitWidth)
+        {
+            var bodyData = new SolarSystemSlice2BodyData(
+                $"Body_{displayName}",
+                stableId,
+                displayName,
+                CelestialBodyCategory.Planet,
+                "sun",
+                sourceId,
+                educationalSummary,
+                radiusKm,
+                massKg,
+                rotationPeriodDays * SecondsPerDay,
+                axialTiltDeg,
+                new SolarSystemSlice2OrbitData(
+                    AstronomicalUnitKm * semiMajorAxisAu,
+                    eccentricity,
+                    inclinationDeg,
+                    ascendingNodeDeg,
+                    longitudePerihelionDeg - ascendingNodeDeg,
+                    meanLongitudeDeg - longitudePerihelionDeg,
+                    orbitalPeriodYears * 365.25d * SecondsPerDay));
+            string textureName = displayName == "Earth"
+                ? "T_Earth_DayAlbedo_2K.jpg"
+                : $"T_{displayName}_Surface_2K.jpg";
+            Material material = CreateBodyMaterial(
+                displayName,
+                textureName,
+                tint,
+                smoothness);
+            if (displayName == "Earth")
+            {
+                ConfigureLitMaterial(
+                    material,
+                    AssetDatabase.LoadAssetAtPath<Texture2D>(EarthNormalPath),
+                    EarthNormalStrength);
+            }
+
+            return CreateBodyContent(
+                CreateBody(bodyData),
+                material,
+                orbitSampleCount,
+                orbitWidth);
+        }
+
+        private static SolarSystemSlice2BodyContent CreateBodyContent(
+            CelestialBodyDefinition definition,
+            Material material,
+            int orbitSampleCount,
+            float orbitWidth)
+        {
+            return new SolarSystemSlice2BodyContent
+            {
+                Definition = definition,
+                Material = material,
+                OrbitSampleCount = orbitSampleCount,
+                OrbitWidth = orbitWidth
+            };
+        }
+
+        private static Material CreateBodyMaterial(
+            string bodyName,
+            string textureName,
+            Color tint,
+            float smoothness,
+            bool unlit = false)
+        {
+            Material material = CreateMaterial(
+                $"{MaterialRoot}/CelestialBodies/M_{bodyName}.mat",
+                unlit
+                    ? "Universal Render Pipeline/Unlit"
+                    : "Universal Render Pipeline/Lit",
+                $"{CelestialTextureRoot}/{bodyName}/{textureName}",
+                tint,
+                smoothness);
+            if (unlit)
+            {
+                ConfigureSunMaterial(material);
+            }
+            else if (bodyName != "Earth")
+            {
+                ConfigureLitMaterial(material, null, 0f);
+            }
+
+            return material;
+        }
+
         private static void ConfigureTextureImports()
         {
+            string[] colorTextures =
+            {
+                $"{CelestialTextureRoot}/Sun/T_Sun_Surface_2K.jpg",
+                $"{CelestialTextureRoot}/Mercury/T_Mercury_Surface_2K.jpg",
+                $"{CelestialTextureRoot}/Venus/T_Venus_Surface_2K.jpg",
+                $"{CelestialTextureRoot}/Earth/T_Earth_DayAlbedo_2K.jpg",
+                $"{CelestialTextureRoot}/Moon/T_Moon_Surface_2K.jpg",
+                $"{CelestialTextureRoot}/Mars/T_Mars_Surface_2K.jpg",
+                $"{CelestialTextureRoot}/Jupiter/T_Jupiter_Surface_2K.jpg",
+                $"{CelestialTextureRoot}/Saturn/T_Saturn_Surface_2K.jpg",
+                $"{CelestialTextureRoot}/Uranus/T_Uranus_Surface_2K.jpg",
+                $"{CelestialTextureRoot}/Neptune/T_Neptune_Surface_2K.jpg"
+            };
+            foreach (string path in colorTextures)
+            {
+                ConfigureTextureImporter(
+                    path,
+                    TextureImporterType.Default,
+                    true,
+                    TextureWrapMode.Repeat);
+            }
+
             ConfigureTextureImporter(
                 SpaceTexturePath,
                 TextureImporterType.Default,
@@ -214,6 +461,11 @@ namespace Tanvir.SolarSystem.Editor.Import
                 TextureImporterType.Default,
                 false,
                 TextureWrapMode.Repeat);
+            ConfigureTextureImporter(
+                SaturnRingTexturePath,
+                TextureImporterType.Default,
+                true,
+                TextureWrapMode.Clamp);
         }
 
         private static void ConfigureTextureImporter(
@@ -274,6 +526,98 @@ namespace Tanvir.SolarSystem.Editor.Import
             }
 
             EditorUtility.SetDirty(material);
+        }
+
+        private static Material CreateSaturnRingMaterial()
+        {
+            const string path = MaterialRoot + "/CelestialBodies/M_Saturn_Rings.mat";
+            Material material = CreateMaterial(
+                path,
+                "Universal Render Pipeline/Lit",
+                SaturnRingTexturePath,
+                Color.white,
+                SaturnRingSmoothness);
+            material.SetFloat("_Metallic", 0f);
+            material.SetFloat("_Surface", 1f);
+            material.SetFloat("_Blend", 0f);
+            material.SetFloat("_AlphaClip", 0f);
+            material.SetFloat("_Cull", (float)CullMode.Off);
+            material.SetFloat("_ZWrite", 0f);
+            material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+            material.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+            material.SetOverrideTag("RenderType", "Transparent");
+            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            material.DisableKeyword("_ALPHATEST_ON");
+            material.renderQueue = (int)RenderQueue.Transparent;
+            material.doubleSidedGI = true;
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        private static Mesh CreateSaturnRingMesh()
+        {
+            const string meshRoot = "Assets/SolarSystem/Content/Models/Generated";
+            const string path = meshRoot + "/SM_Saturn_Rings.asset";
+            EnsureFolder(meshRoot);
+            Mesh mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if (mesh == null)
+            {
+                mesh = new Mesh();
+                AssetDatabase.CreateAsset(mesh, path);
+            }
+
+            int vertexCount = (SaturnRingSegments + 1) * 2;
+            var vertices = new Vector3[vertexCount];
+            var normals = new Vector3[vertexCount];
+            var uv = new Vector2[vertexCount];
+            var triangles = new int[SaturnRingSegments * 6];
+            for (int segment = 0; segment <= SaturnRingSegments; segment++)
+            {
+                float ratio = (float)segment / SaturnRingSegments;
+                float angle = ratio * Mathf.PI * 2f;
+                float x = Mathf.Cos(angle);
+                float z = Mathf.Sin(angle);
+                int inner = segment * 2;
+                int outer = inner + 1;
+                vertices[inner] = new Vector3(
+                    x * SaturnRingInnerRadius,
+                    0f,
+                    z * SaturnRingInnerRadius);
+                vertices[outer] = new Vector3(
+                    x * SaturnRingOuterRadius,
+                    0f,
+                    z * SaturnRingOuterRadius);
+                normals[inner] = Vector3.up;
+                normals[outer] = Vector3.up;
+                uv[inner] = new Vector2(0f, ratio);
+                uv[outer] = new Vector2(1f, ratio);
+            }
+
+            for (int segment = 0; segment < SaturnRingSegments; segment++)
+            {
+                int triangle = segment * 6;
+                int inner = segment * 2;
+                int outer = inner + 1;
+                int nextInner = inner + 2;
+                int nextOuter = outer + 2;
+                triangles[triangle] = inner;
+                triangles[triangle + 1] = nextOuter;
+                triangles[triangle + 2] = outer;
+                triangles[triangle + 3] = inner;
+                triangles[triangle + 4] = nextInner;
+                triangles[triangle + 5] = nextOuter;
+            }
+
+            mesh.Clear();
+            mesh.name = "SM_Saturn_Rings";
+            mesh.vertices = vertices;
+            mesh.normals = normals;
+            mesh.uv = uv;
+            mesh.triangles = triangles;
+            mesh.RecalculateBounds();
+            EditorUtility.SetDirty(mesh);
+            return mesh;
         }
 
         private static Material CreateSkyboxMaterial()
@@ -480,17 +824,17 @@ namespace Tanvir.SolarSystem.Editor.Import
             return asset;
         }
 
-        private static void SetObjectArray(
+        private static void SetCatalogBodies(
             CelestialCatalogDefinition catalog,
-            string propertyName,
-            params Object[] values)
+            SolarSystemSlice2BodyContent[] bodies)
         {
             var serialized = new SerializedObject(catalog);
-            SerializedProperty array = serialized.FindProperty(propertyName);
-            array.arraySize = values.Length;
-            for (int index = 0; index < values.Length; index++)
+            SerializedProperty array = serialized.FindProperty("bodies");
+            array.arraySize = bodies.Length;
+            for (int index = 0; index < bodies.Length; index++)
             {
-                array.GetArrayElementAtIndex(index).objectReferenceValue = values[index];
+                array.GetArrayElementAtIndex(index).objectReferenceValue =
+                    bodies[index].Definition;
             }
 
             serialized.ApplyModifiedPropertiesWithoutUndo();

@@ -1,7 +1,7 @@
 # Celestial Data Sources
 
 **Project:** Solar System Simulation  
-**Dataset slice:** Sun-Earth-Moon-Jupiter graybox  
+**Dataset slice:** Sun, eight planets, and Earth's Moon baseline  
 **Verification date:** 2026-07-23  
 **Authoring epoch:** J2000.0 where orbital elements provide an epoch  
 **Accuracy tier:** Educational visualization; not a date-exact ephemeris
@@ -113,6 +113,168 @@ Primary sources:
 - [JPL Approximate Positions of the Planets](https://ssd.jpl.nasa.gov/planets/approx_pos.html)
 - [NASA Jupiter Facts](https://science.nasa.gov/jupiter/jupiter-facts/)
 
+## Mercury
+
+**Source record ID:** `JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_MERCURY_FACTS`
+
+Authored physical values:
+
+- Mean radius: `2,439.4 km`
+- Mass: `3.30103 × 10^23 kg`
+- Sidereal rotation period: `58.6462 days`
+- Educational axial tilt: `2 degrees`
+
+Authored J2000 orbital values:
+
+- Semi-major axis: `0.38709927 AU` = `57,909,226.54152438 km`
+- Eccentricity: `0.20563593`
+- Inclination: `7.00497902 degrees`
+- Longitude of ascending node: `48.33076593 degrees`
+- Argument of periapsis: `29.12703035 degrees`
+- Mean anomaly: `174.79252722 degrees`
+- Sidereal orbital period: `0.2408467 Julian years` = `87.969257175 days`
+
+Primary sources:
+
+- [JPL Planetary Physical Parameters](https://ssd.jpl.nasa.gov/planets/phys_par.html)
+- [JPL Approximate Positions of the Planets](https://ssd.jpl.nasa.gov/planets/approx_pos.html)
+- [NASA Mercury Facts](https://science.nasa.gov/mercury/facts/)
+
+## Venus
+
+**Source record ID:** `JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_VENUS_FACTS`
+
+Authored physical values:
+
+- Mean radius: `6,051.8 km`
+- Mass: `4.86731 × 10^24 kg`
+- Signed sidereal rotation period: `-243.018 days`; the negative sign records retrograde rotation
+- Educational axial tilt: `3 degrees`, paired with the signed rotation direction
+
+Authored J2000 orbital values:
+
+- Semi-major axis: `0.72333566 AU` = `108,209,474.53737916 km`
+- Eccentricity: `0.00677672`
+- Inclination: `3.39467605 degrees`
+- Longitude of ascending node: `76.67984255 degrees`
+- Argument of periapsis: `54.92262463 degrees`
+- Mean anomaly: `50.37663232 degrees`
+- Sidereal orbital period: `0.61519726 Julian years` = `224.700799215 days`
+
+Primary sources:
+
+- [JPL Planetary Physical Parameters](https://ssd.jpl.nasa.gov/planets/phys_par.html)
+- [JPL Approximate Positions of the Planets](https://ssd.jpl.nasa.gov/planets/approx_pos.html)
+- [NASA Venus Facts](https://science.nasa.gov/venus/venus-facts/)
+
+## Mars
+
+**Source record ID:** `JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_MARS_FACTS`
+
+Authored physical values:
+
+- Mean radius: `3,389.5 km`
+- Mass: `6.41691 × 10^23 kg`
+- Sidereal rotation period: `1.02595676 days`
+- Axial tilt: `25.2 degrees`
+
+Authored J2000 orbital values:
+
+- Semi-major axis: `1.52371034 AU` = `227,943,822.42757303 km`
+- Eccentricity: `0.09339410`
+- Inclination: `1.84969142 degrees`
+- Longitude of ascending node: `49.55953891 degrees`
+- Argument of periapsis: `-73.50316850 degrees`
+- Mean anomaly: `19.39019754 degrees`
+- Sidereal orbital period: `1.8808476 Julian years` = `686.9795859 days`
+
+Primary sources:
+
+- [JPL Planetary Physical Parameters](https://ssd.jpl.nasa.gov/planets/phys_par.html)
+- [JPL Approximate Positions of the Planets](https://ssd.jpl.nasa.gov/planets/approx_pos.html)
+- [NASA Mars Quick Facts](https://science.nasa.gov/resource/mars-quick-facts/)
+
+## Saturn
+
+**Source record ID:** `JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_SATURN_FACTS`
+
+Authored physical values:
+
+- Mean radius: `58,232 km`
+- Mass: `5.68317 × 10^26 kg`
+- Sidereal rotation period: `0.44401 days`
+- Axial tilt: `26.73 degrees`
+
+Authored J2000 orbital values:
+
+- Semi-major axis: `9.53667594 AU` = `1,426,666,414.1799209 km`
+- Eccentricity: `0.05386179`
+- Inclination: `2.48599187 degrees`
+- Longitude of ascending node: `113.66242448 degrees`
+- Argument of periapsis: `-21.06354617 degrees`
+- Mean anomaly: `-42.64463408 degrees`
+- Sidereal orbital period: `29.447498 Julian years` = `10,755.6986445 days`
+
+Primary sources:
+
+- [JPL Planetary Physical Parameters](https://ssd.jpl.nasa.gov/planets/phys_par.html)
+- [JPL Approximate Positions of the Planets](https://ssd.jpl.nasa.gov/planets/approx_pos.html)
+- [NASA Saturn Facts](https://science.nasa.gov/saturn/facts/)
+
+## Uranus
+
+**Source record ID:** `JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_URANUS_FACTS`
+
+Authored physical values:
+
+- Mean radius: `25,362 km`
+- Mass: `8.68099 × 10^25 kg`
+- Signed sidereal rotation period: `-0.71833 days`; the negative sign records retrograde rotation
+- Axial tilt: `97.77 degrees`
+
+Authored J2000 orbital values:
+
+- Semi-major axis: `19.18916464 AU` = `2,870,658,170.6557322 km`
+- Eccentricity: `0.04725744`
+- Inclination: `0.77263783 degrees`
+- Longitude of ascending node: `74.01692503 degrees`
+- Argument of periapsis: `96.93735127 degrees`
+- Mean anomaly: `142.28382821 degrees`
+- Sidereal orbital period: `84.016846 Julian years` = `30,687.1530015 days`
+
+Primary sources:
+
+- [JPL Planetary Physical Parameters](https://ssd.jpl.nasa.gov/planets/phys_par.html)
+- [JPL Approximate Positions of the Planets](https://ssd.jpl.nasa.gov/planets/approx_pos.html)
+- [NASA Uranus Facts](https://science.nasa.gov/uranus/facts/)
+
+## Neptune
+
+**Source record ID:** `JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_NEPTUNE_FACTS`
+
+Authored physical values:
+
+- Mean radius: `24,622 km`
+- Mass: `1.024092 × 10^26 kg`
+- Sidereal rotation period: `0.67125 days`
+- Educational axial tilt: `28 degrees`
+
+Authored J2000 orbital values:
+
+- Semi-major axis: `30.06992276 AU` = `4,498,396,417.0094671 km`
+- Eccentricity: `0.00859048`
+- Inclination: `1.77004347 degrees`
+- Longitude of ascending node: `131.78422574 degrees`
+- Argument of periapsis: `-86.81946347 degrees`
+- Mean anomaly: `-100.08479196 degrees`
+- Sidereal orbital period: `164.79132 Julian years` = `60,190.02963 days`
+
+Primary sources:
+
+- [JPL Planetary Physical Parameters](https://ssd.jpl.nasa.gov/planets/phys_par.html)
+- [JPL Approximate Positions of the Planets](https://ssd.jpl.nasa.gov/planets/approx_pos.html)
+- [NASA Neptune Facts](https://science.nasa.gov/neptune/neptune-facts/)
+
 ## Presentation Transformations
 
 Physical values remain unchanged in the authoring assets and immutable runtime models. The graybox presentation uses a separate provisional scale asset:
@@ -130,7 +292,13 @@ These values are intentionally transformed for legibility. They remain a tunable
 - Orbital elements are fixed at their authoring epoch; secular element rates and perturbations are not evaluated.
 - The Earth follows the JPL Earth-Moon barycenter approximation.
 - The Moon uses fixed mean elements and does not model nodal or apsidal precession, libration, or solar perturbations.
-- Jupiter uses the fixed JPL 1800-2050 approximation row without secular rates or perturbations.
+- All eight planets use the fixed JPL 1800-2050 approximation rows without
+  secular rates or perturbations.
 - Jupiter is represented by its volumetric mean radius; equatorial bulge is not yet modeled.
+- Saturn, Uranus, and Neptune also use volumetric mean radii; oblateness is not
+  yet modeled.
+- Venus and Uranus use signed negative sidereal periods to preserve retrograde
+  spin; the visual axial-tilt values are documented presentation conventions,
+  not a full IAU pole-orientation model.
 - The Sun uses one adopted rotation period even though it rotates differentially by latitude.
 - The simulation epoch is an educational reference state, not the current real-world date.

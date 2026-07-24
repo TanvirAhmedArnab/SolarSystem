@@ -14,6 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.CelestialCatalogDefinition
   bodies:
   - {fileID: 11400000, guid: 2912d180801d5eb459837f92b0b8c0c7, type: 2}
+  - {fileID: 11400000, guid: 4ce81b47e3e54624c85a2747fafd8fda, type: 2}
+  - {fileID: 11400000, guid: d812c6fa09227fe4a9e7ff9fce9c02b4, type: 2}
   - {fileID: 11400000, guid: 4515272fd76d1524cb423f9680465c19, type: 2}
   - {fileID: 11400000, guid: bd92b09b5ee47d245a0a900d1060c10b, type: 2}
+  - {fileID: 11400000, guid: 30f43057f48fa404f8f774e9e04286c0, type: 2}
   - {fileID: 11400000, guid: 90eba97d97efd6e4cb40009314a94c98, type: 2}
+  - {fileID: 11400000, guid: e4d888255a1d41a46b464fc330015c5d, type: 2}
+  - {fileID: 11400000, guid: c01c36cb1e573484dbea6498513e10b4, type: 2}
+  - {fileID: 11400000, guid: 487da43a78ccd3642a472ee5c80a870d, type: 2}

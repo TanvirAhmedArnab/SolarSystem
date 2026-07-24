@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.5.0  
+**Version:** 0.6.0  
 **Last updated:** 2026-07-23  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -32,6 +32,7 @@
 | 0.3.0 | 2026-07-22 | Codex, for Tanvir | Preserved the complete portfolio scope and converted July 29 into an initial inspection and planning milestone | Schedule strategy approved; final release date pending project inspection |
 | 0.4.0 | 2026-07-22 | Codex, for Tanvir | Recorded approval of the GDD authority, URP, deterministic analytical orbits, and lightweight trunk-based development | Foundation decisions approved |
 | 0.5.0 | 2026-07-23 | Codex, for Tanvir | Recorded the validated selection-feedback and educational body-information experience that closes the interaction vertical slice | Implemented product behavior recorded; broader release interface remains |
+| 0.6.0 | 2026-07-23 | Codex, for Tanvir | Recorded the implemented eight-planet content baseline, full-system overview framing, and first Saturn ring presentation | Required planetary roster implemented; final fidelity and selected moon set remain |
 
 ### 1.3 Source hierarchy
 
@@ -219,6 +220,14 @@ The application credits its scientific sources and exposes a concise explanation
 | Terrestrial planets | Mercury, Venus, Earth, Mars | Required |
 | Giant planets | Jupiter, Saturn, Uranus, Neptune | Required |
 | Major moons | Moon, Io, Europa, Ganymede, Callisto, Titan, Triton | Proposed minimum |
+
+**[IMPLEMENTED BASELINE]** The interactive scene now includes the Sun, all
+eight required planets, and Earth's Moon. Every required planet uses verified
+physical data, deterministic J2000-based orbital elements, an audited texture,
+a selectable body view, an orbit path, and the existing educational information
+panel. Saturn includes a first transparent ring presentation. Atmospheres,
+cloud layers, planet-specific shader effects, and the proposed major-moon set
+remain later content/fidelity work rather than implied completion.
 
 ### 8.2 Body information overlay
 
@@ -480,6 +489,11 @@ Each rule should have one authoritative owner document; other documents link to 
 
 - Populate all approved bodies, materials, labels, facts, sources, and credits.
 - Complete cinematic route and accessibility baseline.
+
+**Current progress:** The Sun, eight planets, and Earth's Moon are populated as
+the deterministic planetary baseline. Major moons beyond Earth's Moon,
+advanced per-body visual layers, labels/navigation, cinematic routing, and
+accessibility completion remain.
 
 ### Milestone 5 - Portfolio release
 

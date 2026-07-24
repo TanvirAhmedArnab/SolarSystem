@@ -39,6 +39,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Edit Mode visual-asset contracts and a real-scene Play Mode rendering-foundation test.
 - Real-scene regression coverage for Sun parenting, radial-light units,
   co-location, range, and shadow policy.
+- Serialized scientific definitions, materials, deterministic orbits, body
+  views, and orbit paths for Mercury, Venus, Mars, Saturn, Uranus, and Neptune.
+- Generated 128-segment Saturn annulus with the audited ring alpha texture and
+  two-sided transparent presentation.
+- Full-system overview framing and regression coverage for all ten authored
+  bodies, nine orbit paths, the radial-light envelope, and Saturn's ring wiring.
 
 ### Changed
 
@@ -62,6 +68,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   subassets instead of replacing their stable local file IDs on every run.
 - Replaced fixed camera-test sleeps with bounded state-based waits to prevent
   false failures under variable editor load.
+- Replaced per-body scene wiring with one ordered editor content collection so
+  catalog, material, view, and orbit authoring scale together.
+- Reframed the initial camera from the representative four-body view to the
+  complete eight-planet presentation envelope.
 
 ### Removed
 
