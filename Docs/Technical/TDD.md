@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; layered-Earth representative slice validated  
-**Version:** 0.15.0  
+**Document status:** Living technical authority; layered-Earth and solar-hero representative slices validated  
+**Version:** 0.16.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -41,6 +41,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.13.0 | 2026-07-24 | Codex, for Tanvir | Replaced exaggerated body radii with exact Earth-relative proportions, calibrated readable orbit clearances, anchored `1x` to Earth's sidereal rotation, and added full-cycle regression coverage | Presentation-scale contract approved and validated; guided comparison UI remains |
 | 0.14.0 | 2026-07-24 | Codex, for Tanvir | Added the deterministic three-stage scale service, shared linear projections, Earth-relative render origin, guided camera state capture/restoration, input locking, UI/audio adapters, and full regression coverage | Guided physical-scale comparison implemented and validated |
 | 0.15.0 | 2026-07-24 | Codex, for Tanvir | Added project-owned URP Earth shaders, immutable layer authoring, deterministic cloud drift, Sun shader globals, close-focus orbit visibility policy, and complete asset/scene regression coverage | Representative layered-Earth architecture implemented and validated |
+| 0.16.0 | 2026-07-24 | Codex, for Tanvir | Added project-owned solar surface/corona shaders, immutable solar authoring, absolute-time phase evaluation, cached property blocks, reproducible scene wiring, and complete asset/scene regression coverage | Solar hero architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -707,6 +708,19 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   `_SolarSystemSunPositionWS` value in `LateUpdate`. The Earth surface, cloud,
   and atmosphere shaders derive their day/night or rim response from that live
   position.
+- `SolarVisualDefinition` stores the reviewed Sun shell multiplier and
+  surface/corona flow cycles. Startup converts it to immutable
+  `SolarVisualModel` state. `SolarVisualView` evaluates both phases from
+  authoritative absolute simulation time and the Sun's signed rotation period,
+  then writes them through two cached `MaterialPropertyBlock` instances. It
+  does not accumulate frame delta, instantiate materials, or allocate in
+  steady-state updates.
+- The Sun composes an opaque `Solar Surface` renderer and a separate
+  front-face-culled transparent `Solar Corona` shell at `1.045` surface
+  radius. Both reuse the approved Sun texture, support GPU instancing, and
+  remain non-shadow-casting. The corona does not contribute to reflection
+  probes. These visual renderers are independent from the existing
+  `Solar Radial Light`, which remains parented to the Sun root at local origin.
 - Earth composes three renderers: the opaque surface, a transparent
   non-shadow-casting cloud shell at `1.004` radius, and a transparent
   non-shadow-casting atmosphere shell at `1.018` radius. The shell multipliers
@@ -759,6 +773,9 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Invalid eccentricity, radius, period, and source record.
 - Deterministic catalog ordering.
 - ScriptableObject-to-runtime conversion without asset mutation.
+- Solar authoring conversion, finite parameter validation, deterministic
+  absolute-time phases, shell scale, property-block updates, and renderer
+  policy.
 
 ### 12.3 Play Mode tests
 
@@ -774,6 +791,9 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Asynchronous camera transitions are awaited by observable state with a
   bounded timeout; tests do not rely on fixed sleeps near the nominal
   transition duration.
+- The real scene validates the solar surface/corona hierarchy, deterministic
+  phase progression and pause behavior, light-origin separation, close focus,
+  renderer policy, and preserved camera/simulation state.
 
 ### 12.4 Manual validation
 
@@ -913,6 +933,13 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   disclosure.
 - Layered-Earth evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Layered Earth Rendering Validation.md`.
+- **[IMPLEMENTED REPRESENTATIVE SLICE]** The Sun now uses a project-owned
+  deterministic URP surface shader plus a separate restrained corona shell.
+  Absolute simulation time drives both motion phases through cached property
+  blocks; the radial light remains an independent child of the Sun root. Live
+  overview and close-focus evidence did not justify adding a lens flare.
+- Solar surface/corona evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Solar Surface and Corona Validation.md`.
 - The broader proposed moon set, unique atmosphere/advanced shaders for other
   bodies, advanced ring shading, labels/navigation, player-facing audio
   settings, final audio mix approval, and accessibility options remain Slice 4
@@ -976,6 +1003,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-014 | 2026-07-24 | Define `1x` as one Earth sidereal rotation per real second and derive every body's direction and rate from its signed source period | Approved and implemented | Tanvir | Shared, scientifically proportional time reference |
 | TDD-015 | 2026-07-24 | Teach physical scale through three deterministic guided modes, use Earth as the literal render origin, and restore explorer state after completion or cancellation | Approved and implemented | Tanvir | GDD-007 and Slice 4 guided-comparison validation |
 | TDD-016 | 2026-07-24 | Prove layered rendering on Earth with project-owned URP shaders, immutable layer authoring, absolute deterministic cloud drift, a shared live-Sun global, and focus-only orbit suppression | Implemented candidate | Tanvir | Representative evidence before body-specific shader expansion |
+| TDD-017 | 2026-07-24 | Present the Sun with project-owned URP surface/corona shaders, absolute simulation-time phases, cached property blocks, and a visual/light separation; omit lens flare unless live evidence requires it | Implemented candidate | Tanvir | Deterministic, reusable hero treatment with controlled transparency and exposure cost |
 
 ## 19. Definition of Done for TDD Version 1.0
 

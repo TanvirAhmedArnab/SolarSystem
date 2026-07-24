@@ -188,7 +188,7 @@ namespace Tanvir.SolarSystem.Application
             for (int index = 0; index < catalog.Count; index++)
             {
                 CelestialPresentationState state = presentationStates[index];
-                views[state.Id].Apply(state);
+                views[state.Id].Apply(state, timeSeconds);
             }
 
             foreach (CelestialOrbitPathView orbitPath in orbitPaths)

@@ -103,6 +103,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Earth.");
             }
 
+            CreateSunVisual(sunView, content);
             CreateEarthLayers(earthView, content);
             ConfigureSimulationComposition(
                 composition,
@@ -216,6 +217,50 @@ namespace Tanvir.SolarSystem.Editor.Import
             renderer.sharedMaterial = material;
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             renderer.receiveShadows = false;
+        }
+
+        private static void CreateSunVisual(
+            CelestialBodyView sun,
+            SolarSystemSlice2Content content)
+        {
+            if (content.SunVisualDefinition == null ||
+                content.SunCoronaMaterial == null)
+            {
+                throw new InvalidOperationException(
+                    "Solar hero presentation assets are incomplete.");
+            }
+
+            Transform visualRoot = sun.VisualRoot;
+            MeshRenderer surfaceRenderer =
+                visualRoot.GetComponent<MeshRenderer>();
+            surfaceRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            surfaceRenderer.receiveShadows = false;
+            surfaceRenderer.lightProbeUsage = LightProbeUsage.Off;
+            surfaceRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+
+            Transform coronaShell = CreateLayerSphere(
+                "Corona Layer",
+                visualRoot,
+                content.SunCoronaMaterial,
+                content.SunVisualDefinition.CoronaShellRadiusMultiplier);
+
+            SolarVisualView solarView =
+                sun.gameObject.AddComponent<SolarVisualView>();
+            var serializedSolar = new SerializedObject(solarView);
+            serializedSolar.FindProperty("definition").objectReferenceValue =
+                content.SunVisualDefinition;
+            serializedSolar.FindProperty("coronaShell").objectReferenceValue =
+                coronaShell;
+            serializedSolar.FindProperty("surfaceRenderer").objectReferenceValue =
+                surfaceRenderer;
+            serializedSolar.FindProperty("coronaRenderer").objectReferenceValue =
+                coronaShell.GetComponent<MeshRenderer>();
+            serializedSolar.ApplyModifiedPropertiesWithoutUndo();
+
+            var serializedBody = new SerializedObject(sun);
+            serializedBody.FindProperty("solarVisualView").objectReferenceValue =
+                solarView;
+            serializedBody.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void CreateEarthLayers(

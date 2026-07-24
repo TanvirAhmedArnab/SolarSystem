@@ -14,6 +14,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal PresentationScaleDefinition Scale { get; set; }
         internal Mesh SaturnRingMesh { get; set; }
         internal Material SaturnRingMaterial { get; set; }
+        internal SolarVisualDefinition SunVisualDefinition { get; set; }
+        internal Material SunCoronaMaterial { get; set; }
         internal CelestialLayerVisualDefinition EarthLayerDefinition { get; set; }
         internal Material EarthCloudMaterial { get; set; }
         internal Material EarthAtmosphereMaterial { get; set; }

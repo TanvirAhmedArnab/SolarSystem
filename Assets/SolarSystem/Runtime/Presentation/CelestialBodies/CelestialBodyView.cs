@@ -14,6 +14,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         [SerializeField] private Transform visualRoot;
         [SerializeField] private SphereCollider selectionCollider;
         [SerializeField] private CelestialLayeredBodyView layeredBodyView;
+        [SerializeField] private SolarVisualView solarVisualView;
 
         private CelestialBodyModel model;
         private float currentDisplayRadius;
@@ -35,6 +36,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Gets the optional layered-body presentation adapter.</summary>
         public CelestialLayeredBodyView LayeredBodyView => layeredBodyView;
+
+        /// <summary>Gets the optional deterministic solar presentation adapter.</summary>
+        public SolarVisualView SolarVisualView => solarVisualView;
 
         /// <summary>Initializes the view against its immutable runtime model.</summary>
         public void Initialize(CelestialBodyModel runtimeModel)
@@ -67,10 +71,19 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
             model = runtimeModel;
             layeredBodyView?.Initialize(runtimeModel);
+            solarVisualView?.Initialize(runtimeModel);
         }
 
         /// <summary>Applies one projected snapshot to the transform hierarchy.</summary>
         public void Apply(CelestialPresentationState state)
+        {
+            Apply(state, 0d);
+        }
+
+        /// <summary>Applies projected state and absolute authoritative simulation time.</summary>
+        public void Apply(
+            CelestialPresentationState state,
+            double simulationTimeSeconds)
         {
             if (model == null)
             {
@@ -94,6 +107,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             Quaternion siderealSpin = Quaternion.AngleAxis(-state.RotationAngleDeg, Vector3.up);
             visualRoot.localRotation = axialTilt * siderealSpin;
             layeredBodyView?.Apply(state.RotationAngleDeg);
+            solarVisualView?.Apply(simulationTimeSeconds);
         }
     }
 }

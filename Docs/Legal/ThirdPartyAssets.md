@@ -2,8 +2,8 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.4.0  
-**Last reviewed:** 2026-07-23
+**Version:** 0.5.0  
+**Last reviewed:** 2026-07-24
 
 **Live-source verification:** Rechecked 2026-07-22 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records.
 
@@ -78,7 +78,7 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 
 | IDs | Content | Provider | License | Status |
 |---|---|---|---|---|
-| TEX-SSS-001-017 | Sun, planets, Earth layers, Moon, ring, starfield | Solar System Scope | CC BY 4.0 | Imported; required planet surfaces, layered Earth, Saturn ring, and starfield active |
+| TEX-SSS-001-017 | Sun, planets, Earth layers, Moon, ring, starfield | Solar System Scope | CC BY 4.0 | Imported; solar hero, required planet surfaces, layered Earth, Saturn ring, and starfield active |
 | TEX-USGS-001 | Io browse mosaic | USGS / Galileo and Voyager | Public domain | Imported evaluation source |
 | TEX-USGS-002 | Europa browse mosaic | USGS / Galileo and Voyager | No use constraints listed | Imported evaluation source |
 | TEX-USGS-003 | Ganymede browse mosaic | USGS / Galileo and Voyager | Public domain | Imported evaluation source |
@@ -154,6 +154,23 @@ project-authored. They activate the already approved TEX-SSS-004 through
 TEX-SSS-008 derivatives without modifying their pixels, so the existing Solar
 System Scope CC BY 4.0 attribution obligation continues and no new third-party
 license is introduced.
+
+### Active solar hero record
+
+- Source ID: `TEX-SSS-003`
+- Source: `SourceAssets/ThirdParty/Textures/SolarSystemScope/2k_sun.jpg`
+- Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Sun/T_Sun_Surface_2K.jpg`
+- Active materials: `M_Sun.mat` and `M_Sun_Corona.mat`
+- License: Solar System Scope, CC BY 4.0; release attribution remains required.
+- Modification status: the source and Unity texture pixels are unchanged.
+  Project-authored shaders sample the approved texture for the opaque surface
+  and transparent corona shell.
+
+The solar surface/corona shaders, shell wiring, immutable authoring, and
+deterministic motion code are project-authored. They introduce no new
+third-party asset or license. Their use of TEX-SSS-003 continues the existing
+Solar System Scope CC BY 4.0 attribution obligation.
 
 ### Kenney selected-subset mapping
 

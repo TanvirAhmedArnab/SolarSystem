@@ -70,6 +70,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Edit Mode layer/material/import contracts and a real-scene Play Mode journey
   for hierarchy, shell scale, day/night policy, cloud motion, focus visibility,
   and paused-state preservation.
+- Project-owned URP solar surface and corona shaders that reuse the approved
+  Sun texture with subtle deterministic, absolute-time motion.
+- Immutable solar visual authoring, a cached allocation-free property-block
+  adapter, and reproducible Sun surface/corona scene wiring.
+- Edit Mode solar authoring/material/shader contracts and real-scene Play Mode
+  coverage for hierarchy, phase progression, pause, focus, renderer policy,
+  and separation from the Sun-origin radial light.
 
 ### Changed
 
@@ -108,6 +115,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Replaced Earth's baseline Lit material with the representative layered
   treatment and disclosed that cloud/atmosphere thickness is exaggerated
   without changing the proportional surface radius.
+- Replaced the Sun's static baseline material with an exposure-safe hero
+  treatment and a restrained non-shadow-casting corona; live evidence did not
+  justify adding a lens flare.
 - Suppressed cached orbit guides only during close camera focus and restored
   them in free flight so overview geometry cannot obscure hero views.
 - Paused simulation and temporarily locked selection, time, and navigation

@@ -681,6 +681,110 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 Is.LessThan(0.0001f));
         }
 
+        [UnityTest]
+        public IEnumerator SolarSystemScene_UsesDeterministicSolarSurfaceAndCorona()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+
+            SolarVisualView solar = sun.SolarVisualView;
+            Assert.That(solar, Is.Not.Null);
+            Assert.That(solar.IsInitialized, Is.True);
+            Assert.That(solar.CoronaShell.parent, Is.SameAs(sun.VisualRoot));
+            Assert.That(
+                solar.CoronaShell.localScale.x,
+                Is.EqualTo(SolarVisualRenderingContract.CoronaShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                solar.SurfaceRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Solar Surface"));
+            Assert.That(
+                solar.CoronaRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Solar Corona"));
+            Assert.That(
+                solar.SurfaceRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(
+                solar.CoronaRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(solar.CoronaRenderer.receiveShadows, Is.False);
+            Assert.That(
+                solar.CoronaRenderer.lightProbeUsage,
+                Is.EqualTo(LightProbeUsage.Off));
+            Assert.That(
+                solar.CoronaRenderer.reflectionProbeUsage,
+                Is.EqualTo(ReflectionProbeUsage.Off));
+
+            Light radialLight =
+                GameObject.Find("Solar Radial Light")?.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            Assert.That(radialLight.transform.parent, Is.SameAs(sun.transform));
+            Assert.That(
+                Vector3.Distance(radialLight.transform.position, sun.transform.position),
+                Is.LessThan(0.00001f));
+
+            float surfacePhaseBefore = solar.SurfacePhase;
+            float coronaPhaseBefore = solar.CoronaPhase;
+            yield return new WaitForSecondsRealtime(0.2f);
+            Assert.That(
+                PhaseDistance(surfacePhaseBefore, solar.SurfacePhase),
+                Is.GreaterThan(0.00001f));
+            Assert.That(
+                PhaseDistance(coronaPhaseBefore, solar.CoronaPhase),
+                Is.GreaterThan(0.00001f));
+
+            simulation.SimulationController.SetPaused(true);
+            yield return null;
+            float pausedSurfacePhase = solar.SurfacePhase;
+            float pausedCoronaPhase = solar.CoronaPhase;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(
+                PhaseDistance(pausedSurfacePhase, solar.SurfacePhase),
+                Is.LessThan(0.000001f));
+            Assert.That(
+                PhaseDistance(pausedCoronaPhase, solar.CoronaPhase),
+                Is.LessThan(0.000001f));
+
+            interaction.SelectionController.Select(sun);
+            interaction.CameraController.Focus(sun);
+            yield return WaitUntilFocused(interaction.CameraController);
+            yield return null;
+            Assert.That(solar.SurfaceRenderer.enabled, Is.True);
+            Assert.That(solar.CoronaRenderer.enabled, Is.True);
+            Assert.That(simulation.SimulationController.ClockSnapshot.IsPaused, Is.True);
+
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+            Assert.That(
+                interaction.CameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.FreeFlight));
+            Assert.That(
+                Vector3.Distance(radialLight.transform.position, sun.transform.position),
+                Is.LessThan(0.00001f));
+
+            var properties = new MaterialPropertyBlock();
+            solar.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_SimulationPhase")),
+                Is.EqualTo(solar.SurfacePhase).Within(0.000001f));
+            solar.CoronaRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_SimulationPhase")),
+                Is.EqualTo(solar.CoronaPhase).Within(0.000001f));
+        }
+
         private static void AssertReceivesSunOriginLight(
             Light radialLight,
             CelestialBodyView sun,
@@ -700,6 +804,11 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                     receiver.transform.position) + receiver.CurrentDisplayRadius,
                 Is.LessThan(radialLight.range),
                 $"{receiver.name}'s complete visible sphere must remain inside the light range.");
+        }
+
+        private static float PhaseDistance(float first, float second)
+        {
+            return Mathf.Abs(Mathf.DeltaAngle(first * 360f, second * 360f)) / 360f;
         }
 
         private static IEnumerator WaitUntilFocused(

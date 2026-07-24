@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using Tanvir.SolarSystem.Authoring;
+using Tanvir.SolarSystem.Presentation.CelestialBodies;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -14,6 +16,14 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/Materials/Environment/M_SpaceSkybox.mat";
         private const string SpaceTexturePath =
             "Assets/SolarSystem/Content/Art/Textures/Environment/T_Space_MilkyWay_2K.jpg";
+        private const string SunTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Sun/T_Sun_Surface_2K.jpg";
+        private const string SunMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Sun.mat";
+        private const string SunCoronaMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Sun_Corona.mat";
+        private const string SunVisualDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Sun.asset";
         private const string EarthMaterialPath =
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Earth.mat";
         private const string EarthNormalPath =
@@ -121,6 +131,56 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 atmosphereMaterial.renderQueue,
                 Is.EqualTo((int)RenderQueue.Transparent + 10));
             Assert.That(atmosphereMaterial.GetFloat("_RimIntensity"), Is.LessThan(0.5f));
+        }
+
+        [Test]
+        public void SunMaterials_UseAuditedDeterministicHeroTreatment()
+        {
+            Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(SunTexturePath);
+            Material surface = AssetDatabase.LoadAssetAtPath<Material>(SunMaterialPath);
+            Material corona =
+                AssetDatabase.LoadAssetAtPath<Material>(SunCoronaMaterialPath);
+            SolarVisualDefinition definition =
+                AssetDatabase.LoadAssetAtPath<SolarVisualDefinition>(
+                    SunVisualDefinitionPath);
+            var importer = AssetImporter.GetAtPath(SunTexturePath) as TextureImporter;
+
+            Assert.That(texture, Is.Not.Null);
+            Assert.That(surface, Is.Not.Null);
+            Assert.That(
+                surface.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Solar Surface"));
+            Assert.That(surface.GetTexture("_BaseMap"), Is.SameAs(texture));
+            Assert.That(
+                surface.GetFloat("_FlowStrength"),
+                Is.EqualTo(SolarVisualRenderingContract.SurfaceFlowStrength)
+                    .Within(0.0001f));
+            Assert.That(surface.enableInstancing, Is.True);
+
+            Assert.That(corona, Is.Not.Null);
+            Assert.That(
+                corona.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Solar Corona"));
+            Assert.That(corona.GetTexture("_SolarMap"), Is.SameAs(texture));
+            Assert.That(
+                corona.GetFloat("_Intensity"),
+                Is.EqualTo(SolarVisualRenderingContract.CoronaIntensity)
+                    .Within(0.0001f));
+            Assert.That(
+                corona.renderQueue,
+                Is.EqualTo((int)RenderQueue.Transparent + 20));
+            Assert.That(corona.enableInstancing, Is.True);
+
+            Assert.That(definition, Is.Not.Null);
+            Assert.That(definition.BodyStableId, Is.EqualTo("sun"));
+            Assert.That(
+                definition.CoronaShellRadiusMultiplier,
+                Is.EqualTo(SolarVisualRenderingContract.CoronaShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(importer, Is.Not.Null);
+            Assert.That(importer.sRGBTexture, Is.True);
+            Assert.That(importer.mipmapEnabled, Is.True);
+            Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Repeat));
         }
     }
 }

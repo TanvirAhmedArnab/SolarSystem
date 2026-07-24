@@ -28,6 +28,12 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialTextureRoot + "/Earth/T_Earth_NightEmission_2K.jpg";
         private const string EarthCloudPath =
             CelestialTextureRoot + "/Earth/T_Earth_Clouds_2K.jpg";
+        private const string SunTexturePath =
+            CelestialTextureRoot + "/Sun/T_Sun_Surface_2K.jpg";
+        private const string SolarSurfaceShader =
+            "SolarSystem/Celestial/Solar Surface";
+        private const string SolarCoronaShader =
+            "SolarSystem/Celestial/Solar Corona";
         private const string EarthSurfaceShader =
             "SolarSystem/Celestial/Earth Surface";
         private const string EarthCloudShader =
@@ -78,7 +84,9 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const float VignetteSmoothness = 0.32f;
         private const double SecondsPerDay = 86400d;
         private const double AstronomicalUnitKm = 149597870.7d;
-        private static readonly Color SunTint = new Color(2.6f, 1.55f, 0.5f, 1f);
+        private static readonly Color SunTint = new Color(1.55f, 0.78f, 0.18f, 1f);
+        private static readonly Color SunHotTint = new Color(0.55f, 0.16f, 0.02f, 1f);
+        private static readonly Color CoronaTint = new Color(6f, 2f, 0.2f, 1f);
         private static readonly Color MercuryTint = new Color(0.9f, 0.88f, 0.84f, 1f);
         private static readonly Color VenusTint = new Color(1f, 0.9f, 0.72f, 1f);
         private static readonly Color EarthTint = new Color(0.9f, 0.94f, 1f, 1f);
@@ -337,6 +345,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 Scale = scale,
                 SaturnRingMesh = CreateSaturnRingMesh(),
                 SaturnRingMaterial = CreateSaturnRingMaterial(),
+                SunVisualDefinition = CreateSunVisualDefinition(),
+                SunCoronaMaterial = CreateSunCoronaMaterial(),
                 EarthLayerDefinition = CreateEarthLayerDefinition(),
                 EarthCloudMaterial = CreateEarthCloudMaterial(),
                 EarthAtmosphereMaterial = CreateEarthAtmosphereMaterial(),
@@ -488,6 +498,15 @@ namespace Tanvir.SolarSystem.Editor.Import
             float smoothness,
             bool unlit = false)
         {
+            if (bodyName == "Sun")
+            {
+                Material sunMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Sun.mat",
+                    SolarSurfaceShader);
+                ConfigureSunMaterial(sunMaterial);
+                return sunMaterial;
+            }
+
             if (bodyName == "Earth")
             {
                 Material earthMaterial = CreateOrUpdateMaterial(
@@ -509,11 +528,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 $"{CelestialTextureRoot}/{bodyName}/{textureName}",
                 tint,
                 smoothness);
-            if (unlit)
-            {
-                ConfigureSunMaterial(material);
-            }
-            else if (bodyName != "Earth")
+            if (!unlit && bodyName != "Earth")
             {
                 ConfigureLitMaterial(material, null, 0f);
             }
@@ -605,9 +620,60 @@ namespace Tanvir.SolarSystem.Editor.Import
 
         private static void ConfigureSunMaterial(Material material)
         {
+            material.SetTexture(
+                "_BaseMap",
+                LoadRequiredAsset<Texture2D>(SunTexturePath));
+            material.SetColor("_BaseColor", SunTint);
+            material.SetColor("_HotColor", SunHotTint);
+            material.SetFloat(
+                "_FlowStrength",
+                SolarVisualRenderingContract.SurfaceFlowStrength);
+            material.SetFloat("_SecondaryBlend", 0.16f);
             material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.EmissiveIsBlack;
             material.enableInstancing = true;
             EditorUtility.SetDirty(material);
+        }
+
+        private static SolarVisualDefinition CreateSunVisualDefinition()
+        {
+            const string path =
+                DataRoot + "/VisualLayers/VisualLayers_Sun.asset";
+            SolarVisualDefinition definition =
+                CreateOrLoad<SolarVisualDefinition>(path);
+            var serialized = new SerializedObject(definition);
+            serialized.FindProperty("bodyStableId").stringValue = "sun";
+            serialized.FindProperty("coronaShellRadiusMultiplier").floatValue =
+                SolarVisualRenderingContract.CoronaShellRadiusMultiplier;
+            serialized.FindProperty("surfaceFlowCyclesPerRotation").floatValue =
+                SolarVisualRenderingContract.SurfaceFlowCyclesPerRotation;
+            serialized.FindProperty("coronaFlowCyclesPerRotation").floatValue =
+                SolarVisualRenderingContract.CoronaFlowCyclesPerRotation;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+            return definition;
+        }
+
+        private static Material CreateSunCoronaMaterial()
+        {
+            const string path =
+                MaterialRoot + "/CelestialBodies/M_Sun_Corona.mat";
+            Material material = CreateOrUpdateMaterial(path, SolarCoronaShader);
+            material.SetTexture(
+                "_SolarMap",
+                LoadRequiredAsset<Texture2D>(SunTexturePath));
+            material.SetColor("_CoronaColor", CoronaTint);
+            material.SetFloat("_RimPower", 3.2f);
+            material.SetFloat(
+                "_Intensity",
+                SolarVisualRenderingContract.CoronaIntensity);
+            material.SetFloat("_PulseAmplitude", 0.025f);
+            material.SetFloat(
+                "_FlowStrength",
+                SolarVisualRenderingContract.CoronaFlowStrength);
+            material.renderQueue = (int)RenderQueue.Transparent + 20;
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
         }
 
         private static void ConfigureEarthSurfaceMaterial(Material material)

@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, and layered-Earth foundations  
-**Version:** 0.11.0  
+**Status:** Living authority with validated visual, audio, guided-scale, layered-Earth, and solar-hero foundations  
+**Version:** 0.12.0  
 **Last updated:** 2026-07-24  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -103,9 +103,20 @@ These 512-1024 pixel files are evaluation sources. Hero shots may require later 
 ### Sun
 Emissive/unlit custom material using the 2K solar map for large-scale patterning. Optional subtle layered motion must avoid obvious texture sliding. Use a separate restrained corona; lens flare is optional.
 
-The validated foundation uses URP Unlit with HDR tint and restrained bloom.
-Custom solar motion, corona geometry, and lens flare remain later fidelity
-options rather than baseline dependencies.
+**[IMPLEMENTED REPRESENTATIVE SLICE]** The Sun uses a project-owned opaque URP
+surface shader with the approved 2K Solar System Scope texture, restrained HDR
+color, and two phase-driven samples that create slow cellular motion without a
+recognizable linear texture slide. Its motion is evaluated from absolute
+simulation time and the Sun's authored signed rotation period, so pausing,
+resuming, and repeated evaluation remain deterministic.
+
+A separate front-face-culled transparent shell at `1.045` surface radius adds a
+thin warm corona. It does not cast shadows or contribute to reflection probes,
+and its presentation remains independent from the Sun-parented radial point
+light. The existing fixed-exposure profile retains solar surface detail in both
+overview and close focus without washing out planetary materials or the UI.
+Live review found that a lens flare was not required, so none is included in
+this slice.
 
 ### Mercury
 Neutral gray-brown, high roughness, restrained normals, no metallic response.
@@ -326,14 +337,15 @@ An asset is ready only when:
 1. **[OPEN] Font family:** decide after UI wireframes and license review.
 2. **[OPEN] Icon family:** project-authored or compatible open-license set.
 3. **[OPEN] Moon upgrades:** identify browse maps needing higher resolution after hero shots.
-4. **[OPEN] Remaining shader fidelity:** profile the validated Earth pattern,
-   then select solar and other body-specific atmosphere techniques.
+4. **[OPEN] Remaining shader fidelity:** profile the validated Earth and Sun
+   patterns, then select other body-specific atmosphere techniques.
 5. **[OPEN] Audio mix:** approve music, Sun, Earth, and UI loudness after in-scene audition.
 
 ## Revision History
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.12.0 | 2026-07-24 | Added the validated deterministic solar surface, separate restrained corona, exposure-safe overview/focus treatment, and evidence-based decision to omit lens flare | Solar hero slice implemented and visually validated |
 | 0.11.0 | 2026-07-24 | Added the validated layered-Earth surface, nightside emission, independent cloud shell, restrained atmosphere rim, focus readability, and explicit scale disclosure | Representative visual slice implemented and visually validated |
 | 0.10.0 | 2026-07-24 | Added the validated three-stage scale-comparison card, visual-density rules, transformation disclosures, and linear-stage honesty requirements | Approved behavior implemented and visually validated |
 | 0.9.0 | 2026-07-24 | Established exact Earth-relative rendered radii, selection-only accessibility accommodation, and readable compressed-overview composition rules | Approved and implementation validated |

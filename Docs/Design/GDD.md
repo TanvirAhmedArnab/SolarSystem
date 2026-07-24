@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.10.0  
+**Version:** 0.11.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -37,6 +37,7 @@
 | 0.8.0 | 2026-07-24 | Codex, for Tanvir | Approved exact Earth-relative body sizes, proportional signed rotation rates, readable orbital clearances, and the technical foundation for guided physical-scale comparison | Presentation-scale behavior implemented and validated; guided comparison presentation remains |
 | 0.9.0 | 2026-07-24 | Codex, for Tanvir | Implemented the approved three-stage guided physical-scale comparison with explicit transformations, controlled framing, cancellation, and explorer-state restoration | Product behavior implemented and validated |
 | 0.10.0 | 2026-07-24 | Codex, for Tanvir | Implemented the representative layered-Earth experience with readable day/night response, independent clouds and atmosphere, close-focus orbit suppression, and explicit shell-scale disclosure | Product behavior implemented and validated |
+| 0.11.0 | 2026-07-24 | Codex, for Tanvir | Implemented an exposure-safe solar hero treatment with subtle deterministic surface motion and a restrained corona while preserving the Sun as the scientific and lighting origin | Product behavior implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -394,6 +395,14 @@ surface remains readable and restores them when focus ends. The information
 panel explicitly states that cloud and atmosphere thickness are exaggerated;
 Earth's proportional surface radius remains unchanged.
 
+**[IMPLEMENTED REPRESENTATIVE SLICE]** The Sun now reads as an energetic hero
+body through subtle deterministic surface variation and a thin separate
+corona. The effect remains stable in system overview and close focus, preserves
+UI and planetary exposure, and does not imply a real-time scientific model of
+solar convection. Its visual treatment does not move or replace the Sun's
+scientific transform or radial lighting origin. Live review did not justify a
+lens flare, so the release baseline omits one.
+
 ### 11.4 Asset provenance
 
 Every external asset requires a recorded source URL, creator or organization, license, attribution text, download date, and any modification notes. “Free” is not an acceptable license description. Unverified assets cannot enter a public build.
@@ -553,7 +562,7 @@ Each rule should have one authoritative owner document; other documents link to 
 
 **Current progress:** The Sun, eight planets, and Earth's Moon are populated as
 the deterministic planetary baseline. Major moons beyond Earth's Moon,
-unique visual layers beyond the representative Earth treatment,
+unique visual layers beyond the representative Earth and Sun treatments,
 labels/navigation, cinematic routing, and accessibility completion remain.
 The licensed music, Sun/Earth ambience, and
 event-driven UI feedback baseline is implemented; final listening/mix approval
