@@ -203,8 +203,6 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         [TestCase("Saturn", "T_Saturn_Surface_2K.jpg", 0.2f)]
         [TestCase("Uranus", "T_Uranus_Surface_2K.jpg", 0.28f)]
         [TestCase("Neptune", "T_Neptune_Surface_2K.jpg", 0.3f)]
-        [TestCase("Io", "T_Io_Surface_Browse.jpg", 0.06f)]
-        [TestCase("Europa", "T_Europa_Surface_Browse.jpg", 0.08f)]
         [TestCase("Ganymede", "T_Ganymede_Surface_Browse.jpg", 0.08f)]
         [TestCase("Callisto", "T_Callisto_Surface_Browse.jpg", 0.06f)]
         [TestCase("Triton", "T_Triton_Surface_Browse.jpg", 0.06f)]

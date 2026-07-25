@@ -348,8 +348,45 @@ Primary sources:
 
 - [JPL Planetary Satellite Physical Parameters](https://ssd.jpl.nasa.gov/sats/phys_par/sep.html)
 - [JPL Planetary Satellite Mean Elements](https://ssd.jpl.nasa.gov/sats/elem/)
+- [NASA Io Facts](https://science.nasa.gov/jupiter/jupiter-moons/io/facts/)
+- [NASA Europa Facts](https://science.nasa.gov/jupiter/jupiter-moons/europa/europa-facts/)
 - [NASA Titan Facts](https://science.nasa.gov/saturn/moons/titan/facts/)
 - [NASA Triton Overview](https://science.nasa.gov/neptune/moons/triton/)
+
+### Io and Europa rendering interpretation
+
+NASA describes Io as the Solar System's most volcanically active body, with
+surface colors associated with sulfur compounds and silicate material, while
+also noting that composition and color interpretation are not completely
+settled. This project therefore uses a restrained global warm tint to
+differentiate the grayscale browse mosaic, not a localized composition map.
+No emission, active eruption, lava animation, or plume is authored because
+the retained mosaic is not a date-specific activity record.
+
+NASA describes Europa as a bright, relatively smooth water-ice surface crossed
+by dark bands, ridges, and fractures. Strong evidence supports a salty ocean
+beneath an ice shell, but that ocean is not visible in the retained surface
+mosaic and is not rendered. Possible plumes are likewise omitted from the
+baseline.
+
+Both bodies have tenuous measured atmospheres, but a visible shell at the
+project's scale would overstate them. The renderer uses no atmosphere or cloud
+layer for either moon. Its bounded relief is derived from browse-image
+luminance and affects normals only; it is not an elevation model, terrain
+displacement, measured roughness, or photometric reconstruction.
+
+The renderer does not change the scientific definitions. Io remains
+Jupiter-parented with mean radius `1,821.49 km`, semimajor axis `421,800 km`,
+and positive `1.762732`-day synchronous rotation. Europa remains
+Jupiter-parented with mean radius `1,560.80 km`, semimajor axis `671,100 km`,
+and positive `3.525463`-day synchronous rotation. The fixed J2000 mean elements
+are deterministic educational orbits, not date-exact ephemerides.
+
+USGS product limitations remain authoritative. Io combines Voyager and
+Galileo coverage with uneven observation/control quality. Europa combines
+Galileo and Voyager inputs spanning coarse gap fill through higher-resolution
+coverage before assembly into a `500 m/pixel` map. Both runtime browse images
+are `512 x 256`, grayscale, and byte-identical to the retained downloads.
 
 ### Titan rendering interpretation
 

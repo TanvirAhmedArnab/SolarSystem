@@ -96,6 +96,18 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Moon.mat";
         private const string MoonVisualDefinitionPath =
             "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Moon.asset";
+        private const string IoTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Io/T_Io_Surface_Browse.jpg";
+        private const string IoMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Io.mat";
+        private const string IoVisualDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Io.asset";
+        private const string EuropaTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Europa/T_Europa_Surface_Browse.jpg";
+        private const string EuropaMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Europa.mat";
+        private const string EuropaVisualDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Europa.asset";
         private const string EarthMaterialPath =
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Earth.mat";
         private const string EarthNormalPath =
@@ -709,6 +721,26 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 AirlessRockyVisualRenderingContract.MoonSurfaceSpecular,
                 AirlessRockyVisualRenderingContract.MoonSurfaceSmoothness,
                 AirlessRockyVisualRenderingContract.MoonNightsideReadability);
+            AssertAirlessRockyMaterial(
+                "io",
+                IoTexturePath,
+                IoMaterialPath,
+                IoVisualDefinitionPath,
+                AirlessRockyVisualRenderingContract.IoReliefStrength,
+                AirlessRockyVisualRenderingContract.IoReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.IoSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.IoSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.IoNightsideReadability);
+            AssertAirlessRockyMaterial(
+                "europa",
+                EuropaTexturePath,
+                EuropaMaterialPath,
+                EuropaVisualDefinitionPath,
+                AirlessRockyVisualRenderingContract.EuropaReliefStrength,
+                AirlessRockyVisualRenderingContract.EuropaReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.EuropaSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.EuropaSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.EuropaNightsideReadability);
         }
 
         private static void AssertAirlessRockyMaterial(

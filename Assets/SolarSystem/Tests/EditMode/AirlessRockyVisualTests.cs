@@ -170,6 +170,50 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 () => view.Initialize(moon));
         }
 
+        [TestCase(
+            "io",
+            AirlessRockyVisualRenderingContract.IoReliefStrength,
+            AirlessRockyVisualRenderingContract.IoReliefSampleDistance,
+            AirlessRockyVisualRenderingContract.IoSurfaceSpecular,
+            AirlessRockyVisualRenderingContract.IoSurfaceSmoothness,
+            AirlessRockyVisualRenderingContract.IoNightsideReadability)]
+        [TestCase(
+            "europa",
+            AirlessRockyVisualRenderingContract.EuropaReliefStrength,
+            AirlessRockyVisualRenderingContract.EuropaReliefSampleDistance,
+            AirlessRockyVisualRenderingContract.EuropaSurfaceSpecular,
+            AirlessRockyVisualRenderingContract.EuropaSurfaceSmoothness,
+            AirlessRockyVisualRenderingContract.EuropaNightsideReadability)]
+        public void MajorMoonContract_CreatesValidatedImmutableModel(
+            string stableId,
+            float reliefStrength,
+            float reliefSampleDistance,
+            float surfaceSpecular,
+            float surfaceSmoothness,
+            float nightsideReadability)
+        {
+            var model = new AirlessRockyVisualModel(
+                stableId,
+                reliefStrength,
+                reliefSampleDistance,
+                surfaceSpecular,
+                surfaceSmoothness,
+                nightsideReadability);
+
+            Assert.That(model.BodyStableId, Is.EqualTo(stableId));
+            Assert.That(model.ReliefStrength, Is.EqualTo(reliefStrength));
+            Assert.That(
+                model.ReliefSampleDistance,
+                Is.EqualTo(reliefSampleDistance));
+            Assert.That(model.SurfaceSpecular, Is.EqualTo(surfaceSpecular));
+            Assert.That(
+                model.SurfaceSmoothness,
+                Is.EqualTo(surfaceSmoothness));
+            Assert.That(
+                model.NightsideReadability,
+                Is.EqualTo(nightsideReadability));
+        }
+
         private AirlessRockyVisualDefinition CreateMercuryDefinition()
         {
             AirlessRockyVisualDefinition definition =

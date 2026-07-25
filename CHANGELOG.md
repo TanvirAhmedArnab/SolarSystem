@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Distinct Io and Europa hero treatments through the reusable project-owned
+  airless-rocky definition/model/view path and shared bounded-sample URP
+  surface shader.
+- Clean material-schema migration from generic URP/Lit, separate immutable
+  surface contracts, reproducible visual-definition assets, and deterministic
+  scene wiring for both Jupiter-parented moons.
+- Byte-identical anchored USGS mosaics with restrained reconstructed color,
+  live-Sun day/night response, source-derived non-displacing relief, and
+  explicit image, activity, atmosphere, terrain, and ocean limitations.
+- Io/Europa immutable-model, material/source, scientific-state, hierarchy,
+  lighting, selection, focus, and real-scene regression coverage, bringing
+  the complete suites to 157 Edit Mode and 18 Play Mode cases.
 - Haze-dominant Titan hero rendering with dedicated project-owned surface and
   atmosphere shaders, an atmosphere-only layered composition, live-Sun
   day/night response, and bounded transparent overdraw.

@@ -151,8 +151,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         private static readonly Color UranusAtmosphereTint =
             new Color(0.48f, 0.9f, 0.96f, 1f);
         private static readonly Color NeptuneTint = new Color(0.72f, 0.84f, 1f, 1f);
-        private static readonly Color IoTint = new Color(1f, 0.96f, 0.82f, 1f);
-        private static readonly Color EuropaTint = new Color(0.94f, 0.92f, 0.86f, 1f);
+        private static readonly Color IoTint = new Color(1f, 0.84f, 0.48f, 1f);
+        private static readonly Color EuropaTint = new Color(0.9f, 0.92f, 0.94f, 1f);
         private static readonly Color GanymedeTint = new Color(0.9f, 0.88f, 0.84f, 1f);
         private static readonly Color CallistoTint = new Color(0.86f, 0.84f, 0.8f, 1f);
         private static readonly Color TitanTint = new Color(1f, 0.82f, 0.5f, 1f);
@@ -546,6 +546,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 NeptuneAtmosphereMaterial = CreateNeptuneAtmosphereMaterial(),
                 MercuryVisualDefinition = CreateMercuryVisualDefinition(),
                 MoonVisualDefinition = CreateMoonVisualDefinition(),
+                IoVisualDefinition = CreateIoVisualDefinition(),
+                EuropaVisualDefinition = CreateEuropaVisualDefinition(),
                 OrbitMaterial = orbitMaterial,
                 SkyboxMaterial = skyboxMaterial,
                 VisualProfile = visualProfile,
@@ -796,12 +798,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 Material titanMaterial = CreateOrUpdateMaterial(
                     $"{MaterialRoot}/CelestialBodies/M_Titan.mat",
                     TitanSurfaceShader);
-                var cleanTitanMaterial = new Material(titanMaterial.shader)
-                {
-                    name = titanMaterial.name
-                };
-                EditorUtility.CopySerialized(cleanTitanMaterial, titanMaterial);
-                Object.DestroyImmediate(cleanTitanMaterial);
+                ResetMaterialSchema(titanMaterial);
                 titanMaterial.SetTexture(
                     "_BaseMap",
                     LoadRequiredAsset<Texture2D>(TitanTexturePath));
@@ -836,6 +833,26 @@ namespace Tanvir.SolarSystem.Editor.Import
                     RockySurfaceShader);
                 ConfigureMoonSurfaceMaterial(moonMaterial);
                 return moonMaterial;
+            }
+
+            if (bodyName == "Io")
+            {
+                Material ioMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Io.mat",
+                    RockySurfaceShader);
+                ResetMaterialSchema(ioMaterial);
+                ConfigureIoSurfaceMaterial(ioMaterial);
+                return ioMaterial;
+            }
+
+            if (bodyName == "Europa")
+            {
+                Material europaMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Europa.mat",
+                    RockySurfaceShader);
+                ResetMaterialSchema(europaMaterial);
+                ConfigureEuropaSurfaceMaterial(europaMaterial);
+                return europaMaterial;
             }
 
             if (bodyName == "Saturn")
@@ -1116,6 +1133,32 @@ namespace Tanvir.SolarSystem.Editor.Import
                 AirlessRockyVisualRenderingContract.MoonNightsideReadability);
         }
 
+        private static void ConfigureIoSurfaceMaterial(Material material)
+        {
+            ConfigureAirlessRockySurfaceMaterial(
+                material,
+                IoTexturePath,
+                IoTint,
+                AirlessRockyVisualRenderingContract.IoReliefStrength,
+                AirlessRockyVisualRenderingContract.IoReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.IoSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.IoSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.IoNightsideReadability);
+        }
+
+        private static void ConfigureEuropaSurfaceMaterial(Material material)
+        {
+            ConfigureAirlessRockySurfaceMaterial(
+                material,
+                EuropaTexturePath,
+                EuropaTint,
+                AirlessRockyVisualRenderingContract.EuropaReliefStrength,
+                AirlessRockyVisualRenderingContract.EuropaReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.EuropaSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.EuropaSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.EuropaNightsideReadability);
+        }
+
         private static void ConfigureAirlessRockySurfaceMaterial(
             Material material,
             string texturePath,
@@ -1166,6 +1209,31 @@ namespace Tanvir.SolarSystem.Editor.Import
                 AirlessRockyVisualRenderingContract.MoonSurfaceSpecular,
                 AirlessRockyVisualRenderingContract.MoonSurfaceSmoothness,
                 AirlessRockyVisualRenderingContract.MoonNightsideReadability);
+        }
+
+        private static AirlessRockyVisualDefinition CreateIoVisualDefinition()
+        {
+            return CreateAirlessRockyVisualDefinition(
+                "Io",
+                "io",
+                AirlessRockyVisualRenderingContract.IoReliefStrength,
+                AirlessRockyVisualRenderingContract.IoReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.IoSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.IoSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.IoNightsideReadability);
+        }
+
+        private static AirlessRockyVisualDefinition
+            CreateEuropaVisualDefinition()
+        {
+            return CreateAirlessRockyVisualDefinition(
+                "Europa",
+                "europa",
+                AirlessRockyVisualRenderingContract.EuropaReliefStrength,
+                AirlessRockyVisualRenderingContract.EuropaReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.EuropaSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.EuropaSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.EuropaNightsideReadability);
         }
 
         private static AirlessRockyVisualDefinition
@@ -1995,6 +2063,16 @@ namespace Tanvir.SolarSystem.Editor.Import
             }
 
             return material;
+        }
+
+        private static void ResetMaterialSchema(Material material)
+        {
+            var cleanMaterial = new Material(material.shader)
+            {
+                name = material.name
+            };
+            EditorUtility.CopySerialized(cleanMaterial, material);
+            Object.DestroyImmediate(cleanMaterial);
         }
 
         private static T CreateOrLoad<T>(string path) where T : ScriptableObject

@@ -1,7 +1,7 @@
 namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 {
     /// <summary>
-    /// Reviewed presentation constants for airless Mercury and Moon surfaces.
+    /// Reviewed presentation constants for visible airless-body surfaces.
     /// </summary>
     /// <remarks>
     /// Relief is estimated from the luminance of each anchored source texture. It is
@@ -38,5 +38,35 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Moon source-color visibility on its unlit hemisphere.</summary>
         public const float MoonNightsideReadability = 0.022f;
+
+        /// <summary>Io source-derived relief strength.</summary>
+        public const float IoReliefStrength = 0.22f;
+
+        /// <summary>Io source-texel sample distance.</summary>
+        public const float IoReliefSampleDistance = 1.25f;
+
+        /// <summary>Io non-metallic specular response.</summary>
+        public const float IoSurfaceSpecular = 0.016f;
+
+        /// <summary>Io dry-surface smoothness.</summary>
+        public const float IoSurfaceSmoothness = 0.045f;
+
+        /// <summary>Io source-color visibility on its unlit hemisphere.</summary>
+        public const float IoNightsideReadability = 0.018f;
+
+        /// <summary>Europa source-derived relief strength.</summary>
+        public const float EuropaReliefStrength = 0.18f;
+
+        /// <summary>Europa source-texel sample distance.</summary>
+        public const float EuropaReliefSampleDistance = 1.1f;
+
+        /// <summary>Europa non-metallic specular response.</summary>
+        public const float EuropaSurfaceSpecular = 0.035f;
+
+        /// <summary>Europa icy-surface smoothness.</summary>
+        public const float EuropaSurfaceSmoothness = 0.16f;
+
+        /// <summary>Europa source-color visibility on its unlit hemisphere.</summary>
+        public const float EuropaNightsideReadability = 0.025f;
     }
 }

@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, seven-moon, and Titan haze foundations  
-**Version:** 0.20.0  
+**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, seven-moon, Titan haze, and Io/Europa hero foundations  
+**Version:** 0.21.0  
 **Last updated:** 2026-07-25  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -227,8 +227,32 @@ sphere.
 ### Io
 USGS browse mosaic; sulfur yellow, orange, white, and dark volcanic markings. Animated eruptions are out of minimum scope.
 
+**[IMPLEMENTED REPRESENTATIVE SLICE]** The byte-identical grayscale USGS
+browse mosaic stays anchored as the feature source. A restrained global
+sulfur/ochre tint establishes Io's identity, while moderate source-luminance
+normal perturbation, low smoothness, and low non-metallic specular response
+keep it visually dry. The tint is a presentation reconstruction, not a
+localized compositional map or natural-color claim.
+
+Do not add emissive lava, animated eruptions, plumes, terrain displacement,
+clouds, or a visible atmosphere without a separately audited, date-specific
+source and an approved scope change. Source-image luminance includes
+illumination and processing effects and must not be called elevation.
+
 ### Europa
 USGS browse mosaic; pale ice and tan lineae. Avoid exaggerated blue tint and displacement.
+
+**[IMPLEMENTED REPRESENTATIVE SLICE]** The byte-identical grayscale USGS
+browse mosaic remains the feature source. A pale neutral/cool tint preserves
+the fracture network, with gentler source-derived relief than Io and a
+modestly smoother, higher-specular ice response. The treatment remains
+restrained: Europa must read pale rather than neon blue or mirror-like.
+
+The surface product combines Galileo and Voyager coverage with varying source
+resolution and gap fill. Dark or incomplete source regions are preserved
+rather than fictionally repainted. Do not expose the subsurface ocean, add
+active plumes, displace terrain, or render a visible atmosphere. The ocean is
+an educational fact beneath the ice, not a visible surface layer.
 
 ### Ganymede
 USGS browse mosaic; bright grooved terrain and older dark regions distinguished through albedo.
@@ -468,6 +492,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.21.0 | 2026-07-25 | Added distinct Io and Europa airless hero treatments with anchored byte-identical USGS mosaics, restrained reconstructed color, source-derived non-displacing relief, dry-versus-icy PBR separation, and explicit activity/ocean/coverage limits | Io and Europa hero slice implemented and visually validated |
 | 0.20.0 | 2026-07-25 | Added Titan's haze-dominant project-owned surface/shell treatment, anchored and subdued USGS source use, live-Sun day/night response, deterministic low-amplitude presentation motion, bounded overdraw, and explicit image/atmosphere limitations | Titan hero slice implemented and visually validated |
 | 0.19.0 | 2026-07-25 | Added the approved major-moon baseline with distinct audited USGS browse mosaics, exact proportional radii, and explicit coverage/color limitations | Major-moon visual baseline implemented and validated |
 | 0.18.0 | 2026-07-24 | Added distinct anchored Mercury/Moon airless-rocky treatments, body-specific restrained source-derived relief and dry PBR values, live-Sun nightside readability, no-atmosphere guarantees, and explicit elevation-model limits | Airless rocky hero slice implemented and visually validated |

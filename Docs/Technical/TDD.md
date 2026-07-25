@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Sun, eight-planet, seven-moon, and Titan haze hero baselines validated  
-**Version:** 0.24.0  
+**Document status:** Living technical authority; Sun, eight-planet, seven-moon, Titan haze, and Io/Europa hero baselines validated  
+**Version:** 0.25.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -50,6 +50,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.22.0 | 2026-07-24 | Codex, for Tanvir | Added reusable airless-rocky authoring/model/view architecture, distinct Mercury/Moon material contracts, live-Sun nightside readability in the shared rocky shader, reproducible scene wiring, and complete regression coverage | Mercury and Moon hero architecture implemented and validated |
 | 0.23.0 | 2026-07-25 | Codex, for Tanvir | Expanded the data-driven catalog and reproducible scene pipeline to the approved major moons using JPL parent-relative mean elements, signed synchronous rotation, audited USGS materials, and complete hierarchy/scene regression coverage | Major-moon baseline implemented and validated |
 | 0.24.0 | 2026-07-25 | Codex, for Tanvir | Extended the atmosphere-only layered-body path with a validated deterministic atmosphere phase and added project-owned Titan surface/haze shaders, reproducible authoring, bounded overdraw, live-Sun response, and complete regression coverage | Titan haze hero architecture implemented and validated |
+| 0.25.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Io and Europa with distinct immutable contracts, clean material-schema migration, deterministic scene wiring, anchored USGS sources, and full asset/scene regression coverage | Io and Europa hero architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -831,11 +832,30 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   smoothness `0.07`, and nightside readability `0.018`. The Moon uses relief
   `0.34`, sample distance `1.5`, specular `0.015`, smoothness `0.055`, and
   nightside readability `0.022`.
-- The Mercury/Moon adapter adds no child render shell. Mercury remains parented
-  to the Sun; the Moon remains parented to Earth with its authored `384,400 km`
-  semimajor axis. Exact mean-radius projection, analytical orbit composition,
-  axial tilt, and signed rotation remain owned by the existing simulation and
+- Io and Europa extend the same adapter without a parallel runtime subsystem.
+  Io uses relief `0.22`, sample distance `1.25`, specular `0.016`, smoothness
+  `0.045`, and nightside readability `0.018`. Europa uses relief `0.18`,
+  sample distance `1.1`, specular `0.035`, smoothness `0.16`, and nightside
+  readability `0.025`. These are reviewed presentation controls, not measured
+  roughness, terrain height, or photometry.
+- The shader performs five bounded source samples per fragment: one anchored
+  color sample and four neighboring luminance samples for a shallow normal
+  estimate. It performs no displacement, time animation, emission, fluid
+  simulation, or extra transparent pass. The shared view owns one cached
+  `MaterialPropertyBlock`, creates no material instance, and does no
+  steady-state work after initialization.
+- The airless adapter adds no child render shell. Mercury remains parented to
+  the Sun, the Moon to Earth, and Io/Europa to Jupiter. Io retains its
+  `421,800 km` semimajor axis and positive `1.762732`-day synchronous period;
+  Europa retains `671,100 km` and positive `3.525463` days. Exact mean-radius
+  projection, parent-relative analytical orbit composition, axial tilt, and
+  signed rotation remain owned by the existing simulation and
   `CelestialBodyView`.
+- Io and Europa have measured tenuous atmospheres, but no visible atmosphere
+  shell is justified in this presentation. No emissive lava, active plume,
+  exposed subsurface ocean, terrain displacement, or date-specific activity
+  is authored. Browse-image luminance drives readability only and is not
+  interpreted as elevation.
 - `CelestialOrbitPathVisibilityController` suppresses cached overview paths
   during `FocusTransition` and `Focused`, then restores them in free flight.
   It changes renderer visibility only; geometry, scale-mode data, and

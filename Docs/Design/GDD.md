@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.19.0  
+**Version:** 0.20.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -46,6 +46,7 @@
 | 0.17.0 | 2026-07-24 | Codex, for Tanvir | Implemented distinct Mercury and Moon airless-rocky hero treatments with anchored source identity, restrained source-derived relief, dry PBR response, Sun-aware nightside readability, and explicit no-atmosphere limits | Product behavior implemented and validated |
 | 0.18.0 | 2026-07-25 | Codex, for Tanvir | Completed the approved seven-moon roster with deterministic nested orbits, exact proportional radii, educational facts, accessible selection/focus, and audited source-grounded materials | Minimum major-moon content implemented and validated; hero fidelity remains iterative |
 | 0.19.0 | 2026-07-25 | Codex, for Tanvir | Replaced Titan's interim surface-first baseline with a haze-dominant, Sun-aware hero treatment while preserving its approved data, scale, hierarchy, motion, selection, focus, and educational UI | Titan hero experience implemented and validated |
+| 0.20.0 | 2026-07-25 | Codex, for Tanvir | Replaced the generic Io and Europa materials with distinct, source-grounded airless-surface hero treatments while preserving approved hierarchy, physical data, synchronous motion, scale, selection, focus, and educational UI | Io and Europa hero experience implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -294,6 +295,22 @@ atmosphere thickness, measured scattering, clouds, volumetric weather, or a
 date-specific appearance. Titan remains Saturn-parented, synchronously
 rotating, exactly Earth-proportional, selectable, focusable, and fully
 represented by the existing educational overlay.
+
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Io and Europa now read as different
+worlds in overview and close focus without changing their scientific state.
+Io uses a restrained warm sulfur/ochre presentation over its anchored USGS
+browse mosaic with a dry, low-sheen surface response. Europa uses a pale
+neutral ice presentation, gentler source-derived relief, and a modestly
+smoother response that preserves its fracture network without turning it
+fantasy blue.
+
+Both remain Jupiter-parented, exactly Earth-proportional, and positively
+synchronous to their approved JPL mean orbits. Their small measured
+atmospheres are not rendered as visible shells at this scale. The experience
+does not claim a date-specific eruption, active plume, exposed ocean,
+elevation model, literal terrain displacement, or natural-color reconstruction.
+Selection, focus, and the educational overlay use the existing interaction
+path.
 
 ### 8.2 Body information overlay
 

@@ -35,6 +35,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string VenusStableId = "venus";
         private const string MarsStableId = "mars";
         private const string JupiterStableId = "jupiter";
+        private const string IoStableId = "io";
+        private const string EuropaStableId = "europa";
         private const string SaturnStableId = "saturn";
         private const string TitanStableId = "titan";
         private const string UranusStableId = "uranus";
@@ -77,6 +79,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialBodyView venusView = null;
             CelestialBodyView marsView = null;
             CelestialBodyView jupiterView = null;
+            CelestialBodyView ioView = null;
+            CelestialBodyView europaView = null;
             CelestialBodyView saturnView = null;
             CelestialBodyView titanView = null;
             CelestialBodyView uranusView = null;
@@ -118,6 +122,14 @@ namespace Tanvir.SolarSystem.Editor.Import
                 else if (body.Definition.StableId == JupiterStableId)
                 {
                     jupiterView = view;
+                }
+                else if (body.Definition.StableId == IoStableId)
+                {
+                    ioView = view;
+                }
+                else if (body.Definition.StableId == EuropaStableId)
+                {
+                    europaView = view;
                 }
                 else if (body.Definition.StableId == SaturnStableId)
                 {
@@ -177,6 +189,16 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Jupiter.");
             }
 
+            if (ioView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Io.");
+            }
+
+            if (europaView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Europa.");
+            }
+
             if (marsView == null)
             {
                 throw new InvalidOperationException("The authored content requires Mars.");
@@ -211,6 +233,14 @@ namespace Tanvir.SolarSystem.Editor.Import
                 moonView,
                 content.MoonVisualDefinition,
                 "Moon");
+            CreateAirlessRockyVisual(
+                ioView,
+                content.IoVisualDefinition,
+                "Io");
+            CreateAirlessRockyVisual(
+                europaView,
+                content.EuropaVisualDefinition,
+                "Europa");
             CreateLayeredBodyVisual(
                 earthView,
                 content.EarthLayerDefinition,

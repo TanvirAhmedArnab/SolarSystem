@@ -2,8 +2,8 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.11.0  
-**Last reviewed:** 2026-07-24
+**Version:** 0.12.0  
+**Last reviewed:** 2026-07-25
 
 **Live-source verification:** Rechecked 2026-07-22 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records.
 
@@ -312,6 +312,53 @@ The solar surface/corona shaders, shell wiring, immutable authoring, and
 deterministic motion code are project-authored. They introduce no new
 third-party asset or license. Their use of TEX-SSS-016 continues the existing
 Solar System Scope CC BY 4.0 attribution obligation.
+
+### Active Io and Europa hero records
+
+#### Io
+
+- Source ID: `TEX-USGS-001`
+- Product: Voyager/Galileo SSI global mosaic, `1 km/pixel` source product.
+- Product page:
+  https://astrogeology.usgs.gov/search/map/io_voyager_galileo_ssi_global_mosaic_1km
+- Retained source:
+  `SourceAssets/ThirdParty/Textures/USGS/io_global_mosaic_browse.jpg`
+- Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Io/T_Io_Surface_Browse.jpg`
+- Active material: `M_Io.mat`.
+- Integrity: both repository JPEGs are byte-identical with SHA-256
+  `DE69759452F5479B6F56FF5C72A90ED402AB8D7F11219524C26E5B60610B9597`.
+- Usage status: USGS lists the product as public domain with no use
+  constraints; attribution is retained and no endorsement is implied.
+- Coverage limitations: the mosaic combines Galileo and Voyager imagery;
+  some coverage and control geometry vary, and the browse derivative is only
+  `512 x 256`.
+- Modification status: source pixels are unchanged. The project-authored
+  shader adds a global sulfur/ochre presentation tint and bounded
+  luminance-derived normal response; it does not add source data.
+
+#### Europa
+
+- Source ID: `TEX-USGS-002`
+- Product: Voyager/Galileo SSI global mosaic, `500 m/pixel` final map.
+- Product page:
+  https://astrogeology.usgs.gov/search/map/europa_voyager_galileo_ssi_global_mosaic_500m
+- Retained source:
+  `SourceAssets/ThirdParty/Textures/USGS/europa_global_mosaic_browse.jpg`
+- Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Europa/T_Europa_Surface_Browse.jpg`
+- Active material: `M_Europa.mat`.
+- Integrity: both repository JPEGs are byte-identical with SHA-256
+  `3369BA56CBFA447347B5AFC003B80B69FBF87DD90A724D59F09ABAD8691A9819`.
+- Usage status: USGS lists no use constraints; source attribution is retained
+  and no endorsement is implied.
+- Coverage limitations: Galileo and Voyager inputs span approximately
+  `20 km/pixel` gap fill to `200 m/pixel` detail before assembly into the
+  `500 m/pixel` map; the browse derivative is `512 x 256` and preserves
+  incomplete/dark source regions.
+- Modification status: source pixels are unchanged. The project-authored
+  shader adds a pale presentation tint and bounded luminance-derived normal
+  response; it does not reconstruct missing imagery.
 
 ### Active Titan hero record
 

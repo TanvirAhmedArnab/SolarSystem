@@ -1261,6 +1261,167 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator
+            SolarSystemScene_PresentsDistinctIoAndEuropaAirlessHeroes()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "io",
+                    out CelestialBodyView io),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "europa",
+                    out CelestialBodyView europa),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+
+            AirlessRockyVisualView ioVisual = io.AirlessRockyVisualView;
+            AirlessRockyVisualView europaVisual =
+                europa.AirlessRockyVisualView;
+            Assert.That(ioVisual, Is.Not.Null);
+            Assert.That(europaVisual, Is.Not.Null);
+            Assert.That(ioVisual.IsInitialized, Is.True);
+            Assert.That(europaVisual.IsInitialized, Is.True);
+            Assert.That(io.LayeredBodyView, Is.Null);
+            Assert.That(europa.LayeredBodyView, Is.Null);
+            Assert.That(io.GasGiantVisualView, Is.Null);
+            Assert.That(europa.GasGiantVisualView, Is.Null);
+            Assert.That(io.IceGiantVisualView, Is.Null);
+            Assert.That(europa.IceGiantVisualView, Is.Null);
+            Assert.That(io.Definition.ParentId, Is.EqualTo("jupiter"));
+            Assert.That(europa.Definition.ParentId, Is.EqualTo("jupiter"));
+            Assert.That(
+                io.Definition.RotationPeriodSeconds,
+                Is.EqualTo(1.762732d * 86400d).Within(0.001d));
+            Assert.That(
+                europa.Definition.RotationPeriodSeconds,
+                Is.EqualTo(3.525463d * 86400d).Within(0.001d));
+            Assert.That(io.Definition.RotationPeriodSeconds, Is.GreaterThan(0d));
+            Assert.That(
+                europa.Definition.RotationPeriodSeconds,
+                Is.GreaterThan(0d));
+            Assert.That(
+                io.Definition.Orbit.SemiMajorAxisKm,
+                Is.EqualTo(421800d));
+            Assert.That(
+                europa.Definition.Orbit.SemiMajorAxisKm,
+                Is.EqualTo(671100d));
+            Assert.That(
+                io.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(1821.49f / 6371.0084f).Within(0.0001f));
+            Assert.That(
+                europa.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(1560.80f / 6371.0084f).Within(0.0001f));
+
+            Material ioMaterial = ioVisual.SurfaceRenderer.sharedMaterial;
+            Material europaMaterial =
+                europaVisual.SurfaceRenderer.sharedMaterial;
+            Assert.That(
+                ioMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Rocky Surface"));
+            Assert.That(
+                europaMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Rocky Surface"));
+            Assert.That(ioMaterial, Is.Not.SameAs(europaMaterial));
+            Assert.That(
+                ioMaterial.GetTexture("_BaseMap").name,
+                Is.EqualTo("T_Io_Surface_Browse"));
+            Assert.That(
+                europaMaterial.GetTexture("_BaseMap").name,
+                Is.EqualTo("T_Europa_Surface_Browse"));
+
+            var properties = new MaterialPropertyBlock();
+            ioVisual.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_ReliefStrength")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract.IoReliefStrength));
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_Smoothness")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract.IoSurfaceSmoothness));
+            properties.Clear();
+            europaVisual.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_ReliefStrength")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .EuropaReliefStrength));
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_Smoothness")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .EuropaSurfaceSmoothness));
+
+            Assert.That(
+                ioVisual.SurfaceRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(ioVisual.SurfaceRenderer.receiveShadows, Is.False);
+            Assert.That(
+                europaVisual.SurfaceRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(europaVisual.SurfaceRenderer.receiveShadows, Is.False);
+
+            Vector4 globalSunPosition =
+                Shader.GetGlobalVector("_SolarSystemSunPositionWS");
+            Assert.That(
+                Vector3.Distance(globalSunPosition, sun.transform.position),
+                Is.LessThan(0.0001f));
+            Light radialLight =
+                GameObject.Find("Solar Radial Light")?.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            AssertReceivesSunOriginLight(radialLight, sun, io);
+            AssertReceivesSunOriginLight(radialLight, sun, europa);
+
+            bool wasPaused =
+                simulation.SimulationController.ClockSnapshot.IsPaused;
+            interaction.SelectionController.Select(io);
+            Assert.That(
+                interaction.SelectionController.SelectedView,
+                Is.SameAs(io));
+            interaction.CameraController.Focus(io);
+            yield return WaitUntilFocused(interaction.CameraController);
+            Assert.That(interaction.CameraController.FocusedTarget, Is.SameAs(io));
+
+            interaction.SelectionController.Select(europa);
+            interaction.CameraController.Focus(europa);
+            yield return WaitUntilFocused(interaction.CameraController);
+            Assert.That(
+                interaction.SelectionController.SelectedView,
+                Is.SameAs(europa));
+            Assert.That(
+                interaction.CameraController.FocusedTarget,
+                Is.SameAs(europa));
+            Assert.That(ioVisual.SurfaceRenderer.enabled, Is.True);
+            Assert.That(europaVisual.SurfaceRenderer.enabled, Is.True);
+            Assert.That(
+                simulation.SimulationController.ClockSnapshot.IsPaused,
+                Is.EqualTo(wasPaused));
+
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator SolarSystemScene_UsesDeterministicVenusCloudDeckAndLimb()
         {
             SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);

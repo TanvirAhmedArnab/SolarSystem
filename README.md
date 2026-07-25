@@ -78,13 +78,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Airless Rocky Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Airless%20Rocky%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Major Moon Content Validation](Docs/ProjectManagement/Slice%204%20Major%20Moon%20Content%20Validation.md)
 - [Slice 4 Titan Haze Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Titan%20Haze%20Hero%20Rendering%20Validation.md)
+- [Slice 4 Io and Europa Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Io%20and%20Europa%20Hero%20Rendering%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/seven-moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
 compile successfully. The project currently passes 157 Edit Mode cases and
-17 real-scene Play Mode cases. Coverage includes orbital behavior,
+18 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -135,6 +136,16 @@ subdued beneath one bounded transparent amber shell with live-Sun day/night
 response and deterministic low-amplitude presentation motion. Its approved
 Saturn hierarchy, exact Earth-relative radius, analytical orbit, synchronous
 rotation, selection, focus, and educational facts remain unchanged.
+Io and Europa now extend the reusable airless-rocky path with separate
+immutable presentation contracts and clean project-owned materials. Io uses a
+restrained warm sulfur/ochre reconstruction with a dry response; Europa uses
+pale neutral ice, gentler source-derived relief, and modestly higher
+smoothness. Their audited USGS browse mosaics remain byte-identical and
+anchored, while live-Sun terminators, exact Earth-relative radii,
+Jupiter-parented analytical orbits, and positive synchronous rotations remain
+authoritative. Neither moon receives invented emission, active plumes,
+terrain displacement, a visible atmosphere, or an exposed subsurface ocean.
+Browse resolution, coverage, color, and reconstruction limits are documented.
 Uranus and Neptune now use a reusable ice-giant authoring/model/view path with
 distinct anchored source materials, restrained source-derived band response,
 signed deterministic presentation detail, one thin Sun-aware atmosphere shell
