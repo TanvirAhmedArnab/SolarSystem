@@ -49,7 +49,7 @@ Every file shown in the supplied screenshot was traced by `.meta` GUID rather th
 | `Mobile_RPAsset.asset` | Its only settings reference was the `Mobile` quality tier | Removed with the Mobile tier for the approved Windows-only release. |
 | `PC_Renderer.asset` | Referenced by `PC_RPAsset.asset` | Keep. |
 | `PC_RPAsset.asset` | Referenced by the `PC` quality tier, which is the `Standalone` default | Keep. |
-| `SampleSceneProfile.asset` | Referenced by template `SampleScene.unity`, not by the project-owned build scene | No runtime dependency; retain as an unstaged deletion candidate until Tanvir explicitly approves template-asset removal. |
+| `PC_DefaultVolumeProfile.asset` | Referenced by `PC_RPAsset.asset` as its fallback volume profile | Keep. Renamed from `SampleSceneProfile.asset` without changing its GUID or active settings so the PC pipeline no longer depends on a misleading template name. |
 | `UniversalRenderPipelineGlobalSettings.asset` | Registered in `ProjectSettings/GraphicsSettings.asset` | Keep. |
 
 `QualitySettings.asset` now contains one quality tier, `PC`, at index 0. The current quality and Standalone default both resolve to index 0, and the active pipeline is `PC_RPAsset`.
@@ -79,3 +79,20 @@ The owner-approved package operation performed on 2026-07-22:
 - verified zero Console warnings/errors and a passing Edit Mode smoke test.
 
 Timeline, uGUI, built-in-module, and mobile URP decisions remain separate so later changes stay attributable and reviewable.
+
+## Publication-cleanup addendum
+
+The 2026-07-25 release-readiness audit corrected two baseline assumptions:
+
+1. `SampleSceneProfile.asset` was also referenced by `PC_RPAsset.asset`, not only
+   by the template scene. It was therefore preserved, renamed to
+   `PC_DefaultVolumeProfile.asset`, and kept on the same GUID.
+2. The unused template `SampleScene.unity` had no project-authored references,
+   was not enabled in Build Settings, and was removed. The project default scene
+   now resolves to `Assets/SolarSystem/Scenes/SolarSystem.unity`.
+
+Unity's deterministic Package Manager settings-schema migration and URP default
+resources folder registration are retained as intentional Unity 6000.5.3f1
+settings. Unity's empty Standalone scripting-symbol whitespace rewrite is
+non-semantic but deterministic editor serialization and is retained so opening
+the approved editor version does not repeatedly dirty the worktree.

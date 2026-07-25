@@ -4,7 +4,7 @@
 **Owner:** Tanvir  
 **Reviewed by:** Codex with Tanvir approval gates  
 **Date:** 2026-07-22  
-**Status:** Repository-baseline candidate prepared; awaiting owner commit decision
+**Status:** Completed baseline record; publication cleanup tracked separately
 
 This is the project instance of the central Efficient Unity checklist. `[x]` means verified, `[ ]` means pending, and `[!]` means an approved exception.
 
@@ -32,7 +32,8 @@ This is the project instance of the central Efficient Unity checklist. `[x]` mea
 - [x] The final staged tree has zero missing `.meta` partners and zero duplicate Unity GUIDs.
 - [x] Separate project-authored Runtime, Editor, Edit Mode, and Play Mode test locations are established.
 - [x] Icon, package, and ProjectSettings changes classified in `Repository Baseline Classification.md`.
-- [x] Build Settings contains only `Assets/Scenes/SampleScene.unity`.
+- [x] Build Settings contains only the project-authored
+  `Assets/SolarSystem/Scenes/SolarSystem.unity`.
 - [x] Package manifest/lock and URP settings received a read-only reference audit; see `Unity Package and URP Settings Audit.md`.
 - [x] Owner-approved package cleanup applied and validated; Unity AI Assistant retained for MCP, scope-unneeded packages removed, and retained packages checked against `latestCompatible`.
 - [x] Owner-approved mobile quality-tier and URP asset cleanup applied and validated; PC is the sole tier and active Standalone pipeline.
@@ -66,8 +67,8 @@ This is the project instance of the central Efficient Unity checklist. `[x]` mea
 - [x] Strong-signature secret scan reports zero matches; the only generic-label match is the GDD policy sentence forbidding committed secrets.
 - [x] No generated paths, asset-import paths, non-pointer blobs at or above 1 MiB, or invalid LFS pointers exist in the staged candidate.
 - [x] Present proposed message and exact candidate scope to Tanvir.
-- [ ] Obtain Tanvir's explicit approval before committing.
-- [ ] Obtain Tanvir's explicit approval before pushing.
+- [x] Tanvir explicitly approved the repository-baseline commit.
+- [x] Tanvir explicitly approved publishing the repository baseline.
 
 ## Current blockers
 

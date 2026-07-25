@@ -39,7 +39,8 @@ Tools/                     Reproducible project tooling
 ## Open the project
 
 1. Install Unity Hub and Unity Editor `6000.5.3f1` with Windows build support.
-2. Clone the repository with Git LFS installed: `git lfs install`, then `git clone <repository-url>`.
+2. Clone the repository with Git LFS installed: `git lfs install`, then
+   `git clone https://github.com/TanvirAhmedArnab/SolarSystem.git`.
 3. Add the cloned folder in Unity Hub and open it with the exact editor version above.
 4. Allow Package Manager and asset import to finish before evaluating the Console.
 5. Confirm the Console has no errors or warnings, then run the Edit Mode tests in Test Runner.
@@ -84,6 +85,7 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Celestial Navigator and World Labels Validation](Docs/ProjectManagement/Slice%204%20Celestial%20Navigator%20and%20World%20Labels%20Validation.md)
 - [Slice 4 Cinematic Tour Validation](Docs/ProjectManagement/Slice%204%20Cinematic%20Tour%20Validation.md)
 - [Slice 4 Cinematic Tour Polish Validation](Docs/ProjectManagement/Slice%204%20Cinematic%20Tour%20Polish%20Validation.md)
+- [Repository Publication Cleanup Validation](Docs/ProjectManagement/Repository%20Publication%20Cleanup%20Validation.md)
 
 ## Current validation state
 

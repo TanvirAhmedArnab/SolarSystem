@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Renamed the active PC pipeline fallback volume profile from the misleading
+  template name `SampleSceneProfile` to `PC_DefaultVolumeProfile` while
+  preserving its GUID, references, and authored settings.
+- Pointed Unity's project default scene at the production
+  `Assets/SolarSystem/Scenes/SolarSystem.unity` scene.
+- Accepted Unity 6000.5.3f1's deterministic Package Manager settings-schema
+  migration, URP default-resources folder registration, and empty Standalone
+  scripting-symbol serialization.
+- Replaced the README clone placeholder with the public repository URL.
+
+### Removed
+
+- Removed the unused URP template `SampleScene` and its `.meta` file after
+  confirming it was absent from Build Settings and had no project-authored
+  references.
+
 ### Added
 
 - Data-driven cinematic-tour framing spaces, screen offsets, safety padding,

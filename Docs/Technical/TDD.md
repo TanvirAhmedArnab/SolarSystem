@@ -726,7 +726,10 @@ Rotation angle is evaluated from time and signed sidereal rotation period. The s
 
 ### 9.1 Build scene
 
-**[IMPLEMENTED]** The intentional `SolarSystem` scene is the sole enabled build scene. The template `SampleScene` remains on disk pending a separately approved removal. Additive scenes are deferred until a real loading or ownership boundary appears.
+**[IMPLEMENTED]** The intentional `SolarSystem` scene is the sole enabled build
+scene and the project default scene. The unused template `SampleScene` has been
+removed. Additive scenes are deferred until a real loading or ownership
+boundary appears.
 
 ### 9.2 Scene hierarchy
 
@@ -778,8 +781,9 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - URP asset changes are deliberate and diff-reviewed.
 - The Sun is the motivated light source; emissive appearance and actual scene lighting are separate controls.
 - Materials reference Unity-ready derivatives, never files directly from `SourceAssets`.
-- The runtime scene references the project-owned `VP_SolarSystem` profile,
-  never Unity's template `SampleSceneProfile`.
+- The runtime scene references the project-owned `VP_SolarSystem` profile.
+- The PC pipeline fallback preserves its existing settings in the deliberately
+  named `PC_DefaultVolumeProfile`; no template-named runtime asset remains.
 - The profile owns exactly ACES tonemapping, restrained bloom, fixed post
   exposure/color adjustment, and a subtle vignette. Motion blur, film grain,
   chromatic aberration, and automatic exposure are excluded from the baseline.
