@@ -198,6 +198,13 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             AirlessRockyVisualRenderingContract.CallistoSurfaceSpecular,
             AirlessRockyVisualRenderingContract.CallistoSurfaceSmoothness,
             AirlessRockyVisualRenderingContract.CallistoNightsideReadability)]
+        [TestCase(
+            "triton",
+            AirlessRockyVisualRenderingContract.TritonReliefStrength,
+            AirlessRockyVisualRenderingContract.TritonReliefSampleDistance,
+            AirlessRockyVisualRenderingContract.TritonSurfaceSpecular,
+            AirlessRockyVisualRenderingContract.TritonSurfaceSmoothness,
+            AirlessRockyVisualRenderingContract.TritonNightsideReadability)]
         public void MajorMoonContract_CreatesValidatedImmutableModel(
             string stableId,
             float reliefStrength,

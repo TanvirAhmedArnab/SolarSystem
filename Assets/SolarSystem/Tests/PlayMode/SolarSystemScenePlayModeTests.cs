@@ -562,7 +562,7 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(radialLight.type, Is.EqualTo(LightType.Point));
             Assert.That(radialLight.lightUnit, Is.EqualTo(LightUnit.Candela));
             Assert.That(radialLight.intensity, Is.EqualTo(165000f).Within(0.001f));
-            Assert.That(radialLight.range, Is.EqualTo(620f).Within(0.001f));
+            Assert.That(radialLight.range, Is.EqualTo(1000f).Within(0.001f));
             Assert.That(radialLight.shadows, Is.EqualTo(LightShadows.None));
             Assert.That(radialLight.transform.parent, Is.SameAs(sun.transform));
             Assert.That(
@@ -1597,6 +1597,178 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 Is.SameAs(callisto));
             Assert.That(ganymedeVisual.SurfaceRenderer.enabled, Is.True);
             Assert.That(callistoVisual.SurfaceRenderer.enabled, Is.True);
+            Assert.That(
+                simulation.SimulationController.ClockSnapshot.IsPaused,
+                Is.EqualTo(wasPaused));
+
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_PresentsDistinctTritonHero()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "triton",
+                    out CelestialBodyView triton),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+
+            AirlessRockyVisualView tritonVisual =
+                triton.AirlessRockyVisualView;
+            Assert.That(tritonVisual, Is.Not.Null);
+            Assert.That(tritonVisual.IsInitialized, Is.True);
+            Assert.That(triton.LayeredBodyView, Is.Null);
+            Assert.That(triton.GasGiantVisualView, Is.Null);
+            Assert.That(triton.IceGiantVisualView, Is.Null);
+            Assert.That(triton.Definition.ParentId, Is.EqualTo("neptune"));
+            Assert.That(
+                triton.Definition.RotationPeriodSeconds,
+                Is.EqualTo(-5.876994d * 86400d).Within(0.001d));
+            Assert.That(
+                triton.Definition.RotationPeriodSeconds,
+                Is.LessThan(0d));
+            Assert.That(
+                triton.Definition.Orbit.OrbitalPeriodSeconds,
+                Is.EqualTo(5.876994d * 86400d).Within(0.001d));
+            Assert.That(
+                triton.Definition.Orbit.InclinationDeg,
+                Is.EqualTo(157.3d).Within(0.0001d));
+            Assert.That(
+                triton.Definition.Orbit.InclinationDeg,
+                Is.GreaterThan(90d));
+            Assert.That(
+                triton.Definition.Orbit.SemiMajorAxisKm,
+                Is.EqualTo(354800d));
+            Assert.That(
+                triton.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(1352.60f / 6371.0084f).Within(0.0001f));
+
+            Material material = tritonVisual.SurfaceRenderer.sharedMaterial;
+            Assert.That(
+                material.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Rocky Surface"));
+            Assert.That(
+                material.GetTexture("_BaseMap").name,
+                Is.EqualTo("T_Triton_Surface_Browse"));
+            Assert.That(
+                material.IsKeywordEnabled("_EMISSION"),
+                Is.False);
+
+            var properties = new MaterialPropertyBlock();
+            tritonVisual.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_ReliefStrength")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .TritonReliefStrength));
+            Assert.That(
+                properties.GetFloat(
+                    Shader.PropertyToID("_ReliefSampleDistance")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .TritonReliefSampleDistance));
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_Specular")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .TritonSurfaceSpecular));
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_Smoothness")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .TritonSurfaceSmoothness));
+            Assert.That(
+                properties.GetFloat(
+                    Shader.PropertyToID("_NightsideReadability")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .TritonNightsideReadability));
+            Assert.That(
+                material.GetFloat("_CoverageFallbackStrength"),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .TritonCoverageFallbackStrength));
+            Assert.That(
+                material.GetFloat("_CoverageThreshold"),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .TritonCoverageThreshold));
+
+            Assert.That(
+                tritonVisual.SurfaceRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(
+                tritonVisual.SurfaceRenderer.receiveShadows,
+                Is.False);
+            Assert.That(
+                tritonVisual.SurfaceRenderer.lightProbeUsage,
+                Is.EqualTo(LightProbeUsage.Off));
+            Assert.That(
+                tritonVisual.SurfaceRenderer.reflectionProbeUsage,
+                Is.EqualTo(ReflectionProbeUsage.Off));
+            Assert.That(
+                triton.GetComponentsInChildren<Renderer>(true).Length,
+                Is.EqualTo(1));
+
+            Vector4 globalSunPosition =
+                Shader.GetGlobalVector("_SolarSystemSunPositionWS");
+            Assert.That(
+                Vector3.Distance(globalSunPosition, sun.transform.position),
+                Is.LessThan(0.0001f));
+            Light radialLight =
+                GameObject.Find("Solar Radial Light")?.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            AssertReceivesSunOriginLight(radialLight, sun, triton);
+            Assert.That(
+                Vector3.Distance(sun.transform.position, triton.transform.position),
+                Is.LessThan(radialLight.range - 100f),
+                "Triton must remain inside the authored light range with a stable culling margin.");
+
+            bool wasPaused =
+                simulation.SimulationController.ClockSnapshot.IsPaused;
+            interaction.SelectionController.Select(triton);
+            yield return null;
+            Assert.That(
+                interaction.SelectionController.SelectedView,
+                Is.SameAs(triton));
+            Assert.That(
+                interaction.HudPresenter.BodyNameText,
+                Is.EqualTo("Triton"));
+            Assert.That(
+                interaction.HudPresenter.IsBodyInformationVisible,
+                Is.True);
+            Assert.That(
+                triton.Definition.EducationalSummary,
+                Does.Contain("Voyager 2"));
+            Assert.That(
+                triton.Definition.EducationalSummary,
+                Does.Contain("1989"));
+            interaction.CameraController.Focus(triton);
+            yield return WaitUntilFocused(interaction.CameraController);
+            Assert.That(
+                interaction.CameraController.FocusedTarget,
+                Is.SameAs(triton));
+            Assert.That(tritonVisual.SurfaceRenderer.enabled, Is.True);
             Assert.That(
                 simulation.SimulationController.ClockSnapshot.IsPaused,
                 Is.EqualTo(wasPaused));

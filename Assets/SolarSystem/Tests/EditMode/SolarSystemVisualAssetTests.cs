@@ -120,6 +120,12 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Callisto.mat";
         private const string CallistoVisualDefinitionPath =
             "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Callisto.asset";
+        private const string TritonTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Triton/T_Triton_Surface_Browse.jpg";
+        private const string TritonMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Triton.mat";
+        private const string TritonVisualDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Triton.asset";
         private const string EarthMaterialPath =
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Earth.mat";
         private const string EarthNormalPath =
@@ -773,6 +779,31 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 AirlessRockyVisualRenderingContract.CallistoSurfaceSpecular,
                 AirlessRockyVisualRenderingContract.CallistoSurfaceSmoothness,
                 AirlessRockyVisualRenderingContract.CallistoNightsideReadability);
+            AssertAirlessRockyMaterial(
+                "triton",
+                TritonTexturePath,
+                TritonMaterialPath,
+                TritonVisualDefinitionPath,
+                AirlessRockyVisualRenderingContract.TritonReliefStrength,
+                AirlessRockyVisualRenderingContract.TritonReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.TritonSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.TritonSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.TritonNightsideReadability);
+            Material triton =
+                AssetDatabase.LoadAssetAtPath<Material>(TritonMaterialPath);
+            Assert.That(
+                triton.GetFloat("_CoverageFallbackStrength"),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .TritonCoverageFallbackStrength).Within(0.0001f));
+            Assert.That(
+                triton.GetFloat("_CoverageThreshold"),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .TritonCoverageThreshold).Within(0.0001f));
+            Assert.That(
+                triton.GetColor("_CoverageFallbackColor").a,
+                Is.EqualTo(1f).Within(0.0001f));
         }
 
         private static void AssertAirlessRockyMaterial(

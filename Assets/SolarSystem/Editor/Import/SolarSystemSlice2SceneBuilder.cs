@@ -43,10 +43,11 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string TitanStableId = "titan";
         private const string UranusStableId = "uranus";
         private const string NeptuneStableId = "neptune";
+        private const string TritonStableId = "triton";
         private const float EarthAmbienceMinimumDistance = 1.5f;
         private const float EarthAmbienceMaximumDistance = 12f;
         private const float SolarRadialIntensityCandela = 165000f;
-        private const float SolarRadialRange = 620f;
+        private const float SolarRadialRange = 1000f;
         private const float SolarRadialTemperature = 5600f;
         private const float ReflectionIntensity = 0.18f;
         private static readonly Color AmbientFill =
@@ -89,6 +90,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialBodyView titanView = null;
             CelestialBodyView uranusView = null;
             CelestialBodyView neptuneView = null;
+            CelestialBodyView tritonView = null;
             foreach (SolarSystemSlice2BodyContent body in content.Bodies)
             {
                 bool isSaturn = body.Definition.StableId == "saturn";
@@ -158,6 +160,10 @@ namespace Tanvir.SolarSystem.Editor.Import
                 else if (body.Definition.StableId == NeptuneStableId)
                 {
                     neptuneView = view;
+                }
+                else if (body.Definition.StableId == TritonStableId)
+                {
+                    tritonView = view;
                 }
 
                 if (body.Definition.HasOrbit)
@@ -246,6 +252,11 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Neptune.");
             }
 
+            if (tritonView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Triton.");
+            }
+
             CreateSunVisual(sunView, content);
             CreateAirlessRockyVisual(
                 mercuryView,
@@ -271,6 +282,10 @@ namespace Tanvir.SolarSystem.Editor.Import
                 callistoView,
                 content.CallistoVisualDefinition,
                 "Callisto");
+            CreateAirlessRockyVisual(
+                tritonView,
+                content.TritonVisualDefinition,
+                "Triton");
             CreateLayeredBodyVisual(
                 earthView,
                 content.EarthLayerDefinition,

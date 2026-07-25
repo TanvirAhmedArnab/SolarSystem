@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Sun, eight-planet, seven-moon, Titan haze, and Galilean-moon hero baselines validated  
-**Version:** 0.26.0  
+**Document status:** Living technical authority; Sun, eight-planet, seven-moon, Titan haze, Galilean-moon, and Triton hero baselines validated  
+**Version:** 0.27.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -52,6 +52,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.24.0 | 2026-07-25 | Codex, for Tanvir | Extended the atmosphere-only layered-body path with a validated deterministic atmosphere phase and added project-owned Titan surface/haze shaders, reproducible authoring, bounded overdraw, live-Sun response, and complete regression coverage | Titan haze hero architecture implemented and validated |
 | 0.25.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Io and Europa with distinct immutable contracts, clean material-schema migration, deterministic scene wiring, anchored USGS sources, and full asset/scene regression coverage | Io and Europa hero architecture implemented and validated |
 | 0.26.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Ganymede and Callisto with distinct immutable contracts, clean material-schema migration, deterministic scene wiring, anchored USGS sources, and full asset/scene regression coverage | Ganymede and Callisto hero architecture implemented and validated |
+| 0.27.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Triton with a disclosed unobserved-coverage fill, preserved retrograde scientific state, corrected outer-system point-light culling, deterministic scene wiring, and full asset/scene regression coverage | Triton hero architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -847,6 +848,15 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   compensate for the unusually dark grayscale browse derivatives while
   preserving a clearly unlit hemisphere; they add source color, not emission.
   All values are reviewed presentation controls rather than measurements.
+- Triton extends the same adapter with relief `0.21`, sample distance `1.25`,
+  specular `0.03`, smoothness `0.18`, and nightside readability `0.06`.
+  Its `512 x 256` Voyager-era browse contains substantial near-black
+  unobserved coverage, so the shared shader optionally derives a coverage mask
+  from anchored source luminance at threshold `0.015` and blends a uniform
+  neutral fill at strength `0.85`. Existing airless materials keep the new
+  option disabled. The fill adds no texture sample, terrain, elevation,
+  composition, observed detail, or scientific state; source-derived normal
+  perturbation is suppressed wherever the fill applies.
 - The shader performs five bounded source samples per fragment: one anchored
   color sample and four neighboring luminance samples for a shallow normal
   estimate. It performs no displacement, time animation, emission, fluid
@@ -861,6 +871,18 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   and positive `16.690440` days. Exact mean-radius projection,
   parent-relative analytical orbit composition, axial tilt, and signed
   rotation remain owned by the existing simulation and `CelestialBodyView`.
+- Triton remains parented to Neptune with mean radius `1,352.60 km`,
+  semimajor axis `354,800 km`, positive `5.876994`-day orbital period,
+  `157.3`-degree retrograde mean-orbit inclination, and negative
+  `5.876994`-day synchronous spin. Its thin nitrogen atmosphere is not
+  represented by a visible shell. The educational summary records Voyager
+  2's 1989 observation and does not claim current simulated geyser activity.
+- The Sun-parented point light retains `165000` candela and no shadows, but
+  its presentation culling range is `1000` units rather than `620`. This keeps
+  Triton and the complete authored outer-system envelope inside the radial
+  light with margin. Physical inverse-square attenuation remains active, so
+  this is a culling-envelope correction rather than uniform illumination or a
+  second light.
 - The four Galilean moons have measured tenuous atmospheres or exospheres,
   but no visible shell is justified in this presentation. No emissive lava,
   active plume, exposed subsurface ocean, Ganymede aurora or magnetosphere,
@@ -1236,6 +1258,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-025 | 2026-07-25 | Extend the atmosphere-only layered-body path for Titan with one project-owned opaque surface and one bounded transparent haze shell | Implemented and validated | Tanvir | Haze-dominant identity without a Titan-only runtime subsystem or false weather model |
 | TDD-026 | 2026-07-25 | Extend the reusable airless-rocky path to Io and Europa with distinct immutable contracts, anchored sources, and no invented activity or exposed ocean | Implemented and validated | Tanvir | Distinct Galilean-moon identity without duplicated runtime architecture |
 | TDD-027 | 2026-07-25 | Extend the reusable airless-rocky path to Ganymede and Callisto with distinct immutable contracts, anchored sources, bounded non-emissive nightside readability, and no invented atmosphere, magnetosphere, ocean exposure, or terrain | Implemented and validated | Tanvir | Completes four distinct Galilean hero surfaces with one audited allocation-free rendering architecture |
+| TDD-028 | 2026-07-25 | Extend the reusable airless-rocky path to Triton, preserve anchored observed imagery, use an explicitly disclosed uniform fill only for near-black unobserved coverage, and widen the existing Sun-light culling envelope without changing inverse-square attenuation | Implemented and validated | Tanvir | Completes the approved major-moon hero set without inventing global imagery, active geology, atmosphere scale, or a parallel renderer |
 
 ## 19. Definition of Done for TDD Version 1.0
 

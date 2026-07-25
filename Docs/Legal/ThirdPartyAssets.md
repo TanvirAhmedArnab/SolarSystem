@@ -2,10 +2,10 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.13.0  
+**Version:** 0.14.0  
 **Last reviewed:** 2026-07-25
 
-**Live-source verification:** Rechecked 2026-07-22 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records.
+**Live-source verification:** Rechecked 2026-07-25 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records, including Triton's Voyager 2 mosaic.
 
 > Operational provenance record, not legal advice. Re-check source pages before release and reject assets with ambiguous rights.
 
@@ -84,7 +84,7 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 | TEX-USGS-003 | Ganymede browse mosaic | USGS / Galileo and Voyager | Public domain | Approved runtime baseline; attribution retained |
 | TEX-USGS-004 | Callisto browse mosaic | USGS / Galileo and Voyager | USGS source | Approved runtime baseline; source attribution retained |
 | TEX-USGS-005 | Titan browse mosaic | USGS / Cassini ISS | Cite authors | Approved runtime baseline; author citation required |
-| TEX-USGS-006 | Triton color browse mosaic | USGS / Voyager 2 | Public domain; cite authors | Approved runtime baseline; author citation required |
+| TEX-USGS-006 | Triton color browse mosaic | USGS / Voyager 2 | Public domain | Active hero source; NASA/JPL/USGS credit retained |
 | AUD-OGA-MUS-001 | Outer Space Loop | wipics / OpenGameArt | CC0 1.0 | Imported music loop |
 | AUD-OGA-SUN-001 | Fireplace Sound Loop | PagDev / OpenGameArt | CC0 1.0 | Imported Sun ambience source |
 | AUD-OGA-EARTH-001 | Forest Ambience | TinyWorlds / OpenGameArt | CC0 1.0 | Imported Earth ambience source |
@@ -434,6 +434,41 @@ Solar System Scope CC BY 4.0 attribution obligation.
 Release credits must cite the authors named on the USGS product record and
 identify USGS Astrogeology/Cassini ISS as the imagery source. Reconfirm the
 product page's citation wording during the final release audit.
+
+### Active Triton hero record
+
+- Source ID: `TEX-USGS-006`.
+- Product: Voyager 2 global color orthomosaic, `600 m/pixel`,
+  orthographic projection, product ID `PIA00317`.
+- Product page:
+  https://astrogeology.usgs.gov/search/map/triton_voyager_2_global_color_orthomosaic_600m
+- Retained source:
+  `SourceAssets/ThirdParty/Textures/USGS/triton_global_color_mosaic_browse.jpg`.
+- Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Triton/T_Triton_Surface_Browse.jpg`.
+- Active material: `M_Triton.mat`.
+- Integrity: both repository JPEGs are byte-identical with SHA-256
+  `A71DF5E3DE28BA755200E0E9DB2633E0529CD2CDF344299715660F3DA37D1FCE`.
+- Dimensions: the retained runtime browse is `512 x 256`; the cataloged source
+  product is `4500 x 3500`.
+- Usage status: the USGS product and image records identify the item as public
+  domain. Release credit remains `NASA/JPL/USGS`; no endorsement is implied.
+- Coverage and processing: Voyager 2 is the only spacecraft to have flown by
+  Triton, in 1989, and photographed roughly two-thirds of the moon. The color
+  mosaic synthesizes red, green, and blue display channels from orange,
+  violet, and ultraviolet filter observations. It is not natural-color,
+  globally complete, current, or date-general imagery.
+- Modification status: the retained and runtime JPEG pixels are unchanged.
+  The project-owned shader applies a restrained presentation tint and
+  source-luminance normal response on observed pixels. Near-black unobserved
+  coverage receives a uniform neutral shader-side fill; that fill is not
+  third-party imagery, observed terrain, elevation, albedo, or scientific
+  reconstruction.
+
+The 2026 USGS high-resolution Voyager 2 release is recorded as a possible
+future source upgrade but is not represented as the active runtime asset.
+Any upgrade must be separately reviewed for visual coverage, provenance,
+license, performance, and replacement integrity.
 
 ### Kenney selected-subset mapping
 

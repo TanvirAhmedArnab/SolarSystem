@@ -8,6 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Distinct Triton hero rendering through the reusable project-owned
+  airless-rocky definition/model/view path and shared bounded-sample URP
+  surface shader.
+- Byte-identical anchored USGS/Voyager 2 synthesized-color imagery with a
+  disclosed uniform neutral fill only for near-black unobserved coverage;
+  source-derived normal detail is suppressed wherever that fill applies.
+- Preserved Neptune parentage, exact Earth-relative radius, `157.3`-degree
+  retrograde mean orbit, negative synchronous spin, selection, focus, and
+  corrected Voyager 2/1989 educational wording.
+- Expanded the existing Sun point-light culling envelope from `620` to `1000`
+  units so Triton remains inside live radial illumination while inverse-square
+  attenuation and the day/night terminator remain intact.
+- Triton material/source, scientific-state, hierarchy, lighting-envelope,
+  selection, focus, and real-scene regression coverage, bringing the complete
+  suites to 157 Edit Mode and 20 Play Mode cases.
+- Triton imagery provenance, coverage/reconstruction limitations, rendering
+  architecture, art direction, and dedicated validation evidence across the
+  living documentation set.
 - Distinct Ganymede and Callisto hero treatments through the reusable
   project-owned airless-rocky definition/model/view path and shared
   bounded-sample URP surface shader.

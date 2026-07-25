@@ -203,7 +203,6 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         [TestCase("Saturn", "T_Saturn_Surface_2K.jpg", 0.2f)]
         [TestCase("Uranus", "T_Uranus_Surface_2K.jpg", 0.28f)]
         [TestCase("Neptune", "T_Neptune_Surface_2K.jpg", 0.3f)]
-        [TestCase("Triton", "T_Triton_Surface_Browse.jpg", 0.06f)]
         public void PlanetMaterial_UsesAuditedTextureAndVisualBaseline(
             string bodyName,
             string textureName,

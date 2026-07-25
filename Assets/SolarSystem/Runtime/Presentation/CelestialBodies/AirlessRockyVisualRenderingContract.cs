@@ -98,5 +98,26 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Callisto source-color visibility on its unlit hemisphere.</summary>
         public const float CallistoNightsideReadability = 0.08f;
+
+        /// <summary>Triton source-derived relief strength.</summary>
+        public const float TritonReliefStrength = 0.21f;
+
+        /// <summary>Triton source-texel sample distance.</summary>
+        public const float TritonReliefSampleDistance = 1.25f;
+
+        /// <summary>Triton non-metallic frost-surface specular response.</summary>
+        public const float TritonSurfaceSpecular = 0.03f;
+
+        /// <summary>Triton nitrogen-frost presentation smoothness.</summary>
+        public const float TritonSurfaceSmoothness = 0.18f;
+
+        /// <summary>Triton source-color visibility on its unlit hemisphere.</summary>
+        public const float TritonNightsideReadability = 0.06f;
+
+        /// <summary>Strength of Triton's disclosed neutral unobserved-coverage fill.</summary>
+        public const float TritonCoverageFallbackStrength = 0.85f;
+
+        /// <summary>Source-luminance threshold used to identify unobserved black coverage.</summary>
+        public const float TritonCoverageThreshold = 0.015f;
     }
 }

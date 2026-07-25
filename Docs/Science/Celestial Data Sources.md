@@ -448,6 +448,38 @@ methane windows and haze correction. Its approximate latitude coverage is
 `45 N` to `65 S`; it is not globally complete or natural visible-light color.
 The runtime texture remains byte-identical to the audited browse download.
 
+### Triton rendering interpretation
+
+NASA identifies Triton as Neptune's largest moon and the only large moon in
+the Solar System with a retrograde orbit. It rotates synchronously, has a very
+thin atmosphere primarily of nitrogen with methane, and carries nitrogen frost
+on its surface. Voyager 2 observed nitrogen geyser activity during its single
+1989 flyby; the project records that dated observation but does not simulate
+current active geysers.
+
+The renderer does not alter Triton's approved scientific definition. Mean
+radius remains `1,352.60 km`, Neptune remains the parent, semimajor axis
+remains `354,800 km`, orbital period remains positive `5.876994` days,
+mean-orbit inclination remains `157.3 degrees`, and synchronous spin remains
+negative `5.876994` days. The fixed J2000 mean elements are deterministic
+educational geometry, not date-exact ephemerides.
+
+The active USGS product is a `600 m/pixel`, `4500 x 3500` Voyager 2
+orthographic color mosaic. The retained `512 x 256` browse is byte-identical
+between `SourceAssets` and Unity, with SHA-256
+`A71DF5E3DE28BA755200E0E9DB2633E0529CD2CDF344299715660F3DA37D1FCE`.
+Its displayed color is synthesized from orange, violet, and ultraviolet
+filters and is not natural color. Voyager 2 photographed roughly two-thirds
+of Triton, leaving substantial black/unobserved coverage in the browse.
+
+The project-owned shader detects only near-black source coverage and applies
+a uniform neutral presentation fill so the unobserved side does not disappear
+against space. This fill is not spacecraft imagery, inferred terrain, albedo,
+composition, elevation, global coverage, or a scientific reconstruction.
+Source-derived normal perturbation is suppressed on the fill. No visible
+atmosphere shell, cloud, active plume, emission, terrain displacement, exposed
+subsurface layer, fluid simulation, or date-specific state is authored.
+
 ## Presentation Transformations
 
 Physical values remain unchanged in the authoring assets and immutable runtime

@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.21.0  
+**Version:** 0.22.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -48,6 +48,7 @@
 | 0.19.0 | 2026-07-25 | Codex, for Tanvir | Replaced Titan's interim surface-first baseline with a haze-dominant, Sun-aware hero treatment while preserving its approved data, scale, hierarchy, motion, selection, focus, and educational UI | Titan hero experience implemented and validated |
 | 0.20.0 | 2026-07-25 | Codex, for Tanvir | Replaced the generic Io and Europa materials with distinct, source-grounded airless-surface hero treatments while preserving approved hierarchy, physical data, synchronous motion, scale, selection, focus, and educational UI | Io and Europa hero experience implemented and validated |
 | 0.21.0 | 2026-07-25 | Codex, for Tanvir | Replaced the generic Ganymede and Callisto materials with distinct source-grounded airless-surface hero treatments while preserving approved hierarchy, physical data, synchronous motion, scale, selection, focus, and educational UI | Ganymede and Callisto hero experience implemented and validated |
+| 0.22.0 | 2026-07-25 | Codex, for Tanvir | Replaced Triton's generic material with a distinct source-grounded hero treatment, disclosed incomplete Voyager-era coverage, corrected the outer-system light envelope, and preserved approved retrograde hierarchy, motion, scale, selection, focus, and educational UI | Triton hero experience implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -328,6 +329,24 @@ readable without turning the unlit hemisphere into day. The presentation does
 not expose a subsurface ocean, render Ganymede's magnetosphere, add a visible
 atmosphere or aurora, displace terrain, reconstruct missing coverage, or claim
 natural color, elevation, exact photometry, or date-specific appearance.
+
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Triton now completes the approved
+major-moon hero set with a pale pink, cream, and gray nitrogen-ice identity
+derived from its retained USGS/Voyager 2 color browse mosaic. The observed
+source pixels remain byte-identical and anchored. Near-black unobserved
+coverage receives a uniform neutral presentation fill so the sphere remains
+legible; that fill is explicitly not spacecraft imagery, terrain, albedo,
+elevation, or a claim of global observation.
+
+Triton remains Neptune-parented, exactly Earth-proportional, and
+synchronously retrograde to its approved `157.3`-degree mean orbit. A wider
+Sun-light culling envelope keeps the outer-system body inside the live radial
+day/night system while inverse-square attenuation still makes it visibly
+dimmer than inner worlds. The experience adds no visible atmosphere shell,
+cloud, emission, active geyser, plume animation, displaced terrain, exposed
+subsurface layer, or date-specific state. Its educational summary states that
+Voyager 2 observed nitrogen geyser activity in 1989 rather than implying that
+activity is being simulated now.
 
 ### 8.2 Body information overlay
 

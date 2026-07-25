@@ -80,13 +80,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Titan Haze Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Titan%20Haze%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Io and Europa Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Io%20and%20Europa%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Ganymede and Callisto Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Ganymede%20and%20Callisto%20Hero%20Rendering%20Validation.md)
+- [Slice 4 Triton Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Triton%20Hero%20Rendering%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/seven-moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
 compile successfully. The project currently passes 157 Edit Mode cases and
-19 real-scene Play Mode cases. Coverage includes orbital behavior,
+20 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -158,6 +159,17 @@ synchronous rotation, selection, focus, and educational facts remain
 authoritative. Bounded nightside source-color floors add no emission.
 Neither body receives a visible atmosphere, aurora, magnetosphere, exposed
 ocean, terrain displacement, fictional source fill, or date-specific state.
+Triton now completes the approved major-moon hero set through the same
+airless-rocky architecture. Its byte-identical USGS/Voyager 2
+synthesized-color browse remains anchored, while near-black unobserved
+coverage receives a clearly documented uniform neutral fill with no invented
+terrain detail. The body preserves its exact Earth-relative radius, Neptune
+parentage, `157.3`-degree retrograde mean orbit, negative synchronous spin,
+selection, focus, and educational facts. The existing Sun point light now
+uses a `1000`-unit culling envelope so Triton stays inside live radial
+illumination; inverse-square attenuation and the day/night terminator remain
+intact. No visible atmosphere, cloud, active geyser, plume animation,
+emission, terrain displacement, or date-specific state is added.
 Uranus and Neptune now use a reusable ice-giant authoring/model/view path with
 distinct anchored source materials, restrained source-derived band response,
 signed deterministic presentation detail, one thin Sun-aware atmosphere shell

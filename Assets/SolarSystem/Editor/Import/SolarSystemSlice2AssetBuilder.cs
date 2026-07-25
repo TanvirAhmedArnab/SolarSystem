@@ -158,7 +158,9 @@ namespace Tanvir.SolarSystem.Editor.Import
         private static readonly Color TitanTint = new Color(1f, 0.82f, 0.5f, 1f);
         private static readonly Color TitanHazeTint =
             new Color(1f, 0.56f, 0.18f, 1f);
-        private static readonly Color TritonTint = new Color(0.9f, 0.94f, 1f, 1f);
+        private static readonly Color TritonTint = new Color(1f, 0.84f, 0.9f, 1f);
+        private static readonly Color TritonCoverageFallback =
+            new Color(0.78f, 0.72f, 0.74f, 1f);
         private static readonly Color NeptuneAtmosphereTint =
             new Color(0.2f, 0.48f, 0.98f, 1f);
         private static readonly Color OrbitTint = new Color(0.16f, 0.45f, 0.78f, 1f);
@@ -484,7 +486,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                     "Triton",
                     "triton",
                     "neptune",
-                    "Neptune's largest moon, a captured icy world on a retrograde orbit with active nitrogen geysers.",
+                    "Neptune's largest moon, a captured retrograde world where Voyager 2 observed nitrogen geyser activity in 1989.",
                     1352.60d,
                     1428.49546d,
                     0d,
@@ -550,6 +552,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 EuropaVisualDefinition = CreateEuropaVisualDefinition(),
                 GanymedeVisualDefinition = CreateGanymedeVisualDefinition(),
                 CallistoVisualDefinition = CreateCallistoVisualDefinition(),
+                TritonVisualDefinition = CreateTritonVisualDefinition(),
                 OrbitMaterial = orbitMaterial,
                 SkyboxMaterial = skyboxMaterial,
                 VisualProfile = visualProfile,
@@ -875,6 +878,16 @@ namespace Tanvir.SolarSystem.Editor.Import
                 ResetMaterialSchema(callistoMaterial);
                 ConfigureCallistoSurfaceMaterial(callistoMaterial);
                 return callistoMaterial;
+            }
+
+            if (bodyName == "Triton")
+            {
+                Material tritonMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Triton.mat",
+                    RockySurfaceShader);
+                ResetMaterialSchema(tritonMaterial);
+                ConfigureTritonSurfaceMaterial(tritonMaterial);
+                return tritonMaterial;
             }
 
             if (bodyName == "Saturn")
@@ -1207,6 +1220,30 @@ namespace Tanvir.SolarSystem.Editor.Import
                 AirlessRockyVisualRenderingContract.CallistoNightsideReadability);
         }
 
+        private static void ConfigureTritonSurfaceMaterial(Material material)
+        {
+            ConfigureAirlessRockySurfaceMaterial(
+                material,
+                TritonTexturePath,
+                TritonTint,
+                AirlessRockyVisualRenderingContract.TritonReliefStrength,
+                AirlessRockyVisualRenderingContract.TritonReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.TritonSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.TritonSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.TritonNightsideReadability);
+            material.SetColor(
+                "_CoverageFallbackColor",
+                TritonCoverageFallback);
+            material.SetFloat(
+                "_CoverageFallbackStrength",
+                AirlessRockyVisualRenderingContract
+                    .TritonCoverageFallbackStrength);
+            material.SetFloat(
+                "_CoverageThreshold",
+                AirlessRockyVisualRenderingContract.TritonCoverageThreshold);
+            EditorUtility.SetDirty(material);
+        }
+
         private static void ConfigureAirlessRockySurfaceMaterial(
             Material material,
             string texturePath,
@@ -1308,6 +1345,19 @@ namespace Tanvir.SolarSystem.Editor.Import
                 AirlessRockyVisualRenderingContract.CallistoSurfaceSpecular,
                 AirlessRockyVisualRenderingContract.CallistoSurfaceSmoothness,
                 AirlessRockyVisualRenderingContract.CallistoNightsideReadability);
+        }
+
+        private static AirlessRockyVisualDefinition
+            CreateTritonVisualDefinition()
+        {
+            return CreateAirlessRockyVisualDefinition(
+                "Triton",
+                "triton",
+                AirlessRockyVisualRenderingContract.TritonReliefStrength,
+                AirlessRockyVisualRenderingContract.TritonReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.TritonSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.TritonSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.TritonNightsideReadability);
         }
 
         private static AirlessRockyVisualDefinition

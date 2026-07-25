@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, seven-moon, Titan haze, and Galilean-moon hero foundations  
-**Version:** 0.22.0  
+**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, seven-moon, Titan haze, Galilean-moon, and Triton hero foundations  
+**Version:** 0.23.0  
 **Last updated:** 2026-07-25  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -354,7 +354,27 @@ speed, fluid simulation, atmospheric chemistry, physical scale height,
 volumetric scattering, exact photometry, or date-specific appearance.
 
 ### Triton
-USGS color browse mosaic with pale pink, cream, and gray. Disclose incomplete and gap-filled regions.
+
+Use the retained USGS/Voyager 2 synthesized-color browse mosaic as the
+observed surface anchor. Preserve its muted pink polar deposits, greenish
+equatorial band, dark plume deposits, seams, and incomplete coverage; do not
+market the result as natural color or a globally observed modern map.
+
+The validated hero material uses a pale rose-neutral tint, relief `0.21`,
+sample distance `1.25`, specular `0.03`, smoothness `0.18`, and nightside
+readability `0.06`. Near-black unobserved source coverage receives a uniform
+neutral mauve-gray fill at strength `0.85` using a `0.015` luminance
+threshold. This is a disclosed presentation reconstruction, not inferred
+terrain or spacecraft imagery. Relief is disabled on the reconstructed region
+so the shader does not manufacture surface detail.
+
+Triton remains one opaque sphere with no atmosphere shell. Its measured
+nitrogen atmosphere is too thin to justify a visible layer at this scale.
+Do not add clouds, active geysers, animated plumes, emission, exposed
+subsurface ice/ocean, terrain displacement, fluid simulation, or
+date-specific activity. The Sun-facing hemisphere must remain clearly
+brighter than the opposing hemisphere; the widened radial-light culling
+envelope exists only to keep the outer-system body inside the live light.
 
 **[IMPLEMENTED BASELINE]** Io, Europa, Ganymede, Callisto, Titan, and Triton
 now use distinct audited browse mosaics and restrained opaque URP materials.
@@ -516,6 +536,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.23.0 | 2026-07-25 | Added Triton's distinct airless hero treatment with anchored synthesized-color USGS/Voyager imagery, a disclosed uniform fill for unobserved black coverage, source-derived non-displacing detail only on observed pixels, corrected outer-system light culling, and explicit atmosphere/activity limits | Triton hero slice implemented and visually validated |
 | 0.22.0 | 2026-07-25 | Added distinct Ganymede and Callisto airless hero treatments with anchored byte-identical USGS mosaics, restrained reconstructed color, source-derived non-displacing relief, mixed-versus-ancient surface separation, and explicit magnetic-field, ocean, atmosphere, coverage, and elevation limits | Ganymede and Callisto hero slice implemented and visually validated |
 | 0.21.0 | 2026-07-25 | Added distinct Io and Europa airless hero treatments with anchored byte-identical USGS mosaics, restrained reconstructed color, source-derived non-displacing relief, dry-versus-icy PBR separation, and explicit activity/ocean/coverage limits | Io and Europa hero slice implemented and visually validated |
 | 0.20.0 | 2026-07-25 | Added Titan's haze-dominant project-owned surface/shell treatment, anchored and subdued USGS source use, live-Sun day/night response, deterministic low-amplitude presentation motion, bounded overdraw, and explicit image/atmosphere limitations | Titan hero slice implemented and visually validated |

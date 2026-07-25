@@ -42,6 +42,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _CoverageFallbackStrength: 0
+    - _CoverageThreshold: 0
     - _Cutoff: 0.5
     - _NightsideReadability: 0.018
     - _ReliefSampleDistance: 1.25
@@ -50,5 +52,6 @@ Material:
     - _Specular: 0.016
     m_Colors:
     - _BaseColor: {r: 1, g: 0.84, b: 0.48, a: 1}
+    - _CoverageFallbackColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

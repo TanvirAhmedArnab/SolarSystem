@@ -9,6 +9,9 @@ Shader "SolarSystem/Celestial/Rocky Surface"
         _Specular("Specular", Range(0, 1)) = 0.025
         _Smoothness("Smoothness", Range(0, 1)) = 0.1
         _NightsideReadability("Nightside Readability", Range(0, 0.1)) = 0.018
+        _CoverageFallbackColor("Unobserved Coverage Fill", Color) = (0, 0, 0, 1)
+        _CoverageFallbackStrength("Unobserved Coverage Fill Strength", Range(0, 1)) = 0
+        _CoverageThreshold("Unobserved Coverage Threshold", Range(0, 0.1)) = 0
         [HideInInspector] _Cutoff("Cutoff", Range(0, 1)) = 0.5
     }
 
@@ -58,6 +61,9 @@ Shader "SolarSystem/Celestial/Rocky Surface"
                 half _Specular;
                 half _Smoothness;
                 half _NightsideReadability;
+                half4 _CoverageFallbackColor;
+                half _CoverageFallbackStrength;
+                half _CoverageThreshold;
             CBUFFER_END
 
             float4 _BaseMap_TexelSize;
@@ -123,6 +129,19 @@ Shader "SolarSystem/Celestial/Rocky Surface"
                     _BaseMap,
                     sampler_BaseMap,
                     input.uv).rgb;
+                half coverageMask = 0;
+                if (_CoverageFallbackStrength > 0.0001h)
+                {
+                    half threshold = max(_CoverageThreshold, 0.0001h);
+                    coverageMask = 1.0h - smoothstep(
+                        threshold * 0.5h,
+                        threshold,
+                        Luminance(anchored));
+                    anchored = lerp(
+                        anchored,
+                        _CoverageFallbackColor.rgb,
+                        coverageMask * _CoverageFallbackStrength);
+                }
                 half east = Luminance(SAMPLE_TEXTURE2D(
                     _BaseMap,
                     sampler_BaseMap,
@@ -139,9 +158,10 @@ Shader "SolarSystem/Celestial/Rocky Surface"
                     _BaseMap,
                     sampler_BaseMap,
                     input.uv - float2(0, sampleOffset.y)).rgb);
+                half observedCoverage = 1.0h - coverageMask;
                 half3 normalTS = normalize(half3(
-                    (west - east) * _ReliefStrength,
-                    (south - north) * _ReliefStrength,
+                    (west - east) * _ReliefStrength * observedCoverage,
+                    (south - north) * _ReliefStrength * observedCoverage,
                     1));
 
                 half3 normalWS = NormalizeNormalPerPixel(input.normalWS);

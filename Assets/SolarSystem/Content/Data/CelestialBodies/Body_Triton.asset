@@ -17,8 +17,8 @@ MonoBehaviour:
   category: 2
   parentId: neptune
   scientificSourceId: JPL_SATELLITE_PHYSICAL_PARAMETERS_AND_MEAN_ELEMENTS_J2000
-  educationalSummary: Neptune's largest moon, a captured icy world on a retrograde
-    orbit with active nitrogen geysers.
+  educationalSummary: Neptune's largest moon, a captured retrograde world where Voyager
+    2 observed nitrogen geyser activity in 1989.
   meanRadiusKm: 1352.6
   hasMass: 1
   massKg: 2.1402925550244972e+22
