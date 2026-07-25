@@ -1147,6 +1147,114 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator
+            SolarSystemScene_UsesDistinctAirlessMercuryAndMoonHeroes()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "mercury",
+                    out CelestialBodyView mercury),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "moon",
+                    out CelestialBodyView moon),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+
+            AirlessRockyVisualView mercuryVisual =
+                mercury.AirlessRockyVisualView;
+            AirlessRockyVisualView moonVisual = moon.AirlessRockyVisualView;
+            Assert.That(mercuryVisual, Is.Not.Null);
+            Assert.That(moonVisual, Is.Not.Null);
+            Assert.That(mercuryVisual.IsInitialized, Is.True);
+            Assert.That(moonVisual.IsInitialized, Is.True);
+            Assert.That(mercury.LayeredBodyView, Is.Null);
+            Assert.That(moon.LayeredBodyView, Is.Null);
+            Assert.That(mercury.GasGiantVisualView, Is.Null);
+            Assert.That(moon.GasGiantVisualView, Is.Null);
+            Assert.That(mercury.IceGiantVisualView, Is.Null);
+            Assert.That(moon.IceGiantVisualView, Is.Null);
+            Assert.That(mercury.Definition.ParentId, Is.EqualTo("sun"));
+            Assert.That(moon.Definition.ParentId, Is.EqualTo("earth"));
+            Assert.That(mercury.Definition.HasOrbit, Is.True);
+            Assert.That(moon.Definition.HasOrbit, Is.True);
+            Assert.That(
+                moon.Definition.Orbit.SemiMajorAxisKm,
+                Is.EqualTo(384400d).Within(0.001d));
+            Assert.That(
+                mercury.Definition.RotationPeriodSeconds,
+                Is.GreaterThan(0d));
+            Assert.That(
+                moon.Definition.RotationPeriodSeconds,
+                Is.GreaterThan(0d));
+            Assert.That(mercury.Definition.AxialTiltDeg, Is.EqualTo(2d));
+            Assert.That(moon.Definition.AxialTiltDeg, Is.EqualTo(6.68d));
+
+            Assert.That(
+                mercuryVisual.SurfaceRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Rocky Surface"));
+            Assert.That(
+                moonVisual.SurfaceRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Rocky Surface"));
+            Assert.That(
+                mercuryVisual.SurfaceRenderer.sharedMaterial,
+                Is.Not.SameAs(moonVisual.SurfaceRenderer.sharedMaterial));
+            Assert.That(
+                mercury.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(2439.4f / 6371.0084f).Within(0.0001f));
+            Assert.That(
+                moon.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(1737.4f / 6371.0084f).Within(0.0001f));
+
+            var properties = new MaterialPropertyBlock();
+            mercuryVisual.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_ReliefStrength")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .MercuryReliefStrength));
+            Assert.That(
+                properties.GetFloat(
+                    Shader.PropertyToID("_NightsideReadability")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .MercuryNightsideReadability));
+            moonVisual.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_ReliefStrength")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract.MoonReliefStrength));
+            Assert.That(
+                properties.GetFloat(
+                    Shader.PropertyToID("_NightsideReadability")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .MoonNightsideReadability));
+
+            Light radialLight =
+                GameObject.Find("Solar Radial Light")?.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            AssertReceivesSunOriginLight(radialLight, sun, mercury);
+            AssertReceivesSunOriginLight(radialLight, sun, moon);
+        }
+
+        [UnityTest]
         public IEnumerator SolarSystemScene_UsesDeterministicVenusCloudDeckAndLimb()
         {
             SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);

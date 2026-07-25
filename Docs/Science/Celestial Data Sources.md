@@ -84,6 +84,12 @@ Primary sources:
 - [JPL Planetary Satellite Physical Parameters](https://ssd.jpl.nasa.gov/sats/phys_par/)
 - [JPL Planetary Satellite Mean Elements](https://ssd.jpl.nasa.gov/sats/elem/sep.html)
 
+Presentation note: the Moon hero material preserves the values above and its
+Earth parent. Its source-luminance relief and small Sun-opposed readability
+floor are disclosed visual treatments, not a digital elevation model,
+topographic measurement, atmosphere, weather, emission, libration model, or
+date-specific lunar appearance.
+
 ## Jupiter
 
 **Source record ID:** `JPL_PLANETARY_PHYSICAL_AND_APPROX_POS_J2000_NASA_JUPITER_FACTS`
@@ -139,6 +145,11 @@ Primary sources:
 - [JPL Planetary Physical Parameters](https://ssd.jpl.nasa.gov/planets/phys_par.html)
 - [JPL Approximate Positions of the Planets](https://ssd.jpl.nasa.gov/planets/approx_pos.html)
 - [NASA Mercury Facts](https://science.nasa.gov/mercury/facts/)
+
+Presentation note: Mercury's hero material does not change any value above.
+Its source-luminance relief and small Sun-opposed readability floor are
+disclosed visual treatments, not a digital elevation model, topographic
+measurement, atmosphere, weather, emission, or date-specific surface claim.
 
 ## Venus
 

@@ -8,6 +8,7 @@ Shader "SolarSystem/Celestial/Rocky Surface"
         _ReliefSampleDistance("Relief Sample Distance", Range(0.5, 4)) = 1.5
         _Specular("Specular", Range(0, 1)) = 0.025
         _Smoothness("Smoothness", Range(0, 1)) = 0.1
+        _NightsideReadability("Nightside Readability", Range(0, 0.1)) = 0.018
         [HideInInspector] _Cutoff("Cutoff", Range(0, 1)) = 0.5
     }
 
@@ -56,9 +57,11 @@ Shader "SolarSystem/Celestial/Rocky Surface"
                 half _ReliefSampleDistance;
                 half _Specular;
                 half _Smoothness;
+                half _NightsideReadability;
             CBUFFER_END
 
             float4 _BaseMap_TexelSize;
+            float4 _SolarSystemSunPositionWS;
 
             struct Attributes
             {
@@ -179,6 +182,14 @@ Shader "SolarSystem/Celestial/Rocky Surface"
                 inputData.tangentToWorld = tangentToWorld;
 
                 half4 color = UniversalFragmentPBR(inputData, surfaceData);
+                half3 sunDirectionWS = normalize(
+                    _SolarSystemSunPositionWS.xyz - input.positionWS);
+                half sunFacing = dot(normalWS, sunDirectionWS);
+                half nightsideWeight =
+                    1.0h - smoothstep(-0.12h, 0.08h, sunFacing);
+                color.rgb +=
+                    surfaceData.albedo *
+                    (_NightsideReadability * nightsideWeight);
                 color.rgb = MixFog(color.rgb, input.fogFactor);
                 color.a = 1;
                 return color;

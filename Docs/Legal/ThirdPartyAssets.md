@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.10.0  
+**Version:** 0.11.0  
 **Last reviewed:** 2026-07-24
 
 **Live-source verification:** Rechecked 2026-07-22 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records.
@@ -232,6 +232,36 @@ extension, atmosphere materials, tests, and reproducible scene wiring are
 project-authored. They add no third-party media or license and do not change
 the existing CC BY 4.0 attribution obligations for `TEX-SSS-014` or
 `TEX-SSS-015`.
+
+### Active Mercury and Moon airless-rocky hero-rendering records
+
+- Mercury source ID: `TEX-SSS-001`.
+- Mercury source:
+  `SourceAssets/ThirdParty/Textures/SolarSystemScope/2k_mercury.jpg`.
+- Mercury Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Mercury/T_Mercury_Surface_2K.jpg`.
+- Mercury active material: `M_Mercury.mat`.
+- Mercury source and derivative SHA-256:
+  `5A5C80607F643496BAC9A631E71957DEF35ED788895F18B678AC849C2B38E48A`.
+- Moon source ID: `TEX-SSS-016`.
+- Moon source:
+  `SourceAssets/ThirdParty/Textures/SolarSystemScope/2k_moon.jpg`.
+- Moon Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Moon/T_Moon_Surface_2K.jpg`.
+- Moon active material: `M_Moon.mat`.
+- Moon source and derivative SHA-256:
+  `2764BA6535EA0481A062846EE033CC7A909DAE05B31A8FD13F3E98F3A7FD92BD`.
+- License: Solar System Scope, CC BY 4.0; release attribution remains required.
+- Modification status: both source and derivative hashes match. Texture pixels
+  are unchanged. The project-authored rocky shader applies reviewed tints,
+  estimates restrained relief from neighboring source luminance, uses
+  body-specific dry PBR values, and applies a small live-Sun nightside
+  readability mask without adding another media source.
+
+The airless-rocky definition/model/view architecture, shader extension, tests,
+and reproducible scene wiring are project-authored. They add no third-party
+media or license and do not change the CC BY 4.0 attribution obligations for
+`TEX-SSS-001` or `TEX-SSS-016`.
 
 ### Active eight-planet material records
 

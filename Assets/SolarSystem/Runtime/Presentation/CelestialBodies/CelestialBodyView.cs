@@ -17,6 +17,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         [SerializeField] private SolarVisualView solarVisualView;
         [SerializeField] private GasGiantVisualView gasGiantVisualView;
         [SerializeField] private IceGiantVisualView iceGiantVisualView;
+        [SerializeField] private AirlessRockyVisualView airlessRockyVisualView;
 
         private CelestialBodyModel model;
         private float currentDisplayRadius;
@@ -47,6 +48,10 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Gets the optional deterministic ice-giant presentation adapter.</summary>
         public IceGiantVisualView IceGiantVisualView => iceGiantVisualView;
+
+        /// <summary>Gets the optional airless rocky-body presentation adapter.</summary>
+        public AirlessRockyVisualView AirlessRockyVisualView =>
+            airlessRockyVisualView;
 
         /// <summary>Initializes the view against its immutable runtime model.</summary>
         public void Initialize(CelestialBodyModel runtimeModel)
@@ -82,6 +87,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             solarVisualView?.Initialize(runtimeModel);
             gasGiantVisualView?.Initialize(runtimeModel);
             iceGiantVisualView?.Initialize(runtimeModel);
+            airlessRockyVisualView?.Initialize(runtimeModel);
         }
 
         /// <summary>Applies one projected snapshot to the transform hierarchy.</summary>

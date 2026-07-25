@@ -18,6 +18,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         /// <summary>Dry rocky-surface smoothness.</summary>
         public const float SurfaceSmoothness = 0.1f;
 
+        /// <summary>Anchored surface-color visibility on Mars's unlit hemisphere.</summary>
+        public const float SurfaceNightsideReadability = 0.018f;
+
         /// <summary>Narrow atmospheric-limb falloff power.</summary>
         public const float AtmosphereRimPower = 5.2f;
 

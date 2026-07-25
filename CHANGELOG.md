@@ -119,6 +119,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   coverage for exact proportional radii, source identity, shell hierarchy,
   axial tilts, retrograde/prograde direction, pause, focus, Sun-origin
   lighting, renderer policy, and state preservation.
+- Reusable immutable airless-rocky authoring, runtime model, and cached
+  property-block view for Mercury and Earth's Moon.
+- Distinct anchored Mercury and Moon materials using the shared project-owned
+  rocky shader, body-specific restrained source-derived relief, dry PBR
+  response, and bounded live-Sun nightside readability.
+- Edit Mode airless-rocky model/material/import contracts and real-scene Play
+  Mode coverage for exact Earth-relative radii, Sun/Earth parent identities,
+  Moon orbital baseline, tilt and rotation signs, no-atmosphere composition,
+  Sun-origin lighting, renderer policy, and source identity.
 
 ### Changed
 
@@ -180,6 +189,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   ice giants without changing established shader asset GUIDs.
 - Suppressed cached orbit guides only during close camera focus and restored
   them in free flight so overview geometry cannot obscure hero views.
+- Replaced the generic Lit Mercury and Moon materials with distinct reusable
+  airless-rocky hero treatments while preserving byte-identical approved
+  textures and all authoritative scientific transform state.
+- Extended the rocky-surface shader with a bounded live-Sun nightside
+  readability mask and applied the same explicit property to Mars without
+  changing its atmosphere-only composition.
 - Paused simulation and temporarily locked selection, time, and navigation
   commands during the guided scale comparison, restoring their exact prior
   state when the sequence finishes or is cancelled.

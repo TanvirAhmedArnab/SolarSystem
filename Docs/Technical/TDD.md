@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Earth, Sun, Jupiter, Saturn, Venus, Mars, Uranus, and Neptune hero representative slices validated  
-**Version:** 0.21.0  
+**Document status:** Living technical authority; Earth, Sun, eight-planet, and Earth-Moon hero representative slices validated  
+**Version:** 0.22.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -47,6 +47,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.19.0 | 2026-07-24 | Codex, for Tanvir | Extended the reusable layered-body path to Venus, corrected layer motion to absolute signed simulation time, and added an opaque anchored cloud deck with bounded atmosphere transparency and complete asset/scene regression coverage | Venus atmosphere architecture implemented and validated |
 | 0.20.0 | 2026-07-24 | Codex, for Tanvir | Generalized the layered-body path to explicit atmosphere-only composition and added an anchored rocky-surface shader, thin Mars limb, reproducible assets/scene wiring, and complete regression coverage | Mars hero architecture implemented and validated |
 | 0.21.0 | 2026-07-24 | Codex, for Tanvir | Added reusable ice-giant authoring/model/view architecture, generalized the giant-planet shader identity, distinct Uranus/Neptune material contracts, Sun-aware nightside readability, reproducible scene wiring, and complete regression coverage | Uranus and Neptune hero architecture implemented and validated |
+| 0.22.0 | 2026-07-24 | Codex, for Tanvir | Added reusable airless-rocky authoring/model/view architecture, distinct Mercury/Moon material contracts, live-Sun nightside readability in the shared rocky shader, reproducible scene wiring, and complete regression coverage | Mercury and Moon hero architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -800,6 +801,26 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   All four giant-planet surfaces and shells cast no shadows and use no light
   or reflection probes; only the atmosphere shells add bounded transparent
   overdraw.
+- `AirlessRockyVisualDefinition` stores the stable body identity and reviewed
+  relief, sampling, specular, smoothness, and nightside-readability values.
+  Startup converts it to immutable validated `AirlessRockyVisualModel` state.
+  `AirlessRockyVisualView` verifies stable-ID ownership and applies the values
+  through one cached `MaterialPropertyBlock`; it creates no material instances
+  and performs no steady-state updates.
+- Mercury and the Moon share the project-owned `Rocky Surface` shader with
+  Mars while owning distinct definitions and materials. The shader keeps each
+  approved texture anchored, estimates shallow tangent-space relief from four
+  neighboring source-luminance samples, uses dry non-metallic PBR response,
+  and adds only a bounded source-color floor on the Sun-opposed hemisphere.
+  Mercury uses relief `0.24`, sample distance `1.25`, specular `0.018`,
+  smoothness `0.07`, and nightside readability `0.018`. The Moon uses relief
+  `0.34`, sample distance `1.5`, specular `0.015`, smoothness `0.055`, and
+  nightside readability `0.022`.
+- The Mercury/Moon adapter adds no child render shell. Mercury remains parented
+  to the Sun; the Moon remains parented to Earth with its authored `384,400 km`
+  semimajor axis. Exact mean-radius projection, analytical orbit composition,
+  axial tilt, and signed rotation remain owned by the existing simulation and
+  `CelestialBodyView`.
 - `CelestialOrbitPathVisibilityController` suppresses cached overview paths
   during `FocusTransition` and `Focused`, then restores them in free flight.
   It changes renderer visibility only; geometry, scale-mode data, and
@@ -857,6 +878,9 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Venus layered-body conversion, finite shell parameters, absolute-time signed
   phase, anchored texture and opaque-depth contracts, atmosphere transparency,
   import policy, and exact shell scales.
+- Airless-rocky immutable conversion, finite PBR/readability ranges, stable-ID
+  matching, cached property-block application, renderer policy, distinct
+  anchored Mercury/Moon sources, and no-shell scene composition.
 
 ### 12.3 Play Mode tests
 
@@ -882,6 +906,10 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - The real scene validates Venus's surface/cloud/atmosphere hierarchy, exact
   proportional radius, retrograde absolute-time layer motion, pause freeze,
   live-Sun response, close focus, renderer policy, and preserved state.
+- The real scene validates distinct Mercury/Moon airless adapters, exact
+  Earth-relative radii, Sun/Earth parent identities, Moon semimajor axis,
+  source rotation signs and axial tilts, anchored rocky materials, absence of
+  invented atmosphere layers, property-block contracts, and Sun-origin light.
 
 ### 12.4 Manual validation
 
@@ -1060,7 +1088,15 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   tilts, and signed rotations remain authoritative.
 - Ice-giant evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Ice Giant Hero Rendering Validation.md`.
-- The broader proposed moon set, final Mercury/Moon hero fidelity,
+- **[IMPLEMENTED REPRESENTATIVE SLICE]** Mercury and Earth's Moon now use
+  reusable immutable airless-rocky authoring/model/view components, distinct
+  anchored materials, body-specific restrained relief and dry PBR response,
+  and controlled live-Sun nightside readability without atmosphere shells.
+  Their exact radii, parent-relative orbits, axial tilts, and signed rotations
+  remain authoritative.
+- Airless rocky-body evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Airless Rocky Hero Rendering Validation.md`.
+- The broader proposed moon set,
   particle-scale ring simulation, labels/navigation, player-facing audio
   settings, final audio mix approval, and accessibility options remain Slice 4
   work.
@@ -1129,6 +1165,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-020 | 2026-07-24 | Reuse the layered-body contract for Venus, anchor an opaque source cloud deck above the hidden surface, derive retrograde shell motion from absolute signed simulation time, and bound transparency to one restrained atmosphere rim | Implemented candidate | Tanvir | Recognizable cloud-covered Venus without false surface exposure, wrapped-angle discontinuities, duplicated adapters, or unbounded overdraw |
 | TDD-021 | 2026-07-24 | Extend the layered-body contract with explicit atmosphere-only composition, prove it on Mars with an anchored source-derived rocky surface and one thin Sun-aware limb, and retain exact scientific transform state | Implemented candidate | Tanvir | Reuses the validated composition boundary without inventing a Mars cloud layer or introducing a one-body runtime adapter |
 | TDD-022 | 2026-07-24 | Use a dedicated immutable ice-giant definition/model/view path for Uranus and Neptune while sharing scientifically neutral giant-planet shaders; preserve anchored sources and signed rotation, and limit nightside fill and moving detail to disclosed presentation values | Implemented candidate | Tanvir | Distinct reusable ice-giant semantics without duplicating shaders, changing scientific state, or claiming wind/fluid simulation |
+| TDD-023 | 2026-07-24 | Use one immutable airless-rocky definition/model/view path for Mercury and the Moon; share the anchored rocky shader with Mars, apply body-specific source-derived relief and dry PBR values through cached property blocks, preserve exact parent-relative scientific state, and create no atmosphere shell | Implemented candidate | Tanvir | Distinct close-focus rocky identity without duplicated shaders, invented atmospheric layers, animated terrain, material instances, or elevation-model claims |
 
 ## 19. Definition of Done for TDD Version 1.0
 

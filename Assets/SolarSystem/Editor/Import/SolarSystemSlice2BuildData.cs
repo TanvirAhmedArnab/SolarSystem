@@ -32,6 +32,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal Material UranusAtmosphereMaterial { get; set; }
         internal IceGiantVisualDefinition NeptuneVisualDefinition { get; set; }
         internal Material NeptuneAtmosphereMaterial { get; set; }
+        internal AirlessRockyVisualDefinition MercuryVisualDefinition { get; set; }
+        internal AirlessRockyVisualDefinition MoonVisualDefinition { get; set; }
         internal Material OrbitMaterial { get; set; }
         internal Material SkyboxMaterial { get; set; }
         internal VolumeProfile VisualProfile { get; set; }

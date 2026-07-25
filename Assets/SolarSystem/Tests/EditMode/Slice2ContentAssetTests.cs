@@ -121,7 +121,10 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 Is.EqualTo(374355659.124d).Within(0.001d));
         }
 
-        [TestCase("Mercury", "T_Mercury_Surface_2K.jpg", 0.08f)]
+        [TestCase(
+            "Mercury",
+            "T_Mercury_Surface_2K.jpg",
+            AirlessRockyVisualRenderingContract.MercurySurfaceSmoothness)]
         [TestCase("Venus", "T_Venus_Surface_2K.jpg", 0.24f)]
         [TestCase("Mars", "T_Mars_Surface_2K.jpg", 0.1f)]
         [TestCase("Jupiter", "T_Jupiter_Surface_2K.jpg", 0.18f)]

@@ -36,6 +36,10 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialTextureRoot + "/Venus/T_Venus_Atmosphere_2K.jpg";
         private const string MarsTexturePath =
             CelestialTextureRoot + "/Mars/T_Mars_Surface_2K.jpg";
+        private const string MercuryTexturePath =
+            CelestialTextureRoot + "/Mercury/T_Mercury_Surface_2K.jpg";
+        private const string MoonTexturePath =
+            CelestialTextureRoot + "/Moon/T_Moon_Surface_2K.jpg";
         private const string SaturnTexturePath =
             CelestialTextureRoot + "/Saturn/T_Saturn_Surface_2K.jpg";
         private const string UranusTexturePath =
@@ -398,6 +402,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 UranusAtmosphereMaterial = CreateUranusAtmosphereMaterial(),
                 NeptuneVisualDefinition = CreateNeptuneVisualDefinition(),
                 NeptuneAtmosphereMaterial = CreateNeptuneAtmosphereMaterial(),
+                MercuryVisualDefinition = CreateMercuryVisualDefinition(),
+                MoonVisualDefinition = CreateMoonVisualDefinition(),
                 OrbitMaterial = orbitMaterial,
                 SkyboxMaterial = skyboxMaterial,
                 VisualProfile = visualProfile,
@@ -584,6 +590,24 @@ namespace Tanvir.SolarSystem.Editor.Import
                     RockySurfaceShader);
                 ConfigureMarsSurfaceMaterial(marsMaterial);
                 return marsMaterial;
+            }
+
+            if (bodyName == "Mercury")
+            {
+                Material mercuryMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Mercury.mat",
+                    RockySurfaceShader);
+                ConfigureMercurySurfaceMaterial(mercuryMaterial);
+                return mercuryMaterial;
+            }
+
+            if (bodyName == "Moon")
+            {
+                Material moonMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Moon.mat",
+                    RockySurfaceShader);
+                ConfigureMoonSurfaceMaterial(moonMaterial);
+                return moonMaterial;
             }
 
             if (bodyName == "Saturn")
@@ -825,8 +849,120 @@ namespace Tanvir.SolarSystem.Editor.Import
             material.SetFloat(
                 "_Smoothness",
                 MarsLayerRenderingContract.SurfaceSmoothness);
+            material.SetFloat(
+                "_NightsideReadability",
+                MarsLayerRenderingContract.SurfaceNightsideReadability);
             material.enableInstancing = true;
             EditorUtility.SetDirty(material);
+        }
+
+        private static void ConfigureMercurySurfaceMaterial(Material material)
+        {
+            ConfigureAirlessRockySurfaceMaterial(
+                material,
+                MercuryTexturePath,
+                MercuryTint,
+                AirlessRockyVisualRenderingContract.MercuryReliefStrength,
+                AirlessRockyVisualRenderingContract.MercuryReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.MercurySurfaceSpecular,
+                AirlessRockyVisualRenderingContract.MercurySurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.MercuryNightsideReadability);
+        }
+
+        private static void ConfigureMoonSurfaceMaterial(Material material)
+        {
+            ConfigureAirlessRockySurfaceMaterial(
+                material,
+                MoonTexturePath,
+                MoonTint,
+                AirlessRockyVisualRenderingContract.MoonReliefStrength,
+                AirlessRockyVisualRenderingContract.MoonReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.MoonSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.MoonSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.MoonNightsideReadability);
+        }
+
+        private static void ConfigureAirlessRockySurfaceMaterial(
+            Material material,
+            string texturePath,
+            Color tint,
+            float reliefStrength,
+            float reliefSampleDistance,
+            float surfaceSpecular,
+            float surfaceSmoothness,
+            float nightsideReadability)
+        {
+            material.SetTexture(
+                "_BaseMap",
+                LoadRequiredAsset<Texture2D>(texturePath));
+            material.SetColor("_BaseColor", tint);
+            material.SetFloat("_ReliefStrength", reliefStrength);
+            material.SetFloat(
+                "_ReliefSampleDistance",
+                reliefSampleDistance);
+            material.SetFloat("_Specular", surfaceSpecular);
+            material.SetFloat("_Smoothness", surfaceSmoothness);
+            material.SetFloat(
+                "_NightsideReadability",
+                nightsideReadability);
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+        }
+
+        private static AirlessRockyVisualDefinition
+            CreateMercuryVisualDefinition()
+        {
+            return CreateAirlessRockyVisualDefinition(
+                "Mercury",
+                "mercury",
+                AirlessRockyVisualRenderingContract.MercuryReliefStrength,
+                AirlessRockyVisualRenderingContract.MercuryReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.MercurySurfaceSpecular,
+                AirlessRockyVisualRenderingContract.MercurySurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.MercuryNightsideReadability);
+        }
+
+        private static AirlessRockyVisualDefinition CreateMoonVisualDefinition()
+        {
+            return CreateAirlessRockyVisualDefinition(
+                "Moon",
+                "moon",
+                AirlessRockyVisualRenderingContract.MoonReliefStrength,
+                AirlessRockyVisualRenderingContract.MoonReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.MoonSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.MoonSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.MoonNightsideReadability);
+        }
+
+        private static AirlessRockyVisualDefinition
+            CreateAirlessRockyVisualDefinition(
+                string displayName,
+                string stableId,
+                float reliefStrength,
+                float reliefSampleDistance,
+                float surfaceSpecular,
+                float surfaceSmoothness,
+                float nightsideReadability)
+        {
+            string path =
+                $"{DataRoot}/VisualLayers/VisualLayers_{displayName}.asset";
+            AirlessRockyVisualDefinition definition =
+                CreateOrLoad<AirlessRockyVisualDefinition>(path);
+            var serialized = new SerializedObject(definition);
+            serialized.FindProperty("bodyStableId").stringValue = stableId;
+            serialized.FindProperty("reliefStrength").floatValue =
+                reliefStrength;
+            serialized.FindProperty("reliefSampleDistance").floatValue =
+                reliefSampleDistance;
+            serialized.FindProperty("surfaceSpecular").floatValue =
+                surfaceSpecular;
+            serialized.FindProperty("surfaceSmoothness").floatValue =
+                surfaceSmoothness;
+            serialized.FindProperty("nightsideReadability").floatValue =
+                nightsideReadability;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+            return definition;
         }
 
         private static void ConfigureJupiterSurfaceMaterial(Material material)

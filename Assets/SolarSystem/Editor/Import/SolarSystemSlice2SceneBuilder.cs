@@ -29,7 +29,9 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string SolarRadialLightName = "Solar Radial Light";
         private const string LegacySolarKeyLightName = "Sun Key Light";
         private const string SunStableId = "sun";
+        private const string MercuryStableId = "mercury";
         private const string EarthStableId = "earth";
+        private const string MoonStableId = "moon";
         private const string VenusStableId = "venus";
         private const string MarsStableId = "mars";
         private const string JupiterStableId = "jupiter";
@@ -68,7 +70,9 @@ namespace Tanvir.SolarSystem.Editor.Import
             var bodyViews = new List<CelestialBodyView>(content.Bodies.Length);
             var orbitPaths = new List<CelestialOrbitPathView>(content.Bodies.Length - 1);
             CelestialBodyView sunView = null;
+            CelestialBodyView mercuryView = null;
             CelestialBodyView earthView = null;
+            CelestialBodyView moonView = null;
             CelestialBodyView venusView = null;
             CelestialBodyView marsView = null;
             CelestialBodyView jupiterView = null;
@@ -89,9 +93,17 @@ namespace Tanvir.SolarSystem.Editor.Import
                 {
                     sunView = view;
                 }
+                else if (body.Definition.StableId == MercuryStableId)
+                {
+                    mercuryView = view;
+                }
                 else if (body.Definition.StableId == EarthStableId)
                 {
                     earthView = view;
+                }
+                else if (body.Definition.StableId == MoonStableId)
+                {
+                    moonView = view;
                 }
                 else if (body.Definition.StableId == VenusStableId)
                 {
@@ -139,6 +151,16 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Earth.");
             }
 
+            if (mercuryView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Mercury.");
+            }
+
+            if (moonView == null)
+            {
+                throw new InvalidOperationException("The authored content requires the Moon.");
+            }
+
             if (venusView == null)
             {
                 throw new InvalidOperationException("The authored content requires Venus.");
@@ -170,6 +192,14 @@ namespace Tanvir.SolarSystem.Editor.Import
             }
 
             CreateSunVisual(sunView, content);
+            CreateAirlessRockyVisual(
+                mercuryView,
+                content.MercuryVisualDefinition,
+                "Mercury");
+            CreateAirlessRockyVisual(
+                moonView,
+                content.MoonVisualDefinition,
+                "Moon");
             CreateLayeredBodyVisual(
                 earthView,
                 content.EarthLayerDefinition,
@@ -429,6 +459,40 @@ namespace Tanvir.SolarSystem.Editor.Import
             var serializedBody = new SerializedObject(body);
             serializedBody.FindProperty("layeredBodyView").objectReferenceValue =
                 layeredView;
+            serializedBody.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void CreateAirlessRockyVisual(
+            CelestialBodyView body,
+            AirlessRockyVisualDefinition definition,
+            string displayName)
+        {
+            if (definition == null)
+            {
+                throw new InvalidOperationException(
+                    $"{displayName} airless rocky presentation is incomplete.");
+            }
+
+            MeshRenderer surfaceRenderer =
+                body.VisualRoot.GetComponent<MeshRenderer>();
+            if (surfaceRenderer == null)
+            {
+                throw new InvalidOperationException(
+                    $"{displayName} requires a physical surface renderer.");
+            }
+
+            AirlessRockyVisualView rockyView =
+                body.gameObject.AddComponent<AirlessRockyVisualView>();
+            var serializedRocky = new SerializedObject(rockyView);
+            serializedRocky.FindProperty("definition").objectReferenceValue =
+                definition;
+            serializedRocky.FindProperty("surfaceRenderer").objectReferenceValue =
+                surfaceRenderer;
+            serializedRocky.ApplyModifiedPropertiesWithoutUndo();
+
+            var serializedBody = new SerializedObject(body);
+            serializedBody.FindProperty("airlessRockyVisualView").objectReferenceValue =
+                rockyView;
             serializedBody.ApplyModifiedPropertiesWithoutUndo();
         }
 

@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, Earth, Sun, Jupiter, Saturn, Venus, Mars, Uranus, and Neptune hero foundations  
-**Version:** 0.17.0  
+**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, and Earth-Moon hero foundations  
+**Version:** 0.18.0  
 **Last updated:** 2026-07-24  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -121,7 +121,14 @@ this slice.
 ### Mercury
 Neutral gray-brown, high roughness, restrained normals, no metallic response.
 
-The baseline uses the audited 2K surface map with `0.08` smoothness.
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Mercury keeps the audited Solar System
+Scope 2K source anchored and byte-identical. Four neighboring luminance samples
+provide restrained crater relief at strength `0.24` and sample distance
+`1.25`; the center sample remains the color authority. The dry non-metallic
+surface uses `0.018` specular, `0.07` smoothness, and a `0.018` source-color
+readability floor restricted to the Sun-opposed hemisphere. It has no
+atmosphere shell, clouds, weather, emission, animated terrain, or claim of
+scientific elevation accuracy.
 
 ### Venus
 Separate surface and atmosphere/cloud spheres. Warm cream and sulfur yellow, not emissive orange. Cloud motion is slow and independent.
@@ -164,7 +171,14 @@ while the camera is in close focus so they cannot obscure the layered material,
 then restored in free flight.
 
 ### Moon
-Use Solar System Scope 2K initially. NASA CGI Moon Kit is the upgrade candidate if hero shots justify it. Keep saturation and normal intensity low.
+**[IMPLEMENTED REPRESENTATIVE SLICE]** The Moon uses the audited Solar System
+Scope 2K map as its distinct anchored source. Its airless-regolith treatment
+uses restrained source-derived relief `0.34`, sample distance `1.5`, specular
+`0.015`, smoothness `0.055`, and nightside readability `0.022`. Live review
+retains recognizable maria, crater structure, low saturation, a clear
+Sun-driven terminator, and no atmospheric halo. NASA CGI Moon Kit remains only
+an evidence-gated upgrade if an approved release shot demonstrates a material
+2K limitation.
 
 ### Mars
 Restrained rust, ochre, and basalt. Preserve polar contrast without clipping.
@@ -410,17 +424,18 @@ An asset is ready only when:
 
 1. **[OPEN] Font family:** decide after UI wireframes and license review.
 2. **[OPEN] Icon family:** project-authored or compatible open-license set.
-3. **[OPEN] Moon upgrades:** identify browse maps needing higher resolution after hero shots.
+3. **[OPEN] Moon upgrade:** compare the current validated 2K focus shot against
+   the NASA CGI Moon Kit only if release capture reveals a visible limitation.
 4. **[OPEN] Remaining shader fidelity:** profile the validated Earth, Sun,
-   Jupiter, Saturn, Venus, Mars, Uranus, and Neptune patterns, then prioritize
-   Mercury and Moon
-   against release screenshots and measured screen-space need.
+   eight-planet, and Earth-Moon patterns against release screenshots and
+   measured screen-space need; add no unique shader without evidence.
 5. **[OPEN] Audio mix:** approve music, Sun, Earth, and UI loudness after in-scene audition.
 
 ## Revision History
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.18.0 | 2026-07-24 | Added distinct anchored Mercury/Moon airless-rocky treatments, body-specific restrained source-derived relief and dry PBR values, live-Sun nightside readability, no-atmosphere guarantees, and explicit elevation-model limits | Airless rocky hero slice implemented and visually validated |
 | 0.17.0 | 2026-07-24 | Added distinct anchored Uranus/Neptune treatments, restrained source-derived detail, signed deterministic presentation motion, thin Sun-aware limbs, controlled nightside readability, and explicit non-fluid-simulation limits | Ice-giant hero slice implemented and visually validated |
 | 0.16.0 | 2026-07-24 | Added Mars's anchored rocky surface, restrained source-derived relief, atmosphere-only layered composition, thin Sun-aware limb, and explicit color/atmosphere limitations | Mars hero slice implemented and visually validated |
 | 0.15.0 | 2026-07-24 | Added Venus's anchored opaque cloud deck, deterministic retrograde cloud presentation, restrained Sun-aware limb, bounded transparency, and explicit scientific limitations | Venus atmosphere slice implemented and visually validated |

@@ -76,6 +76,18 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Mars_Atmosphere.mat";
         private const string MarsLayerDefinitionPath =
             "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Mars.asset";
+        private const string MercuryTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Mercury/T_Mercury_Surface_2K.jpg";
+        private const string MercuryMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Mercury.mat";
+        private const string MercuryVisualDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Mercury.asset";
+        private const string MoonTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Moon/T_Moon_Surface_2K.jpg";
+        private const string MoonMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Moon.mat";
+        private const string MoonVisualDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Moon.asset";
         private const string EarthMaterialPath =
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Earth.mat";
         private const string EarthNormalPath =
@@ -575,6 +587,100 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 Is.EqualTo(MarsLayerRenderingContract.AtmosphereShellRadiusMultiplier)
                     .Within(0.0001f));
             Assert.That(importer, Is.Not.Null);
+            Assert.That(importer.sRGBTexture, Is.True);
+            Assert.That(importer.mipmapEnabled, Is.True);
+            Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Repeat));
+        }
+
+        [Test]
+        public void AirlessRockyMaterials_UseDistinctAnchoredSourcesAndContracts()
+        {
+            AssertAirlessRockyMaterial(
+                "mercury",
+                MercuryTexturePath,
+                MercuryMaterialPath,
+                MercuryVisualDefinitionPath,
+                AirlessRockyVisualRenderingContract.MercuryReliefStrength,
+                AirlessRockyVisualRenderingContract.MercuryReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.MercurySurfaceSpecular,
+                AirlessRockyVisualRenderingContract.MercurySurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.MercuryNightsideReadability);
+            AssertAirlessRockyMaterial(
+                "moon",
+                MoonTexturePath,
+                MoonMaterialPath,
+                MoonVisualDefinitionPath,
+                AirlessRockyVisualRenderingContract.MoonReliefStrength,
+                AirlessRockyVisualRenderingContract.MoonReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.MoonSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.MoonSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.MoonNightsideReadability);
+        }
+
+        private static void AssertAirlessRockyMaterial(
+            string stableId,
+            string texturePath,
+            string materialPath,
+            string definitionPath,
+            float reliefStrength,
+            float reliefSampleDistance,
+            float surfaceSpecular,
+            float surfaceSmoothness,
+            float nightsideReadability)
+        {
+            Texture2D texture =
+                AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+            Material material =
+                AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+            AirlessRockyVisualDefinition definition =
+                AssetDatabase.LoadAssetAtPath<AirlessRockyVisualDefinition>(
+                    definitionPath);
+            var importer =
+                AssetImporter.GetAtPath(texturePath) as TextureImporter;
+
+            Assert.That(texture, Is.Not.Null, stableId);
+            Assert.That(material, Is.Not.Null, stableId);
+            Assert.That(
+                material.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Rocky Surface"),
+                stableId);
+            Assert.That(material.GetTexture("_BaseMap"), Is.SameAs(texture));
+            Assert.That(
+                material.GetFloat("_ReliefStrength"),
+                Is.EqualTo(reliefStrength).Within(0.0001f));
+            Assert.That(
+                material.GetFloat("_ReliefSampleDistance"),
+                Is.EqualTo(reliefSampleDistance).Within(0.0001f));
+            Assert.That(
+                material.GetFloat("_Specular"),
+                Is.EqualTo(surfaceSpecular).Within(0.0001f));
+            Assert.That(
+                material.GetFloat("_Smoothness"),
+                Is.EqualTo(surfaceSmoothness).Within(0.0001f));
+            Assert.That(
+                material.GetFloat("_NightsideReadability"),
+                Is.EqualTo(nightsideReadability).Within(0.0001f));
+            Assert.That(material.enableInstancing, Is.True);
+
+            Assert.That(definition, Is.Not.Null, stableId);
+            Assert.That(definition.BodyStableId, Is.EqualTo(stableId));
+            Assert.That(
+                definition.ReliefStrength,
+                Is.EqualTo(reliefStrength).Within(0.0001f));
+            Assert.That(
+                definition.ReliefSampleDistance,
+                Is.EqualTo(reliefSampleDistance).Within(0.0001f));
+            Assert.That(
+                definition.SurfaceSpecular,
+                Is.EqualTo(surfaceSpecular).Within(0.0001f));
+            Assert.That(
+                definition.SurfaceSmoothness,
+                Is.EqualTo(surfaceSmoothness).Within(0.0001f));
+            Assert.That(
+                definition.NightsideReadability,
+                Is.EqualTo(nightsideReadability).Within(0.0001f));
+
+            Assert.That(importer, Is.Not.Null, stableId);
             Assert.That(importer.sRGBTexture, Is.True);
             Assert.That(importer.mipmapEnabled, Is.True);
             Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Repeat));

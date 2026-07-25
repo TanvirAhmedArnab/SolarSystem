@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.16.0  
+**Version:** 0.17.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -43,6 +43,7 @@
 | 0.14.0 | 2026-07-24 | Codex, for Tanvir | Implemented a cloud-covered Venus hero treatment with warm source-grounded identity, deterministic retrograde cloud presentation, a restrained Sun-aware limb, and explicit atmospheric-simulation limits | Product behavior implemented and validated |
 | 0.15.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Mars hero treatment with anchored source identity, restrained source-derived rocky relief, a thin Sun-aware atmospheric limb, and explicit color and atmosphere limitations | Product behavior implemented and validated |
 | 0.16.0 | 2026-07-24 | Codex, for Tanvir | Implemented distinct Uranus and Neptune hero treatments with anchored source identity, restrained Sun-aware limbs, deterministic signed presentation detail, nightside readability, and explicit non-fluid-simulation limits | Product behavior implemented and validated |
+| 0.17.0 | 2026-07-24 | Codex, for Tanvir | Implemented distinct Mercury and Moon airless-rocky hero treatments with anchored source identity, restrained source-derived relief, dry PBR response, Sun-aware nightside readability, and explicit no-atmosphere limits | Product behavior implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -456,6 +457,16 @@ bounded presentation treatment tied to signed rotation, not a model or claim
 of measured winds, fluid dynamics, atmospheric chemistry, exact scattering,
 or date-specific appearance.
 
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Mercury and Earth's Moon now use one
+reusable airless-rocky presentation pattern while retaining distinct anchored
+source maps and body-specific surface response. Both preserve exact
+Earth-relative radii, parent-relative analytical orbits, axial tilts, and
+signed sidereal rotation. Source luminance supplies restrained close-focus
+relief; small Sun-opposed readability floors preserve texture identity without
+flattening the day/night terminator. Neither body receives an atmosphere,
+clouds, weather, emissive night lighting, animated terrain, or an unsupported
+scientific elevation model.
+
 ### 11.4 Asset provenance
 
 Every external asset requires a recorded source URL, creator or organization, license, attribution text, download date, and any modification notes. “Free” is not an acceptable license description. Unverified assets cannot enter a public build.
@@ -615,8 +626,7 @@ Each rule should have one authoritative owner document; other documents link to 
 
 **Current progress:** The Sun, eight planets, and Earth's Moon are populated as
 the deterministic planetary baseline. Major moons beyond Earth's Moon,
-final Mercury and Moon hero fidelity, labels/navigation, cinematic routing,
-and accessibility completion remain.
+labels/navigation, cinematic routing, and accessibility completion remain.
 The licensed music, Sun/Earth ambience, and
 event-driven UI feedback baseline is implemented; final listening/mix approval
 and a settings UI remain.
