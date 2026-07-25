@@ -1,9 +1,9 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, and Earth-Moon hero foundations  
-**Version:** 0.18.0  
-**Last updated:** 2026-07-24  
+**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, and seven-moon foundations  
+**Version:** 0.19.0  
+**Last updated:** 2026-07-25  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
 
@@ -85,7 +85,12 @@ Disclose that some unmapped regions contain fictional fill, colors are enhanced,
 
 Use browse derivatives for Io, Europa, Ganymede, Callisto, Titan, and Triton.
 
-These 512-1024 pixel files are evaluation sources. Hero shots may require later upgrades. Products can contain incomplete coverage, enhanced or synthesized color, interpolation, pole fill, and illumination seams. Titan's visible identity should emphasize haze over sharp surface detail.
+These 512-pixel browse files are approved runtime baseline sources, not
+hero-resolution masters. Hero shots may require later upgrades. Products can
+contain incomplete coverage, enhanced or synthesized color, interpolation,
+pole fill, and illumination seams. Titan's visible identity should emphasize
+haze over sharp surface detail. No browse mosaic is presented as raw,
+date-exact, globally complete scientific imagery.
 
 ### Resolution and derivative rules
 
@@ -284,6 +289,15 @@ volumetric scattering, exact photometry, or date-specific appearance.
 
 ### Triton
 USGS color browse mosaic with pale pink, cream, and gray. Disclose incomplete and gap-filled regions.
+
+**[IMPLEMENTED BASELINE]** Io, Europa, Ganymede, Callisto, Titan, and Triton
+now use distinct audited browse mosaics and restrained opaque URP materials.
+Rendered radii stay scientifically proportional; invisible selection
+colliders and cached orbit guides provide usability without enlarging the
+surfaces. The baseline intentionally adds no invented eruptions, clouds,
+terrain displacement, emissive geology, or date-specific weather. Titan's
+current surface-first material is an interim content proof; its final hero
+treatment must subordinate sharp surface detail to its documented amber haze.
 
 ## 6. Background, UI, and Motion
 

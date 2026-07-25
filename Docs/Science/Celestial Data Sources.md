@@ -1,8 +1,8 @@
 # Celestial Data Sources
 
 **Project:** Solar System Simulation  
-**Dataset slice:** Sun, eight planets, and Earth's Moon baseline  
-**Verification date:** 2026-07-24  
+**Dataset slice:** Sun, eight planets, and seven approved major moons  
+**Verification date:** 2026-07-25  
 **Authoring epoch:** J2000.0 where orbital elements provide an epoch  
 **Accuracy tier:** Educational visualization; not a date-exact ephemeris
 
@@ -312,6 +312,45 @@ Primary sources:
 - [JPL Approximate Positions of the Planets](https://ssd.jpl.nasa.gov/planets/approx_pos.html)
 - [NASA Neptune Facts](https://science.nasa.gov/neptune/neptune-facts/)
 
+## Major Moons of Jupiter, Saturn, and Neptune
+
+**Source record ID:** `JPL_SATELLITE_PHYSICAL_PARAMETERS_AND_MEAN_ELEMENTS_J2000`
+
+The six added bodies use JPL mean radii and gravitational parameters. Authored
+mass is derived with `mass = GM / G`, where
+`G = 6.67430e-20 km^3 kg^-1 s^-2`. Their fixed parent-relative elements are
+JPL mean elements at `2000-01-01.5 TDB`. JPL explicitly describes these values
+as fitted mean ellipses for general orbit shape and orientation, not accurate
+ephemerides.
+
+| Body | Parent | Radius (km) | GM (km^3/s^2) | Derived mass (kg) | a (km) | e | i (deg) | Node (deg) | Periapsis (deg) | M (deg) | Period (days) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Io | Jupiter | 1,821.49 | 5,959.91547 | 8.92965 x 10^22 | 421,800 | 0.004 | 0.0 | 0.0 | 49.1 | 330.9 | 1.762732 |
+| Europa | Jupiter | 1,560.80 | 3,202.71210 | 4.79857 x 10^22 | 671,100 | 0.009 | 0.5 | 184.0 | 45.0 | 345.4 | 3.525463 |
+| Ganymede | Jupiter | 2,631.20 | 9,887.83275 | 1.48148 x 10^23 | 1,070,400 | 0.001 | 0.2 | 58.5 | 198.3 | 324.8 | 7.155588 |
+| Callisto | Jupiter | 2,410.30 | 7,179.28340 | 1.07566 x 10^23 | 1,882,700 | 0.007 | 0.3 | 309.1 | 43.8 | 87.4 | 16.690440 |
+| Titan | Saturn | 2,574.76 | 8,978.13710 | 1.34518 x 10^23 | 1,221,900 | 0.029 | 0.3 | 78.6 | 78.3 | 11.7 | 15.945448 |
+| Triton | Neptune | 1,352.60 | 1,428.49546 | 2.14029 x 10^22 | 354,800 | 0.000 | 157.3 | 178.1 | 0.0 | 63.0 | 5.876994 |
+
+Rotation and tilt conventions:
+
+- Each body is modeled as synchronously rotating, so the absolute sidereal
+  rotation period equals its orbital period.
+- Io, Europa, Ganymede, Callisto, and Titan use positive periods. Triton uses
+  a negative spin period while its mean orbit has an inclination of
+  `157.3 degrees`, preserving its documented retrograde behavior.
+- The small authored axial-tilt values (`0.0`, `0.5`, `0.2`, `0.3`, `0.3`,
+  and `0.0 degrees`) are an educational alignment convention for the
+  synchronous presentation, based on the adopted mean-plane geometry. They
+  are not a full IAU pole-orientation or physical-libration model.
+
+Primary sources:
+
+- [JPL Planetary Satellite Physical Parameters](https://ssd.jpl.nasa.gov/sats/phys_par/sep.html)
+- [JPL Planetary Satellite Mean Elements](https://ssd.jpl.nasa.gov/sats/elem/)
+- [NASA Titan Facts](https://science.nasa.gov/saturn/moons/titan/facts/)
+- [NASA Triton Overview](https://science.nasa.gov/neptune/moons/triton/)
+
 ## Presentation Transformations
 
 Physical values remain unchanged in the authoring assets and immutable runtime
@@ -360,6 +399,11 @@ weather.
 - Orbital elements are fixed at their authoring epoch; secular element rates and perturbations are not evaluated.
 - The Earth follows the JPL Earth-Moon barycenter approximation.
 - The Moon uses fixed mean elements and does not model nodal or apsidal precession, libration, or solar perturbations.
+- The six added major moons use fixed J2000 mean parent-relative elements.
+  Perturbations, resonances, precession, libration, barycentric corrections,
+  and date-exact positions are not evaluated.
+- Synchronous rotation is represented by period and direction; prime-meridian
+  orientation and physical libration are not modeled.
 - All eight planets use the fixed JPL 1800-2050 approximation rows without
   secular rates or perturbations.
 - Jupiter is represented by its volumetric mean radius; equatorial bulge is not yet modeled.

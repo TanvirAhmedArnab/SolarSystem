@@ -79,12 +79,12 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 | IDs | Content | Provider | License | Status |
 |---|---|---|---|---|
 | TEX-SSS-001-017 | Sun, planets, Earth layers, Moon, ring, starfield | Solar System Scope | CC BY 4.0 | Imported; solar hero, required planet surfaces, layered Earth, Saturn ring, and starfield active |
-| TEX-USGS-001 | Io browse mosaic | USGS / Galileo and Voyager | Public domain | Imported evaluation source |
-| TEX-USGS-002 | Europa browse mosaic | USGS / Galileo and Voyager | No use constraints listed | Imported evaluation source |
-| TEX-USGS-003 | Ganymede browse mosaic | USGS / Galileo and Voyager | Public domain | Imported evaluation source |
-| TEX-USGS-004 | Callisto browse mosaic | USGS / Galileo and Voyager | USGS source | Imported evaluation source |
-| TEX-USGS-005 | Titan browse mosaic | USGS / Cassini ISS | Cite authors | Imported evaluation source |
-| TEX-USGS-006 | Triton color browse mosaic | USGS / Voyager 2 | Public domain; cite authors | Imported evaluation source |
+| TEX-USGS-001 | Io browse mosaic | USGS / Galileo and Voyager | Public domain | Approved runtime baseline; attribution retained |
+| TEX-USGS-002 | Europa browse mosaic | USGS / Galileo and Voyager | No use constraints listed | Approved runtime baseline; source attribution retained |
+| TEX-USGS-003 | Ganymede browse mosaic | USGS / Galileo and Voyager | Public domain | Approved runtime baseline; attribution retained |
+| TEX-USGS-004 | Callisto browse mosaic | USGS / Galileo and Voyager | USGS source | Approved runtime baseline; source attribution retained |
+| TEX-USGS-005 | Titan browse mosaic | USGS / Cassini ISS | Cite authors | Approved runtime baseline; author citation required |
+| TEX-USGS-006 | Triton color browse mosaic | USGS / Voyager 2 | Public domain; cite authors | Approved runtime baseline; author citation required |
 | AUD-OGA-MUS-001 | Outer Space Loop | wipics / OpenGameArt | CC0 1.0 | Imported music loop |
 | AUD-OGA-SUN-001 | Fireplace Sound Loop | PagDev / OpenGameArt | CC0 1.0 | Imported Sun ambience source |
 | AUD-OGA-EARTH-001 | Forest Ambience | TinyWorlds / OpenGameArt | CC0 1.0 | Imported Earth ambience source |
@@ -108,7 +108,7 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 |---|---|---|
 | TEX-SSS-001-016 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Body>` | Imported; Sun, eight planet surfaces, layered Earth and Venus maps, Moon, and Saturn ring active |
 | TEX-SSS-017 | `Assets/SolarSystem/Content/Art/Textures/Environment/T_Space_MilkyWay_2K.jpg` | Imported; sky presentation review pending |
-| TEX-USGS-001-006 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Moon>` | Imported as visibly named `Browse` evaluation textures |
+| TEX-USGS-001-006 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Moon>` | Active byte-identical `Browse` runtime baselines; source limitations disclosed |
 | AUD-KEN-001 selected subset | `Assets/SolarSystem/Content/Audio/SFX/UI` | Imported; audition and loudness review pending |
 | AUD-OGA-MUS-001 | `Assets/SolarSystem/Content/Audio/Music/A_Music_OuterSpaceLoop.mp3` | Imported; 2D music mix review pending |
 | AUD-OGA-SUN-001 | `Assets/SolarSystem/Content/Audio/Ambience/CelestialBodies/Sun/A_Sun_BurningLoop.wav` | Imported; intended 2D loop and mix review pending |
@@ -333,6 +333,20 @@ Solar System Scope CC BY 4.0 attribution obligation.
 - Callisto: https://astrogeology.usgs.gov/search/map/callisto_galileo_voyager_simple_cylindrical_global_map
 - Titan: https://astrogeology.usgs.gov/search/map/titan_cassini_iss_near_global_mosaic_450m
 - Triton: https://astrogeology.usgs.gov/search/map/triton_voyager_2_global_color_mosaic_600m
+
+### Active USGS derivative integrity
+
+The runtime files are byte-identical copies of the retained source downloads;
+Unity import settings do not modify the repository binaries.
+
+| ID | Body | Dimensions | SHA-256 |
+|---|---|---:|---|
+| TEX-USGS-001 | Io | 512 x 256 | `DE69759452F5479B6F56FF5C72A90ED402AB8D7F11219524C26E5B60610B9597` |
+| TEX-USGS-002 | Europa | 512 x 256 | `3369BA56CBFA447347B5AFC003B80B69FBF87DD90A724D59F09ABAD8691A9819` |
+| TEX-USGS-003 | Ganymede | 512 x 256 | `465673D0D789658CE63275C8CCC9EBBDF6B1AEC0A148CAA41052FEBC314A1616` |
+| TEX-USGS-004 | Callisto | 512 x 249 | `FA60F8305E1B000E4FBC4446CECDD5DF919A778841D9D7354E606889BBAC856F` |
+| TEX-USGS-005 | Titan | 512 x 156 | `0F967976320C91444D5CBF7E5A0BEAD56C4A38FE41F497D85E00A22D1F119774` |
+| TEX-USGS-006 | Triton | 512 x 256 | `A71DF5E3DE28BA755200E0E9DB2633E0529CD2CDF344299715660F3DA37D1FCE` |
 
 ## Release Audit
 

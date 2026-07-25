@@ -31,9 +31,15 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             "moon",
             "mars",
             "jupiter",
+            "io",
+            "europa",
+            "ganymede",
+            "callisto",
             "saturn",
+            "titan",
             "uranus",
-            "neptune"
+            "neptune",
+            "triton"
         };
 
         [UnityTest]
@@ -46,8 +52,8 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
             Assert.That(composition, Is.Not.Null);
             Assert.That(composition.IsInitialized, Is.True);
-            Assert.That(composition.SimulationController.CatalogCount, Is.EqualTo(10));
-            Assert.That(composition.SimulationController.ViewCount, Is.EqualTo(10));
+            Assert.That(composition.SimulationController.CatalogCount, Is.EqualTo(16));
+            Assert.That(composition.SimulationController.ViewCount, Is.EqualTo(16));
             foreach (string stableId in ExpectedBodyIds)
             {
                 Assert.That(
@@ -98,7 +104,7 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 Is.LessThan(0.00001f));
             Assert.That(
                 Object.FindObjectsByType<CelestialOrbitPathView>().Length,
-                Is.EqualTo(9));
+                Is.EqualTo(15));
 
             Camera camera = Camera.main;
             Assert.That(camera, Is.Not.Null);

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f0c39ba5e8a744c8533815ee975f4a, type: 3}
+  m_Name: Body_Triton
+  m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.CelestialBodyDefinition
+  stableId: triton
+  displayName: Triton
+  category: 2
+  parentId: neptune
+  scientificSourceId: JPL_SATELLITE_PHYSICAL_PARAMETERS_AND_MEAN_ELEMENTS_J2000
+  educationalSummary: Neptune's largest moon, a captured icy world on a retrograde
+    orbit with active nitrogen geysers.
+  meanRadiusKm: 1352.6
+  hasMass: 1
+  massKg: 2.1402925550244972e+22
+  rotationPeriodSeconds: -507772.2816
+  axialTiltDeg: 0
+  hasOrbit: 1
+  orbit:
+    semiMajorAxisKm: 354800
+    eccentricity: 0
+    inclinationDeg: 157.3
+    longitudeAscendingNodeDeg: 178.1
+    argumentPeriapsisDeg: 0
+    meanAnomalyAtEpochDeg: 63
+    orbitalPeriodSeconds: 507772.2816

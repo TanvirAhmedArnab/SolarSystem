@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.17.0  
-**Last updated:** 2026-07-24  
+**Version:** 0.18.0  
+**Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
 
@@ -44,6 +44,7 @@
 | 0.15.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Mars hero treatment with anchored source identity, restrained source-derived rocky relief, a thin Sun-aware atmospheric limb, and explicit color and atmosphere limitations | Product behavior implemented and validated |
 | 0.16.0 | 2026-07-24 | Codex, for Tanvir | Implemented distinct Uranus and Neptune hero treatments with anchored source identity, restrained Sun-aware limbs, deterministic signed presentation detail, nightside readability, and explicit non-fluid-simulation limits | Product behavior implemented and validated |
 | 0.17.0 | 2026-07-24 | Codex, for Tanvir | Implemented distinct Mercury and Moon airless-rocky hero treatments with anchored source identity, restrained source-derived relief, dry PBR response, Sun-aware nightside readability, and explicit no-atmosphere limits | Product behavior implemented and validated |
+| 0.18.0 | 2026-07-25 | Codex, for Tanvir | Completed the approved seven-moon roster with deterministic nested orbits, exact proportional radii, educational facts, accessible selection/focus, and audited source-grounded materials | Minimum major-moon content implemented and validated; hero fidelity remains iterative |
 
 ### 1.3 Source hierarchy
 
@@ -270,16 +271,17 @@ The application credits its scientific sources and exposes a concise explanation
 | Star | Sun | Required |
 | Terrestrial planets | Mercury, Venus, Earth, Mars | Required |
 | Giant planets | Jupiter, Saturn, Uranus, Neptune | Required |
-| Major moons | Moon, Io, Europa, Ganymede, Callisto, Titan, Triton | Proposed minimum |
+| Major moons | Moon, Io, Europa, Ganymede, Callisto, Titan, Triton | Required and implemented baseline |
 
 **[IMPLEMENTED BASELINE]** The interactive scene now includes the Sun, all
-eight required planets, and Earth's Moon. Every required planet uses verified
-physical data, deterministic J2000-based orbital elements, an audited texture,
-a selectable body view, an orbit path, and the existing educational information
-panel. Saturn includes a first transparent ring presentation. Atmospheres,
-cloud layers, planet-specific shader effects, and the proposed major-moon set
-remain later content/fidelity work except where representative Earth, Sun,
-Jupiter, Saturn, and Venus slices are explicitly documented.
+eight required planets, and the complete approved seven-moon set. Every body
+uses verified physical data, deterministic mean orbital elements, a selectable
+view, educational information, exact Earth-relative mean-radius proportions,
+and an orbit path where applicable. Io, Europa, Ganymede, Callisto, Titan, and
+Triton move relative to their planet parents; Triton preserves retrograde
+motion. Their distinct audited browse mosaics are baseline content rather than
+final hero-resolution art. Further atmosphere, cloud, and body-specific shader
+polish remains iterative fidelity work.
 
 ### 8.2 Body information overlay
 

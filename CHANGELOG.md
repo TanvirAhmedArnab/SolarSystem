@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Approved major-moon content for Io, Europa, Ganymede, Callisto, Titan, and
+  Triton, completing the seven-moon minimum portfolio roster.
+- JPL physical parameters and J2000 mean parent-relative orbital elements,
+  synchronous signed rotation, exact Earth-relative radii, and deterministic
+  hierarchy under Jupiter, Saturn, and Neptune.
+- Distinct byte-identical USGS browse-mosaic derivatives, restrained baseline
+  URP materials, selectable body views, educational facts, and cached moon
+  orbit paths.
+- Complete moon-parent clearance sampling, Triton retrograde/synchronous
+  regression coverage, and expanded 16-body real-scene validation.
+
 - Living GDD, TDD, Art Bible, package baseline, and project validation records.
 - Project-authored runtime, editor, Edit Mode test, and Play Mode test assembly boundaries.
 - Unity-aware repository attributes, Git LFS rules, and generated-file ignores.
@@ -43,8 +54,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   views, and orbit paths for Mercury, Venus, Mars, Saturn, Uranus, and Neptune.
 - Generated 128-segment Saturn annulus with the audited ring alpha texture and
   two-sided transparent presentation.
-- Full-system overview framing and regression coverage for all ten authored
-  bodies, nine orbit paths, the radial-light envelope, and Saturn's ring wiring.
+- Full-system overview framing and regression coverage for the original ten
+  authored bodies, nine orbit paths, the radial-light envelope, and Saturn's
+  ring wiring.
 - Event-driven audio direction with independently adjustable master, music, UI,
   and celestial levels plus a non-destructive master mute.
 - Licensed CC0 music, 2D Sun ambience, 3D Earth ambience, and UI feedback for

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f0c39ba5e8a744c8533815ee975f4a, type: 3}
+  m_Name: Body_Ganymede
+  m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.CelestialBodyDefinition
+  stableId: ganymede
+  displayName: Ganymede
+  category: 2
+  parentId: jupiter
+  scientificSourceId: JPL_SATELLITE_PHYSICAL_PARAMETERS_AND_MEAN_ELEMENTS_J2000
+  educationalSummary: The largest moon in the Solar System and the only moon known
+    to generate its own magnetic field.
+  meanRadiusKm: 2631.2
+  hasMass: 1
+  massKg: 1.4814786194806946e+23
+  rotationPeriodSeconds: 618242.8032
+  axialTiltDeg: 0.2
+  hasOrbit: 1
+  orbit:
+    semiMajorAxisKm: 1070400
+    eccentricity: 0.001
+    inclinationDeg: 0.2
+    longitudeAscendingNodeDeg: 58.5
+    argumentPeriapsisDeg: 198.3
+    meanAnomalyAtEpochDeg: 324.8
+    orbitalPeriodSeconds: 618242.8032

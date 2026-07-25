@@ -46,6 +46,18 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialTextureRoot + "/Uranus/T_Uranus_Surface_2K.jpg";
         private const string NeptuneTexturePath =
             CelestialTextureRoot + "/Neptune/T_Neptune_Surface_2K.jpg";
+        private const string IoTexturePath =
+            CelestialTextureRoot + "/Io/T_Io_Surface_Browse.jpg";
+        private const string EuropaTexturePath =
+            CelestialTextureRoot + "/Europa/T_Europa_Surface_Browse.jpg";
+        private const string GanymedeTexturePath =
+            CelestialTextureRoot + "/Ganymede/T_Ganymede_Surface_Browse.jpg";
+        private const string CallistoTexturePath =
+            CelestialTextureRoot + "/Callisto/T_Callisto_Surface_Browse.jpg";
+        private const string TitanTexturePath =
+            CelestialTextureRoot + "/Titan/T_Titan_Surface_Browse.jpg";
+        private const string TritonTexturePath =
+            CelestialTextureRoot + "/Triton/T_Triton_Surface_Browse.jpg";
         private const string SolarSurfaceShader =
             "SolarSystem/Celestial/Solar Surface";
         private const string SolarCoronaShader =
@@ -109,6 +121,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const float VignetteSmoothness = 0.32f;
         private const double SecondsPerDay = 86400d;
         private const double AstronomicalUnitKm = 149597870.7d;
+        private const double StandardGravitationalConstantKm3PerKgSecond2 =
+            6.67430e-20d;
         private static readonly Color SunTint = new Color(1.55f, 0.78f, 0.18f, 1f);
         private static readonly Color SunHotTint = new Color(0.55f, 0.16f, 0.02f, 1f);
         private static readonly Color CoronaTint = new Color(6f, 2f, 0.2f, 1f);
@@ -133,6 +147,12 @@ namespace Tanvir.SolarSystem.Editor.Import
         private static readonly Color UranusAtmosphereTint =
             new Color(0.48f, 0.9f, 0.96f, 1f);
         private static readonly Color NeptuneTint = new Color(0.72f, 0.84f, 1f, 1f);
+        private static readonly Color IoTint = new Color(1f, 0.96f, 0.82f, 1f);
+        private static readonly Color EuropaTint = new Color(0.94f, 0.92f, 0.86f, 1f);
+        private static readonly Color GanymedeTint = new Color(0.9f, 0.88f, 0.84f, 1f);
+        private static readonly Color CallistoTint = new Color(0.86f, 0.84f, 0.8f, 1f);
+        private static readonly Color TitanTint = new Color(1f, 0.82f, 0.5f, 1f);
+        private static readonly Color TritonTint = new Color(0.9f, 0.94f, 1f, 1f);
         private static readonly Color NeptuneAtmosphereTint =
             new Color(0.2f, 0.48f, 0.98f, 1f);
         private static readonly Color OrbitTint = new Color(0.16f, 0.45f, 0.78f, 1f);
@@ -299,6 +319,82 @@ namespace Tanvir.SolarSystem.Editor.Import
                     JupiterSmoothness,
                     256,
                     0.065f),
+                CreateMajorMoonContent(
+                    "Io",
+                    "io",
+                    "jupiter",
+                    "The innermost Galilean moon and the most volcanically active world known.",
+                    1821.49d,
+                    5959.91547d,
+                    0d,
+                    421800d,
+                    0.004d,
+                    0d,
+                    0d,
+                    49.1d,
+                    330.9d,
+                    1.762732d,
+                    IoTint,
+                    0.06f,
+                    96,
+                    0.018f),
+                CreateMajorMoonContent(
+                    "Europa",
+                    "europa",
+                    "jupiter",
+                    "An ice-covered Galilean moon with strong evidence for a global subsurface ocean.",
+                    1560.80d,
+                    3202.71210d,
+                    0.5d,
+                    671100d,
+                    0.009d,
+                    0.5d,
+                    184d,
+                    45d,
+                    345.4d,
+                    3.525463d,
+                    EuropaTint,
+                    0.08f,
+                    112,
+                    0.018f),
+                CreateMajorMoonContent(
+                    "Ganymede",
+                    "ganymede",
+                    "jupiter",
+                    "The largest moon in the Solar System and the only moon known to generate its own magnetic field.",
+                    2631.20d,
+                    9887.83275d,
+                    0.2d,
+                    1070400d,
+                    0.001d,
+                    0.2d,
+                    58.5d,
+                    198.3d,
+                    324.8d,
+                    7.155588d,
+                    GanymedeTint,
+                    0.08f,
+                    128,
+                    0.018f),
+                CreateMajorMoonContent(
+                    "Callisto",
+                    "callisto",
+                    "jupiter",
+                    "A heavily cratered Galilean moon whose ancient surface preserves a long impact history.",
+                    2410.30d,
+                    7179.28340d,
+                    0.3d,
+                    1882700d,
+                    0.007d,
+                    0.3d,
+                    309.1d,
+                    43.8d,
+                    87.4d,
+                    16.690440d,
+                    CallistoTint,
+                    0.06f,
+                    144,
+                    0.018f),
                 CreatePlanetContent(
                     "Saturn",
                     "saturn",
@@ -319,6 +415,25 @@ namespace Tanvir.SolarSystem.Editor.Import
                     SaturnSmoothness,
                     288,
                     0.07f),
+                CreateMajorMoonContent(
+                    "Titan",
+                    "titan",
+                    "saturn",
+                    "Saturn's largest moon, wrapped in a dense nitrogen-rich atmosphere with methane weather and surface lakes.",
+                    2574.76d,
+                    8978.13710d,
+                    0.3d,
+                    1221900d,
+                    0.029d,
+                    0.3d,
+                    78.6d,
+                    78.3d,
+                    11.7d,
+                    15.945448d,
+                    TitanTint,
+                    0.04f,
+                    144,
+                    0.018f),
                 CreatePlanetContent(
                     "Uranus",
                     "uranus",
@@ -358,7 +473,26 @@ namespace Tanvir.SolarSystem.Editor.Import
                     NeptuneTint,
                     NeptuneSmoothness,
                     352,
-                    0.08f)
+                    0.08f),
+                CreateMajorMoonContent(
+                    "Triton",
+                    "triton",
+                    "neptune",
+                    "Neptune's largest moon, a captured icy world on a retrograde orbit with active nitrogen geysers.",
+                    1352.60d,
+                    1428.49546d,
+                    0d,
+                    354800d,
+                    0d,
+                    157.3d,
+                    178.1d,
+                    0d,
+                    63d,
+                    -5.876994d,
+                    TritonTint,
+                    0.06f,
+                    96,
+                    0.018f)
             };
 
             CelestialCatalogDefinition catalog = CreateOrLoad<CelestialCatalogDefinition>(
@@ -530,6 +664,63 @@ namespace Tanvir.SolarSystem.Editor.Import
                 orbitWidth);
         }
 
+        private static SolarSystemSlice2BodyContent CreateMajorMoonContent(
+            string displayName,
+            string stableId,
+            string parentId,
+            string educationalSummary,
+            double radiusKm,
+            double gravitationalParameterKm3PerSecond2,
+            double axialTiltDeg,
+            double semiMajorAxisKm,
+            double eccentricity,
+            double inclinationDeg,
+            double ascendingNodeDeg,
+            double argumentPeriapsisDeg,
+            double meanAnomalyDeg,
+            double signedOrbitalPeriodDays,
+            Color tint,
+            float smoothness,
+            int orbitSampleCount,
+            float orbitWidth)
+        {
+            double orbitalPeriodSeconds =
+                Math.Abs(signedOrbitalPeriodDays) * SecondsPerDay;
+            double rotationPeriodSeconds =
+                signedOrbitalPeriodDays * SecondsPerDay;
+            var bodyData = new SolarSystemSlice2BodyData(
+                $"Body_{displayName}",
+                stableId,
+                displayName,
+                CelestialBodyCategory.Moon,
+                parentId,
+                "JPL_SATELLITE_PHYSICAL_PARAMETERS_AND_MEAN_ELEMENTS_J2000",
+                educationalSummary,
+                radiusKm,
+                gravitationalParameterKm3PerSecond2 /
+                    StandardGravitationalConstantKm3PerKgSecond2,
+                rotationPeriodSeconds,
+                axialTiltDeg,
+                new SolarSystemSlice2OrbitData(
+                    semiMajorAxisKm,
+                    eccentricity,
+                    inclinationDeg,
+                    ascendingNodeDeg,
+                    argumentPeriapsisDeg,
+                    meanAnomalyDeg,
+                    orbitalPeriodSeconds));
+            Material material = CreateBodyMaterial(
+                displayName,
+                $"T_{displayName}_Surface_Browse.jpg",
+                tint,
+                smoothness);
+            return CreateBodyContent(
+                CreateBody(bodyData),
+                material,
+                orbitSampleCount,
+                orbitWidth);
+        }
+
         private static SolarSystemSlice2BodyContent CreateBodyContent(
             CelestialBodyDefinition definition,
             Material material,
@@ -668,7 +859,13 @@ namespace Tanvir.SolarSystem.Editor.Import
                 $"{CelestialTextureRoot}/Jupiter/T_Jupiter_Surface_2K.jpg",
                 $"{CelestialTextureRoot}/Saturn/T_Saturn_Surface_2K.jpg",
                 $"{CelestialTextureRoot}/Uranus/T_Uranus_Surface_2K.jpg",
-                $"{CelestialTextureRoot}/Neptune/T_Neptune_Surface_2K.jpg"
+                $"{CelestialTextureRoot}/Neptune/T_Neptune_Surface_2K.jpg",
+                IoTexturePath,
+                EuropaTexturePath,
+                GanymedeTexturePath,
+                CallistoTexturePath,
+                TitanTexturePath,
+                TritonTexturePath
             };
             foreach (string path in colorTextures)
             {

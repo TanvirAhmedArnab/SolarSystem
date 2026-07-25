@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f0c39ba5e8a744c8533815ee975f4a, type: 3}
+  m_Name: Body_Europa
+  m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.CelestialBodyDefinition
+  stableId: europa
+  displayName: Europa
+  category: 2
+  parentId: jupiter
+  scientificSourceId: JPL_SATELLITE_PHYSICAL_PARAMETERS_AND_MEAN_ELEMENTS_J2000
+  educationalSummary: An ice-covered Galilean moon with strong evidence for a global
+    subsurface ocean.
+  meanRadiusKm: 1560.8
+  hasMass: 1
+  massKg: 4.7985737830184444e+22
+  rotationPeriodSeconds: 304600.0032
+  axialTiltDeg: 0.5
+  hasOrbit: 1
+  orbit:
+    semiMajorAxisKm: 671100
+    eccentricity: 0.009
+    inclinationDeg: 0.5
+    longitudeAscendingNodeDeg: 184
+    argumentPeriapsisDeg: 45
+    meanAnomalyAtEpochDeg: 345.4
+    orbitalPeriodSeconds: 304600.0032

@@ -6,9 +6,9 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Earth, Sun, eight-planet, and Earth-Moon hero representative slices validated  
-**Version:** 0.22.0  
-**Last updated:** 2026-07-24  
+**Document status:** Living technical authority; Sun, eight-planet, and seven-moon baseline validated  
+**Version:** 0.23.0  
+**Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
 **Art authority:** `Docs/Art/ArtBible.md`
@@ -48,6 +48,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.20.0 | 2026-07-24 | Codex, for Tanvir | Generalized the layered-body path to explicit atmosphere-only composition and added an anchored rocky-surface shader, thin Mars limb, reproducible assets/scene wiring, and complete regression coverage | Mars hero architecture implemented and validated |
 | 0.21.0 | 2026-07-24 | Codex, for Tanvir | Added reusable ice-giant authoring/model/view architecture, generalized the giant-planet shader identity, distinct Uranus/Neptune material contracts, Sun-aware nightside readability, reproducible scene wiring, and complete regression coverage | Uranus and Neptune hero architecture implemented and validated |
 | 0.22.0 | 2026-07-24 | Codex, for Tanvir | Added reusable airless-rocky authoring/model/view architecture, distinct Mercury/Moon material contracts, live-Sun nightside readability in the shared rocky shader, reproducible scene wiring, and complete regression coverage | Mercury and Moon hero architecture implemented and validated |
+| 0.23.0 | 2026-07-25 | Codex, for Tanvir | Expanded the data-driven catalog and reproducible scene pipeline to the approved major moons using JPL parent-relative mean elements, signed synchronous rotation, audited USGS materials, and complete hierarchy/scene regression coverage | Major-moon baseline implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -1096,8 +1097,21 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   remain authoritative.
 - Airless rocky-body evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Airless Rocky Hero Rendering Validation.md`.
-- The broader proposed moon set,
-  particle-scale ring simulation, labels/navigation, player-facing audio
+- **[IMPLEMENTED]** The catalog now contains all seven approved moons. Io,
+  Europa, Ganymede, and Callisto are children of Jupiter; Titan is a child of
+  Saturn; Triton is a child of Neptune. The existing parent-first catalog,
+  analytical evaluator, scale projector, selection controller, camera, HUD,
+  and orbit-path view required no moon-specific runtime branch.
+- JPL gravitational parameters are converted to mass with
+  `G = 6.67430e-20 km^3 kg^-1 s^-2`. JPL J2000 mean satellite elements drive
+  general educational orbits, not date-exact ephemerides. Synchronous rotation
+  uses each signed orbital period; Triton's `157.3`-degree inclination and
+  negative spin period preserve retrograde behavior.
+- Distinct USGS browse mosaics are wired through deterministic material
+  authoring. Minimum invisible selection radii and logarithmically compressed
+  parent-relative distance preserve usability without changing rendered body
+  proportions or physical source data.
+- Particle-scale ring simulation, labels/navigation, player-facing audio
   settings, final audio mix approval, and accessibility options remain Slice 4
   work.
 
@@ -1166,6 +1180,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-021 | 2026-07-24 | Extend the layered-body contract with explicit atmosphere-only composition, prove it on Mars with an anchored source-derived rocky surface and one thin Sun-aware limb, and retain exact scientific transform state | Implemented candidate | Tanvir | Reuses the validated composition boundary without inventing a Mars cloud layer or introducing a one-body runtime adapter |
 | TDD-022 | 2026-07-24 | Use a dedicated immutable ice-giant definition/model/view path for Uranus and Neptune while sharing scientifically neutral giant-planet shaders; preserve anchored sources and signed rotation, and limit nightside fill and moving detail to disclosed presentation values | Implemented candidate | Tanvir | Distinct reusable ice-giant semantics without duplicating shaders, changing scientific state, or claiming wind/fluid simulation |
 | TDD-023 | 2026-07-24 | Use one immutable airless-rocky definition/model/view path for Mercury and the Moon; share the anchored rocky shader with Mars, apply body-specific source-derived relief and dry PBR values through cached property blocks, preserve exact parent-relative scientific state, and create no atmosphere shell | Implemented candidate | Tanvir | Distinct close-focus rocky identity without duplicated shaders, invented atmospheric layers, animated terrain, material instances, or elevation-model claims |
+| TDD-024 | 2026-07-25 | Extend the existing data-driven catalog, parent-relative Kepler evaluation, scale projection, selection/focus, HUD, and cached orbit paths to the approved major moons; use JPL mean elements and physical parameters, signed synchronous rotation, and distinct audited USGS browse materials | Implemented and validated | Tanvir | Completes approved moon scope without a parallel simulation path or false ephemeris, scale, atmosphere, or image-fidelity claims |
 
 ## 19. Definition of Done for TDD Version 1.0
 

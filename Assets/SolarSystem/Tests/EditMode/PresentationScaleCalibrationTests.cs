@@ -31,6 +31,17 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "neptune"
         };
 
+        private static readonly string[] MajorMoonIds =
+        {
+            "moon",
+            "io",
+            "europa",
+            "ganymede",
+            "callisto",
+            "titan",
+            "triton"
+        };
+
         private CelestialCatalog catalog;
         private CelestialScaleProjector projector;
         private KeplerOrbitEvaluator evaluator;
@@ -166,6 +177,37 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         }
 
         [Test]
+        public void EveryApprovedMoon_MaintainsReadableParentClearanceAcrossItsOrbit()
+        {
+            foreach (string moonId in MajorMoonIds)
+            {
+                CelestialBodyModel moon = Find(moonId);
+                CelestialBodyModel parent = Find(moon.ParentId.Value.Value);
+                double sampledMinimum = double.MaxValue;
+                double orbitalPeriod = moon.Orbit.Value.OrbitalPeriodSeconds;
+                for (int sample = 0; sample <= SynodicCycleSamples; sample++)
+                {
+                    double timeSeconds =
+                        orbitalPeriod * sample / SynodicCycleSamples;
+                    CelestialState moonState =
+                        evaluator.Evaluate(moon, Double3.Zero, timeSeconds);
+                    double centerDistance = projector.ProjectRelativePosition(
+                        moonState.ParentRelativePositionKm).magnitude;
+                    sampledMinimum = Math.Min(
+                        sampledMinimum,
+                        centerDistance -
+                        EffectiveRadius(parent) -
+                        EffectiveRadius(moon));
+                }
+
+                Assert.That(
+                    sampledMinimum,
+                    Is.GreaterThanOrEqualTo(projector.MinimumSurfaceClearance),
+                    $"{moon.DisplayName} must remain visibly clear of {parent.DisplayName}.");
+            }
+        }
+
+        [Test]
         public void SignedSiderealRates_UseEarthRotationReferenceAndCorrectDirection()
         {
             CelestialBodyModel earth = Find("earth");
@@ -188,12 +230,28 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                     $"{body.DisplayName} must derive spin from its signed sidereal period.");
 
                 bool expectedRetrograde =
-                    body.Id.Value == "venus" || body.Id.Value == "uranus";
+                    body.Id.Value == "venus" ||
+                    body.Id.Value == "uranus" ||
+                    body.Id.Value == "triton";
                 Assert.That(
                     body.RotationPeriodSeconds < 0d,
                     Is.EqualTo(expectedRetrograde),
                     $"{body.DisplayName} has an unexpected rotation direction.");
             }
+        }
+
+        [Test]
+        public void Triton_UsesRetrogradeOrbitGeometryAndSynchronousSignedSpin()
+        {
+            CelestialBodyModel triton = Find("triton");
+
+            Assert.That(triton.ParentId.Value.Value, Is.EqualTo("neptune"));
+            Assert.That(triton.Orbit.Value.InclinationDeg, Is.GreaterThan(90d));
+            Assert.That(triton.RotationPeriodSeconds, Is.LessThan(0d));
+            Assert.That(
+                Math.Abs(triton.RotationPeriodSeconds),
+                Is.EqualTo(triton.Orbit.Value.OrbitalPeriodSeconds)
+                    .Within(0.000001d));
         }
 
         [Test]

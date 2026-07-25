@@ -28,7 +28,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             Selection.activeGameObject = sceneRoot;
             SceneView.lastActiveSceneView?.FrameSelected();
             Debug.Log(
-                "PROJECT_BUILD_COMPLETE|scene=SolarSystem|bodies=10|planets=8|orbits=9|interaction=ready");
+                "PROJECT_BUILD_COMPLETE|scene=SolarSystem|bodies=16|planets=8|moons=7|orbits=15|interaction=ready");
         }
     }
 }
