@@ -21,8 +21,12 @@ MonoBehaviour:
     targetIds:
     - sun
     durationSeconds: 10
-    framingPadding: 1.35
+    framingPadding: 1.75
     framingDirection: {x: 0.12, y: 0.22, z: -1}
+    framingSpace: 0
+    screenOffset: {x: 0.24, y: 0.18}
+    transitionDurationSeconds: 1.35
+    transitionEasing: 1
   - stableId: earth-moon
     title: A Paired World
     subtitle: Earth and Moon
@@ -32,8 +36,12 @@ MonoBehaviour:
     - earth
     - moon
     durationSeconds: 12
-    framingPadding: 1.45
-    framingDirection: {x: 0.32, y: 0.24, z: -1}
+    framingPadding: 1.25
+    framingDirection: {x: 0.25, y: 0.08, z: -1}
+    framingSpace: 3
+    screenOffset: {x: 0, y: 0.3}
+    transitionDurationSeconds: 1.2
+    transitionEasing: 1
   - stableId: jupiter-system
     title: The Giant System
     subtitle: Jupiter and the Galilean Moons
@@ -46,8 +54,12 @@ MonoBehaviour:
     - ganymede
     - callisto
     durationSeconds: 14
-    framingPadding: 1.25
-    framingDirection: {x: -0.3, y: 0.2, z: -1}
+    framingPadding: 1.55
+    framingDirection: {x: 0.3, y: 0.12, z: -1}
+    framingSpace: 3
+    screenOffset: {x: 0.1, y: 0.18}
+    transitionDurationSeconds: 1.3
+    transitionEasing: 1
   - stableId: saturn
     title: A World of Rings
     subtitle: Saturn
@@ -56,17 +68,24 @@ MonoBehaviour:
     targetIds:
     - saturn
     durationSeconds: 12
-    framingPadding: 2.15
-    framingDirection: {x: 0.38, y: 0.38, z: -1}
+    framingPadding: 2.3
+    framingDirection: {x: 0.34, y: 0.34, z: -1}
+    framingSpace: 1
+    screenOffset: {x: 0.24, y: 0.16}
+    transitionDurationSeconds: 1.35
+    transitionEasing: 1
   - stableId: outer-system
     title: The Distant Frontier
-    subtitle: Uranus, Neptune, and Triton
-    description: The tour closes among the ice giants and Neptune's retrograde moon
-      Triton, at the edge of the authored planetary system.
+    subtitle: Neptune and Triton
+    description: Beyond Uranus, the tour closes at Neptune with retrograde Triton,
+      a captured world moving against its planet's rotation.
     targetIds:
-    - uranus
     - neptune
     - triton
     durationSeconds: 12
-    framingPadding: 1.3
-    framingDirection: {x: -0.24, y: 0.28, z: -1}
+    framingPadding: 1.85
+    framingDirection: {x: 0.2, y: 0.12, z: -1}
+    framingSpace: 3
+    screenOffset: {x: 0.3, y: 0.26}
+    transitionDurationSeconds: 1.4
+    transitionEasing: 1

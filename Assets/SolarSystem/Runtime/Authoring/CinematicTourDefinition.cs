@@ -1,5 +1,6 @@
 using System;
 using Tanvir.SolarSystem.Application;
+using Tanvir.SolarSystem.Presentation.Camera;
 using UnityEngine;
 
 namespace Tanvir.SolarSystem.Authoring
@@ -22,6 +23,13 @@ namespace Tanvir.SolarSystem.Authoring
             [SerializeField, Min(1f)] private float framingPadding = 1.2f;
             [SerializeField] private Vector3 framingDirection =
                 new Vector3(0.18f, 0.34f, -1f);
+            [SerializeField] private CinematicTourFramingSpace framingSpace;
+            [SerializeField] private Vector2 screenOffset =
+                new Vector2(0.20f, 0.16f);
+            [SerializeField, Min(0f)] private float transitionDurationSeconds =
+                1.15f;
+            [SerializeField] private GuidedCameraEasing transitionEasing =
+                GuidedCameraEasing.SmootherStep;
 
             internal CinematicTourChapter ToRuntime()
             {
@@ -33,7 +41,11 @@ namespace Tanvir.SolarSystem.Authoring
                     targetIds,
                     durationSeconds,
                     framingPadding,
-                    framingDirection);
+                    framingDirection,
+                    framingSpace,
+                    screenOffset,
+                    transitionDurationSeconds,
+                    transitionEasing);
             }
         }
 

@@ -40,6 +40,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private GuidedScaleComparisonService scaleComparison;
         private CinematicTourController tourController;
         private CinematicTourService cinematicTour;
+        private PresentationMotionPreferenceService motionPreference;
         private SelectionService selection;
         private CelestialSelectionController selectionController;
         private SolarSystemCameraController cameraController;
@@ -72,6 +73,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private Label tourSubtitle;
         private Label tourDescription;
         private Button tourNextButton;
+        private Button tourMotionButton;
         private Button tourExitButton;
         private Label bodyName;
         private Label bodyCategory;
@@ -140,6 +142,10 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         /// <summary>Gets the current cinematic-tour chapter title.</summary>
         public string CinematicTourTitleText => tourTitle?.text ?? string.Empty;
+
+        /// <summary>Gets the motion preference presented on the tour control.</summary>
+        public string CinematicTourMotionText =>
+            tourMotionButton?.text ?? string.Empty;
 
         /// <summary>Gets whether the celestial navigator is currently visible.</summary>
         public bool IsNavigatorVisible => navigation?.IsNavigatorVisible == true;
@@ -247,6 +253,9 @@ namespace Tanvir.SolarSystem.Presentation.UI
             cinematicTour = tourController.Service ??
                 throw new InvalidOperationException(
                     "Cinematic tour controller must be initialized before the HUD.");
+            motionPreference = tourController.MotionPreference ??
+                throw new InvalidOperationException(
+                    "Motion preference must be initialized before the HUD.");
 
             if (document == null || styleSheet == null)
             {
@@ -258,6 +267,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
             selection.SelectionChanged += OnSelectionChanged;
             scaleComparison.Changed += Refresh;
             cinematicTour.Changed += Refresh;
+            motionPreference.Changed += Refresh;
             navigation.Changed += OnNavigationChanged;
             TryConnectDocument();
         }
@@ -355,6 +365,11 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 tourExitButton.clicked -= OnTourExitClicked;
             }
 
+            if (tourMotionButton != null)
+            {
+                tourMotionButton.clicked -= OnTourMotionClicked;
+            }
+
             if (timeControls != null)
             {
                 timeControls.Changed -= Refresh;
@@ -375,6 +390,11 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 cinematicTour.Changed -= Refresh;
             }
 
+            if (motionPreference != null)
+            {
+                motionPreference.Changed -= Refresh;
+            }
+
             if (navigation != null)
             {
                 navigation.Changed -= OnNavigationChanged;
@@ -390,6 +410,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
             scaleComparison = null;
             tourController = null;
             cinematicTour = null;
+            motionPreference = null;
             IsInitialized = false;
             IsBodyInformationVisible = false;
             IsSelectionReticleVisible = false;
@@ -421,6 +442,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
             tourSubtitle = null;
             tourDescription = null;
             tourNextButton = null;
+            tourMotionButton = null;
             tourExitButton = null;
             bodyName = null;
             bodyCategory = null;
@@ -484,8 +506,10 @@ namespace Tanvir.SolarSystem.Presentation.UI
             tourSubtitle = RequireLabel(root, "tour-subtitle");
             tourDescription = RequireLabel(root, "tour-description");
             tourNextButton = RequireButton(root, "tour-next-button");
+            tourMotionButton = RequireButton(root, "tour-motion-button");
             tourExitButton = RequireButton(root, "tour-exit-button");
             tourNextButton.clicked += OnTourNextClicked;
+            tourMotionButton.clicked += OnTourMotionClicked;
             tourExitButton.clicked += OnTourExitClicked;
             bodyName = RequireLabel(root, "body-name");
             bodyCategory = RequireLabel(root, "body-category");
@@ -1025,6 +1049,9 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 cinematicTour.CurrentChapterNumber == cinematicTour.ChapterCount
                     ? "T  FINISH"
                     : "T  NEXT";
+            tourMotionButton.text = motionPreference.IsReducedMotion
+                ? "M  MOTION / REDUCED"
+                : "M  MOTION / FULL";
         }
 
         private void OnTourNextClicked()
@@ -1035,6 +1062,11 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private void OnTourExitClicked()
         {
             tourController.Cancel();
+        }
+
+        private void OnTourMotionClicked()
+        {
+            tourController.ToggleReducedMotion();
         }
 
         private static Label RequireLabel(VisualElement root, string name)

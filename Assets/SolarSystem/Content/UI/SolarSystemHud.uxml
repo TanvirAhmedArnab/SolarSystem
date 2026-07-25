@@ -97,6 +97,7 @@
             <ui:Label name="tour-description" text="" class="tour-description" />
             <ui:VisualElement class="tour-controls">
                 <ui:Button name="tour-next-button" text="T  NEXT" class="tour-button tour-next-button" />
+                <ui:Button name="tour-motion-button" text="M  MOTION / FULL" class="tour-button tour-motion-button" />
                 <ui:Button name="tour-exit-button" text="ESC  EXIT" class="tour-button tour-exit-button" />
             </ui:VisualElement>
         </ui:VisualElement>

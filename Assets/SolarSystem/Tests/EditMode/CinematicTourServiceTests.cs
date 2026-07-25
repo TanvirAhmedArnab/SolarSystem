@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Tanvir.SolarSystem.Application;
+using Tanvir.SolarSystem.Presentation.Camera;
 using UnityEngine;
 
 namespace Tanvir.SolarSystem.Tests.EditMode
@@ -95,6 +96,54 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(service.CurrentChapter.StableId, Is.EqualTo("outer-system"));
             Assert.That(service.Advance(), Is.True);
             Assert.That(service.IsActive, Is.False);
+        }
+
+        [Test]
+        public void Chapter_PreservesValidatedAuthoredShotContract()
+        {
+            var chapter = new CinematicTourChapter(
+                "earth-moon",
+                "A Paired World",
+                "Earth and Moon",
+                "Educational description.",
+                new[] { "earth", "moon" },
+                12f,
+                1.1f,
+                new Vector3(0.2f, 0.3f, -1f),
+                CinematicTourFramingSpace.SunlitTargetAxis,
+                new Vector2(0.22f, 0.18f),
+                1.25f,
+                GuidedCameraEasing.SmootherStep);
+
+            Assert.That(
+                chapter.FramingSpace,
+                Is.EqualTo(CinematicTourFramingSpace.SunlitTargetAxis));
+            Assert.That(chapter.ScreenOffset, Is.EqualTo(new Vector2(0.22f, 0.18f)));
+            Assert.That(chapter.TransitionDurationSeconds, Is.EqualTo(1.25f));
+            Assert.That(
+                chapter.TransitionEasing,
+                Is.EqualTo(GuidedCameraEasing.SmootherStep));
+            Assert.That(chapter.FramingDirection.magnitude, Is.EqualTo(1f).Within(0.0001f));
+        }
+
+        [Test]
+        public void Chapter_RejectsUnsafeScreenOffset()
+        {
+            Assert.That(
+                () => new CinematicTourChapter(
+                    "sun",
+                    "Sun",
+                    "The Sun",
+                    "Educational description.",
+                    new[] { "sun" },
+                    10f,
+                    1.2f,
+                    Vector3.forward,
+                    CinematicTourFramingSpace.World,
+                    new Vector2(0.8f, 0f),
+                    1f,
+                    GuidedCameraEasing.SmoothStep),
+                Throws.TypeOf<System.ArgumentOutOfRangeException>());
         }
 
         private static CinematicTourChapter Chapter(string id, float duration)

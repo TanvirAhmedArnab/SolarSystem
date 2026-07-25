@@ -2,6 +2,7 @@ using System;
 using Tanvir.SolarSystem.Audio;
 using Tanvir.SolarSystem.Authoring;
 using Tanvir.SolarSystem.Input;
+using Tanvir.SolarSystem.Infrastructure.Preferences;
 using Tanvir.SolarSystem.Interaction;
 using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
@@ -28,6 +29,10 @@ namespace Tanvir.SolarSystem.Application
         [SerializeField] private CelestialNavigationController navigationController;
         [SerializeField] private CinematicTourController tourController;
         [SerializeField] private CinematicTourDefinition tourDefinition;
+        [SerializeField] private CelestialOrbitPathVisibilityController
+            orbitPathVisibility;
+        [SerializeField] private CinematicTourBodyVisibilityController
+            tourBodyVisibility;
         [SerializeField] private CelestialBodyView[] bodyViews =
             Array.Empty<CelestialBodyView>();
         [SerializeField] private SolarSystemHudPresenter hudPresenter;
@@ -52,6 +57,18 @@ namespace Tanvir.SolarSystem.Application
         /// <summary>Gets the deterministic cinematic-tour service.</summary>
         public CinematicTourService CinematicTour => tourController?.Service;
 
+        /// <summary>Gets the persisted presentation-motion accessibility service.</summary>
+        public PresentationMotionPreferenceService MotionPreference =>
+            tourController?.MotionPreference;
+
+        /// <summary>Gets the shared orbit-guide presentation policy.</summary>
+        public CelestialOrbitPathVisibilityController OrbitPathVisibility =>
+            orbitPathVisibility;
+
+        /// <summary>Gets the reversible tour target-renderer spotlight.</summary>
+        public CinematicTourBodyVisibilityController TourBodyVisibility =>
+            tourBodyVisibility;
+
         /// <summary>Gets the runtime HUD presenter.</summary>
         public SolarSystemHudPresenter HudPresenter => hudPresenter;
 
@@ -74,6 +91,10 @@ namespace Tanvir.SolarSystem.Application
             navigationController.IsInitialized &&
             tourController != null &&
             tourController.IsInitialized &&
+            orbitPathVisibility != null &&
+            orbitPathVisibility.IsInitialized &&
+            tourBodyVisibility != null &&
+            tourBodyVisibility.IsInitialized &&
             hudPresenter != null &&
             hudPresenter.IsInitialized &&
             audioDirector != null &&
@@ -99,6 +120,8 @@ namespace Tanvir.SolarSystem.Application
                 navigationController == null ||
                 tourController == null ||
                 tourDefinition == null ||
+                orbitPathVisibility == null ||
+                tourBodyVisibility == null ||
                 bodyViews == null ||
                 bodyViews.Length == 0 ||
                 hudPresenter == null ||
@@ -133,12 +156,18 @@ namespace Tanvir.SolarSystem.Application
                 cameraController,
                 guidedPresentation,
                 bodyViews);
+            tourBodyVisibility.Initialize(bodyViews);
+            var motionPreference = new PresentationMotionPreferenceService(
+                new PlayerPrefsPresentationMotionPreferenceStore());
             tourController.Initialize(
                 inputAdapter,
                 selectionController,
                 timeInputController,
                 cameraController,
                 navigationController,
+                orbitPathVisibility,
+                tourBodyVisibility,
+                motionPreference,
                 explorerCamera,
                 tourDefinition,
                 bodyViews,

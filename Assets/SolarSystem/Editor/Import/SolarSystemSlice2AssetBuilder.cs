@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Tanvir.SolarSystem.Application;
 using Tanvir.SolarSystem.Authoring;
+using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
 using Tanvir.SolarSystem.Presentation.Scale;
 using Tanvir.SolarSystem.Simulation;
@@ -2132,8 +2134,12 @@ namespace Tanvir.SolarSystem.Editor.Import
                 "anchors every planetary orbit shown here.",
                 new[] { "sun" },
                 10f,
+                1.75f,
+                new Vector3(0.12f, 0.22f, -1f),
+                CinematicTourFramingSpace.World,
+                new Vector2(0.24f, 0.18f),
                 1.35f,
-                new Vector3(0.12f, 0.22f, -1f));
+                GuidedCameraEasing.SmootherStep);
             ConfigureTourChapter(
                 chapters.GetArrayElementAtIndex(1),
                 "earth-moon",
@@ -2143,8 +2149,12 @@ namespace Tanvir.SolarSystem.Editor.Import
                 "while both continue their journey around the Sun.",
                 new[] { "earth", "moon" },
                 12f,
-                1.45f,
-                new Vector3(0.32f, 0.24f, -1f));
+                1.25f,
+                new Vector3(0.25f, 0.08f, -1f),
+                CinematicTourFramingSpace.SunlitTargetAxis,
+                new Vector2(0f, 0.30f),
+                1.20f,
+                GuidedCameraEasing.SmootherStep);
             ConfigureTourChapter(
                 chapters.GetArrayElementAtIndex(2),
                 "jupiter-system",
@@ -2154,8 +2164,12 @@ namespace Tanvir.SolarSystem.Editor.Import
                 "four distinct worlds orbiting the largest planet.",
                 new[] { "jupiter", "io", "europa", "ganymede", "callisto" },
                 14f,
-                1.25f,
-                new Vector3(-0.30f, 0.20f, -1f));
+                1.55f,
+                new Vector3(0.30f, 0.12f, -1f),
+                CinematicTourFramingSpace.SunlitTargetAxis,
+                new Vector2(0.10f, 0.18f),
+                1.30f,
+                GuidedCameraEasing.SmootherStep);
             ConfigureTourChapter(
                 chapters.GetArrayElementAtIndex(3),
                 "saturn",
@@ -2165,19 +2179,27 @@ namespace Tanvir.SolarSystem.Editor.Import
                 "System's clearest examples of orbital structure at a glance.",
                 new[] { "saturn" },
                 12f,
-                2.15f,
-                new Vector3(0.38f, 0.38f, -1f));
+                2.30f,
+                new Vector3(0.34f, 0.34f, -1f),
+                CinematicTourFramingSpace.SolarRadial,
+                new Vector2(0.24f, 0.16f),
+                1.35f,
+                GuidedCameraEasing.SmootherStep);
             ConfigureTourChapter(
                 chapters.GetArrayElementAtIndex(4),
                 "outer-system",
                 "The Distant Frontier",
-                "Uranus, Neptune, and Triton",
-                "The tour closes among the ice giants and Neptune's retrograde " +
-                "moon Triton, at the edge of the authored planetary system.",
-                new[] { "uranus", "neptune", "triton" },
+                "Neptune and Triton",
+                "Beyond Uranus, the tour closes at Neptune with retrograde " +
+                "Triton, a captured world moving against its planet's rotation.",
+                new[] { "neptune", "triton" },
                 12f,
-                1.30f,
-                new Vector3(-0.24f, 0.28f, -1f));
+                1.85f,
+                new Vector3(0.20f, 0.12f, -1f),
+                CinematicTourFramingSpace.SunlitTargetAxis,
+                new Vector2(0.30f, 0.26f),
+                1.40f,
+                GuidedCameraEasing.SmootherStep);
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(definition);
         }
@@ -2191,7 +2213,11 @@ namespace Tanvir.SolarSystem.Editor.Import
             string[] targetIds,
             float durationSeconds,
             float framingPadding,
-            Vector3 framingDirection)
+            Vector3 framingDirection,
+            CinematicTourFramingSpace framingSpace,
+            Vector2 screenOffset,
+            float transitionDurationSeconds,
+            GuidedCameraEasing transitionEasing)
         {
             chapter.FindPropertyRelative("stableId").stringValue = stableId;
             chapter.FindPropertyRelative("title").stringValue = title;
@@ -2207,6 +2233,13 @@ namespace Tanvir.SolarSystem.Editor.Import
             chapter.FindPropertyRelative("durationSeconds").floatValue = durationSeconds;
             chapter.FindPropertyRelative("framingPadding").floatValue = framingPadding;
             chapter.FindPropertyRelative("framingDirection").vector3Value = framingDirection;
+            chapter.FindPropertyRelative("framingSpace").enumValueIndex =
+                (int)framingSpace;
+            chapter.FindPropertyRelative("screenOffset").vector2Value = screenOffset;
+            chapter.FindPropertyRelative("transitionDurationSeconds").floatValue =
+                transitionDurationSeconds;
+            chapter.FindPropertyRelative("transitionEasing").enumValueIndex =
+                (int)transitionEasing;
         }
 
         private static void ConfigureScale(PresentationScaleDefinition scale)

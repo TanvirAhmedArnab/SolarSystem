@@ -7,7 +7,7 @@
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
 **Document status:** Living technical authority; Sun, eight-planet, seven-moon, Titan haze, Galilean-moon, and Triton hero baselines validated  
-**Version:** 0.29.0  
+**Version:** 0.30.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -55,6 +55,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.27.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Triton with a disclosed unobserved-coverage fill, preserved retrograde scientific state, corrected outer-system point-light culling, deterministic scene wiring, and full asset/scene regression coverage | Triton hero architecture implemented and validated |
 | 0.28.0 | 2026-07-25 | Codex, for Tanvir | Added event-driven celestial navigation state, parent-first selection/focus routing, cached UI Toolkit navigator entries, allocation-stable projected labels, deterministic overlap priorities, responsive safe areas, explicit input, and real-scene regression coverage | Navigator and label architecture implemented and validated |
 | 0.29.0 | 2026-07-25 | Codex, for Tanvir | Added immutable cinematic-tour authoring/runtime data, shared guided ownership, allocation-stable live group framing, exact moving-target camera restoration, responsive UI, and full asset/service/scene coverage | Cinematic-tour architecture implemented and validated |
+| 0.30.0 | 2026-07-25 | Codex, for Tanvir | Added authored composition/easing, phase-robust screen-plane group framing, persisted reduced motion, reversible orbit/body visibility ownership, and exact restoration coverage | Cinematic-tour polish architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -450,8 +451,9 @@ or invalid targets hide the reticle without clearing selection.
 Camera transitions and movement use unscaled time so pausing the simulation
 does not trap the camera. Focus distance and zoom limits respond to the target's
 projected radius. Context-sensitive free-flight speed, scripted cinematic
-waypoints are now data-driven through `CinematicTourDefinition`; contextual
-free-flight speed and reduced-motion/instant transitions remain pending.
+waypoints, and cinematic transition timing/easing are data-driven through
+`CinematicTourDefinition`. Reduced-motion instant transitions are implemented;
+context-sensitive free-flight speed remains pending.
 
 ### 6.8 Input
 
@@ -489,24 +491,42 @@ and `T` cannot interrupt a scale comparison.
 
 `CinematicTourDefinition` is a ScriptableObject authoring contract. Each
 chapter contains a stable ID, display copy, stable body IDs, deterministic
-unscaled duration, framing padding, and viewing direction. Runtime conversion
-produces immutable `CinematicTourChapter` instances and validates all body
-references once during composition.
+unscaled duration, framing padding, framing space, viewing direction, normalized
+screen offset, transition duration, and easing. Runtime conversion produces
+immutable `CinematicTourChapter` instances and validates all body references
+once during composition.
 
 `CinematicTourService` owns only chapter index and elapsed unscaled time. It
 supports start, deterministic carry-over across chapter boundaries, explicit
 advance, completion, and cancellation without referencing scene objects.
 `CinematicTourController` resolves authored IDs to the existing
-`CelestialBodyView` graph, computes a bounding-sphere camera pose without
+`CelestialBodyView` graph, computes a bounded group camera pose without
 per-frame collections, and updates the existing camera controller as bodies
-move.
+move. World and solar-radial framing support single-body chapters. The
+sunlit-target-axis mode projects the Sun-facing direction into the plane
+perpendicular to the widest target axis; this keeps paired bodies separated on
+screen while choosing the most illuminated available phase. Authored padding
+and offsets protect the responsive HUD safe area at both reference resolutions.
+
+`GuidedCameraTransition` is an immutable value that evaluates deterministic
+SmoothStep or SmootherStep interpolation. `PresentationMotionPreferenceService`
+owns Full Motion or Reduced Motion and persists it through the narrow
+`IPresentationMotionPreferenceStore` boundary. The Unity adapter stores only
+the enum value in `PlayerPrefs`. Full Motion uses each chapter's authored
+duration/easing; Reduced Motion uses an instant transition for entry, advance,
+and restore. The Input System exposes `M`, and the existing HUD button calls the
+same service.
 
 On entry, the controller captures navigator visibility and label preference,
-then locks selection and time input. The camera controller captures its exact
-pose, rotation, clip planes, velocity, focus target, focus transition state,
-focus direction/distance, yaw, pitch, and interaction mode. On completion or
-cancellation, the camera restores that snapshot before interaction, navigator,
-and labels are restored. Selection state, the simulation clock, and
+then locks selection and time input. It acquires reversible tour ownership of
+orbit-guide visibility and caches every body renderer's enabled state before
+showing only the active chapter targets. Renderer arrays and state buffers are
+built once at composition, so live spotlight changes allocate nothing.
+The camera controller captures its exact pose, rotation, clip planes, velocity,
+focus target, focus transition state, focus direction/distance, yaw, pitch, and
+interaction mode. On completion or cancellation, the camera restores that
+snapshot before interaction, navigator, labels, orbit guides, and exact
+renderer states are restored. Selection state, the simulation clock, and
 `AudioDirector` settings are never mutated by the tour.
 
 ### 6.9 UI
@@ -524,12 +544,12 @@ and concise keyboard hints.
 
 The cinematic-tour card shares the project-owned UXML/USS and presenter. It
 shows chapter number, title, subtitle, educational copy, and mouse-accessible
-next/finish and exit buttons. A compact rule keeps the card inside exact
-1280x720 and 2560x1440 reference surfaces. Body information, reticle, quick
-controls, navigator, and projected labels are suppressed while the tour owns
-presentation; the persistent status panel continues to disclose simulation
-and scale state. Chapter UI changes only at deterministic state transitions,
-so the tour adds no per-frame string or element allocation.
+next/finish, motion, and exit buttons. A compact lower-left rule keeps the card
+inside exact 1280x720 and 2560x1440 reference surfaces. Body information,
+reticle, status, quick controls, navigator, and projected labels are suppressed
+while the tour owns presentation. Chapter and motion labels change only at
+effective state transitions, so the tour adds no per-frame string or element
+allocation.
 
 `CelestialBodyInformation` is a display-only formatter. It converts the selected
 definition's verified authoring values into consistent, culture-invariant

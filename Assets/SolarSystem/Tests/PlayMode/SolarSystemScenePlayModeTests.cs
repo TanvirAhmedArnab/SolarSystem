@@ -582,6 +582,16 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             int savedMultiplier = interaction.TimeControls.CurrentMultiplier;
             bool savedPaused = interaction.TimeControls.IsPaused;
             int savedFeedbackCount = audio.FeedbackCueCount;
+            bool savedOrbitVisibility =
+                interaction.OrbitPathVisibility.ArePathsVisible;
+            bool savedEarthVisibility =
+                interaction.TourBodyVisibility.IsBodyVisible("earth");
+            bool savedSaturnVisibility =
+                interaction.TourBodyVisibility.IsBodyVisible("saturn");
+            PresentationMotionMode savedMotionMode =
+                interaction.MotionPreference.Mode;
+            interaction.MotionPreference.SetMode(
+                PresentationMotionMode.FullMotion);
             CinematicTourService tour = interaction.CinematicTour;
             CinematicTourController tourController =
                 Object.FindAnyObjectByType<CinematicTourController>();
@@ -603,10 +613,23 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(interaction.SelectionController.SelectedView, Is.SameAs(earth));
             Assert.That(interaction.TimeControls.CurrentMultiplier, Is.EqualTo(savedMultiplier));
             Assert.That(interaction.TimeControls.IsPaused, Is.EqualTo(savedPaused));
+            Assert.That(
+                interaction.OrbitPathVisibility.IsCinematicTourSuppressed,
+                Is.True);
+            Assert.That(interaction.OrbitPathVisibility.ArePathsVisible, Is.False);
+            Assert.That(interaction.TourBodyVisibility.IsTourOverrideActive, Is.True);
+            Assert.That(interaction.TourBodyVisibility.IsBodyVisible("sun"), Is.True);
+            Assert.That(interaction.TourBodyVisibility.IsBodyVisible("earth"), Is.False);
 
             interaction.ScaleComparison.Advance();
             Assert.That(interaction.ScaleComparison.IsActive, Is.False);
             Assert.That(tour.IsActive, Is.True);
+
+            tourController.ToggleReducedMotion();
+            Assert.That(interaction.MotionPreference.IsReducedMotion, Is.True);
+            Assert.That(
+                interaction.HudPresenter.CinematicTourMotionText,
+                Does.Contain("REDUCED"));
 
             string[] expectedRemainingChapters =
             {
@@ -618,10 +641,24 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             foreach (string expectedChapter in expectedRemainingChapters)
             {
                 tourController.StartOrAdvance();
+                Assert.That(
+                    interaction.CameraController.Mode,
+                    Is.EqualTo(SolarSystemCameraMode.CinematicTour),
+                    "Reduced motion must complete a chapter transition instantly.");
                 yield return WaitUntilCinematic(interaction.CameraController);
                 Assert.That(tour.CurrentChapter.StableId, Is.EqualTo(expectedChapter));
+                if (expectedChapter == "jupiter-system")
+                {
+                    Assert.That(
+                        interaction.TourBodyVisibility.IsBodyVisible("jupiter"),
+                        Is.True);
+                    Assert.That(
+                        interaction.TourBodyVisibility.IsBodyVisible("saturn"),
+                        Is.False);
+                }
             }
 
+            interaction.MotionPreference.SetMode(savedMotionMode);
             tourController.StartOrAdvance();
             yield return WaitUntilAnyGuidedPresentationRestored(
                 interaction.CameraController);
@@ -675,6 +712,82 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(audio.CelestialVolume, Is.EqualTo(0.53f).Within(0.0001f));
             Assert.That(audio.IsMuted, Is.True, "Audio mute must remain unchanged.");
             Assert.That(audio.FeedbackCueCount, Is.EqualTo(savedFeedbackCount));
+            Assert.That(
+                interaction.OrbitPathVisibility.IsCinematicTourSuppressed,
+                Is.False);
+            Assert.That(
+                interaction.OrbitPathVisibility.ArePathsVisible,
+                Is.EqualTo(savedOrbitVisibility),
+                "Orbit-guide visibility must restore exactly.");
+            Assert.That(
+                interaction.TourBodyVisibility.IsTourOverrideActive,
+                Is.False);
+            Assert.That(
+                interaction.TourBodyVisibility.IsBodyVisible("earth"),
+                Is.EqualTo(savedEarthVisibility));
+            Assert.That(
+                interaction.TourBodyVisibility.IsBodyVisible("saturn"),
+                Is.EqualTo(savedSaturnVisibility));
+            Assert.That(interaction.MotionPreference.Mode, Is.EqualTo(savedMotionMode));
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_ReducedMotionCancelRestoresCameraAndGuidePolicy()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            CinematicTourController tourController =
+                Object.FindAnyObjectByType<CinematicTourController>();
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(tourController, Is.Not.Null);
+
+            Camera camera = Camera.main;
+            Vector3 savedPosition = camera.transform.position;
+            Quaternion savedRotation = camera.transform.rotation;
+            bool savedGuideVisibility =
+                interaction.OrbitPathVisibility.ArePathsVisible;
+            PresentationMotionMode savedMotionMode =
+                interaction.MotionPreference.Mode;
+            interaction.MotionPreference.SetMode(
+                PresentationMotionMode.ReducedMotion);
+
+            tourController.StartOrAdvance();
+
+            Assert.That(interaction.CinematicTour.IsActive, Is.True);
+            Assert.That(
+                interaction.CameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.CinematicTour));
+            Assert.That(interaction.OrbitPathVisibility.ArePathsVisible, Is.False);
+            Assert.That(interaction.TourBodyVisibility.IsTourOverrideActive, Is.True);
+
+            tourController.Cancel();
+            yield return null;
+
+            Assert.That(interaction.CinematicTour.IsActive, Is.False);
+            Assert.That(
+                interaction.CameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.FreeFlight));
+            Assert.That(
+                Vector3.Distance(camera.transform.position, savedPosition),
+                Is.LessThan(0.001f));
+            Assert.That(
+                Quaternion.Angle(camera.transform.rotation, savedRotation),
+                Is.LessThan(0.001f));
+            Assert.That(
+                interaction.OrbitPathVisibility.IsCinematicTourSuppressed,
+                Is.False);
+            Assert.That(
+                interaction.OrbitPathVisibility.ArePathsVisible,
+                Is.EqualTo(savedGuideVisibility));
+            Assert.That(
+                interaction.TourBodyVisibility.IsTourOverrideActive,
+                Is.False);
+            Assert.That(interaction.TourBodyVisibility.IsBodyVisible("saturn"), Is.True);
+
+            interaction.MotionPreference.SetMode(savedMotionMode);
         }
 
         [UnityTest]

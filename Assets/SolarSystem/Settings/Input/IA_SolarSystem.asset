@@ -170,6 +170,15 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
       m_Priority: 0
+    - m_Name: ToggleReducedMotion
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: f7964ba2-a950-4e5f-97ff-207f682ee077
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+      m_Priority: 0
     m_Bindings:
     - m_Name: 2DVector
       m_Id: 93525f18-8f8a-48e8-ae11-42fe0962c997
@@ -394,6 +403,14 @@ MonoBehaviour:
       m_Processors: 
       m_Groups: 
       m_Action: CinematicTour
+      m_Flags: 0
+    - m_Name: 
+      m_Id: a99cf5c0-f8b2-4ca6-95fd-3be9e09d2a07
+      m_Path: <Keyboard>/m
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: ToggleReducedMotion
       m_Flags: 0
   m_ControlSchemes: []
   m_IsProjectWide: 0

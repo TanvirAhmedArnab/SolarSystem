@@ -13,6 +13,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         [SerializeField] private CelestialOrbitPathView[] orbitPaths =
             Array.Empty<CelestialOrbitPathView>();
         private bool? appliedVisibility;
+        private bool isCinematicTourSuppressed;
 
         /// <summary>Gets whether required camera and path references are available.</summary>
         public bool IsInitialized =>
@@ -20,6 +21,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Gets the last visibility state applied to every orbit path.</summary>
         public bool ArePathsVisible => appliedVisibility ?? true;
+
+        /// <summary>Gets whether the tour currently owns the visibility override.</summary>
+        public bool IsCinematicTourSuppressed => isCinematicTourSuppressed;
 
         private void OnEnable()
         {
@@ -40,7 +44,8 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
                 return;
             }
 
-            bool visible = cameraController.Mode != SolarSystemCameraMode.FocusTransition &&
+            bool visible = !isCinematicTourSuppressed &&
+                cameraController.Mode != SolarSystemCameraMode.FocusTransition &&
                 cameraController.Mode != SolarSystemCameraMode.Focused;
             if (appliedVisibility == visible)
             {
@@ -57,6 +62,20 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             }
 
             appliedVisibility = visible;
+        }
+
+        /// <summary>Suppresses every orbit guide for an active cinematic shot.</summary>
+        public void BeginCinematicTourSuppression()
+        {
+            isCinematicTourSuppressed = true;
+            RefreshVisibility();
+        }
+
+        /// <summary>Releases the tour override and reapplies the camera-mode policy.</summary>
+        public void EndCinematicTourSuppression()
+        {
+            isCinematicTourSuppressed = false;
+            RefreshVisibility();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
-**Status:** Implemented exploration, navigation, labels, guided scale comparison, and cinematic-tour controls  
+**Status:** Implemented exploration, navigation, labels, guided scale comparison, cinematic-tour, and motion-accessibility controls  
 **Last updated:** 2026-07-25  
 **Input asset:** `Assets/SolarSystem/Settings/Input/IA_SolarSystem.asset`
 
@@ -119,20 +119,29 @@ state.
 | Advance chapter | T or **Next** | Skip to the next deterministic chapter |
 | Finish | T or **Finish** on chapter 5 | Restore the exact pre-tour explorer state |
 | Exit early | Escape or **Exit** | Cancel and restore the exact pre-tour explorer state |
+| Toggle transition motion | M or **Motion** | Switch between eased camera travel and instant chapter/restore cuts; the preference persists locally |
 
 The five chapters frame the Sun, Earth-Moon system, Jupiter and the four
-Galilean moons, Saturn and its rings, and an outer-system finale with Uranus,
-Neptune, and Triton. Chapter timing uses unscaled time. Planetary motion
+Galilean moons, Saturn and its rings, and an outer-system finale with Neptune
+and Triton. Chapter timing uses unscaled time. Planetary motion
 continues from the authoritative simulation at the user's existing rate while
 the camera tracks each live target group.
+
+**Full Motion** uses each chapter's authored deterministic duration and easing.
+**Reduced Motion** completes chapter entry, advance, and explorer restoration
+instantly. The current mode is shown directly on the keyboard- and
+mouse-accessible Motion control, and the selected mode is retained between
+sessions.
 
 The tour and guided scale comparison are mutually exclusive because they share
 one camera and guided-UI ownership coordinator. During a tour, selection,
 focus, free-flight, zoom, time controls, labels, and the navigator are
-temporarily locked. Completion and cancellation restore the captured camera
-pose, focus target/mode, clip planes, navigator visibility, and label
-preference. Selection, time rate, pause state, and audio settings are never
-changed by the tour.
+temporarily locked. Orbit guides are suppressed and only the current chapter's
+featured body renderers are shown, without pausing simulation or audio.
+Completion and cancellation restore the captured camera pose, focus
+target/mode, clip planes, navigator visibility, label preference, orbit-guide
+state, and every renderer's exact prior enabled state. Selection, time rate,
+pause state, and audio settings are never changed by the tour.
 
 ## Deferred Controls
 
@@ -140,5 +149,4 @@ The following approved product capabilities remain pending for later release
 slices:
 
 - complete Help, settings, and contextual onboarding;
-- reduced-motion or instant-transition setting;
 - gamepad bindings, which are outside the first public-release baseline.

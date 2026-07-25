@@ -75,6 +75,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(root.Q<Label>("tour-subtitle"), Is.Not.Null);
             Assert.That(root.Q<Label>("tour-description"), Is.Not.Null);
             Assert.That(root.Q<Button>("tour-next-button"), Is.Not.Null);
+            Assert.That(root.Q<Button>("tour-motion-button"), Is.Not.Null);
             Assert.That(root.Q<Button>("tour-exit-button"), Is.Not.Null);
         }
 

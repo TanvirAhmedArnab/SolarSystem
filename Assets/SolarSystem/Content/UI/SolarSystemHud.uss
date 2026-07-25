@@ -545,10 +545,9 @@
 
 .cinematic-tour-panel {
     position: absolute;
-    left: 50%;
-    bottom: 42px;
-    width: 560px;
-    margin-left: -280px;
+    left: 32px;
+    bottom: 32px;
+    width: 480px;
     padding: 22px 24px;
     background-color: rgba(3, 13, 25, 0.94);
     border-left-width: 3px;
@@ -608,6 +607,12 @@
     border-color: rgb(177, 76, 111);
 }
 
+.tour-motion-button {
+    color: rgb(255, 228, 151);
+    background-color: rgb(61, 49, 21);
+    border-color: rgb(211, 164, 54);
+}
+
 .key-tour {
     color: rgb(255, 219, 107);
     background-color: rgb(76, 60, 17);
@@ -615,6 +620,7 @@
 }
 
 .tour-active .hint-panel,
+.tour-active .status-panel,
 .tour-active .body-information-panel,
 .tour-active .selection-reticle,
 .tour-active .navigator-panel {
@@ -626,8 +632,15 @@
     right: 18px;
     bottom: 18px;
     width: auto;
-    margin-left: 0;
     padding: 15px 17px;
+}
+
+.is-compact .tour-controls {
+    flex-wrap: wrap;
+}
+
+.is-compact .tour-button {
+    margin-bottom: 8px;
 }
 
 .is-compact .tour-title {

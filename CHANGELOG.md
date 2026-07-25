@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Data-driven cinematic-tour framing spaces, screen offsets, safety padding,
+  transition durations, and deterministic easing for all five chapters.
+- Persisted Full Motion/Reduced Motion preference on `M` and the visible Motion
+  button; reduced mode cuts immediately between chapters and back to the exact
+  explorer pose.
+- Reversible tour-only orbit-guide suppression and target renderer spotlighting
+  that leave authoritative simulation and audio running and restore every
+  prior visibility state on completion or cancellation.
+- Phase-robust multi-body framing that keeps the widest target axis in the
+  screen plane while selecting the most sunward available view.
+- Expanded motion, input, UI, state-restoration, renderer-visibility, and
+  real-scene regression coverage, bringing the suites to 178 Edit Mode and
+  24 Play Mode cases.
 - Data-driven five-chapter cinematic tour on `T`, covering the Sun,
   Earth-Moon system, Jupiter and the Galilean moons, Saturn's rings, and an
   outer-system finale.

@@ -83,13 +83,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Triton Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Triton%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Celestial Navigator and World Labels Validation](Docs/ProjectManagement/Slice%204%20Celestial%20Navigator%20and%20World%20Labels%20Validation.md)
 - [Slice 4 Cinematic Tour Validation](Docs/ProjectManagement/Slice%204%20Cinematic%20Tour%20Validation.md)
+- [Slice 4 Cinematic Tour Polish Validation](Docs/ProjectManagement/Slice%204%20Cinematic%20Tour%20Polish%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/seven-moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 169 Edit Mode cases and
-23 real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 178 Edit Mode cases and
+24 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -108,7 +109,11 @@ camera, selection, navigation, time, audio, and UI services to visit the Sun,
 Earth-Moon system, Jupiter system, Saturn's rings, and the outer system. It
 supports `T`, Escape, and visible mouse controls, keeps scientific motion
 running, prevents conflict with scale comparison, and restores the exact prior
-explorer state relative to any live focused target.
+explorer state relative to any live focused target. Per-chapter composition and
+easing are authored as data; `M` or the visible Motion control switches between
+full eased travel and a persisted instant reduced-motion mode. Tour-only orbit
+guide suppression and renderer spotlighting preserve visual hierarchy while
+restoring every prior visibility state on completion or cancellation.
 Earth now provides the representative layered-rendering proof with a custom
 URP surface, ocean response, nightside-only city lights, independent clouds,
 a restrained atmosphere rim, and close-focus orbit-guide suppression.

@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, seven-moon, hero-rendering, and celestial-navigation foundations  
-**Version:** 0.24.0  
+**Version:** 0.26.0  
 **Last updated:** 2026-07-25  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -454,26 +454,30 @@ Do not add minimum visible body sizes, glow markers, or decorative substitutes
 in the two linear stages; the apparent disappearance is the educational point.
 
 **[IMPLEMENTED AND VALIDATED: CINEMATIC TOUR]** The cinematic tour
-uses a centered lower-third observatory card rather than a second interface
+uses a compact lower-left observatory card rather than a second interface
 theme. Cyan identifies chapter/progress context, high-contrast white carries
 the chapter title, muted blue-gray carries the body/system subtitle, and
 separate labeled buttons expose `T / NEXT` or `T / FINISH` and `ESC / EXIT`
 without relying on color alone.
 
-The card suppresses the normal quick controls, selected-body card, reticle,
-navigator, and projected labels while preserving the top-left simulation and
-scale disclosure. At compact resolutions it becomes edge-anchored with reduced
-padding and type size. The five authored compositions prioritize:
+The card suppresses the normal status, quick controls, selected-body card,
+reticle, navigator, and projected labels. At compact resolutions it remains
+edge-anchored with reduced padding and type size. A yellow Motion action
+exposes Full or Reduced state without relying on color alone. The five authored
+compositions prioritize:
 
 1. the Sun's surface and corona;
 2. Earth and Moon as a readable hierarchy;
 3. Jupiter and the four Galilean moons;
 4. Saturn with sufficient padding for its ring plane;
-5. Uranus, Neptune, and Triton as the outer-system finale.
+5. Neptune and Triton as the outer-system finale.
 
 No new font, icon, image, texture, or audio asset is introduced by the tour.
-Camera movement reuses the existing unscaled transition language, and a future
-reduced-motion setting remains required before the public accessibility gate.
+Camera movement reuses the existing unscaled transition language. Full Motion
+uses authored deterministic easing, while Reduced Motion uses immediate cuts.
+Orbit guides and non-featured body renderers are suppressed only during the
+tour, then restored exactly; the skybox, live simulation, and audio remain
+continuous.
 
 ## 7. Audio Direction
 
@@ -575,6 +579,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.26.0 | 2026-07-25 | Refined all cinematic chapters with responsive lower-left hierarchy, target-only visual spotlighting, reversible orbit-guide suppression, phase-robust group separation, and a visible Full/Reduced Motion control | Cinematic-tour polish implemented and validated at exact 1280x720 and 2560x1440 |
 | 0.25.0 | 2026-07-25 | Added the responsive cinematic-tour card, five reviewed composition priorities, non-color-only keyboard/mouse actions, controlled HUD-density rules, and explicit no-new-media decision | Cinematic-tour visual baseline implemented and validated at exact 1280x720 and 2560x1440 |
 | 0.24.0 | 2026-07-25 | Added the restrained parent-first navigator and projected-label visual language, including moon indentation, non-color-only selection, overlap suppression, HUD safe areas, focus/guided-state density rules, explicit keycaps, and compact responsive treatment without third-party fonts or icons | Celestial navigation and label baseline implemented and visually validated |
 | 0.23.0 | 2026-07-25 | Added Triton's distinct airless hero treatment with anchored synthesized-color USGS/Voyager imagery, a disclosed uniform fill for unobserved black coverage, source-derived non-displacing detail only on observed pixels, corrected outer-system light culling, and explicit atmosphere/activity limits | Triton hero slice implemented and visually validated |

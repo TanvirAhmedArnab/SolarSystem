@@ -794,6 +794,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 camera.gameObject.AddComponent<SolarSystemCameraController>();
             CelestialOrbitPathVisibilityController orbitVisibility =
                 interactionObject.AddComponent<CelestialOrbitPathVisibilityController>();
+            CinematicTourBodyVisibilityController bodyVisibility =
+                interactionObject.AddComponent<CinematicTourBodyVisibilityController>();
             SolarSystemInteractionCompositionRoot composition =
                 interactionObject.AddComponent<SolarSystemInteractionCompositionRoot>();
 
@@ -819,6 +821,10 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.FindProperty("tourController").objectReferenceValue = tour;
             serialized.FindProperty("tourDefinition").objectReferenceValue =
                 cinematicTour;
+            serialized.FindProperty("orbitPathVisibility").objectReferenceValue =
+                orbitVisibility;
+            serialized.FindProperty("tourBodyVisibility").objectReferenceValue =
+                bodyVisibility;
             SetArray(serialized.FindProperty("bodyViews"), bodyViews);
             serialized.FindProperty("hudPresenter").objectReferenceValue = hudPresenter;
             serialized.FindProperty("audioDirector").objectReferenceValue = audioDirector;

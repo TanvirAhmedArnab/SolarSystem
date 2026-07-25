@@ -10,7 +10,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string InputFolder = "Assets/SolarSystem/Settings/Input";
         private const string InputAssetPath = InputFolder + "/IA_SolarSystem.asset";
         private const string AssetName = "IA_SolarSystem";
-        private const string ContractLabel = "SolarSystemInputContract-v5";
+        private const string ContractLabel = "SolarSystemInputContract-v6";
 
         internal static InputActionAsset Build()
         {
@@ -44,12 +44,12 @@ namespace Tanvir.SolarSystem.Editor.Import
                 AddPointerActions(explorer);
                 AddDiscreteActions(explorer);
             }
-            else if (explorer.FindAction("CinematicTour", false) == null)
+            else if (explorer.FindAction("ToggleReducedMotion", false) == null)
             {
                 explorer.AddAction(
-                    "CinematicTour",
+                    "ToggleReducedMotion",
                     InputActionType.Button,
-                    "<Keyboard>/t");
+                    "<Keyboard>/m");
             }
 
             AssetDatabase.SetLabels(actions, new[] { ContractLabel });
@@ -93,6 +93,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 "Cancel",
                 "TogglePause",
                 "ScaleComparison",
+                "CinematicTour",
                 "ToggleNavigator",
                 "ToggleWorldLabels",
                 "DecreaseTimeSpeed",
@@ -166,6 +167,10 @@ namespace Tanvir.SolarSystem.Editor.Import
                 "CinematicTour",
                 InputActionType.Button,
                 "<Keyboard>/t");
+            explorer.AddAction(
+                "ToggleReducedMotion",
+                InputActionType.Button,
+                "<Keyboard>/m");
             explorer.AddAction(
                 "ToggleNavigator",
                 InputActionType.Button,
