@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Rebuilt the Sun ambience as a reproducible PCM16 mono derivative with a
+  100 ms loop crossfade and controlled `-3 dBFS` peak, then added a runtime
+  regression proving that all three continuous-audio playheads advance.
 - Centralized Escape handling under one contextual router: close menu, cancel
   tour, cancel scale comparison, cancel focus, then open Help in free flight.
 - Expanded validation to 183 Edit Mode and 25 Play Mode cases with a clean

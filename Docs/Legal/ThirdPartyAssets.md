@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.15.0  
+**Version:** 0.16.0  
 **Last reviewed:** 2026-07-25
 
 **Live-source verification:** Rechecked 2026-07-25 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records, including Triton's Voyager 2 mosaic.
@@ -105,8 +105,9 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 ## Unity Import Record
 
 **Imported:** 2026-07-22  
+**Sun derivative reviewed:** 2026-07-25  
 **Unity root:** `Assets/SolarSystem/Content`  
-**Method:** Byte-identical copies renamed to the project naming convention; originals and SHA-256 values remain in `SourceAssets`.
+**Method:** Originals remain in `SourceAssets`; Unity files are byte-identical renames unless a derivative is documented below.
 
 | Source IDs | Unity destination | Import status |
 |---|---|---|
@@ -115,8 +116,24 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 | TEX-USGS-001-006 | `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/<Moon>` | Active byte-identical `Browse` runtime baselines; source limitations disclosed |
 | AUD-KEN-001 selected subset | `Assets/SolarSystem/Content/Audio/SFX/UI` | Imported; audition and loudness review pending |
 | AUD-OGA-MUS-001 | `Assets/SolarSystem/Content/Audio/Music/A_Music_OuterSpaceLoop.mp3` | Imported; 2D music mix review pending |
-| AUD-OGA-SUN-001 | `Assets/SolarSystem/Content/Audio/Ambience/CelestialBodies/Sun/A_Sun_BurningLoop.wav` | Imported; intended 2D loop and mix review pending |
+| AUD-OGA-SUN-001 | `Assets/SolarSystem/Content/Audio/Ambience/CelestialBodies/Sun/A_Sun_BurningLoop.wav` | Reproducible PCM16 mono derivative; 2D playback validated; mix review pending |
 | AUD-OGA-EARTH-001 | `Assets/SolarSystem/Content/Audio/Ambience/CelestialBodies/Earth/A_Earth_ForestAmbienceLoop.mp3` | Imported; intended 3D rolloff and mix review pending |
+
+### Active Sun ambience record
+
+- Source ID: `AUD-OGA-SUN-001`
+- Source: `SourceAssets/ThirdParty/Audio/OpenGameArt/PagDev/fire.wav`
+- Source SHA-256:
+  `85CA0CC60D0C037FFF8B185E31AD1FCDBDA6CE45EEE17C3EE1318D1B8F59E330`
+- Unity derivative:
+  `Assets/SolarSystem/Content/Audio/Ambience/CelestialBodies/Sun/A_Sun_BurningLoop.wav`
+- Derivative SHA-256:
+  `C83B0A41A5CBC73E12B21124E431826701DA730739DA5450CEAD728D7807492E`
+- Processing: `Tools/AssetPipeline/Build-SunAmbience.py` downmixes the verified
+  32-bit stereo PCM master to 16-bit mono PCM, applies a 100 ms loop
+  crossfade, and normalizes the peak to `-3 dBFS`.
+- License: PagDev / OpenGameArt, CC0 1.0. Modification, redistribution, and
+  commercial use are permitted; optional credit remains in the release.
 
 ### Active Jupiter texture record
 

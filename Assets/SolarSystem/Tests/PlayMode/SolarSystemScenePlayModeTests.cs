@@ -478,6 +478,22 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(audio.UiSource.spatialBlend, Is.Zero);
             Assert.That(audio.UiSource.playOnAwake, Is.False);
 
+            Assert.That(audio.MusicSource.isPlaying, Is.True);
+            Assert.That(audio.SunAmbienceSource.isPlaying, Is.True);
+            Assert.That(audio.EarthAmbienceSource.isPlaying, Is.True);
+            int musicStart = audio.MusicSource.timeSamples;
+            int sunStart = audio.SunAmbienceSource.timeSamples;
+            int earthStart = audio.EarthAmbienceSource.timeSamples;
+
+            yield return new WaitForSecondsRealtime(0.1f);
+
+            Assert.That(audio.MusicSource.timeSamples, Is.GreaterThan(musicStart));
+            Assert.That(
+                audio.SunAmbienceSource.timeSamples,
+                Is.GreaterThan(sunStart),
+                "The preloaded Sun WAV must advance instead of stalling at sample zero.");
+            Assert.That(audio.EarthAmbienceSource.timeSamples, Is.GreaterThan(earthStart));
+
             interaction.SelectionController.Select(earth);
             Assert.That(audio.LastFeedbackCue, Is.EqualTo(AudioFeedbackCue.Selection));
             Assert.That(audio.FeedbackCueCount, Is.EqualTo(1));

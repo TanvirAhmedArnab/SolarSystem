@@ -577,19 +577,56 @@ namespace Tanvir.SolarSystem.Editor.Import
 
         private static void ConfigureAudioImporters()
         {
-            ConfigureAudioImporter(MusicClipPath, true, false);
-            ConfigureAudioImporter(SunAmbienceClipPath, true, true);
-            ConfigureAudioImporter(EarthAmbienceClipPath, true, true);
-            ConfigureAudioImporter(SelectionClipPath, false, true);
-            ConfigureAudioImporter(FocusClipPath, false, true);
-            ConfigureAudioImporter(TimeControlClipPath, false, true);
-            ConfigureAudioImporter(ScaleComparisonClipPath, false, true);
+            ConfigureAudioImporter(
+                MusicClipPath,
+                AudioClipLoadType.Streaming,
+                false,
+                false,
+                true);
+            ConfigureAudioImporter(
+                SunAmbienceClipPath,
+                AudioClipLoadType.CompressedInMemory,
+                false,
+                true,
+                false);
+            ConfigureAudioImporter(
+                EarthAmbienceClipPath,
+                AudioClipLoadType.Streaming,
+                true,
+                false,
+                true);
+            ConfigureAudioImporter(
+                SelectionClipPath,
+                AudioClipLoadType.DecompressOnLoad,
+                true,
+                true,
+                false);
+            ConfigureAudioImporter(
+                FocusClipPath,
+                AudioClipLoadType.DecompressOnLoad,
+                true,
+                true,
+                false);
+            ConfigureAudioImporter(
+                TimeControlClipPath,
+                AudioClipLoadType.DecompressOnLoad,
+                true,
+                true,
+                false);
+            ConfigureAudioImporter(
+                ScaleComparisonClipPath,
+                AudioClipLoadType.DecompressOnLoad,
+                true,
+                true,
+                false);
         }
 
         private static void ConfigureAudioImporter(
             string path,
-            bool streaming,
-            bool forceToMono)
+            AudioClipLoadType loadType,
+            bool forceToMono,
+            bool preloadAudioData,
+            bool loadInBackground)
         {
             AudioImporter importer = AssetImporter.GetAtPath(path) as AudioImporter;
             if (importer == null)
@@ -599,13 +636,11 @@ namespace Tanvir.SolarSystem.Editor.Import
             }
 
             AudioImporterSampleSettings settings = importer.defaultSampleSettings;
-            AudioClipLoadType expectedLoadType =
-                streaming ? AudioClipLoadType.Streaming : AudioClipLoadType.DecompressOnLoad;
             bool changed =
                 importer.forceToMono != forceToMono ||
-                importer.loadInBackground != streaming ||
-                settings.loadType != expectedLoadType ||
-                settings.preloadAudioData == streaming ||
+                importer.loadInBackground != loadInBackground ||
+                settings.loadType != loadType ||
+                settings.preloadAudioData != preloadAudioData ||
                 settings.compressionFormat != AudioCompressionFormat.Vorbis ||
                 Math.Abs(settings.quality - 0.7f) > 0.0001f ||
                 settings.sampleRateSetting != AudioSampleRateSetting.OptimizeSampleRate;
@@ -616,9 +651,9 @@ namespace Tanvir.SolarSystem.Editor.Import
             }
 
             importer.forceToMono = forceToMono;
-            importer.loadInBackground = streaming;
-            settings.loadType = expectedLoadType;
-            settings.preloadAudioData = !streaming;
+            importer.loadInBackground = loadInBackground;
+            settings.loadType = loadType;
+            settings.preloadAudioData = preloadAudioData;
             settings.compressionFormat = AudioCompressionFormat.Vorbis;
             settings.quality = 0.7f;
             settings.sampleRateSetting = AudioSampleRateSetting.OptimizeSampleRate;

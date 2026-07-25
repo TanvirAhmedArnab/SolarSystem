@@ -9,9 +9,8 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         private const string AudioRoot = "Assets/SolarSystem/Content/Audio";
 
         [TestCase("Music/A_Music_OuterSpaceLoop.mp3", false)]
-        [TestCase("Ambience/CelestialBodies/Sun/A_Sun_BurningLoop.wav", true)]
         [TestCase("Ambience/CelestialBodies/Earth/A_Earth_ForestAmbienceLoop.mp3", true)]
-        public void LoopingAudio_UsesStreamingImportPolicy(
+        public void Mp3Loops_UseStreamingImportPolicy(
             string relativePath,
             bool expectedMono)
         {
@@ -21,6 +20,17 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 expectedMono,
                 false,
                 true);
+        }
+
+        [Test]
+        public void SunWavLoop_UsesPreloadedCompressedMemoryPolicy()
+        {
+            AssertImporter(
+                $"{AudioRoot}/Ambience/CelestialBodies/Sun/A_Sun_BurningLoop.wav",
+                AudioClipLoadType.CompressedInMemory,
+                false,
+                true,
+                false);
         }
 
         [TestCase("SFX/UI/A_UI_Select.ogg")]

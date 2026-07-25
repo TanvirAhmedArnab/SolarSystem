@@ -511,13 +511,20 @@ non-spatial scene source.
 - **Sun:** `A_Sun_BurningLoop.wav`, sourced from PagDev's CC0 Fireplace Sound Loop. Configure as a looping 2D AudioSource (`Spatial Blend = 0`) so it supplies a stylized solar-burning layer independent of camera distance.
 - **Earth:** `A_Earth_ForestAmbienceLoop.mp3`, sourced from TinyWorlds' CC0 Forest Ambience. Configure as a looping 3D AudioSource (`Spatial Blend = 1`) attached to Earth, with a measured logarithmic rolloff range that supports focus shots without leaking across the system view.
 
-**[IMPLEMENTED BASELINE]** Both ambience clips import as mono, streaming
-Vorbis audio with background loading. The Sun source is 2D and parented to the
-Sun. The Earth source is fully 3D and parented to Earth, using logarithmic
-rolloff from `1.5` to `12` presentation units with Doppler and reverb-zone
-effects disabled.
+**[IMPLEMENTED BASELINE]** The retained Sun master remains unchanged. The
+project tool creates a mono PCM16 derivative with a 100 ms loop crossfade and
+controlled `-3 dBFS` peak; Unity preloads it as compressed memory so playback
+advances reliably. The Sun source is 2D and parented to the Sun. Earth imports
+as mono, streaming Vorbis audio with background loading and uses a fully 3D
+source parented to Earth, with logarithmic rolloff from `1.5` to `12`
+presentation units and Doppler/reverb-zone effects disabled.
 
-These sounds are interpretive experience design, not a claim that sound propagates through space. Each must have an independent mixer level, a restrained fade during focus transitions, and no audible discontinuity when looping.
+These sounds are interpretive experience design, not a claim that sound
+propagates through space. The first release exposes one shared celestial
+ambience control while retaining separate authored source gains. Add separate
+player controls only if audition evidence shows a usability need. Focus
+transitions should remain restrained, and loops must have no audible
+discontinuity.
 
 ### Interface sounds
 
@@ -565,7 +572,12 @@ Provider filenames remain unchanged under `SourceAssets`.
 
 ### Imported working set
 
-The Unity working set contains byte-identical, renamed copies of 17 Solar System Scope textures, six USGS browse mosaics, seven selected Kenney UI sounds, one CC0 music loop, and two CC0 celestial-body ambience loops. Originals remain under `SourceAssets/ThirdParty`; the exact provenance and import mapping are owned by `Docs/Legal/ThirdPartyAssets.md`.
+The retained working set contains 17 Solar System Scope textures, six USGS
+browse mosaics, seven selected Kenney UI sounds, one CC0 music loop, and two
+CC0 celestial-body ambience sources. Unity-ready files are byte-identical
+renames except where the licensing ledger explicitly records a derivative,
+including the processed Sun ambience. Originals remain under
+`SourceAssets/ThirdParty`.
 
 ## 9. Release Quality Gate
 
@@ -594,6 +606,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.28.0 | 2026-07-25 | Recorded the reproducible Sun ambience derivative, reliable playback policy, shared celestial-level contract, and playhead regression | Technical audio fix implemented and validated; final mix awaits owner review |
 | 0.27.0 | 2026-07-25 | Added the responsive unified Explorer Menu language for Help, onboarding, Settings, and Credits & Sources, including visible audio values and non-color-only state | Explorer UX visual baseline implemented and validated |
 | 0.26.0 | 2026-07-25 | Refined all cinematic chapters with responsive lower-left hierarchy, target-only visual spotlighting, reversible orbit-guide suppression, phase-robust group separation, and a visible Full/Reduced Motion control | Cinematic-tour polish implemented and validated at exact 1280x720 and 2560x1440 |
 | 0.25.0 | 2026-07-25 | Added the responsive cinematic-tour card, five reviewed composition priorities, non-color-only keyboard/mouse actions, controlled HUD-density rules, and explicit no-new-media decision | Cinematic-tour visual baseline implemented and validated at exact 1280x720 and 2560x1440 |

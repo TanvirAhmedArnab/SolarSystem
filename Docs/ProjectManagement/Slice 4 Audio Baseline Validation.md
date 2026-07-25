@@ -5,7 +5,7 @@
 **Validation date:** 2026-07-24  
 **Unity:** 6000.5.3f1  
 **URP:** 17.5.0  
-**Status:** Implemented and automatically validated; awaiting owner review
+**Status:** Implemented and automatically validated; final mix awaits owner review
 
 ## Scope
 
@@ -18,8 +18,8 @@ This candidate integrates the previously approved, licensed audio working set:
 - Independent master, music, UI, and celestial runtime levels plus master mute.
 
 The audio is interpretive experience design. It does not claim that sound
-propagates through space. A player-facing settings panel, transition fades,
-and final mix approval remain outside this candidate.
+propagates through space. Player-facing settings are implemented; transition
+fades and final mix approval remain outside this candidate.
 
 ## Licensing and provenance
 
@@ -49,9 +49,14 @@ and final mix approval remain outside this candidate.
 
 ## Import and scene contracts
 
-- Long music/ambience clips use streaming Vorbis compression, background
-  loading, and optimized sample rate.
-- Sun and Earth ambience import as mono; the music loop remains stereo.
+- Long MP3 music and Earth ambience use streaming Vorbis compression,
+  background loading, and optimized sample rate.
+- The retained Sun master remains an unchanged 32-bit stereo PCM source. A
+  deterministic project tool creates its Unity-ready 16-bit mono PCM
+  derivative with a 100 ms loop crossfade and `-3 dBFS` peak.
+- The Sun derivative uses preloaded compressed-memory playback to avoid the
+  sample-zero stall observed with the source-format WAV.
+- Sun and Earth ambience are mono; the music loop remains stereo.
 - Short UI cues import as mono, preload audio data, and decompress on load.
 - The Sun uses `Spatial Blend = 0`.
 - Earth uses `Spatial Blend = 1`, logarithmic rolloff, `Min Distance = 1.5`,
@@ -61,19 +66,20 @@ and final mix approval remain outside this candidate.
 
 | Suite | Passed | Failed | Skipped | Inconclusive |
 |---|---:|---:|---:|---:|
-| Edit Mode | 94 | 0 | 0 | 0 |
-| Play Mode | 6 | 0 | 0 | 0 |
+| Edit Mode | 183 | 0 | 0 | 0 |
+| Play Mode | 25 | 0 | 0 | 0 |
 
-The nine new Edit Mode cases cover default mix policy, event-to-cue mapping,
-level/mute independence, and deterministic import settings. The new real-scene
-Play Mode case covers licensed clip wiring, playback policy, spatialization,
-rolloff, channel independence, and interaction-service composition.
+The complete suites cover default mix policy, event-to-cue mapping,
+level/mute independence, deterministic import settings, licensed clip wiring,
+spatialization, rolloff, channel independence, and interaction-service
+composition. The real-scene audio case now also waits in real time and proves
+that the music, Sun, and Earth playheads all advance.
 
 ## Final Unity result
 
 - Compilation: passed
-- Edit Mode: `94 passed`, `0 failed`, `0 skipped`, `0 inconclusive`
-- Play Mode: `6 passed`, `0 failed`, `0 skipped`, `0 inconclusive`
+- Edit Mode: `183 passed`, `0 failed`, `0 skipped`, `0 inconclusive`
+- Play Mode: `25 passed`, `0 failed`, `0 skipped`, `0 inconclusive`
 - Console after validation: `0 errors`, `0 warnings`
 - Editor state: Edit Mode
 

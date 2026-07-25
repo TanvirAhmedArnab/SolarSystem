@@ -604,10 +604,10 @@ If audio is included:
 **[IMPLEMENTED BASELINE]** The scene now plays the approved CC0 music loop,
 stylized 2D Sun ambience, and spatial 3D Earth ambience. Selection, focus, and
 simulation-time changes produce restrained UI cues. Master, music, UI, and
-celestial levels are independently adjustable through the runtime audio
-service, and master mute preserves the chosen channel levels. A player-facing
-settings surface is still required. Final loudness, loop-seam, and fatigue
-approval remains an owner listening gate; this implementation does not claim
+celestial levels are independently adjustable through the runtime settings
+surface, and master mute preserves the chosen channel levels. Final loudness,
+loop-seam, and fatigue approval remains an owner listening gate; this
+implementation does not claim
 that sound propagates through space.
 
 ## 13. Technical Product Constraints

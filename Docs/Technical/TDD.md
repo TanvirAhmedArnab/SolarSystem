@@ -636,6 +636,12 @@ gameplay state.
 - Music and UI use non-spatial sources under `_Audio`. The stylized Sun source
   is 2D and parented to the Sun; Earth ambience is fully 3D and parented to
   Earth with logarithmic attenuation.
+- Long MP3 music/Earth loops stream in the background. The Sun uses a
+  reproducible project-generated PCM16 mono derivative, imported as preloaded
+  compressed memory because the retained 32-bit stereo source stalled at
+  sample zero in Unity 6000.5.3f1.
+- Real-scene regression coverage proves that every continuous-audio playhead
+  advances after startup.
 - Complete initialization subscribes once; destruction or reinitialization
   removes prior subscriptions.
 
