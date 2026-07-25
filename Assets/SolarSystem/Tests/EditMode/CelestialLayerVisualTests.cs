@@ -33,6 +33,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             CelestialLayerVisualModel model = definition.ToModel();
 
             Assert.That(model.BodyStableId, Is.EqualTo("earth"));
+            Assert.That(model.HasCloudLayer, Is.True);
             Assert.That(
                 model.CloudShellRadiusMultiplier,
                 Is.EqualTo(EarthLayerRenderingContract.CloudShellRadiusMultiplier));
@@ -54,6 +55,23 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 () => new CelestialLayerVisualModel("earth", 1.02f, 1.01f, 1.025f));
             Assert.Throws<ArgumentOutOfRangeException>(
                 () => new CelestialLayerVisualModel("earth", 1.004f, 1.018f, 0f));
+        }
+
+        [Test]
+        public void Model_AllowsAtmosphereOnlyCompositionWithoutInventingClouds()
+        {
+            var model = new CelestialLayerVisualModel(
+                "mars",
+                false,
+                EarthLayerRenderingContract.CloudShellRadiusMultiplier,
+                MarsLayerRenderingContract.AtmosphereShellRadiusMultiplier,
+                1f);
+
+            Assert.That(model.BodyStableId, Is.EqualTo("mars"));
+            Assert.That(model.HasCloudLayer, Is.False);
+            Assert.That(
+                model.AtmosphereShellRadiusMultiplier,
+                Is.EqualTo(MarsLayerRenderingContract.AtmosphereShellRadiusMultiplier));
         }
 
         [Test]
@@ -164,6 +182,45 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         }
 
         [Test]
+        public void MarsLayeredView_InitializesAtmosphereWithoutCloudDependencies()
+        {
+            CelestialLayerVisualDefinition definition = CreateDefinition(
+                "mars",
+                EarthLayerRenderingContract.CloudShellRadiusMultiplier,
+                MarsLayerRenderingContract.AtmosphereShellRadiusMultiplier,
+                1f,
+                false);
+            GameObject root = CreateObject("Mars");
+            Transform atmosphere =
+                CreateRendererObject("Atmosphere Layer", root.transform);
+            MeshRenderer surface = root.AddComponent<MeshRenderer>();
+            CelestialLayeredBodyView view =
+                root.AddComponent<CelestialLayeredBodyView>();
+            var serialized = new SerializedObject(view);
+            serialized.FindProperty("definition").objectReferenceValue = definition;
+            serialized.FindProperty("atmosphereShell").objectReferenceValue = atmosphere;
+            serialized.FindProperty("surfaceRenderer").objectReferenceValue = surface;
+            serialized.FindProperty("atmosphereRenderer").objectReferenceValue =
+                atmosphere.GetComponent<MeshRenderer>();
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            CelestialBodyModel mars =
+                CelestialTestFactory.CreateOrbitingBody("mars", "sun");
+
+            view.Initialize(mars);
+            view.Apply(120d);
+
+            Assert.That(view.IsInitialized, Is.True);
+            Assert.That(view.HasCloudLayer, Is.False);
+            Assert.That(view.CloudShell, Is.Null);
+            Assert.That(view.CloudRenderer, Is.Null);
+            Assert.That(view.CloudRelativeRotationDeg, Is.Zero);
+            Assert.That(
+                atmosphere.localScale.x,
+                Is.EqualTo(MarsLayerRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+        }
+
+        [Test]
         public void NightWeight_IsZeroOnDaysideAndOneOnOpposedHemisphere()
         {
             Assert.That(EarthLayerRenderingContract.EvaluateNightWeight(1f), Is.Zero);
@@ -184,13 +241,15 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             string bodyStableId,
             float cloudShellRadiusMultiplier,
             float atmosphereShellRadiusMultiplier,
-            float cloudRotationMultiplier)
+            float cloudRotationMultiplier,
+            bool hasCloudLayer = true)
         {
             CelestialLayerVisualDefinition definition =
                 ScriptableObject.CreateInstance<CelestialLayerVisualDefinition>();
             createdObjects.Add(definition);
             var serialized = new SerializedObject(definition);
             serialized.FindProperty("bodyStableId").stringValue = bodyStableId;
+            serialized.FindProperty("hasCloudLayer").boolValue = hasCloudLayer;
             serialized.FindProperty("cloudShellRadiusMultiplier").floatValue =
                 cloudShellRadiusMultiplier;
             serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =

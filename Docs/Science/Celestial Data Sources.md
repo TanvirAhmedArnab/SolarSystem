@@ -201,6 +201,19 @@ Authored J2000 orbital values:
 - Mean anomaly: `19.39019754 degrees`
 - Sidereal orbital period: `1.8808476 Julian years` = `686.9795859 days`
 
+Presentation use and limitations:
+
+- The positive sidereal period retains Mars's authored prograde rotation.
+- Rendered surface radius remains the exact Earth-relative ratio derived from
+  `3,389.5 km`; the atmosphere shell never enters scientific state.
+- The `1.008` atmosphere multiplier is a readability treatment, not a measured
+  atmospheric boundary or claim about pressure, scale height, or composition.
+- The Solar System Scope map supplies enhanced presentation color and terrain
+  identity; it is licensed art provenance, not the authority for physical or
+  orbital values.
+- The renderer does not model dust storms, clouds, weather, scattering,
+  chemistry, or date-exact appearance.
+
 Primary sources:
 
 - [JPL Planetary Physical Parameters](https://ssd.jpl.nasa.gov/planets/phys_par.html)

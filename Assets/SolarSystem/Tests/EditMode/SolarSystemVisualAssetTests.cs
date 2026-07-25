@@ -52,6 +52,14 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Venus_Atmosphere.mat";
         private const string VenusLayerDefinitionPath =
             "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Venus.asset";
+        private const string MarsTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Mars/T_Mars_Surface_2K.jpg";
+        private const string MarsMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Mars.mat";
+        private const string MarsAtmosphereMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Mars_Atmosphere.mat";
+        private const string MarsLayerDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Mars.asset";
         private const string EarthMaterialPath =
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Earth.mat";
         private const string EarthNormalPath =
@@ -436,6 +444,80 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(
                 atmosphereImporter.wrapMode,
                 Is.EqualTo(TextureWrapMode.Repeat));
+        }
+
+        [Test]
+        public void MarsMaterials_UseAnchoredRockySurfaceAndAtmosphereOnlyContract()
+        {
+            Texture2D texture =
+                AssetDatabase.LoadAssetAtPath<Texture2D>(MarsTexturePath);
+            Material surface =
+                AssetDatabase.LoadAssetAtPath<Material>(MarsMaterialPath);
+            Material atmosphere =
+                AssetDatabase.LoadAssetAtPath<Material>(
+                    MarsAtmosphereMaterialPath);
+            CelestialLayerVisualDefinition definition =
+                AssetDatabase.LoadAssetAtPath<CelestialLayerVisualDefinition>(
+                    MarsLayerDefinitionPath);
+            var importer =
+                AssetImporter.GetAtPath(MarsTexturePath) as TextureImporter;
+
+            Assert.That(texture, Is.Not.Null);
+            Assert.That(surface, Is.Not.Null);
+            Assert.That(
+                surface.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Rocky Surface"));
+            Assert.That(surface.GetTexture("_BaseMap"), Is.SameAs(texture));
+            Assert.That(
+                surface.GetFloat("_ReliefStrength"),
+                Is.EqualTo(MarsLayerRenderingContract.ReliefStrength)
+                    .Within(0.0001f));
+            Assert.That(
+                surface.GetFloat("_ReliefSampleDistance"),
+                Is.EqualTo(MarsLayerRenderingContract.ReliefSampleDistance)
+                    .Within(0.0001f));
+            Assert.That(
+                surface.GetFloat("_Specular"),
+                Is.EqualTo(MarsLayerRenderingContract.SurfaceSpecular)
+                    .Within(0.0001f));
+            Assert.That(
+                surface.GetFloat("_Smoothness"),
+                Is.EqualTo(MarsLayerRenderingContract.SurfaceSmoothness)
+                    .Within(0.0001f));
+            Assert.That(surface.enableInstancing, Is.True);
+
+            Assert.That(atmosphere, Is.Not.Null);
+            Assert.That(
+                atmosphere.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Atmosphere Rim"));
+            Assert.That(
+                atmosphere.GetFloat("_RimPower"),
+                Is.EqualTo(MarsLayerRenderingContract.AtmosphereRimPower)
+                    .Within(0.0001f));
+            Assert.That(
+                atmosphere.GetFloat("_RimIntensity"),
+                Is.EqualTo(MarsLayerRenderingContract.AtmosphereIntensity)
+                    .Within(0.0001f));
+            Assert.That(
+                atmosphere.GetFloat("_NightsideVisibility"),
+                Is.EqualTo(MarsLayerRenderingContract.AtmosphereNightsideVisibility)
+                    .Within(0.0001f));
+            Assert.That(
+                atmosphere.renderQueue,
+                Is.EqualTo((int)RenderQueue.Transparent + 10));
+            Assert.That(atmosphere.enableInstancing, Is.True);
+
+            Assert.That(definition, Is.Not.Null);
+            Assert.That(definition.BodyStableId, Is.EqualTo("mars"));
+            Assert.That(definition.HasCloudLayer, Is.False);
+            Assert.That(
+                definition.AtmosphereShellRadiusMultiplier,
+                Is.EqualTo(MarsLayerRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(importer, Is.Not.Null);
+            Assert.That(importer.sRGBTexture, Is.True);
+            Assert.That(importer.mipmapEnabled, Is.True);
+            Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Repeat));
         }
     }
 }

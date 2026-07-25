@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.8.0  
+**Version:** 0.9.0  
 **Last reviewed:** 2026-07-24
 
 **Live-source verification:** Rechecked 2026-07-22 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records.
@@ -177,6 +177,28 @@ The Venus layer definition/model/view reuse, cloud shader, atmosphere
 material, and reproducible scene wiring are project-authored. They introduce
 no new third-party media or license and do not alter the existing Solar System
 Scope CC BY 4.0 attribution obligation.
+
+### Active Mars hero-rendering record
+
+- Source ID: `TEX-SSS-010`.
+- Source:
+  `SourceAssets/ThirdParty/Textures/SolarSystemScope/2k_mars.jpg`.
+- Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Mars/T_Mars_Surface_2K.jpg`.
+- Active materials: `M_Mars.mat` and project-authored
+  `M_Mars_Atmosphere.mat`.
+- Source and Unity derivative SHA-256:
+  `2D187F3E77A98EAA8CEA5F4CC722F633C122EF170B9E94ACE6B5FB6CBC3F8E01`.
+- License: Solar System Scope, CC BY 4.0; release attribution remains required.
+- Modification status: texture pixels are unchanged. The project-owned rocky
+  shader keeps the source map anchored, applies an authored color multiplier,
+  and samples four neighboring source texels for restrained relief. The
+  atmosphere shader uses no additional texture.
+
+The atmosphere-only definition/model/view extension, rocky shader, atmosphere
+material, tests, and reproducible scene wiring are project-authored. They add
+no third-party media or license and do not change the existing attribution
+obligation for `TEX-SSS-010`.
 
 ### Active eight-planet material records
 

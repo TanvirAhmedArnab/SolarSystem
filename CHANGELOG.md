@@ -101,6 +101,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Edit Mode Venus authoring/material/import contracts and real-scene Play Mode
   coverage for exact scale, hierarchy, retrograde cloud motion, pause,
   Sun-origin lighting, focus visibility, renderer policy, and state preservation.
+- Project-owned anchored rocky-surface shader for Mars with restrained
+  source-derived relief, dry PBR response, and no artificial surface motion.
+- Explicit atmosphere-only support in the reusable layered-body
+  definition/model/view path, avoiding a dummy Mars cloud layer.
+- Reproducible Mars layer definition, thin Sun-aware atmosphere material, and
+  real-scene hierarchy preserving exact radius, orbit, tilt, and prograde spin.
+- Edit Mode Mars model/material/import contracts and real-scene Play Mode
+  coverage for proportional scale, hierarchy, focus, Sun-origin lighting,
+  renderer policy, and simulation-time state preservation.
 
 ### Changed
 

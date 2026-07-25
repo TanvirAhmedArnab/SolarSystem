@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: VisualLayers_Earth
   m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.CelestialLayerVisualDefinition
   bodyStableId: earth
+  hasCloudLayer: 1
   cloudShellRadiusMultiplier: 1.004
   atmosphereShellRadiusMultiplier: 1.018
   cloudRotationMultiplier: 1.025

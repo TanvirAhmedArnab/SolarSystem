@@ -10,6 +10,7 @@ namespace Tanvir.SolarSystem.Authoring
     public sealed class CelestialLayerVisualDefinition : ScriptableObject
     {
         [SerializeField] private string bodyStableId;
+        [SerializeField] private bool hasCloudLayer = true;
         [SerializeField, Min(1.0001f)]
         private float cloudShellRadiusMultiplier =
             EarthLayerRenderingContract.CloudShellRadiusMultiplier;
@@ -22,6 +23,9 @@ namespace Tanvir.SolarSystem.Authoring
 
         /// <summary>Gets the stable body ID assigned to this definition.</summary>
         public string BodyStableId => bodyStableId;
+
+        /// <summary>Gets whether this body presents a separate visible cloud shell.</summary>
+        public bool HasCloudLayer => hasCloudLayer;
 
         /// <summary>Gets the authored cloud-shell radius multiplier.</summary>
         public float CloudShellRadiusMultiplier => cloudShellRadiusMultiplier;
@@ -37,6 +41,7 @@ namespace Tanvir.SolarSystem.Authoring
         {
             return new CelestialLayerVisualModel(
                 bodyStableId,
+                hasCloudLayer,
                 cloudShellRadiusMultiplier,
                 atmosphereShellRadiusMultiplier,
                 cloudRotationMultiplier);

@@ -34,6 +34,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialTextureRoot + "/Jupiter/T_Jupiter_Surface_2K.jpg";
         private const string VenusAtmosphereTexturePath =
             CelestialTextureRoot + "/Venus/T_Venus_Atmosphere_2K.jpg";
+        private const string MarsTexturePath =
+            CelestialTextureRoot + "/Mars/T_Mars_Surface_2K.jpg";
         private const string SaturnTexturePath =
             CelestialTextureRoot + "/Saturn/T_Saturn_Surface_2K.jpg";
         private const string SolarSurfaceShader =
@@ -52,6 +54,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             "SolarSystem/Celestial/Earth Cloud Layer";
         private const string VenusCloudShader =
             "SolarSystem/Celestial/Venus Cloud Deck";
+        private const string RockySurfaceShader =
+            "SolarSystem/Celestial/Rocky Surface";
         private const string AtmosphereShader =
             "SolarSystem/Celestial/Atmosphere Rim";
         private const string SaturnRingTexturePath =
@@ -108,7 +112,9 @@ namespace Tanvir.SolarSystem.Editor.Import
             new Color(1f, 0.66f, 0.22f, 1f);
         private static readonly Color EarthTint = new Color(0.9f, 0.94f, 1f, 1f);
         private static readonly Color MoonTint = new Color(0.82f, 0.82f, 0.8f, 1f);
-        private static readonly Color MarsTint = new Color(1f, 0.78f, 0.68f, 1f);
+        private static readonly Color MarsTint = new Color(0.86f, 0.94f, 1f, 1f);
+        private static readonly Color MarsAtmosphereTint =
+            new Color(0.95f, 0.55f, 0.35f, 1f);
         private static readonly Color JupiterTint = new Color(0.96f, 0.9f, 0.84f, 1f);
         private static readonly Color JupiterAtmosphereTint =
             new Color(0.76f, 0.58f, 0.42f, 1f);
@@ -374,6 +380,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 VenusLayerDefinition = CreateVenusLayerDefinition(),
                 VenusCloudMaterial = CreateVenusCloudMaterial(),
                 VenusAtmosphereMaterial = CreateVenusAtmosphereMaterial(),
+                MarsLayerDefinition = CreateMarsLayerDefinition(),
+                MarsAtmosphereMaterial = CreateMarsAtmosphereMaterial(),
                 JupiterVisualDefinition = CreateJupiterVisualDefinition(),
                 JupiterAtmosphereMaterial = CreateJupiterAtmosphereMaterial(),
                 SaturnVisualDefinition = CreateSaturnVisualDefinition(),
@@ -555,6 +563,15 @@ namespace Tanvir.SolarSystem.Editor.Import
                     GasGiantSurfaceShader);
                 ConfigureJupiterSurfaceMaterial(jupiterMaterial);
                 return jupiterMaterial;
+            }
+
+            if (bodyName == "Mars")
+            {
+                Material marsMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Mars.mat",
+                    RockySurfaceShader);
+                ConfigureMarsSurfaceMaterial(marsMaterial);
+                return marsMaterial;
             }
 
             if (bodyName == "Saturn")
@@ -760,6 +777,28 @@ namespace Tanvir.SolarSystem.Editor.Import
             EditorUtility.SetDirty(material);
         }
 
+        private static void ConfigureMarsSurfaceMaterial(Material material)
+        {
+            material.SetTexture(
+                "_BaseMap",
+                LoadRequiredAsset<Texture2D>(MarsTexturePath));
+            material.SetColor("_BaseColor", MarsTint);
+            material.SetFloat(
+                "_ReliefStrength",
+                MarsLayerRenderingContract.ReliefStrength);
+            material.SetFloat(
+                "_ReliefSampleDistance",
+                MarsLayerRenderingContract.ReliefSampleDistance);
+            material.SetFloat(
+                "_Specular",
+                MarsLayerRenderingContract.SurfaceSpecular);
+            material.SetFloat(
+                "_Smoothness",
+                MarsLayerRenderingContract.SurfaceSmoothness);
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+        }
+
         private static void ConfigureJupiterSurfaceMaterial(Material material)
         {
             material.SetTexture(
@@ -882,6 +921,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 CreateOrLoad<CelestialLayerVisualDefinition>(path);
             var serialized = new SerializedObject(definition);
             serialized.FindProperty("bodyStableId").stringValue = "earth";
+            serialized.FindProperty("hasCloudLayer").boolValue = true;
             serialized.FindProperty("cloudShellRadiusMultiplier").floatValue =
                 EarthLayerRenderingContract.CloudShellRadiusMultiplier;
             serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =
@@ -901,6 +941,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 CreateOrLoad<CelestialLayerVisualDefinition>(path);
             var serialized = new SerializedObject(definition);
             serialized.FindProperty("bodyStableId").stringValue = "venus";
+            serialized.FindProperty("hasCloudLayer").boolValue = true;
             serialized.FindProperty("cloudShellRadiusMultiplier").floatValue =
                 VenusLayerRenderingContract.CloudShellRadiusMultiplier;
             serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =
@@ -910,6 +951,43 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(definition);
             return definition;
+        }
+
+        private static CelestialLayerVisualDefinition CreateMarsLayerDefinition()
+        {
+            const string path =
+                DataRoot + "/VisualLayers/VisualLayers_Mars.asset";
+            CelestialLayerVisualDefinition definition =
+                CreateOrLoad<CelestialLayerVisualDefinition>(path);
+            var serialized = new SerializedObject(definition);
+            serialized.FindProperty("bodyStableId").stringValue = "mars";
+            serialized.FindProperty("hasCloudLayer").boolValue = false;
+            serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =
+                MarsLayerRenderingContract.AtmosphereShellRadiusMultiplier;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+            return definition;
+        }
+
+        private static Material CreateMarsAtmosphereMaterial()
+        {
+            const string path =
+                MaterialRoot + "/CelestialBodies/M_Mars_Atmosphere.mat";
+            Material material = CreateOrUpdateMaterial(path, AtmosphereShader);
+            material.SetColor("_AtmosphereColor", MarsAtmosphereTint);
+            material.SetFloat(
+                "_RimPower",
+                MarsLayerRenderingContract.AtmosphereRimPower);
+            material.SetFloat(
+                "_RimIntensity",
+                MarsLayerRenderingContract.AtmosphereIntensity);
+            material.SetFloat(
+                "_NightsideVisibility",
+                MarsLayerRenderingContract.AtmosphereNightsideVisibility);
+            material.renderQueue = (int)RenderQueue.Transparent + 10;
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
         }
 
         private static Material CreateVenusCloudMaterial()

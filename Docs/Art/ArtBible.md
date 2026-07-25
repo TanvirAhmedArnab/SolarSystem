@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, Earth, Sun, Jupiter, Saturn, and Venus hero foundations  
-**Version:** 0.15.0  
+**Status:** Living authority with validated visual, audio, guided-scale, Earth, Sun, Jupiter, Saturn, Venus, and Mars hero foundations  
+**Version:** 0.16.0  
 **Last updated:** 2026-07-24  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -169,7 +169,21 @@ Use Solar System Scope 2K initially. NASA CGI Moon Kit is the upgrade candidate 
 ### Mars
 Restrained rust, ochre, and basalt. Preserve polar contrast without clipping.
 
-The baseline uses the audited 2K surface map with `0.10` smoothness.
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Mars uses the audited 2K surface map as
+an anchored source of recognizable terrain and polar identity. A cool
+multiplicative correction offsets the source's strong red cast without
+altering its pixels; the final planet reads as dark rust and ochre rather than
+emissive red. Four neighboring source samples derive restrained relief around
+the anchored center sample. The surface remains dry and broad with `0.025`
+specular and `0.10` smoothness.
+
+A single warm atmosphere shell at `1.008` surface radius supplies a narrow
+Sun-aware limb with `0.16` intensity and minimal nightside visibility. Mars
+has no authored cloud shell. The atmosphere casts and receives no shadows,
+uses no light or reflection probes, and remains subordinate to the surface.
+The shell thickness is presentation exaggeration; dust storms, clouds,
+volumetric scattering, atmospheric chemistry, and date-exact color are not
+simulated.
 
 ### Jupiter
 Cloud bands and Great Red Spot define identity. Use soft broad response; optional band motion must preserve features.
@@ -380,13 +394,15 @@ An asset is ready only when:
 2. **[OPEN] Icon family:** project-authored or compatible open-license set.
 3. **[OPEN] Moon upgrades:** identify browse maps needing higher resolution after hero shots.
 4. **[OPEN] Remaining shader fidelity:** profile the validated Earth, Sun,
-   Jupiter, Saturn, and Venus patterns, then select the next body-specific technique.
+   Jupiter, Saturn, Venus, and Mars patterns, then prioritize remaining bodies
+   against release screenshots and measured screen-space need.
 5. **[OPEN] Audio mix:** approve music, Sun, Earth, and UI loudness after in-scene audition.
 
 ## Revision History
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.16.0 | 2026-07-24 | Added Mars's anchored rocky surface, restrained source-derived relief, atmosphere-only layered composition, thin Sun-aware limb, and explicit color/atmosphere limitations | Mars hero slice implemented and visually validated |
 | 0.15.0 | 2026-07-24 | Added Venus's anchored opaque cloud deck, deterministic retrograde cloud presentation, restrained Sun-aware limb, bounded transparency, and explicit scientific limitations | Venus atmosphere slice implemented and visually validated |
 | 0.14.0 | 2026-07-24 | Added Saturn's anchored gas-giant surface, restrained limb, and two-sided Sun-aware radial ring treatment with explicit scientific limitations | Saturn hero slice implemented and visually validated |
 | 0.13.0 | 2026-07-24 | Added the validated anchored-texture Jupiter surface, restrained source-derived band relief, deterministic low-amplitude detail, Sun-aware limb, and scientific-limitation disclosure | Jupiter hero slice implemented and visually validated |

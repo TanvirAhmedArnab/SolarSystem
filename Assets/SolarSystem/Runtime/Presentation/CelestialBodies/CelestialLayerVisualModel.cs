@@ -11,6 +11,22 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             float cloudShellRadiusMultiplier,
             float atmosphereShellRadiusMultiplier,
             float cloudRotationMultiplier)
+            : this(
+                bodyStableId,
+                true,
+                cloudShellRadiusMultiplier,
+                atmosphereShellRadiusMultiplier,
+                cloudRotationMultiplier)
+        {
+        }
+
+        /// <summary>Initializes validated visual-layer settings.</summary>
+        public CelestialLayerVisualModel(
+            string bodyStableId,
+            bool hasCloudLayer,
+            float cloudShellRadiusMultiplier,
+            float atmosphereShellRadiusMultiplier,
+            float cloudRotationMultiplier)
         {
             if (string.IsNullOrWhiteSpace(bodyStableId))
             {
@@ -28,11 +44,15 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             }
 
             if (!float.IsFinite(atmosphereShellRadiusMultiplier) ||
-                atmosphereShellRadiusMultiplier <= cloudShellRadiusMultiplier)
+                atmosphereShellRadiusMultiplier <= 1f ||
+                (hasCloudLayer &&
+                 atmosphereShellRadiusMultiplier <= cloudShellRadiusMultiplier))
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(atmosphereShellRadiusMultiplier),
-                    "Atmosphere shell radius must be finite and exceed the cloud shell radius.");
+                    hasCloudLayer
+                        ? "Atmosphere shell radius must be finite and exceed the cloud shell radius."
+                        : "Atmosphere shell radius must be finite and exceed the body radius.");
             }
 
             if (!float.IsFinite(cloudRotationMultiplier) ||
@@ -44,6 +64,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             }
 
             BodyStableId = bodyStableId.Trim();
+            HasCloudLayer = hasCloudLayer;
             CloudShellRadiusMultiplier = cloudShellRadiusMultiplier;
             AtmosphereShellRadiusMultiplier = atmosphereShellRadiusMultiplier;
             CloudRotationMultiplier = cloudRotationMultiplier;
@@ -51,6 +72,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Gets the body that owns these layers.</summary>
         public string BodyStableId { get; }
+
+        /// <summary>Gets whether the presentation includes a separate cloud shell.</summary>
+        public bool HasCloudLayer { get; }
 
         /// <summary>Gets the cloud-shell radius relative to the physical body mesh.</summary>
         public float CloudShellRadiusMultiplier { get; }

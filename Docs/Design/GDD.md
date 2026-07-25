@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.14.0  
+**Version:** 0.15.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -41,6 +41,7 @@
 | 0.12.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Jupiter hero treatment with stable source identity, readable cloud bands, subtle deterministic detail, a restrained atmospheric limb, and explicit non-scientific-fluid disclosure | Product behavior implemented and validated |
 | 0.13.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Saturn hero treatment with readable cream bands, a restrained limb, and two-sided Sun-aware rings while preserving approved scale and scientific motion | Product behavior implemented and validated |
 | 0.14.0 | 2026-07-24 | Codex, for Tanvir | Implemented a cloud-covered Venus hero treatment with warm source-grounded identity, deterministic retrograde cloud presentation, a restrained Sun-aware limb, and explicit atmospheric-simulation limits | Product behavior implemented and validated |
+| 0.15.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Mars hero treatment with anchored source identity, restrained source-derived rocky relief, a thin Sun-aware atmospheric limb, and explicit color and atmosphere limitations | Product behavior implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -431,6 +432,16 @@ time, with a restrained Sun-aware atmospheric limb and no claims of exact
 cloud altitude, chemistry, scattering, or fluid dynamics. The treatment does
 not alter Venus's proportional radius, analytical orbit, signed solid-body
 rotation, axial tilt, or selection and focus behavior.
+
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Mars now presents its approved surface
+map as a stable rocky identity with restrained rust, ochre, dark basalt, and
+polar contrast. Source-derived terrain relief adds close-focus definition
+without sliding or replacing the texture. A single thin Sun-aware atmospheric
+limb supports silhouette readability without inventing a visible cloud deck.
+The treatment does not alter Mars's proportional radius, analytical orbit,
+`25.2 degree` axial tilt, or prograde `1.02595676-day` sidereal rotation. The
+surface map uses enhanced presentation color, while the `1.008` atmosphere
+shell is a readability layer rather than a physical atmospheric boundary.
 
 ### 11.4 Asset provenance
 

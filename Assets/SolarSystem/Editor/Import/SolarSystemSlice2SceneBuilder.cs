@@ -31,6 +31,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string SunStableId = "sun";
         private const string EarthStableId = "earth";
         private const string VenusStableId = "venus";
+        private const string MarsStableId = "mars";
         private const string JupiterStableId = "jupiter";
         private const string SaturnStableId = "saturn";
         private const float EarthAmbienceMinimumDistance = 1.5f;
@@ -67,6 +68,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialBodyView sunView = null;
             CelestialBodyView earthView = null;
             CelestialBodyView venusView = null;
+            CelestialBodyView marsView = null;
             CelestialBodyView jupiterView = null;
             CelestialBodyView saturnView = null;
             foreach (SolarSystemSlice2BodyContent body in content.Bodies)
@@ -90,6 +92,10 @@ namespace Tanvir.SolarSystem.Editor.Import
                 else if (body.Definition.StableId == VenusStableId)
                 {
                     venusView = view;
+                }
+                else if (body.Definition.StableId == MarsStableId)
+                {
+                    marsView = view;
                 }
                 else if (body.Definition.StableId == JupiterStableId)
                 {
@@ -131,6 +137,11 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Jupiter.");
             }
 
+            if (marsView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Mars.");
+            }
+
             if (saturnView == null)
             {
                 throw new InvalidOperationException("The authored content requires Saturn.");
@@ -149,6 +160,12 @@ namespace Tanvir.SolarSystem.Editor.Import
                 content.VenusCloudMaterial,
                 content.VenusAtmosphereMaterial,
                 "Venus");
+            CreateLayeredBodyVisual(
+                marsView,
+                content.MarsLayerDefinition,
+                null,
+                content.MarsAtmosphereMaterial,
+                "Mars");
             CreateGasGiantVisual(
                 jupiterView,
                 content.JupiterVisualDefinition,
@@ -326,12 +343,17 @@ namespace Tanvir.SolarSystem.Editor.Import
             Material atmosphereMaterial,
             string displayName)
         {
-            if (definition == null ||
-                cloudMaterial == null ||
-                atmosphereMaterial == null)
+            if (definition == null || atmosphereMaterial == null)
             {
                 throw new InvalidOperationException(
                     $"{displayName} layered presentation assets are incomplete.");
+            }
+
+            CelestialLayerVisualModel model = definition.ToModel();
+            if (model.HasCloudLayer && cloudMaterial == null)
+            {
+                throw new InvalidOperationException(
+                    $"{displayName} requires a cloud material.");
             }
 
             Transform visualRoot = body.VisualRoot;
@@ -342,11 +364,13 @@ namespace Tanvir.SolarSystem.Editor.Import
             surfaceRenderer.lightProbeUsage = LightProbeUsage.Off;
             surfaceRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
 
-            Transform cloudShell = CreateLayerSphere(
-                "Cloud Layer",
-                visualRoot,
-                cloudMaterial,
-                definition.CloudShellRadiusMultiplier);
+            Transform cloudShell = model.HasCloudLayer
+                ? CreateLayerSphere(
+                    "Cloud Layer",
+                    visualRoot,
+                    cloudMaterial,
+                    definition.CloudShellRadiusMultiplier)
+                : null;
             Transform atmosphereShell = CreateLayerSphere(
                 "Atmosphere Layer",
                 visualRoot,
@@ -365,7 +389,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             serializedLayer.FindProperty("surfaceRenderer").objectReferenceValue =
                 surfaceRenderer;
             serializedLayer.FindProperty("cloudRenderer").objectReferenceValue =
-                cloudShell.GetComponent<MeshRenderer>();
+                cloudShell == null ? null : cloudShell.GetComponent<MeshRenderer>();
             serializedLayer.FindProperty("atmosphereRenderer").objectReferenceValue =
                 atmosphereShell.GetComponent<MeshRenderer>();
             serializedLayer.ApplyModifiedPropertiesWithoutUndo();

@@ -73,13 +73,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Jupiter Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Jupiter%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Saturn Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Saturn%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Venus Atmosphere Rendering Validation](Docs/ProjectManagement/Slice%204%20Venus%20Atmosphere%20Rendering%20Validation.md)
+- [Slice 4 Mars Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Mars%20Hero%20Rendering%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/Earth-Moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 129 Edit Mode cases and
-13 real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 132 Edit Mode cases and
+14 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -110,6 +111,11 @@ Venus now uses the reusable layered-body path to place its approved opaque
 cloud map above the proportional surface, add a restrained Sun-aware limb, and
 evaluate retrograde cloud motion from absolute simulation time without exposing
 an unjustifiably detailed solid surface.
+Mars now uses the same layered composition in explicit atmosphere-only mode,
+with an anchored source-derived rocky surface, restrained rust/ochre balance,
+and one narrow Sun-aware limb. No dummy cloud renderer or non-scientific
+surface motion is introduced, and the exact proportional radius, analytical
+orbit, axial tilt, and prograde rotation remain authoritative.
 Detailed evidence is recorded in `Docs/ProjectManagement`.
 
 ## License

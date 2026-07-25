@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Earth, Sun, Jupiter, Saturn, and Venus hero representative slices validated  
-**Version:** 0.19.0  
+**Document status:** Living technical authority; Earth, Sun, Jupiter, Saturn, Venus, and Mars hero representative slices validated  
+**Version:** 0.20.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -45,6 +45,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.17.0 | 2026-07-24 | Codex, for Tanvir | Added reusable gas-giant authoring, anchored-texture Jupiter surface/atmosphere shaders, absolute-time band phase, cached property blocks, reproducible scene wiring, and complete asset/scene regression coverage | Jupiter hero architecture implemented and validated |
 | 0.18.0 | 2026-07-24 | Codex, for Tanvir | Extended the reusable gas-giant path to Saturn and added a project-owned one-sample, two-sided, Sun-aware ring shader with deterministic authoring and complete asset/scene regression coverage | Saturn hero architecture implemented and validated |
 | 0.19.0 | 2026-07-24 | Codex, for Tanvir | Extended the reusable layered-body path to Venus, corrected layer motion to absolute signed simulation time, and added an opaque anchored cloud deck with bounded atmosphere transparency and complete asset/scene regression coverage | Venus atmosphere architecture implemented and validated |
+| 0.20.0 | 2026-07-24 | Codex, for Tanvir | Generalized the layered-body path to explicit atmosphere-only composition and added an anchored rocky-surface shader, thin Mars limb, reproducible assets/scene wiring, and complete regression coverage | Mars hero architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -739,6 +740,20 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   writes depth and is queued immediately after opaque geometry; only the outer
   rim contributes bounded transparent overdraw. Both renderers cast no shadows
   and use no light or reflection probes.
+- `CelestialLayerVisualDefinition` now records whether a visible cloud layer
+  exists. Its immutable model validates shell data in both modes, while
+  `CelestialLayeredBodyView` requires cloud dependencies only when the authored
+  flag is true. This lets Mars reuse the proven surface/layer composition
+  without a dummy cloud GameObject, material, renderer, rotation, or update.
+- Mars composes the proportional opaque surface and one transparent atmosphere
+  shell at `1.008` surface radius. The project-owned `Rocky Surface` shader
+  keeps the approved source map anchored and derives restrained tangent-space
+  relief from the central texel plus four neighboring luminance samples. It
+  has no time phase, UV displacement, material instance, or runtime allocation.
+  The shared `Atmosphere Rim` shader uses Mars-specific narrow falloff,
+  intensity, nightside visibility, and warm color. Both renderers are excluded
+  from shadow, light-probe, and reflection-probe work; only the atmosphere
+  contributes transparent overdraw.
 - `GasGiantVisualDefinition` stores a stable body ID, reviewed atmosphere-shell
   multiplier, and band-detail cycles per signed rotation. Startup converts it
   to immutable `GasGiantVisualModel` state. `GasGiantVisualView` evaluates one
@@ -1074,6 +1089,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-018 | 2026-07-24 | Prove a reusable gas-giant contract on Jupiter with anchored source identity, source-derived band relief, low-amplitude absolute-time detail, one restrained atmosphere shell, and cached property-block updates | Implemented candidate | Tanvir | Preserves the Great Red Spot and scientific state while adding bounded hero fidelity and a reusable Saturn-facing architecture |
 | TDD-019 | 2026-07-24 | Extend the gas-giant contract to Saturn and render its generated annulus with anchored radial alpha, one-sample premultiplied transparency, symmetric live-Sun response, and no shadow/probe cost | Implemented candidate | Tanvir | Distinct Saturn identity and readable rings without duplicating runtime architecture or claiming particle-scale/self-shadow photometry |
 | TDD-020 | 2026-07-24 | Reuse the layered-body contract for Venus, anchor an opaque source cloud deck above the hidden surface, derive retrograde shell motion from absolute signed simulation time, and bound transparency to one restrained atmosphere rim | Implemented candidate | Tanvir | Recognizable cloud-covered Venus without false surface exposure, wrapped-angle discontinuities, duplicated adapters, or unbounded overdraw |
+| TDD-021 | 2026-07-24 | Extend the layered-body contract with explicit atmosphere-only composition, prove it on Mars with an anchored source-derived rocky surface and one thin Sun-aware limb, and retain exact scientific transform state | Implemented candidate | Tanvir | Reuses the validated composition boundary without inventing a Mars cloud layer or introducing a one-body runtime adapter |
 
 ## 19. Definition of Done for TDD Version 1.0
 

@@ -27,6 +27,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         /// <summary>Gets the authored definition.</summary>
         public CelestialLayerVisualDefinition Definition => definition;
 
+        /// <summary>Gets whether the initialized model includes a separate cloud shell.</summary>
+        public bool HasCloudLayer => model?.HasCloudLayer ?? false;
+
         /// <summary>Gets the cloud shell transform.</summary>
         public Transform CloudShell => cloudShell;
 
@@ -54,10 +57,8 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             }
 
             if (definition == null ||
-                cloudShell == null ||
                 atmosphereShell == null ||
                 surfaceRenderer == null ||
-                cloudRenderer == null ||
                 atmosphereRenderer == null)
             {
                 throw new InvalidOperationException(
@@ -65,6 +66,13 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             }
 
             CelestialLayerVisualModel runtimeModel = definition.ToModel();
+            if (runtimeModel.HasCloudLayer &&
+                (cloudShell == null || cloudRenderer == null))
+            {
+                throw new InvalidOperationException(
+                    $"Layered view '{name}' requires its authored cloud dependencies.");
+            }
+
             if (!string.Equals(
                     runtimeModel.BodyStableId,
                     body.Id.Value,
@@ -77,7 +85,12 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
             model = runtimeModel;
             signedRotationPeriodSeconds = body.RotationPeriodSeconds;
-            cloudShell.localScale = Vector3.one * model.CloudShellRadiusMultiplier;
+            if (model.HasCloudLayer)
+            {
+                cloudShell.localScale =
+                    Vector3.one * model.CloudShellRadiusMultiplier;
+            }
+
             atmosphereShell.localScale =
                 Vector3.one * model.AtmosphereShellRadiusMultiplier;
         }
@@ -99,15 +112,18 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
                     "Layer simulation time must be finite.");
             }
 
-            double relativeAngle =
-                -360d *
-                simulationTimeSeconds /
-                signedRotationPeriodSeconds *
-                (model.CloudRotationMultiplier - 1f);
-            CloudRelativeRotationDeg =
-                Mathf.Repeat((float)(relativeAngle % 360d), 360f);
-            cloudShell.localRotation =
-                Quaternion.AngleAxis(CloudRelativeRotationDeg, Vector3.up);
+            if (model.HasCloudLayer)
+            {
+                double relativeAngle =
+                    -360d *
+                    simulationTimeSeconds /
+                    signedRotationPeriodSeconds *
+                    (model.CloudRotationMultiplier - 1f);
+                CloudRelativeRotationDeg =
+                    Mathf.Repeat((float)(relativeAngle % 360d), 360f);
+                cloudShell.localRotation =
+                    Quaternion.AngleAxis(CloudRelativeRotationDeg, Vector3.up);
+            }
         }
     }
 }

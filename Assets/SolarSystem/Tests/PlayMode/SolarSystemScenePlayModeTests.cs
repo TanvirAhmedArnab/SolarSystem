@@ -1113,6 +1113,106 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             AssertReceivesSunOriginLight(radialLight, sun, venus);
         }
 
+        [UnityTest]
+        public IEnumerator SolarSystemScene_UsesAnchoredMarsSurfaceAndThinAtmosphere()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "mars",
+                    out CelestialBodyView mars),
+                Is.True,
+                "The runtime catalog must expose the authored Mars view.");
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True,
+                "The Earth reference view is required for proportional validation.");
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True,
+                "The Sun reference view is required for lighting validation.");
+
+            CelestialLayeredBodyView layers = mars.LayeredBodyView;
+            Assert.That(layers, Is.Not.Null);
+            Assert.That(
+                layers.IsInitialized,
+                Is.True,
+                "Mars's layered adapter must initialize with the simulation.");
+            Assert.That(layers.HasCloudLayer, Is.False);
+            Assert.That(layers.CloudShell, Is.Null);
+            Assert.That(layers.CloudRenderer, Is.Null);
+            Assert.That(layers.AtmosphereShell.parent, Is.SameAs(mars.VisualRoot));
+            Assert.That(
+                layers.AtmosphereShell.localScale.x,
+                Is.EqualTo(MarsLayerRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                mars.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(3389.5f / 6371.0084f).Within(0.001f));
+            Assert.That(
+                layers.SurfaceRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Rocky Surface"));
+            Assert.That(
+                layers.AtmosphereRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Atmosphere Rim"));
+            Assert.That(
+                layers.AtmosphereRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(
+                layers.AtmosphereRenderer.receiveShadows,
+                Is.False,
+                "The presentation atmosphere must not receive shadows.");
+            Assert.That(
+                layers.AtmosphereRenderer.lightProbeUsage,
+                Is.EqualTo(LightProbeUsage.Off));
+            Assert.That(
+                layers.AtmosphereRenderer.reflectionProbeUsage,
+                Is.EqualTo(ReflectionProbeUsage.Off));
+
+            Light radialLight =
+                GameObject.Find("Solar Radial Light")?.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            AssertReceivesSunOriginLight(radialLight, sun, mars);
+
+            bool wasPausedBeforeFocus =
+                simulation.SimulationController.ClockSnapshot.IsPaused;
+            interaction.SelectionController.Select(mars);
+            interaction.CameraController.Focus(mars);
+            yield return WaitUntilFocused(interaction.CameraController);
+            yield return null;
+            Assert.That(
+                layers.SurfaceRenderer.enabled,
+                Is.True,
+                "Mars's anchored surface must remain visible in close focus.");
+            Assert.That(
+                layers.AtmosphereRenderer.enabled,
+                Is.True,
+                "Mars's thin atmosphere must remain visible in close focus.");
+            Assert.That(
+                simulation.SimulationController.ClockSnapshot.IsPaused,
+                Is.EqualTo(wasPausedBeforeFocus),
+                "Visual focus must preserve the user's simulation-time state.");
+
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+            Assert.That(
+                interaction.CameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.FreeFlight));
+            AssertReceivesSunOriginLight(radialLight, sun, mars);
+        }
+
         private static void AssertReceivesSunOriginLight(
             Light radialLight,
             CelestialBodyView sun,
