@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Tanvir.SolarSystem.Application;
 using Tanvir.SolarSystem.Interaction;
+using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
 using Tanvir.SolarSystem.Simulation;
 using UnityEngine;
@@ -13,6 +14,25 @@ namespace Tanvir.SolarSystem.Presentation.UI
     [DisallowMultipleComponent]
     public sealed class SolarSystemHudPresenter : MonoBehaviour
     {
+        private const float WorldLabelWidth = 118f;
+        private const float WorldLabelHeight = 28f;
+        private const float WorldLabelGap = 6f;
+        private const float WorldLabelEdgeMargin = 8f;
+        private const float CompactWidthThreshold = 1500f;
+        private const float CompactHeightThreshold = 820f;
+
+        private sealed class CelestialUiEntry
+        {
+            public CelestialBodyView View;
+            public Button NavigatorButton;
+            public Label NavigatorName;
+            public Label WorldLabel;
+            public string NavigatorNameText;
+            public string SelectedNavigatorNameText;
+            public string WorldLabelText;
+            public string SelectedWorldLabelText;
+        }
+
         [SerializeField] private UIDocument document;
         [SerializeField] private StyleSheet styleSheet;
 
@@ -20,14 +40,23 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private GuidedScaleComparisonService scaleComparison;
         private SelectionService selection;
         private CelestialSelectionController selectionController;
+        private SolarSystemCameraController cameraController;
+        private CelestialNavigationController navigationController;
+        private CelestialNavigationService navigation;
         private UnityEngine.Camera explorerCamera;
         private VisualElement hudRoot;
+        private VisualElement statusPanel;
+        private VisualElement hintPanel;
         private VisualElement bodyInformationPanel;
         private VisualElement selectionReticle;
+        private VisualElement worldLabelLayer;
+        private VisualElement navigatorPanel;
+        private ScrollView navigatorList;
         private Label simulationState;
         private Label simulationRate;
         private Label selectionTarget;
         private Label scaleMode;
+        private Label labelsState;
         private Label pauseAction;
         private VisualElement comparisonPanel;
         private Label comparisonProgress;
@@ -47,6 +76,10 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private Label bodyOrbitPeriod;
         private Label bodyScaleNote;
         private Label bodySource;
+        private CelestialUiEntry[] celestialEntries = Array.Empty<CelestialUiEntry>();
+        private Rect[] occupiedWorldLabelRects = Array.Empty<Rect>();
+        private int visibleWorldLabelCount;
+        private bool isCompactLayout;
 
         /// <summary>Gets whether the document and application state are connected.</summary>
         public bool IsInitialized { get; private set; }
@@ -93,12 +126,83 @@ namespace Tanvir.SolarSystem.Presentation.UI
         /// <summary>Gets the guided comparison's primary numeric explanation.</summary>
         public string ScaleComparisonMetricText => comparisonMetric?.text ?? string.Empty;
 
+        /// <summary>Gets whether the celestial navigator is currently visible.</summary>
+        public bool IsNavigatorVisible => navigation?.IsNavigatorVisible == true;
+
+        /// <summary>Gets whether the user preference enables projected labels.</summary>
+        public bool AreWorldLabelsEnabled =>
+            navigation?.AreWorldLabelsEnabled == true;
+
+        /// <summary>Gets the number of deterministic navigator entries.</summary>
+        public int NavigatorEntryCount => celestialEntries.Length;
+
+        /// <summary>Gets the number of cached projected-label elements.</summary>
+        public int WorldLabelCount => celestialEntries.Length;
+
+        /// <summary>Gets the number of labels accepted by the latest overlap pass.</summary>
+        public int VisibleWorldLabelCount => visibleWorldLabelCount;
+
+        /// <summary>Gets the current label-state disclosure.</summary>
+        public string LabelsStateText => labelsState?.text ?? string.Empty;
+
+        /// <summary>Gets the active HUD root bounds for responsive validation.</summary>
+        public Rect HudWorldBound => hudRoot?.worldBound ?? Rect.zero;
+
+        /// <summary>Gets the navigator bounds for responsive validation.</summary>
+        public Rect NavigatorWorldBound => navigatorPanel?.worldBound ?? Rect.zero;
+
+        /// <summary>Gets one parent-first navigator stable ID.</summary>
+        public string GetNavigatorEntryId(int index)
+        {
+            if (index < 0 || index >= celestialEntries.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            return celestialEntries[index].View.StableId;
+        }
+
+        /// <summary>Gets whether one body's projected label survived the current pass.</summary>
+        public bool IsWorldLabelVisible(string stableId)
+        {
+            foreach (CelestialUiEntry entry in celestialEntries)
+            {
+                if (entry.View.StableId == stableId)
+                {
+                    return !entry.WorldLabel.ClassListContains("is-hidden");
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>Routes a navigator activation through the application controller.</summary>
+        public bool NavigateTo(string stableId)
+        {
+            return navigationController != null &&
+                navigationController.NavigateTo(stableId);
+        }
+
+        /// <summary>Sets navigator visibility for UI and regression validation.</summary>
+        public void SetNavigatorVisible(bool visible)
+        {
+            navigationController?.SetNavigatorVisible(visible);
+        }
+
+        /// <summary>Sets projected-label visibility for UI and regression validation.</summary>
+        public void SetWorldLabelsEnabled(bool enabled)
+        {
+            navigationController?.SetWorldLabelsEnabled(enabled);
+        }
+
         /// <summary>Initializes the HUD against read-only application services.</summary>
         public void Initialize(
             SimulationTimeControlService simulationTimeControls,
             CelestialSelectionController celestialSelectionController,
             UnityEngine.Camera camera,
-            GuidedScaleComparisonService guidedScaleComparison)
+            GuidedScaleComparisonService guidedScaleComparison,
+            SolarSystemCameraController explorerCameraController,
+            CelestialNavigationController celestialNavigationController)
         {
             Release();
             timeControls = simulationTimeControls ??
@@ -113,6 +217,15 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 : throw new ArgumentNullException(nameof(camera));
             scaleComparison = guidedScaleComparison ??
                 throw new ArgumentNullException(nameof(guidedScaleComparison));
+            cameraController = explorerCameraController != null
+                ? explorerCameraController
+                : throw new ArgumentNullException(nameof(explorerCameraController));
+            navigationController = celestialNavigationController != null
+                ? celestialNavigationController
+                : throw new ArgumentNullException(nameof(celestialNavigationController));
+            navigation = navigationController.Service ??
+                throw new InvalidOperationException(
+                    "Navigation controller must be initialized before the HUD.");
 
             if (document == null || styleSheet == null)
             {
@@ -123,6 +236,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
             timeControls.Changed += Refresh;
             selection.SelectionChanged += OnSelectionChanged;
             scaleComparison.Changed += Refresh;
+            navigation.Changed += OnNavigationChanged;
             TryConnectDocument();
         }
 
@@ -138,7 +252,9 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         private void LateUpdate()
         {
+            RefreshResponsiveState();
             RefreshSelectionReticle();
+            RefreshWorldLabels();
         }
 
         private void Refresh()
@@ -173,14 +289,35 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 _ => "SCALE / READABLE OVERVIEW / ORBITS COMPRESSED"
             };
             pauseAction.text = snapshot.IsPaused ? "RESUME" : "PAUSE";
+            labelsState.text = navigation.AreWorldLabelsEnabled
+                ? "LABELS / ON / L TO TOGGLE"
+                : "LABELS / OFF / L TO TOGGLE";
             RefreshScaleComparison();
             RefreshBodyInformation();
+            RefreshNavigator();
         }
 
         private void OnSelectionChanged(CelestialBodyId? selectedId)
         {
             Refresh();
             RefreshSelectionReticle();
+            RefreshWorldLabels();
+        }
+
+        private void OnNavigationChanged()
+        {
+            if (!IsInitialized)
+            {
+                return;
+            }
+
+            Refresh();
+            if (navigation.IsNavigatorVisible)
+            {
+                FocusSelectedNavigatorEntry();
+            }
+
+            RefreshWorldLabels();
         }
 
         private void Release()
@@ -200,9 +337,17 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 scaleComparison.Changed -= Refresh;
             }
 
+            if (navigation != null)
+            {
+                navigation.Changed -= OnNavigationChanged;
+            }
+
             timeControls = null;
             selection = null;
             selectionController = null;
+            cameraController = null;
+            navigationController = null;
+            navigation = null;
             explorerCamera = null;
             scaleComparison = null;
             IsInitialized = false;
@@ -210,13 +355,19 @@ namespace Tanvir.SolarSystem.Presentation.UI
             IsSelectionReticleVisible = false;
             IsScaleComparisonVisible = false;
             hudRoot = null;
+            statusPanel = null;
+            hintPanel = null;
             bodyInformationPanel = null;
             selectionReticle = null;
+            worldLabelLayer = null;
+            navigatorPanel = null;
+            navigatorList = null;
             comparisonPanel = null;
             simulationState = null;
             simulationRate = null;
             selectionTarget = null;
             scaleMode = null;
+            labelsState = null;
             pauseAction = null;
             comparisonProgress = null;
             comparisonTitle = null;
@@ -235,6 +386,10 @@ namespace Tanvir.SolarSystem.Presentation.UI
             bodyOrbitPeriod = null;
             bodyScaleNote = null;
             bodySource = null;
+            celestialEntries = Array.Empty<CelestialUiEntry>();
+            occupiedWorldLabelRects = Array.Empty<Rect>();
+            visibleWorldLabelCount = 0;
+            isCompactLayout = false;
         }
 
         private void TryConnectDocument()
@@ -256,13 +411,19 @@ namespace Tanvir.SolarSystem.Presentation.UI
             }
 
             hudRoot = RequireElement(root, "hud-root");
+            statusPanel = RequireElement(root, "status-panel");
+            hintPanel = RequireElement(root, "hint-panel");
             bodyInformationPanel = RequireElement(root, "body-information-panel");
             selectionReticle = RequireElement(root, "selection-reticle");
+            worldLabelLayer = RequireElement(root, "world-label-layer");
+            navigatorPanel = RequireElement(root, "navigator-panel");
+            navigatorList = RequireScrollView(root, "navigator-list");
             comparisonPanel = RequireElement(root, "scale-comparison-panel");
             simulationState = RequireLabel(root, "simulation-state");
             simulationRate = RequireLabel(root, "simulation-rate");
             selectionTarget = RequireLabel(root, "selection-target");
             scaleMode = RequireLabel(root, "scale-mode");
+            labelsState = RequireLabel(root, "labels-state");
             pauseAction = RequireLabel(root, "pause-action");
             comparisonProgress = RequireLabel(root, "comparison-progress");
             comparisonTitle = RequireLabel(root, "comparison-title");
@@ -281,8 +442,352 @@ namespace Tanvir.SolarSystem.Presentation.UI
             bodyOrbitPeriod = RequireLabel(root, "body-orbit-period");
             bodyScaleNote = RequireLabel(root, "body-scale-note");
             bodySource = RequireLabel(root, "body-source");
+            BuildCelestialUi();
             IsInitialized = true;
             Refresh();
+        }
+
+        private void BuildCelestialUi()
+        {
+            navigatorList.Clear();
+            worldLabelLayer.Clear();
+            int count = navigationController.OrderedViews.Count;
+            celestialEntries = new CelestialUiEntry[count];
+            occupiedWorldLabelRects = new Rect[count];
+
+            for (int index = 0; index < count; index++)
+            {
+                CelestialBodyView view = navigationController.OrderedViews[index];
+                string displayName = view.Definition.DisplayName.ToUpperInvariant();
+                var button = new Button
+                {
+                    name = $"navigator-entry-{view.StableId}",
+                    userData = view.StableId,
+                    focusable = true,
+                    tabIndex = index
+                };
+                button.AddToClassList("navigator-row");
+                if (view.Definition.Category == CelestialBodyCategory.Moon)
+                {
+                    button.AddToClassList("is-moon");
+                }
+
+                var nameLabel = new Label(displayName);
+                nameLabel.AddToClassList("navigator-row-name");
+                var typeLabel = new Label(BuildNavigatorType(view));
+                typeLabel.AddToClassList("navigator-row-type");
+                button.Add(nameLabel);
+                button.Add(typeLabel);
+                button.RegisterCallback<ClickEvent>(OnNavigatorEntryClicked);
+                navigatorList.Add(button);
+
+                var worldLabel = new Label(displayName)
+                {
+                    name = $"world-label-{view.StableId}",
+                    pickingMode = PickingMode.Ignore
+                };
+                worldLabel.AddToClassList("world-label");
+                worldLabel.AddToClassList("is-hidden");
+                worldLabelLayer.Add(worldLabel);
+
+                celestialEntries[index] = new CelestialUiEntry
+                {
+                    View = view,
+                    NavigatorButton = button,
+                    NavigatorName = nameLabel,
+                    WorldLabel = worldLabel,
+                    NavigatorNameText = displayName,
+                    SelectedNavigatorNameText = $"› {displayName}",
+                    WorldLabelText = displayName,
+                    SelectedWorldLabelText = $"[ {displayName} ]"
+                };
+            }
+        }
+
+        private string BuildNavigatorType(CelestialBodyView view)
+        {
+            if (view.Definition.Category != CelestialBodyCategory.Moon)
+            {
+                return view.Definition.Category.ToString().ToUpperInvariant();
+            }
+
+            string parentId = view.Definition.ParentId;
+            foreach (CelestialBodyView candidate in navigationController.OrderedViews)
+            {
+                if (candidate.StableId == parentId)
+                {
+                    return $"MOON / {candidate.Definition.DisplayName.ToUpperInvariant()}";
+                }
+            }
+
+            return "MOON";
+        }
+
+        private void OnNavigatorEntryClicked(ClickEvent evt)
+        {
+            if (evt.currentTarget is VisualElement element &&
+                element.userData is string stableId)
+            {
+                navigationController.NavigateTo(stableId);
+            }
+        }
+
+        private void RefreshNavigator()
+        {
+            bool visible = navigation.IsNavigatorVisible &&
+                !scaleComparison.IsActive;
+            navigatorPanel.EnableInClassList("is-hidden", !visible);
+            CelestialBodyView selected = selectionController.SelectedView;
+            foreach (CelestialUiEntry entry in celestialEntries)
+            {
+                bool isSelected = entry.View == selected;
+                entry.NavigatorButton.EnableInClassList("is-selected", isSelected);
+                entry.NavigatorName.text = isSelected
+                    ? entry.SelectedNavigatorNameText
+                    : entry.NavigatorNameText;
+                entry.WorldLabel.EnableInClassList("is-selected", isSelected);
+                entry.WorldLabel.text = isSelected
+                    ? entry.SelectedWorldLabelText
+                    : entry.WorldLabelText;
+            }
+        }
+
+        private void FocusSelectedNavigatorEntry()
+        {
+            CelestialBodyView selected = selectionController.SelectedView;
+            foreach (CelestialUiEntry entry in celestialEntries)
+            {
+                if (entry.View == selected)
+                {
+                    entry.NavigatorButton.Focus();
+                    return;
+                }
+            }
+
+            if (celestialEntries.Length > 0)
+            {
+                celestialEntries[0].NavigatorButton.Focus();
+            }
+        }
+
+        private void RefreshResponsiveState()
+        {
+            if (!IsInitialized || hudRoot == null)
+            {
+                return;
+            }
+
+            float width = hudRoot.resolvedStyle.width;
+            float height = hudRoot.resolvedStyle.height;
+            bool compact =
+                width > 0f &&
+                height > 0f &&
+                (width < CompactWidthThreshold || height < CompactHeightThreshold);
+            if (compact == isCompactLayout)
+            {
+                return;
+            }
+
+            isCompactLayout = compact;
+            hudRoot.EnableInClassList("is-compact", compact);
+        }
+
+        private void RefreshWorldLabels()
+        {
+            if (!IsInitialized ||
+                worldLabelLayer == null ||
+                !navigation.AreWorldLabelsEnabled ||
+                scaleComparison.IsActive)
+            {
+                HideAllWorldLabels();
+                return;
+            }
+
+            float width = hudRoot.resolvedStyle.width;
+            float height = hudRoot.resolvedStyle.height;
+            if (width <= 0f || height <= 0f)
+            {
+                HideAllWorldLabels();
+                return;
+            }
+
+            HideAllWorldLabels();
+            int occupiedCount = 0;
+            CelestialBodyView selected = selectionController.SelectedView;
+            CelestialBodyView focused = cameraController.FocusedTarget;
+
+            if (cameraController.Mode != SolarSystemCameraMode.FreeFlight)
+            {
+                CelestialBodyView priority = focused != null ? focused : selected;
+                if (priority != null)
+                {
+                    TryShowWorldLabel(priority, width, height, ref occupiedCount);
+                }
+
+                visibleWorldLabelCount = occupiedCount;
+                return;
+            }
+
+            if (selected != null)
+            {
+                TryShowWorldLabel(selected, width, height, ref occupiedCount);
+            }
+
+            foreach (CelestialUiEntry entry in celestialEntries)
+            {
+                if (entry.View == selected ||
+                    entry.View.Definition.Category == CelestialBodyCategory.Moon)
+                {
+                    continue;
+                }
+
+                TryShowWorldLabel(entry.View, width, height, ref occupiedCount);
+            }
+
+            foreach (CelestialUiEntry entry in celestialEntries)
+            {
+                if (entry.View == selected ||
+                    entry.View.Definition.Category != CelestialBodyCategory.Moon)
+                {
+                    continue;
+                }
+
+                TryShowWorldLabel(entry.View, width, height, ref occupiedCount);
+            }
+
+            visibleWorldLabelCount = occupiedCount;
+        }
+
+        private void TryShowWorldLabel(
+            CelestialBodyView view,
+            float panelWidth,
+            float panelHeight,
+            ref int occupiedCount)
+        {
+            CelestialUiEntry entry = FindEntry(view);
+            if (entry == null)
+            {
+                return;
+            }
+
+            Vector3 centerViewport =
+                explorerCamera.WorldToViewportPoint(view.transform.position);
+            if (centerViewport.z <= 0f ||
+                centerViewport.x <= 0.01f ||
+                centerViewport.x >= 0.99f ||
+                centerViewport.y <= 0.01f ||
+                centerViewport.y >= 0.99f)
+            {
+                return;
+            }
+
+            Vector3 topViewport = explorerCamera.WorldToViewportPoint(
+                view.transform.position +
+                explorerCamera.transform.up * view.CurrentDisplayRadius);
+            float left =
+                centerViewport.x * panelWidth - (WorldLabelWidth * 0.5f);
+            float aboveTop =
+                (1f - Mathf.Max(centerViewport.y, topViewport.y)) * panelHeight -
+                WorldLabelHeight -
+                WorldLabelGap;
+            Rect candidate = new Rect(
+                left,
+                aboveTop,
+                WorldLabelWidth,
+                WorldLabelHeight);
+            if (!CanPlaceWorldLabel(candidate, panelWidth, panelHeight, occupiedCount))
+            {
+                float belowTop =
+                    (1f - Mathf.Min(centerViewport.y, topViewport.y)) * panelHeight +
+                    WorldLabelGap;
+                candidate.y = belowTop;
+                if (!CanPlaceWorldLabel(
+                        candidate,
+                        panelWidth,
+                        panelHeight,
+                        occupiedCount))
+                {
+                    return;
+                }
+            }
+
+            entry.WorldLabel.style.left = candidate.x;
+            entry.WorldLabel.style.top = candidate.y;
+            entry.WorldLabel.EnableInClassList("is-hidden", false);
+            occupiedWorldLabelRects[occupiedCount] = candidate;
+            occupiedCount++;
+        }
+
+        private bool CanPlaceWorldLabel(
+            Rect candidate,
+            float panelWidth,
+            float panelHeight,
+            int occupiedCount)
+        {
+            if (candidate.xMin < WorldLabelEdgeMargin ||
+                candidate.yMin < WorldLabelEdgeMargin ||
+                candidate.xMax > panelWidth - WorldLabelEdgeMargin ||
+                candidate.yMax > panelHeight - WorldLabelEdgeMargin ||
+                OverlapsPanel(candidate, statusPanel, true) ||
+                OverlapsPanel(candidate, hintPanel, true) ||
+                OverlapsPanel(candidate, bodyInformationPanel, IsBodyInformationVisible) ||
+                OverlapsPanel(candidate, navigatorPanel, navigation.IsNavigatorVisible))
+            {
+                return false;
+            }
+
+            for (int index = 0; index < occupiedCount; index++)
+            {
+                if (candidate.Overlaps(occupiedWorldLabelRects[index]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool OverlapsPanel(
+            Rect candidate,
+            VisualElement panel,
+            bool include)
+        {
+            if (!include || panel == null)
+            {
+                return false;
+            }
+
+            Rect panelBounds = panel.worldBound;
+            if (panelBounds.width <= 0f || panelBounds.height <= 0f)
+            {
+                return false;
+            }
+
+            Rect hudBounds = hudRoot.worldBound;
+            panelBounds.position -= hudBounds.position;
+            return candidate.Overlaps(panelBounds);
+        }
+
+        private CelestialUiEntry FindEntry(CelestialBodyView view)
+        {
+            foreach (CelestialUiEntry entry in celestialEntries)
+            {
+                if (entry.View == view)
+                {
+                    return entry;
+                }
+            }
+
+            return null;
+        }
+
+        private void HideAllWorldLabels()
+        {
+            visibleWorldLabelCount = 0;
+            foreach (CelestialUiEntry entry in celestialEntries)
+            {
+                entry.WorldLabel.EnableInClassList("is-hidden", true);
+            }
         }
 
         private void RefreshBodyInformation()
@@ -446,6 +951,15 @@ namespace Tanvir.SolarSystem.Presentation.UI
             return element != null
                 ? element
                 : throw new InvalidOperationException($"HUD is missing element '{name}'.");
+        }
+
+        private static ScrollView RequireScrollView(VisualElement root, string name)
+        {
+            ScrollView scrollView = root.Q<ScrollView>(name);
+            return scrollView != null
+                ? scrollView
+                : throw new InvalidOperationException(
+                    $"HUD is missing scroll view '{name}'.");
         }
     }
 }

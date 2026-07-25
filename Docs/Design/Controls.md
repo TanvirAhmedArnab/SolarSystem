@@ -2,8 +2,8 @@
 
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
-**Status:** Implemented exploration and guided scale-comparison controls  
-**Last updated:** 2026-07-24  
+**Status:** Implemented exploration, navigation, labels, and guided scale-comparison controls  
+**Last updated:** 2026-07-25  
 **Input asset:** `Assets/SolarSystem/Settings/Input/IA_SolarSystem.asset`
 
 This document is the readable control contract for the project-owned `Explorer`
@@ -22,10 +22,33 @@ automated tests.
 | Select body | Left mouse button | Raycast from the pointer and select a celestial body |
 | Focus selection | F | Smoothly transition to the selected body |
 | Return to free flight | Escape | Cancel a focus transition or leave focused mode without snapping |
+| Open or close navigator | N | Show or hide the complete parent-first celestial catalog |
+| Toggle body labels | L | Show or hide projected body-name labels |
 
 Free-flight velocity accelerates and decelerates rather than changing
 instantaneously. Input and camera updates use unscaled time, so pausing the
 celestial simulation does not disable exploration.
+
+## Celestial Navigator and Labels
+
+Press `N` to open a scrollable list of every authored body. The list is ordered
+parent-first: the Sun, each planet, and then each planet's authored moons.
+Moon rows are indented and identify their parent. The current selection has a
+leading marker and stronger border in addition to color.
+
+| Intent | Binding | Behavior |
+|---|---|---|
+| Open or close navigator | N | Toggle the navigator without changing simulation time |
+| Move between entries | Tab / Shift+Tab | Move keyboard focus forward or backward |
+| Select and focus | Enter or left-click on an entry | Select the body, start the existing focus transition, and close the navigator |
+| Toggle projected labels | L | Preserve or suppress body-name labels without changing body size |
+
+Projected labels are read-only so they never block clicking the body beneath
+them. In overview, the selected body is considered first, then stars/planets,
+then moons; labels that would overlap another accepted label or a HUD panel are
+suppressed. Focus mode shows only the focused target. Guided scale comparison
+temporarily hides labels and closes/locks the navigator to protect its teaching
+composition; the user's label preference remains intact afterward.
 
 ## Focused View
 

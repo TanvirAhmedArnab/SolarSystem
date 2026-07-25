@@ -7,7 +7,7 @@
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
 **Document status:** Living technical authority; Sun, eight-planet, seven-moon, Titan haze, Galilean-moon, and Triton hero baselines validated  
-**Version:** 0.27.0  
+**Version:** 0.28.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -53,6 +53,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.25.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Io and Europa with distinct immutable contracts, clean material-schema migration, deterministic scene wiring, anchored USGS sources, and full asset/scene regression coverage | Io and Europa hero architecture implemented and validated |
 | 0.26.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Ganymede and Callisto with distinct immutable contracts, clean material-schema migration, deterministic scene wiring, anchored USGS sources, and full asset/scene regression coverage | Ganymede and Callisto hero architecture implemented and validated |
 | 0.27.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Triton with a disclosed unobserved-coverage fill, preserved retrograde scientific state, corrected outer-system point-light culling, deterministic scene wiring, and full asset/scene regression coverage | Triton hero architecture implemented and validated |
+| 0.28.0 | 2026-07-25 | Codex, for Tanvir | Added event-driven celestial navigation state, parent-first selection/focus routing, cached UI Toolkit navigator entries, allocation-stable projected labels, deterministic overlap priorities, responsive safe areas, explicit input, and real-scene regression coverage | Navigator and label architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -179,7 +180,7 @@ sequenceDiagram
     participant View as Celestial Views
     participant UI as HUD Presenter
 
-    Input->>App: command (pause, speed, focus, scale mode)
+    Input->>App: command (pause, speed, focus, scale mode, navigator, labels)
     App->>Clock: apply command
     Clock-->>App: authoritative simulation time
     App->>Core: evaluate all bodies at time
@@ -198,7 +199,11 @@ sequenceDiagram
 - `ScaleModeService` owns the active scale mode and controlled transition progress.
 - `FocusCameraController` owns camera pose/transition state, not simulation state.
 - Views own only presentation caches and Unity component references.
-- UI owns transient interface state such as an open help panel, not authoritative simulation values.
+- `CelestialNavigationService` owns transient navigator visibility and the
+  projected-label preference. Its controller routes body activation through
+  the existing selection and camera services.
+- UI owns element caches and derived screen placement, not authoritative
+  selection, camera, simulation, or scientific state.
 
 ### 4.5 Composition and dependency injection
 
@@ -457,12 +462,16 @@ The implemented map covers:
 - left-click selection, F focus, Escape cancellation, and mouse-wheel zoom;
 - Space pause/resume plus bracket-key slower/faster commands.
 - C start/advance/finish for guided scale comparison.
+- N open/close for the parent-first celestial navigator.
+- L on/off for projected celestial labels.
 
 `SimulationTimeInputController` translates the three time intents into an
 application service. Input code does not access the clock or simulation
 controller. During comparison, the application adapter temporarily disables
 selection, focus, free-flight, zoom, and time commands; Escape remains active
-for cancellation. Complete UI/help actions remain pending.
+for cancellation. Guided comparison also closes and locks the navigator while
+temporarily suppressing projected labels. Help/settings actions remain
+pending.
 
 ### 6.9 UI
 
@@ -485,11 +494,32 @@ right-side card exposes the source-record ID and a scale-adjustment disclosure.
 The presenter owns visibility and UI element binding, not scientific data or
 selection state.
 
+`CelestialNavigationController` validates the authored `CelestialBodyView`
+array as unique and parent-first, then builds one ordinal stable-ID index.
+Navigator activation calls `CelestialSelectionController.Select` and
+`SolarSystemCameraController.Focus`; it does not duplicate raycasting, camera
+motion, or simulation logic. `CelestialNavigationService` emits only effective
+visibility changes. The navigator opens with `N`, is keyboard-focusable,
+identifies moons by parent, reflects selection without relying on color alone,
+and closes after successful activation.
+
+`SolarSystemHudPresenter` creates one cached `Button` and projected `Label` per
+catalog body at initialization. Its steady-state label pass reuses the cached
+arrays and rectangles. It projects the live body center and display radius,
+rejects off-screen candidates, avoids status/hint/body/navigator safe areas,
+and performs deterministic rectangle-overlap suppression in this priority
+order: selected body, non-moon catalog order, moon catalog order. Focus mode
+shows only the focused/selected target; guided comparison hides the complete
+label layer and navigator. A compact USS state activates below `1500` logical
+pixels wide or `820` high. No visual body radius, scientific data, or collider
+size is changed by labels.
+
 During scale comparison, the presenter hides the quick-control and body
 information cards, retains the status card, and shows a bottom-center teaching
 card with stage progress, the numeric transformation, a concise explanation,
-and separate next/exit keycaps. Navigator, settings, Help, live
-current-distance/speed fields, and licensed typography remain release work.
+and separate next/exit keycaps. The navigator and labels are suppressed to
+protect the guided composition. Settings, Help, live current-distance/speed
+fields, and licensed typography remain release work.
 
 ### 6.10 Audio
 
@@ -1075,8 +1105,11 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   added scene test asserts point-light type and units, Sun parenting and
   co-location, representative-body range coverage, and the absence of the
   obsolete directional-Sun reference.
-- Navigator, Help/settings, licensed typography, and reduced-motion behavior
-  remain release work and do not block continued visual/content production.
+- The parent-first navigator and projected-label baseline are implemented with
+  explicit `N`/`L` actions, selection/focus routing, overlap suppression,
+  responsive safe areas, focus/guided-state rules, and cached UI elements.
+  Help/settings, licensed typography, and reduced-motion behavior remain
+  release work and do not block continued visual/content production.
 - Detailed evidence is recorded in
   `Docs/ProjectManagement/Slice 3 Interaction Proof Validation.md`.
 - Time-control and HUD evidence is recorded in
@@ -1089,6 +1122,8 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   `Docs/ProjectManagement/Slice 4 Sun-Origin Illumination Validation.md`.
 - Licensed audio and event-routing evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Audio Baseline Validation.md`.
+- Celestial navigator and projected-label evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Celestial Navigator and World Labels Validation.md`.
 
 ### Slice 4 - Visual/content completion
 
@@ -1185,9 +1220,15 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   positive synchronous rotation, selection, focus, HUD, and scale behavior
   remain unchanged. Dedicated evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Titan Haze Hero Rendering Validation.md`.
-- Particle-scale ring simulation, labels/navigation, player-facing audio
-  settings, final audio mix approval, and accessibility options remain Slice 4
-  work.
+- **[IMPLEMENTED BASELINE]** The complete 16-body catalog is available through
+  one parent-first navigator. Projected labels use deterministic priority,
+  overlap suppression, HUD safe areas, explicit toggling, focus-mode reduction,
+  and guided-comparison suppression without altering presentation scale.
+- Celestial navigation/label evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Celestial Navigator and World Labels Validation.md`.
+- Particle-scale ring simulation, player-facing audio settings, final audio mix
+  approval, cinematic routing, Help/settings/credits/sources surfaces, and
+  remaining accessibility options remain Slice 4 work.
 
 ### Slice 5 - Portfolio release
 
@@ -1259,6 +1300,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-026 | 2026-07-25 | Extend the reusable airless-rocky path to Io and Europa with distinct immutable contracts, anchored sources, and no invented activity or exposed ocean | Implemented and validated | Tanvir | Distinct Galilean-moon identity without duplicated runtime architecture |
 | TDD-027 | 2026-07-25 | Extend the reusable airless-rocky path to Ganymede and Callisto with distinct immutable contracts, anchored sources, bounded non-emissive nightside readability, and no invented atmosphere, magnetosphere, ocean exposure, or terrain | Implemented and validated | Tanvir | Completes four distinct Galilean hero surfaces with one audited allocation-free rendering architecture |
 | TDD-028 | 2026-07-25 | Extend the reusable airless-rocky path to Triton, preserve anchored observed imagery, use an explicitly disclosed uniform fill only for near-black unobserved coverage, and widen the existing Sun-light culling envelope without changing inverse-square attenuation | Implemented and validated | Tanvir | Completes the approved major-moon hero set without inventing global imagery, active geology, atmosphere scale, or a parallel renderer |
+| TDD-029 | 2026-07-25 | Own navigator/label visibility in a small event-driven application service, validate one parent-first view list, route activation through existing selection/focus services, and cache all UI elements and overlap rectangles | Implemented and validated | Tanvir | Adds complete-body navigation and readable labels without duplicating simulation/camera logic, changing body scale, adding third-party UI assets, or introducing steady-state managed allocations |
 
 ## 19. Definition of Done for TDD Version 1.0
 

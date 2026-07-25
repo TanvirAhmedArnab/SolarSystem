@@ -81,13 +81,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Io and Europa Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Io%20and%20Europa%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Ganymede and Callisto Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Ganymede%20and%20Callisto%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Triton Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Triton%20Hero%20Rendering%20Validation.md)
+- [Slice 4 Celestial Navigator and World Labels Validation](Docs/ProjectManagement/Slice%204%20Celestial%20Navigator%20and%20World%20Labels%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/seven-moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 157 Edit Mode cases and
-20 real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 162 Edit Mode cases and
+22 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -184,6 +185,15 @@ nightside readability floors. Neither body receives an atmosphere, cloud
 layer, emissive night treatment, or animated terrain. Mercury remains
 Sun-parented and the Moon remains Earth-parented; their exact proportional
 radii, authored orbits, axial tilts, and signed rotations remain unchanged.
+Every authored body is now reachable through an `N` celestial navigator in
+deterministic parent-first order, with moons indented and identified by parent.
+Activation reuses the existing selection and camera-focus services and does
+not alter simulation pause state. `L` toggles cached projected labels that
+prioritize the selected body and planets, suppress overlaps, avoid responsive
+HUD safe areas, reduce to one target during focus, and hide during the guided
+physical-scale comparison. The feature changes no body radius, orbit,
+collider, or scientific source data and adds no third-party font or icon
+dependency.
 Detailed evidence is recorded in `Docs/ProjectManagement`.
 
 ## License

@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, seven-moon, Titan haze, Galilean-moon, and Triton hero foundations  
-**Version:** 0.23.0  
+**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, seven-moon, hero-rendering, and celestial-navigation foundations  
+**Version:** 0.24.0  
 **Last updated:** 2026-07-25  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -418,6 +418,23 @@ uses UI Toolkit scaling from a 1920x1080 reference. Unity's default runtime
 sans-serif remains temporary until the open font decision and license review
 are complete.
 
+**[IMPLEMENTED NAVIGATION BASELINE]** The celestial navigator extends the same
+observatory language as a scrollable left-side instrument panel. Star and
+planet rows remain flush; moon rows are indented and explicitly name their
+parent. The selected row combines a cyan edge, stronger surface, and leading
+chevron so state never depends on color alone. `N` and `L` use separate
+project-owned keycap colors while retaining text labels.
+
+Projected body labels use compact navy scrims, a fine cyan border, uppercase
+names, and a stronger bracketed selected treatment. Their placement is
+restrained by deterministic overlap suppression and HUD safe areas. Labels do
+not enlarge bodies, block world picking, or add iconography; overview favors
+selection and planets before moons, focus view shows one target, and guided
+comparison hides the layer. The interface switches to narrower panels and
+wrapped hints at compact logical dimensions. This slice deliberately retains
+Unity's default runtime sans-serif and introduces no third-party font or icon
+before those open licensing decisions are approved.
+
 **[IMPLEMENTED GUIDED COMPARISON]** A wide bottom-center teaching card replaces
 the normal quick-control strip and selected-body card while scale comparison is
 active. It presents stage progress, a plain-language title, the current numeric
@@ -536,6 +553,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.24.0 | 2026-07-25 | Added the restrained parent-first navigator and projected-label visual language, including moon indentation, non-color-only selection, overlap suppression, HUD safe areas, focus/guided-state density rules, explicit keycaps, and compact responsive treatment without third-party fonts or icons | Celestial navigation and label baseline implemented and visually validated |
 | 0.23.0 | 2026-07-25 | Added Triton's distinct airless hero treatment with anchored synthesized-color USGS/Voyager imagery, a disclosed uniform fill for unobserved black coverage, source-derived non-displacing detail only on observed pixels, corrected outer-system light culling, and explicit atmosphere/activity limits | Triton hero slice implemented and visually validated |
 | 0.22.0 | 2026-07-25 | Added distinct Ganymede and Callisto airless hero treatments with anchored byte-identical USGS mosaics, restrained reconstructed color, source-derived non-displacing relief, mixed-versus-ancient surface separation, and explicit magnetic-field, ocean, atmosphere, coverage, and elevation limits | Ganymede and Callisto hero slice implemented and visually validated |
 | 0.21.0 | 2026-07-25 | Added distinct Io and Europa airless hero treatments with anchored byte-identical USGS mosaics, restrained reconstructed color, source-derived non-displacing relief, dry-versus-icy PBR separation, and explicit activity/ocean/coverage limits | Io and Europa hero slice implemented and visually validated |

@@ -2108,6 +2108,126 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 Is.EqualTo(SolarSystemCameraMode.FreeFlight));
         }
 
+        [UnityTest]
+        public IEnumerator SolarSystemScene_NavigatorListsAndFocusesAllAuthoredBodies()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(interaction.IsInitialized, Is.True);
+            Assert.That(interaction.Navigation, Is.Not.Null);
+            Assert.That(interaction.Navigation.IsInitialized, Is.True);
+
+            SolarSystemHudPresenter hud = interaction.HudPresenter;
+            Assert.That(hud.NavigatorEntryCount, Is.EqualTo(ExpectedBodyIds.Length));
+            for (int index = 0; index < ExpectedBodyIds.Length; index++)
+            {
+                Assert.That(
+                    hud.GetNavigatorEntryId(index),
+                    Is.EqualTo(ExpectedBodyIds[index]),
+                    "Navigator order must remain deterministic and parent-first.");
+            }
+
+            bool wasPaused = interaction.TimeControls.IsPaused;
+            hud.SetNavigatorVisible(true);
+            yield return null;
+            Assert.That(hud.IsNavigatorVisible, Is.True);
+
+            Assert.That(hud.NavigateTo("moon"), Is.True);
+            yield return WaitUntilFocused(interaction.CameraController);
+            yield return null;
+
+            Assert.That(hud.IsNavigatorVisible, Is.False);
+            Assert.That(
+                interaction.SelectionController.SelectedView.StableId,
+                Is.EqualTo("moon"));
+            Assert.That(
+                interaction.CameraController.FocusedTarget.StableId,
+                Is.EqualTo("moon"));
+            Assert.That(hud.BodyNameText, Is.EqualTo("Moon"));
+            Assert.That(interaction.TimeControls.IsPaused, Is.EqualTo(wasPaused));
+            Assert.That(hud.NavigateTo("not-a-body"), Is.False);
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_LabelsRespectFocusGuidanceAndResponsiveSafeAreas()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            SolarSystemCompositionRoot composition =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(composition, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            SolarSystemHudPresenter hud = interaction.HudPresenter;
+            Assert.That(hud.AreWorldLabelsEnabled, Is.True);
+            Assert.That(hud.WorldLabelCount, Is.EqualTo(ExpectedBodyIds.Length));
+
+            Assert.That(
+                composition.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+            interaction.SelectionController.Select(sun);
+            yield return null;
+            Assert.That(hud.VisibleWorldLabelCount, Is.GreaterThan(0));
+            Assert.That(
+                hud.VisibleWorldLabelCount,
+                Is.LessThanOrEqualTo(ExpectedBodyIds.Length));
+            Assert.That(hud.IsWorldLabelVisible("sun"), Is.True);
+
+            interaction.CameraController.Focus(sun);
+            yield return WaitUntilFocused(interaction.CameraController);
+            yield return null;
+            Assert.That(hud.VisibleWorldLabelCount, Is.EqualTo(1));
+            Assert.That(hud.IsWorldLabelVisible("sun"), Is.True);
+
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+            hud.SetWorldLabelsEnabled(false);
+            yield return null;
+            Assert.That(hud.VisibleWorldLabelCount, Is.Zero);
+            Assert.That(hud.LabelsStateText, Does.Contain("OFF"));
+
+            hud.SetWorldLabelsEnabled(true);
+            hud.SetNavigatorVisible(true);
+            yield return null;
+            Rect rootBounds = hud.HudWorldBound;
+            Rect navigatorBounds = hud.NavigatorWorldBound;
+            Assert.That(navigatorBounds.width, Is.GreaterThan(0f));
+            Assert.That(navigatorBounds.height, Is.GreaterThan(0f));
+            Assert.That(
+                navigatorBounds.xMin,
+                Is.GreaterThanOrEqualTo(rootBounds.xMin));
+            Assert.That(
+                navigatorBounds.yMin,
+                Is.GreaterThanOrEqualTo(rootBounds.yMin));
+            Assert.That(
+                navigatorBounds.xMax,
+                Is.LessThanOrEqualTo(rootBounds.xMax));
+            Assert.That(
+                navigatorBounds.yMax,
+                Is.LessThanOrEqualTo(rootBounds.yMax));
+
+            GuidedScaleComparisonService comparison = interaction.ScaleComparison;
+            comparison.Advance();
+            yield return WaitUntilGuided(interaction.CameraController);
+            yield return null;
+            Assert.That(hud.IsNavigatorVisible, Is.False);
+            Assert.That(hud.VisibleWorldLabelCount, Is.Zero);
+            hud.SetNavigatorVisible(true);
+            Assert.That(hud.IsNavigatorVisible, Is.False);
+
+            Assert.That(comparison.Cancel(), Is.True);
+            yield return WaitUntilExplorerRestored(interaction.CameraController);
+        }
+
         private static void AssertReceivesSunOriginLight(
             Light radialLight,
             CelestialBodyView sun,

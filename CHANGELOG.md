@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Complete 16-body celestial navigator on `N`, using deterministic parent-first
+  order, moon-parent identification, keyboard focus, non-color-only selection
+  feedback, and existing selection/focus application services.
+- Toggleable projected body labels on `L`, with cached elements, selection and
+  planet-first priority, deterministic overlap suppression, responsive HUD safe
+  areas, focus-mode reduction, and guided-comparison suppression.
+- Event-driven navigation visibility state, reproducible Input System and scene
+  authoring, responsive UI Toolkit styling, and expanded real-scene coverage,
+  bringing the complete suites to 162 Edit Mode and 22 Play Mode cases.
+- Updated GDD, TDD, Art Bible, controls, README, and dedicated validation
+  evidence for the celestial navigation and label baseline.
 - Distinct Triton hero rendering through the reusable project-owned
   airless-rocky definition/model/view path and shared bounded-sample URP
   surface shader.

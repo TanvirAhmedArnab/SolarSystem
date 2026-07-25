@@ -349,6 +349,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 controller,
                 hudPresenter,
                 audioDirector,
+                bodyViews.ToArray(),
                 orbitPaths.ToArray());
             CreateLighting(sunView.transform);
             CreateGlobalVolume(environmentRoot, content.VisualProfile);
@@ -762,6 +763,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             SolarSystemSimulationController simulationController,
             SolarSystemHudPresenter hudPresenter,
             AudioDirector audioDirector,
+            CelestialBodyView[] bodyViews,
             CelestialOrbitPathView[] orbitPaths)
         {
             UnityEngine.InputSystem.InputActionAsset inputActions =
@@ -782,6 +784,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 interactionObject.AddComponent<SimulationTimeInputController>();
             GuidedScaleComparisonInputController scaleComparison =
                 interactionObject.AddComponent<GuidedScaleComparisonInputController>();
+            CelestialNavigationController navigation =
+                interactionObject.AddComponent<CelestialNavigationController>();
             SolarSystemCameraController cameraController =
                 camera.gameObject.AddComponent<SolarSystemCameraController>();
             CelestialOrbitPathVisibilityController orbitVisibility =
@@ -806,6 +810,9 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.FindProperty("timeInputController").objectReferenceValue = timeInput;
             serialized.FindProperty("scaleComparisonController").objectReferenceValue =
                 scaleComparison;
+            serialized.FindProperty("navigationController").objectReferenceValue =
+                navigation;
+            SetArray(serialized.FindProperty("bodyViews"), bodyViews);
             serialized.FindProperty("hudPresenter").objectReferenceValue = hudPresenter;
             serialized.FindProperty("audioDirector").objectReferenceValue = audioDirector;
             serialized.ApplyModifiedPropertiesWithoutUndo();

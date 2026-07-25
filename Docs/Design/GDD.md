@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.22.0  
+**Version:** 0.23.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -49,6 +49,7 @@
 | 0.20.0 | 2026-07-25 | Codex, for Tanvir | Replaced the generic Io and Europa materials with distinct, source-grounded airless-surface hero treatments while preserving approved hierarchy, physical data, synchronous motion, scale, selection, focus, and educational UI | Io and Europa hero experience implemented and validated |
 | 0.21.0 | 2026-07-25 | Codex, for Tanvir | Replaced the generic Ganymede and Callisto materials with distinct source-grounded airless-surface hero treatments while preserving approved hierarchy, physical data, synchronous motion, scale, selection, focus, and educational UI | Ganymede and Callisto hero experience implemented and validated |
 | 0.22.0 | 2026-07-25 | Codex, for Tanvir | Replaced Triton's generic material with a distinct source-grounded hero treatment, disclosed incomplete Voyager-era coverage, corrected the outer-system light envelope, and preserved approved retrograde hierarchy, motion, scale, selection, focus, and educational UI | Triton hero experience implemented and validated |
+| 0.23.0 | 2026-07-25 | Codex, for Tanvir | Implemented a deterministic parent-first celestial navigator and restrained projected body labels with selection synchronization, overlap suppression, responsive safe areas, explicit toggles, and guided-comparison rules | Milestone 4 navigation and label baseline implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -372,13 +373,21 @@ clearly defined live-measurement presentation rather than static source facts.
 
 ### 8.3 Selection behavior
 
-- A visible body, label, or navigator entry can select the same target.
+- **[IMPLEMENTED]** A visible body or navigator entry can select the same
+  target. Projected labels are intentionally read-only in this baseline so
+  they cannot intercept body-selection clicks.
 - Selection is clearly differentiated from camera focus.
 - A non-color-only screen-space reticle follows an on-screen selected body.
 - Selection immediately opens a consistent educational information panel.
 - Focus transitions can be cancelled or redirected.
-- Occluded or extremely distant bodies remain reachable through the navigator.
-- The selected state remains synchronized across world labels, navigator, and detail panel.
+- **[IMPLEMENTED]** Occluded or extremely distant bodies remain reachable
+  through the `N` navigator, which lists the complete catalog in deterministic
+  parent-first order and identifies each moon with its parent.
+- **[IMPLEMENTED]** Activating a navigator entry selects the body, starts the
+  existing focus transition, closes the navigator, and leaves simulation pause
+  state unchanged.
+- **[IMPLEMENTED]** The selected state remains synchronized across projected
+  labels, navigator, reticle, status card, and detail panel.
 
 ## 9. Camera Design
 
@@ -411,8 +420,14 @@ clearly defined live-measurement presentation rather than static source facts.
 - Current selected or focused body.
 - Simulation state: running or paused, time multiplier, and scale mode.
 - Contextual body information.
-- Optional world-space labels and orbit-path controls.
-- Access to navigator, settings, help, credits, and sources.
+- **[IMPLEMENTED]** Optional projected body labels, toggled with `L`. Labels
+  prioritize selection, planets, then moons; suppress overlaps; avoid HUD safe
+  areas; show only the focused target in focus mode; and hide during guided
+  scale comparison.
+- **[IMPLEMENTED]** A scrollable `N` navigator provides keyboard and mouse
+  access to every authored star, planet, and moon without enlarging any body.
+- Orbit-path controls, settings, Help, credits, and sources access remain
+  release work.
 
 ### 10.2 Visual direction
 
@@ -691,12 +706,16 @@ Each rule should have one authoritative owner document; other documents link to 
 - Populate all approved bodies, materials, labels, facts, sources, and credits.
 - Complete cinematic route and accessibility baseline.
 
-**Current progress:** The Sun, eight planets, and Earth's Moon are populated as
-the deterministic planetary baseline. Major moons beyond Earth's Moon,
-labels/navigation, cinematic routing, and accessibility completion remain.
-The licensed music, Sun/Earth ambience, and
-event-driven UI feedback baseline is implemented; final listening/mix approval
-and a settings UI remain.
+**Current progress:** The Sun, eight planets, and all seven approved moons are
+populated with deterministic motion, source-grounded materials, exact
+Earth-relative radii, educational facts, and selection/focus support. The
+parent-first celestial navigator and projected-label baseline are implemented
+with responsive safe areas, overlap suppression, selection synchronization,
+focus/guided-mode rules, and explicit `N`/`L` controls. Cinematic routing,
+settings, Help/credits/sources access, licensed typography, reduced-motion
+behavior, and broader accessibility completion remain. The licensed music,
+Sun/Earth ambience, and event-driven UI feedback baseline is implemented;
+final listening/mix approval and an audio settings UI remain.
 
 ### Milestone 5 - Portfolio release
 

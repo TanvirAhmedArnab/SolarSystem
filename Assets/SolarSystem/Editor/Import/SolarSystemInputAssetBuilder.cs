@@ -10,7 +10,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string InputFolder = "Assets/SolarSystem/Settings/Input";
         private const string InputAssetPath = InputFolder + "/IA_SolarSystem.asset";
         private const string AssetName = "IA_SolarSystem";
-        private const string ContractLabel = "SolarSystemInputContract-v3";
+        private const string ContractLabel = "SolarSystemInputContract-v4";
 
         internal static InputActionAsset Build()
         {
@@ -112,6 +112,14 @@ namespace Tanvir.SolarSystem.Editor.Import
                 "ScaleComparison",
                 InputActionType.Button,
                 "<Keyboard>/c");
+            explorer.AddAction(
+                "ToggleNavigator",
+                InputActionType.Button,
+                "<Keyboard>/n");
+            explorer.AddAction(
+                "ToggleWorldLabels",
+                InputActionType.Button,
+                "<Keyboard>/l");
             explorer.AddAction(
                 "DecreaseTimeSpeed",
                 InputActionType.Button,

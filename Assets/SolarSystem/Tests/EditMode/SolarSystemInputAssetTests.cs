@@ -30,6 +30,8 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             AssertAction(explorer, "DecreaseTimeSpeed");
             AssertAction(explorer, "IncreaseTimeSpeed");
             AssertAction(explorer, "ScaleComparison");
+            AssertAction(explorer, "ToggleNavigator");
+            AssertAction(explorer, "ToggleWorldLabels");
         }
 
         [TestCase("Move", "<Keyboard>/w")]
@@ -41,6 +43,8 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         [TestCase("DecreaseTimeSpeed", "<Keyboard>/leftBracket")]
         [TestCase("IncreaseTimeSpeed", "<Keyboard>/rightBracket")]
         [TestCase("ScaleComparison", "<Keyboard>/c")]
+        [TestCase("ToggleNavigator", "<Keyboard>/n")]
+        [TestCase("ToggleWorldLabels", "<Keyboard>/l")]
         public void ProjectInputAsset_ActionContainsExpectedBinding(
             string actionName,
             string expectedPath)
