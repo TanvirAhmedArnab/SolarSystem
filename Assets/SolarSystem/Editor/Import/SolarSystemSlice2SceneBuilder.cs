@@ -36,6 +36,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string MarsStableId = "mars";
         private const string JupiterStableId = "jupiter";
         private const string SaturnStableId = "saturn";
+        private const string TitanStableId = "titan";
         private const string UranusStableId = "uranus";
         private const string NeptuneStableId = "neptune";
         private const float EarthAmbienceMinimumDistance = 1.5f;
@@ -77,6 +78,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialBodyView marsView = null;
             CelestialBodyView jupiterView = null;
             CelestialBodyView saturnView = null;
+            CelestialBodyView titanView = null;
             CelestialBodyView uranusView = null;
             CelestialBodyView neptuneView = null;
             foreach (SolarSystemSlice2BodyContent body in content.Bodies)
@@ -120,6 +122,10 @@ namespace Tanvir.SolarSystem.Editor.Import
                 else if (body.Definition.StableId == SaturnStableId)
                 {
                     saturnView = view;
+                }
+                else if (body.Definition.StableId == TitanStableId)
+                {
+                    titanView = view;
                 }
                 else if (body.Definition.StableId == UranusStableId)
                 {
@@ -181,6 +187,11 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Saturn.");
             }
 
+            if (titanView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Titan.");
+            }
+
             if (uranusView == null)
             {
                 throw new InvalidOperationException("The authored content requires Uranus.");
@@ -218,6 +229,12 @@ namespace Tanvir.SolarSystem.Editor.Import
                 null,
                 content.MarsAtmosphereMaterial,
                 "Mars");
+            CreateLayeredBodyVisual(
+                titanView,
+                content.TitanLayerDefinition,
+                null,
+                content.TitanHazeMaterial,
+                "Titan");
             CreateGasGiantVisual(
                 jupiterView,
                 content.JupiterVisualDefinition,

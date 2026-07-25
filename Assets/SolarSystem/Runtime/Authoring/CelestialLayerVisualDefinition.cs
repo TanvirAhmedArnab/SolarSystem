@@ -20,6 +20,8 @@ namespace Tanvir.SolarSystem.Authoring
         [SerializeField, Min(0.0001f)]
         private float cloudRotationMultiplier =
             EarthLayerRenderingContract.CloudRotationMultiplier;
+        [SerializeField, Min(0f)]
+        private float atmosphereCyclesPerRotation;
 
         /// <summary>Gets the stable body ID assigned to this definition.</summary>
         public string BodyStableId => bodyStableId;
@@ -36,6 +38,9 @@ namespace Tanvir.SolarSystem.Authoring
         /// <summary>Gets the authored total cloud rotation multiplier.</summary>
         public float CloudRotationMultiplier => cloudRotationMultiplier;
 
+        /// <summary>Gets the authored atmosphere-detail cycles per signed body rotation.</summary>
+        public float AtmosphereCyclesPerRotation => atmosphereCyclesPerRotation;
+
         /// <summary>Creates a validated immutable runtime model without mutating this asset.</summary>
         public CelestialLayerVisualModel ToModel()
         {
@@ -44,7 +49,8 @@ namespace Tanvir.SolarSystem.Authoring
                 hasCloudLayer,
                 cloudShellRadiusMultiplier,
                 atmosphereShellRadiusMultiplier,
-                cloudRotationMultiplier);
+                cloudRotationMultiplier,
+                atmosphereCyclesPerRotation);
         }
     }
 }

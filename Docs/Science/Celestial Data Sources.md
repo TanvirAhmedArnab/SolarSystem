@@ -351,6 +351,28 @@ Primary sources:
 - [NASA Titan Facts](https://science.nasa.gov/saturn/moons/titan/facts/)
 - [NASA Triton Overview](https://science.nasa.gov/neptune/moons/triton/)
 
+### Titan rendering interpretation
+
+NASA describes Titan as having a dense golden haze that obscures its surface,
+with an atmosphere composed primarily of nitrogen and a smaller methane
+component. The hero presentation therefore makes the amber atmosphere the
+dominant visible feature and retains only faint structure from the approved
+USGS mosaic.
+
+The renderer does not alter Titan's scientific definition: mean radius remains
+`2,574.76 km`, it remains parented to Saturn at a mean semimajor axis of
+`1,221,900 km`, and its positive `15.945448`-day synchronous rotation remains
+authoritative. The `1.028` haze-shell radius, color, opacity, rim, forward
+scatter, and slow deterministic phase are presentation values. They are not
+measured atmospheric thickness, radiative transfer, volumetric scattering,
+weather, wind, fluid motion, physical methane opacity, exact photometry, or a
+date-specific state.
+
+The USGS source is a processed Cassini ISS near-global mosaic assembled through
+methane windows and haze correction. Its approximate latitude coverage is
+`45 N` to `65 S`; it is not globally complete or natural visible-light color.
+The runtime texture remains byte-identical to the audited browse download.
+
 ## Presentation Transformations
 
 Physical values remain unchanged in the authoring assets and immutable runtime

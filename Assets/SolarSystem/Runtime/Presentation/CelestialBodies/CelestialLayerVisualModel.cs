@@ -16,7 +16,8 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
                 true,
                 cloudShellRadiusMultiplier,
                 atmosphereShellRadiusMultiplier,
-                cloudRotationMultiplier)
+                cloudRotationMultiplier,
+                0f)
         {
         }
 
@@ -26,7 +27,8 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             bool hasCloudLayer,
             float cloudShellRadiusMultiplier,
             float atmosphereShellRadiusMultiplier,
-            float cloudRotationMultiplier)
+            float cloudRotationMultiplier,
+            float atmosphereCyclesPerRotation = 0f)
         {
             if (string.IsNullOrWhiteSpace(bodyStableId))
             {
@@ -63,11 +65,21 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
                     "Cloud rotation multiplier must be finite and positive.");
             }
 
+            if (!float.IsFinite(atmosphereCyclesPerRotation) ||
+                atmosphereCyclesPerRotation < 0f ||
+                atmosphereCyclesPerRotation > 1f)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(atmosphereCyclesPerRotation),
+                    "Atmosphere cycles per rotation must be finite and in [0, 1].");
+            }
+
             BodyStableId = bodyStableId.Trim();
             HasCloudLayer = hasCloudLayer;
             CloudShellRadiusMultiplier = cloudShellRadiusMultiplier;
             AtmosphereShellRadiusMultiplier = atmosphereShellRadiusMultiplier;
             CloudRotationMultiplier = cloudRotationMultiplier;
+            AtmosphereCyclesPerRotation = atmosphereCyclesPerRotation;
         }
 
         /// <summary>Gets the body that owns these layers.</summary>
@@ -84,5 +96,40 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Gets total cloud rotation relative to the body's sidereal spin.</summary>
         public float CloudRotationMultiplier { get; }
+
+        /// <summary>Gets atmosphere-detail cycles per signed body rotation.</summary>
+        public float AtmosphereCyclesPerRotation { get; }
+
+        /// <summary>Evaluates a deterministic atmosphere phase from absolute simulation time.</summary>
+        public float EvaluateAtmospherePhase(
+            double simulationTimeSeconds,
+            double signedRotationPeriodSeconds)
+        {
+            if (!IsFinite(simulationTimeSeconds))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(simulationTimeSeconds),
+                    simulationTimeSeconds,
+                    "Simulation time must be finite.");
+            }
+
+            if (!IsFinite(signedRotationPeriodSeconds) ||
+                Math.Abs(signedRotationPeriodSeconds) < double.Epsilon)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(signedRotationPeriodSeconds),
+                    signedRotationPeriodSeconds,
+                    "Rotation period must be finite and non-zero.");
+            }
+
+            double cycles =
+                simulationTimeSeconds /
+                signedRotationPeriodSeconds *
+                AtmosphereCyclesPerRotation;
+            return (float)(cycles - Math.Floor(cycles));
+        }
+
+        private static bool IsFinite(double value) =>
+            !double.IsNaN(value) && !double.IsInfinity(value);
     }
 }

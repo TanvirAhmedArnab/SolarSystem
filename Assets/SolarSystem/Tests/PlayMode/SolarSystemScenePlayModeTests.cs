@@ -1479,6 +1479,118 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             AssertReceivesSunOriginLight(radialLight, sun, mars);
         }
 
+        [UnityTest]
+        public IEnumerator SolarSystemScene_PresentsTitanAsHazeDominantScientificMoon()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "titan",
+                    out CelestialBodyView titan),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+
+            CelestialLayeredBodyView layers = titan.LayeredBodyView;
+            Assert.That(layers, Is.Not.Null);
+            Assert.That(layers.IsInitialized, Is.True);
+            Assert.That(layers.HasCloudLayer, Is.False);
+            Assert.That(layers.CloudShell, Is.Null);
+            Assert.That(layers.CloudRenderer, Is.Null);
+            Assert.That(layers.AtmosphereShell.parent, Is.SameAs(titan.VisualRoot));
+            Assert.That(
+                layers.AtmosphereShell.localScale.x,
+                Is.EqualTo(TitanHazeRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                titan.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(2574.76f / 6371.0084f).Within(0.0001f));
+            Assert.That(titan.Definition.ParentId, Is.EqualTo("saturn"));
+            Assert.That(titan.Definition.MeanRadiusKm, Is.EqualTo(2574.76d));
+            Assert.That(
+                titan.Definition.RotationPeriodSeconds,
+                Is.EqualTo(15.945448d * 86400d).Within(0.001d));
+            Assert.That(
+                titan.Definition.Orbit.SemiMajorAxisKm,
+                Is.EqualTo(1221900d));
+            Assert.That(titan.Definition.Orbit.Eccentricity, Is.EqualTo(0.029d));
+            Assert.That(
+                layers.SurfaceRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Titan Surface"));
+            Assert.That(
+                layers.SurfaceRenderer.sharedMaterial
+                    .GetTexture("_BaseMap").name,
+                Is.EqualTo("T_Titan_Surface_Browse"));
+            Assert.That(
+                layers.AtmosphereRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Titan Haze"));
+            Assert.That(
+                layers.AtmosphereRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(layers.AtmosphereRenderer.receiveShadows, Is.False);
+            Assert.That(
+                layers.AtmosphereRenderer.lightProbeUsage,
+                Is.EqualTo(LightProbeUsage.Off));
+            Assert.That(
+                layers.AtmosphereRenderer.reflectionProbeUsage,
+                Is.EqualTo(ReflectionProbeUsage.Off));
+
+            layers.Apply(123456d);
+            float firstPhase = layers.AtmospherePhase;
+            layers.Apply(123456d);
+            Assert.That(
+                layers.AtmospherePhase,
+                Is.EqualTo(firstPhase).Within(0.000001f));
+            layers.Apply(246912d);
+            Assert.That(
+                PhaseDistance(firstPhase, layers.AtmospherePhase),
+                Is.GreaterThan(0.0001f));
+
+            Vector4 globalSunPosition =
+                Shader.GetGlobalVector("_SolarSystemSunPositionWS");
+            Assert.That(
+                Vector3.Distance(globalSunPosition, sun.transform.position),
+                Is.LessThan(0.0001f));
+            Light radialLight =
+                GameObject.Find("Solar Radial Light")?.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            AssertReceivesSunOriginLight(radialLight, sun, titan);
+
+            bool wasPausedBeforeFocus =
+                simulation.SimulationController.ClockSnapshot.IsPaused;
+            interaction.SelectionController.Select(titan);
+            interaction.CameraController.Focus(titan);
+            yield return WaitUntilFocused(interaction.CameraController);
+            yield return null;
+            Assert.That(layers.SurfaceRenderer.enabled, Is.True);
+            Assert.That(layers.AtmosphereRenderer.enabled, Is.True);
+            Assert.That(
+                simulation.SimulationController.ClockSnapshot.IsPaused,
+                Is.EqualTo(wasPausedBeforeFocus));
+
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+            Assert.That(
+                interaction.CameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.FreeFlight));
+        }
+
         private static void AssertReceivesSunOriginLight(
             Light radialLight,
             CelestialBodyView sun,

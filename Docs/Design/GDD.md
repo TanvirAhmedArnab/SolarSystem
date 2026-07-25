@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.18.0  
+**Version:** 0.19.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -45,6 +45,7 @@
 | 0.16.0 | 2026-07-24 | Codex, for Tanvir | Implemented distinct Uranus and Neptune hero treatments with anchored source identity, restrained Sun-aware limbs, deterministic signed presentation detail, nightside readability, and explicit non-fluid-simulation limits | Product behavior implemented and validated |
 | 0.17.0 | 2026-07-24 | Codex, for Tanvir | Implemented distinct Mercury and Moon airless-rocky hero treatments with anchored source identity, restrained source-derived relief, dry PBR response, Sun-aware nightside readability, and explicit no-atmosphere limits | Product behavior implemented and validated |
 | 0.18.0 | 2026-07-25 | Codex, for Tanvir | Completed the approved seven-moon roster with deterministic nested orbits, exact proportional radii, educational facts, accessible selection/focus, and audited source-grounded materials | Minimum major-moon content implemented and validated; hero fidelity remains iterative |
+| 0.19.0 | 2026-07-25 | Codex, for Tanvir | Replaced Titan's interim surface-first baseline with a haze-dominant, Sun-aware hero treatment while preserving its approved data, scale, hierarchy, motion, selection, focus, and educational UI | Titan hero experience implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -282,6 +283,17 @@ Triton move relative to their planet parents; Triton preserves retrograde
 motion. Their distinct audited browse mosaics are baseline content rather than
 final hero-resolution art. Further atmosphere, cloud, and body-specific shader
 polish remains iterative fidelity work.
+
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Titan now reads first as an opaque amber
+world rather than a sharply mapped rocky moon. Its audited near-global USGS
+mosaic remains the source-grounded surface reference, but only faint softened
+structure is visible beneath one dense Sun-aware haze shell. The live Sun
+produces a readable day/night gradient and restrained limb response. The
+effect does not claim globally complete visible-light imagery, literal
+atmosphere thickness, measured scattering, clouds, volumetric weather, or a
+date-specific appearance. Titan remains Saturn-parented, synchronously
+rotating, exactly Earth-proportional, selectable, focusable, and fully
+represented by the existing educational overlay.
 
 ### 8.2 Body information overlay
 

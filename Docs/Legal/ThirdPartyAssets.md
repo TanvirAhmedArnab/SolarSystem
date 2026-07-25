@@ -313,6 +313,32 @@ deterministic motion code are project-authored. They introduce no new
 third-party asset or license. Their use of TEX-SSS-016 continues the existing
 Solar System Scope CC BY 4.0 attribution obligation.
 
+### Active Titan hero record
+
+- Source ID: `TEX-USGS-005`
+- Product: Cassini ISS Titan near-global mosaic, `450 m/pixel` source product.
+- Product page:
+  https://astrogeology.usgs.gov/search/map/titan_cassini_iss_near_global_mosaic_450m
+- Retained source:
+  `SourceAssets/ThirdParty/Textures/USGS/titan_near_global_mosaic_browse.jpg`
+- Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Titan/T_Titan_Surface_Browse.jpg`
+- Active materials: `M_Titan.mat` and project-authored `M_Titan_Haze.mat`.
+- Integrity: both repository JPEGs are byte-identical with SHA-256
+  `0F967976320C91444D5CBF7E5A0BEAD56C4A38FE41F497D85E00A22D1F119774`.
+- Usage status: approved with required author citation; no endorsement implied.
+- Coverage and processing: the browse mosaic covers all longitudes from
+  approximately `45 N` to `65 S`; Cassini ISS methane-window observations
+  were processed and haze-corrected. It is not raw natural-color,
+  globally complete, or date-specific visible-light imagery.
+- Modifications: the source pixels remain unchanged. Project-authored shaders
+  suppress surface contrast and add an amber presentation haze; those
+  rendering choices introduce no new third-party asset or license.
+
+Release credits must cite the authors named on the USGS product record and
+identify USGS Astrogeology/Cassini ISS as the imagery source. Reconfirm the
+product page's citation wording during the final release audit.
+
 ### Kenney selected-subset mapping
 
 | Source file | Unity asset | Intended event |

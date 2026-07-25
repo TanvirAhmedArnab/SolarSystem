@@ -24,6 +24,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal Material VenusAtmosphereMaterial { get; set; }
         internal CelestialLayerVisualDefinition MarsLayerDefinition { get; set; }
         internal Material MarsAtmosphereMaterial { get; set; }
+        internal CelestialLayerVisualDefinition TitanLayerDefinition { get; set; }
+        internal Material TitanHazeMaterial { get; set; }
         internal GasGiantVisualDefinition JupiterVisualDefinition { get; set; }
         internal Material JupiterAtmosphereMaterial { get; set; }
         internal GasGiantVisualDefinition SaturnVisualDefinition { get; set; }

@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Haze-dominant Titan hero rendering with dedicated project-owned surface and
+  atmosphere shaders, an atmosphere-only layered composition, live-Sun
+  day/night response, and bounded transparent overdraw.
+- Deterministic absolute-time Titan haze phase through the reusable layered
+  body model/view and a cached material property block.
+- Titan material, hierarchy, scientific-state, focus/readability, and
+  regression coverage, bringing the complete suites to 157 Edit Mode and 17
+  Play Mode cases.
+- Titan imagery, atmospheric limitations, technical design, art direction,
+  and validation evidence across the living documentation set.
 - Approved major-moon content for Io, Europa, Ganymede, Callisto, Titan, and
   Triton, completing the seven-moon minimum portfolio roster.
 - JPL physical parameters and J2000 mean parent-relative orbital elements,

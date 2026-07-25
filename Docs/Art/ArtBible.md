@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, and seven-moon foundations  
-**Version:** 0.19.0  
+**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, seven-moon, and Titan haze foundations  
+**Version:** 0.20.0  
 **Last updated:** 2026-07-25  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -257,7 +257,25 @@ reflection probes. Saturn's physical radius, orbit, signed rotation, axial
 tilt, and generated ring geometry remain unchanged.
 
 ### Titan
-USGS near-global browse below a dense amber atmosphere. Surface detail remains subdued.
+USGS near-global browse below a dense amber atmosphere. Surface detail remains
+subdued.
+
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Titan uses a dedicated project-owned
+surface shader and one transparent haze shell. The anchored USGS Cassini ISS
+near-global mosaic contributes only faint softened structure: source contrast
+is limited to `0.12`, with no moving surface sample, terrain relief, specular
+highlight, or inferred topography. A warm amber shell at `1.028` surface
+radius supplies a `0.64` full-disk haze term, broad restrained limb, live-Sun
+day/night response, and a low-amplitude `0.018` presentation variation.
+
+The shell is intentionally atmosphere-dominant in close focus. It is not a
+literal atmosphere-scale visualization, volumetric scattering solution,
+measured methane-opacity model, cloud layer, or weather simulation. The slow
+absolute-time phase is presentation motion only and must not be described as
+wind speed or observed weather. The source mosaic is processed through methane
+windows and haze correction, covers approximately 45 degrees north to 65
+degrees south, and is not natural visible-light, globally complete, or
+date-specific imagery.
 
 ### Uranus
 Pale cyan-blue, low-contrast bands, never neon. Rings remain conditional.
@@ -296,8 +314,9 @@ Rendered radii stay scientifically proportional; invisible selection
 colliders and cached orbit guides provide usability without enlarging the
 surfaces. The baseline intentionally adds no invented eruptions, clouds,
 terrain displacement, emissive geology, or date-specific weather. Titan's
-current surface-first material is an interim content proof; its final hero
-treatment must subordinate sharp surface detail to its documented amber haze.
+validated hero treatment supersedes its interim surface-first material and
+subordinates sharp source detail to its documented amber haze without
+inventing a cloud deck.
 
 ## 6. Background, UI, and Motion
 
@@ -449,6 +468,8 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.20.0 | 2026-07-25 | Added Titan's haze-dominant project-owned surface/shell treatment, anchored and subdued USGS source use, live-Sun day/night response, deterministic low-amplitude presentation motion, bounded overdraw, and explicit image/atmosphere limitations | Titan hero slice implemented and visually validated |
+| 0.19.0 | 2026-07-25 | Added the approved major-moon baseline with distinct audited USGS browse mosaics, exact proportional radii, and explicit coverage/color limitations | Major-moon visual baseline implemented and validated |
 | 0.18.0 | 2026-07-24 | Added distinct anchored Mercury/Moon airless-rocky treatments, body-specific restrained source-derived relief and dry PBR values, live-Sun nightside readability, no-atmosphere guarantees, and explicit elevation-model limits | Airless rocky hero slice implemented and visually validated |
 | 0.17.0 | 2026-07-24 | Added distinct anchored Uranus/Neptune treatments, restrained source-derived detail, signed deterministic presentation motion, thin Sun-aware limbs, controlled nightside readability, and explicit non-fluid-simulation limits | Ice-giant hero slice implemented and visually validated |
 | 0.16.0 | 2026-07-24 | Added Mars's anchored rocky surface, restrained source-derived relief, atmosphere-only layered composition, thin Sun-aware limb, and explicit color/atmosphere limitations | Mars hero slice implemented and visually validated |

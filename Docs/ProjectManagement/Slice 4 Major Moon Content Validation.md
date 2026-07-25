@@ -99,7 +99,9 @@ that are intentionally sub-pixel at the overview scale.
 
 - The six USGS files are browse-resolution baselines; close hero shots may
   require higher-resolution derivatives from the same approved products.
-- Titan still needs its final haze-dominant hero treatment.
+- Titan's interim surface-first limitation was resolved by the validated
+  follow-up recorded in
+  `Slice 4 Titan Haze Hero Rendering Validation.md`.
 - The model intentionally omits perturbations, resonances, precession,
   libration, prime-meridian orientation, and date-exact ephemerides.
 - Owner visual review in the Game view remains desirable before the final

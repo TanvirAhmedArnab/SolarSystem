@@ -76,6 +76,14 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Mars_Atmosphere.mat";
         private const string MarsLayerDefinitionPath =
             "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Mars.asset";
+        private const string TitanTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Titan/T_Titan_Surface_Browse.jpg";
+        private const string TitanMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Titan.mat";
+        private const string TitanHazeMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Titan_Haze.mat";
+        private const string TitanLayerDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Titan.asset";
         private const string MercuryTexturePath =
             "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Mercury/T_Mercury_Surface_2K.jpg";
         private const string MercuryMaterialPath =
@@ -585,6 +593,92 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(
                 definition.AtmosphereShellRadiusMultiplier,
                 Is.EqualTo(MarsLayerRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(importer, Is.Not.Null);
+            Assert.That(importer.sRGBTexture, Is.True);
+            Assert.That(importer.mipmapEnabled, Is.True);
+            Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Repeat));
+        }
+
+        [Test]
+        public void TitanMaterials_KeepAnchoredSurfaceSubordinateToDenseHazeContract()
+        {
+            Texture2D texture =
+                AssetDatabase.LoadAssetAtPath<Texture2D>(TitanTexturePath);
+            Material surface =
+                AssetDatabase.LoadAssetAtPath<Material>(TitanMaterialPath);
+            Material haze =
+                AssetDatabase.LoadAssetAtPath<Material>(TitanHazeMaterialPath);
+            CelestialLayerVisualDefinition definition =
+                AssetDatabase.LoadAssetAtPath<CelestialLayerVisualDefinition>(
+                    TitanLayerDefinitionPath);
+            var importer =
+                AssetImporter.GetAtPath(TitanTexturePath) as TextureImporter;
+
+            Assert.That(texture, Is.Not.Null);
+            Assert.That(surface, Is.Not.Null);
+            Assert.That(
+                surface.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Titan Surface"));
+            Assert.That(surface.GetTexture("_BaseMap"), Is.SameAs(texture));
+            Assert.That(
+                surface.GetFloat("_DetailStrength"),
+                Is.EqualTo(TitanHazeRenderingContract.SurfaceDetailStrength)
+                    .Within(0.0001f));
+            Assert.That(
+                surface.GetFloat("_AmbientBrightness"),
+                Is.EqualTo(TitanHazeRenderingContract.SurfaceAmbientBrightness)
+                    .Within(0.0001f));
+            Assert.That(
+                surface.GetFloat("_SunBrightness"),
+                Is.EqualTo(TitanHazeRenderingContract.SurfaceSunBrightness)
+                    .Within(0.0001f));
+            Assert.That(surface.renderQueue, Is.EqualTo((int)RenderQueue.Geometry));
+            Assert.That(surface.enableInstancing, Is.True);
+
+            Assert.That(haze, Is.Not.Null);
+            Assert.That(
+                haze.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Titan Haze"));
+            Assert.That(
+                haze.GetFloat("_DiskOpacity"),
+                Is.EqualTo(TitanHazeRenderingContract.HazeDiskOpacity)
+                    .Within(0.0001f));
+            Assert.That(
+                haze.GetFloat("_RimIntensity"),
+                Is.EqualTo(TitanHazeRenderingContract.HazeRimIntensity)
+                    .Within(0.0001f));
+            Assert.That(
+                haze.GetFloat("_RimPower"),
+                Is.EqualTo(TitanHazeRenderingContract.HazeRimPower)
+                    .Within(0.0001f));
+            Assert.That(
+                haze.GetFloat("_NightsideVisibility"),
+                Is.EqualTo(TitanHazeRenderingContract.HazeNightsideVisibility)
+                    .Within(0.0001f));
+            Assert.That(
+                haze.GetFloat("_ForwardScatter"),
+                Is.EqualTo(TitanHazeRenderingContract.HazeForwardScatter)
+                    .Within(0.0001f));
+            Assert.That(
+                haze.GetFloat("_VariationStrength"),
+                Is.EqualTo(TitanHazeRenderingContract.HazeVariationStrength)
+                    .Within(0.0001f));
+            Assert.That(
+                haze.renderQueue,
+                Is.EqualTo((int)RenderQueue.Transparent + 12));
+            Assert.That(haze.enableInstancing, Is.True);
+
+            Assert.That(definition, Is.Not.Null);
+            Assert.That(definition.BodyStableId, Is.EqualTo("titan"));
+            Assert.That(definition.HasCloudLayer, Is.False);
+            Assert.That(
+                definition.AtmosphereShellRadiusMultiplier,
+                Is.EqualTo(TitanHazeRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                definition.AtmosphereCyclesPerRotation,
+                Is.EqualTo(TitanHazeRenderingContract.HazeCyclesPerRotation)
                     .Within(0.0001f));
             Assert.That(importer, Is.Not.Null);
             Assert.That(importer.sRGBTexture, Is.True);

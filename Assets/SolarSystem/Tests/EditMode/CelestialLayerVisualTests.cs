@@ -43,6 +43,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(
                 model.CloudRotationMultiplier,
                 Is.EqualTo(EarthLayerRenderingContract.CloudRotationMultiplier));
+            Assert.That(model.AtmosphereCyclesPerRotation, Is.Zero);
             Assert.That(definition.BodyStableId, Is.EqualTo("earth"));
         }
 
@@ -55,6 +56,22 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 () => new CelestialLayerVisualModel("earth", 1.02f, 1.01f, 1.025f));
             Assert.Throws<ArgumentOutOfRangeException>(
                 () => new CelestialLayerVisualModel("earth", 1.004f, 1.018f, 0f));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => new CelestialLayerVisualModel(
+                    "titan",
+                    false,
+                    1.004f,
+                    TitanHazeRenderingContract.AtmosphereShellRadiusMultiplier,
+                    1f,
+                    -0.01f));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => new CelestialLayerVisualModel(
+                    "titan",
+                    false,
+                    1.004f,
+                    TitanHazeRenderingContract.AtmosphereShellRadiusMultiplier,
+                    1f,
+                    1.01f));
         }
 
         [Test]
@@ -221,6 +238,58 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         }
 
         [Test]
+        public void TitanLayeredView_UsesDeterministicSignedAtmospherePhase()
+        {
+            CelestialLayerVisualDefinition definition = CreateDefinition(
+                "titan",
+                EarthLayerRenderingContract.CloudShellRadiusMultiplier,
+                TitanHazeRenderingContract.AtmosphereShellRadiusMultiplier,
+                1f,
+                false,
+                TitanHazeRenderingContract.HazeCyclesPerRotation);
+            GameObject root = CreateObject("Titan");
+            Transform atmosphere =
+                CreateRendererObject("Atmosphere Layer", root.transform);
+            MeshRenderer surface = root.AddComponent<MeshRenderer>();
+            CelestialLayeredBodyView view =
+                root.AddComponent<CelestialLayeredBodyView>();
+            var serialized = new SerializedObject(view);
+            serialized.FindProperty("definition").objectReferenceValue = definition;
+            serialized.FindProperty("atmosphereShell").objectReferenceValue = atmosphere;
+            serialized.FindProperty("surfaceRenderer").objectReferenceValue = surface;
+            serialized.FindProperty("atmosphereRenderer").objectReferenceValue =
+                atmosphere.GetComponent<MeshRenderer>();
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            CelestialBodyModel titan = CelestialTestFactory.CreateOrbitingBody(
+                "titan",
+                "saturn",
+                rotationPeriodSeconds: 10d);
+
+            view.Initialize(titan);
+            view.Apply(25d);
+            float first = view.AtmospherePhase;
+            view.Apply(25d);
+            float repeated = view.AtmospherePhase;
+            view.Apply(50d);
+            float advanced = view.AtmospherePhase;
+            var properties = new MaterialPropertyBlock();
+            view.AtmosphereRenderer.GetPropertyBlock(properties);
+
+            Assert.That(view.IsInitialized, Is.True);
+            Assert.That(view.HasCloudLayer, Is.False);
+            Assert.That(view.CloudShell, Is.Null);
+            Assert.That(
+                atmosphere.localScale.x,
+                Is.EqualTo(TitanHazeRenderingContract.AtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(first, Is.EqualTo(repeated).Within(0.000001f));
+            Assert.That(advanced, Is.Not.EqualTo(first).Within(0.000001f));
+            Assert.That(
+                properties.GetFloat("_SimulationPhase"),
+                Is.EqualTo(advanced).Within(0.000001f));
+        }
+
+        [Test]
         public void NightWeight_IsZeroOnDaysideAndOneOnOpposedHemisphere()
         {
             Assert.That(EarthLayerRenderingContract.EvaluateNightWeight(1f), Is.Zero);
@@ -242,7 +311,8 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             float cloudShellRadiusMultiplier,
             float atmosphereShellRadiusMultiplier,
             float cloudRotationMultiplier,
-            bool hasCloudLayer = true)
+            bool hasCloudLayer = true,
+            float atmosphereCyclesPerRotation = 0f)
         {
             CelestialLayerVisualDefinition definition =
                 ScriptableObject.CreateInstance<CelestialLayerVisualDefinition>();
@@ -256,6 +326,8 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 atmosphereShellRadiusMultiplier;
             serialized.FindProperty("cloudRotationMultiplier").floatValue =
                 cloudRotationMultiplier;
+            serialized.FindProperty("atmosphereCyclesPerRotation").floatValue =
+                atmosphereCyclesPerRotation;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             return definition;
         }

@@ -2,6 +2,7 @@ using System;
 using Tanvir.SolarSystem.Authoring;
 using Tanvir.SolarSystem.Simulation;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 {
@@ -11,6 +12,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
     [DisallowMultipleComponent]
     public sealed class CelestialLayeredBodyView : MonoBehaviour
     {
+        private static readonly int AtmospherePhaseId =
+            Shader.PropertyToID("_SimulationPhase");
+
         [SerializeField] private CelestialLayerVisualDefinition definition;
         [SerializeField] private Transform cloudShell;
         [SerializeField] private Transform atmosphereShell;
@@ -20,6 +24,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         private CelestialLayerVisualModel model;
         private double signedRotationPeriodSeconds;
+        private MaterialPropertyBlock atmosphereProperties;
 
         /// <summary>Gets whether the view owns a validated immutable layer model.</summary>
         public bool IsInitialized => model != null;
@@ -47,6 +52,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Gets the current deterministic cloud drift angle relative to the surface.</summary>
         public float CloudRelativeRotationDeg { get; private set; }
+
+        /// <summary>Gets the current deterministic atmosphere phase in [0, 1).</summary>
+        public float AtmospherePhase { get; private set; }
 
         /// <summary>Initializes the layer view for its owning immutable body.</summary>
         public void Initialize(CelestialBodyModel body)
@@ -85,6 +93,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
             model = runtimeModel;
             signedRotationPeriodSeconds = body.RotationPeriodSeconds;
+            atmosphereProperties ??= new MaterialPropertyBlock();
             if (model.HasCloudLayer)
             {
                 cloudShell.localScale =
@@ -93,6 +102,14 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
             atmosphereShell.localScale =
                 Vector3.one * model.AtmosphereShellRadiusMultiplier;
+            surfaceRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            surfaceRenderer.receiveShadows = false;
+            atmosphereRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            atmosphereRenderer.receiveShadows = false;
+            atmosphereRenderer.lightProbeUsage = LightProbeUsage.Off;
+            atmosphereRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            atmosphereRenderer.GetPropertyBlock(atmosphereProperties);
+            Apply(0d);
         }
 
         /// <summary>Applies deterministic layer motion from authoritative absolute time.</summary>
@@ -124,6 +141,14 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
                 cloudShell.localRotation =
                     Quaternion.AngleAxis(CloudRelativeRotationDeg, Vector3.up);
             }
+
+            AtmospherePhase = model.EvaluateAtmospherePhase(
+                simulationTimeSeconds,
+                signedRotationPeriodSeconds);
+            atmosphereProperties.SetFloat(
+                AtmospherePhaseId,
+                AtmospherePhase);
+            atmosphereRenderer.SetPropertyBlock(atmosphereProperties);
         }
     }
 }

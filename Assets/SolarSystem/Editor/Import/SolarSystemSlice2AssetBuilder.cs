@@ -78,6 +78,10 @@ namespace Tanvir.SolarSystem.Editor.Import
             "SolarSystem/Celestial/Rocky Surface";
         private const string AtmosphereShader =
             "SolarSystem/Celestial/Atmosphere Rim";
+        private const string TitanSurfaceShader =
+            "SolarSystem/Celestial/Titan Surface";
+        private const string TitanHazeShader =
+            "SolarSystem/Celestial/Titan Haze";
         private const string SaturnRingTexturePath =
             CelestialTextureRoot + "/Saturn/T_Saturn_RingsAlpha_2K.png";
         private const string SpaceTexturePath =
@@ -152,6 +156,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         private static readonly Color GanymedeTint = new Color(0.9f, 0.88f, 0.84f, 1f);
         private static readonly Color CallistoTint = new Color(0.86f, 0.84f, 0.8f, 1f);
         private static readonly Color TitanTint = new Color(1f, 0.82f, 0.5f, 1f);
+        private static readonly Color TitanHazeTint =
+            new Color(1f, 0.56f, 0.18f, 1f);
         private static readonly Color TritonTint = new Color(0.9f, 0.94f, 1f, 1f);
         private static readonly Color NeptuneAtmosphereTint =
             new Color(0.2f, 0.48f, 0.98f, 1f);
@@ -528,6 +534,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 VenusAtmosphereMaterial = CreateVenusAtmosphereMaterial(),
                 MarsLayerDefinition = CreateMarsLayerDefinition(),
                 MarsAtmosphereMaterial = CreateMarsAtmosphereMaterial(),
+                TitanLayerDefinition = CreateTitanLayerDefinition(),
+                TitanHazeMaterial = CreateTitanHazeMaterial(),
                 JupiterVisualDefinition = CreateJupiterVisualDefinition(),
                 JupiterAtmosphereMaterial = CreateJupiterAtmosphereMaterial(),
                 SaturnVisualDefinition = CreateSaturnVisualDefinition(),
@@ -781,6 +789,35 @@ namespace Tanvir.SolarSystem.Editor.Import
                     RockySurfaceShader);
                 ConfigureMarsSurfaceMaterial(marsMaterial);
                 return marsMaterial;
+            }
+
+            if (bodyName == "Titan")
+            {
+                Material titanMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Titan.mat",
+                    TitanSurfaceShader);
+                var cleanTitanMaterial = new Material(titanMaterial.shader)
+                {
+                    name = titanMaterial.name
+                };
+                EditorUtility.CopySerialized(cleanTitanMaterial, titanMaterial);
+                Object.DestroyImmediate(cleanTitanMaterial);
+                titanMaterial.SetTexture(
+                    "_BaseMap",
+                    LoadRequiredAsset<Texture2D>(TitanTexturePath));
+                titanMaterial.SetColor("_BaseColor", TitanTint);
+                titanMaterial.SetFloat(
+                    "_DetailStrength",
+                    TitanHazeRenderingContract.SurfaceDetailStrength);
+                titanMaterial.SetFloat(
+                    "_AmbientBrightness",
+                    TitanHazeRenderingContract.SurfaceAmbientBrightness);
+                titanMaterial.SetFloat(
+                    "_SunBrightness",
+                    TitanHazeRenderingContract.SurfaceSunBrightness);
+                titanMaterial.enableInstancing = true;
+                EditorUtility.SetDirty(titanMaterial);
+                return titanMaterial;
             }
 
             if (bodyName == "Mercury")
@@ -1419,6 +1456,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 EarthLayerRenderingContract.AtmosphereShellRadiusMultiplier;
             serialized.FindProperty("cloudRotationMultiplier").floatValue =
                 EarthLayerRenderingContract.CloudRotationMultiplier;
+            serialized.FindProperty("atmosphereCyclesPerRotation").floatValue = 0f;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(definition);
             return definition;
@@ -1439,6 +1477,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 VenusLayerRenderingContract.AtmosphereShellRadiusMultiplier;
             serialized.FindProperty("cloudRotationMultiplier").floatValue =
                 VenusLayerRenderingContract.CloudRotationMultiplier;
+            serialized.FindProperty("atmosphereCyclesPerRotation").floatValue = 0f;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(definition);
             return definition;
@@ -1455,9 +1494,61 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.FindProperty("hasCloudLayer").boolValue = false;
             serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =
                 MarsLayerRenderingContract.AtmosphereShellRadiusMultiplier;
+            serialized.FindProperty("atmosphereCyclesPerRotation").floatValue = 0f;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(definition);
             return definition;
+        }
+
+        private static CelestialLayerVisualDefinition CreateTitanLayerDefinition()
+        {
+            const string path =
+                DataRoot + "/VisualLayers/VisualLayers_Titan.asset";
+            CelestialLayerVisualDefinition definition =
+                CreateOrLoad<CelestialLayerVisualDefinition>(path);
+            var serialized = new SerializedObject(definition);
+            serialized.FindProperty("bodyStableId").stringValue = "titan";
+            serialized.FindProperty("hasCloudLayer").boolValue = false;
+            serialized.FindProperty("cloudShellRadiusMultiplier").floatValue =
+                EarthLayerRenderingContract.CloudShellRadiusMultiplier;
+            serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =
+                TitanHazeRenderingContract.AtmosphereShellRadiusMultiplier;
+            serialized.FindProperty("cloudRotationMultiplier").floatValue = 1f;
+            serialized.FindProperty("atmosphereCyclesPerRotation").floatValue =
+                TitanHazeRenderingContract.HazeCyclesPerRotation;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+            return definition;
+        }
+
+        private static Material CreateTitanHazeMaterial()
+        {
+            const string path =
+                MaterialRoot + "/CelestialBodies/M_Titan_Haze.mat";
+            Material material = CreateOrUpdateMaterial(path, TitanHazeShader);
+            material.SetColor("_HazeColor", TitanHazeTint);
+            material.SetFloat(
+                "_DiskOpacity",
+                TitanHazeRenderingContract.HazeDiskOpacity);
+            material.SetFloat(
+                "_RimIntensity",
+                TitanHazeRenderingContract.HazeRimIntensity);
+            material.SetFloat(
+                "_RimPower",
+                TitanHazeRenderingContract.HazeRimPower);
+            material.SetFloat(
+                "_NightsideVisibility",
+                TitanHazeRenderingContract.HazeNightsideVisibility);
+            material.SetFloat(
+                "_ForwardScatter",
+                TitanHazeRenderingContract.HazeForwardScatter);
+            material.SetFloat(
+                "_VariationStrength",
+                TitanHazeRenderingContract.HazeVariationStrength);
+            material.renderQueue = (int)RenderQueue.Transparent + 12;
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
         }
 
         private static Material CreateMarsAtmosphereMaterial()

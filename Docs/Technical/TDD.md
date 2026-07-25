@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Sun, eight-planet, and seven-moon baseline validated  
-**Version:** 0.23.0  
+**Document status:** Living technical authority; Sun, eight-planet, seven-moon, and Titan haze hero baselines validated  
+**Version:** 0.24.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -49,6 +49,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.21.0 | 2026-07-24 | Codex, for Tanvir | Added reusable ice-giant authoring/model/view architecture, generalized the giant-planet shader identity, distinct Uranus/Neptune material contracts, Sun-aware nightside readability, reproducible scene wiring, and complete regression coverage | Uranus and Neptune hero architecture implemented and validated |
 | 0.22.0 | 2026-07-24 | Codex, for Tanvir | Added reusable airless-rocky authoring/model/view architecture, distinct Mercury/Moon material contracts, live-Sun nightside readability in the shared rocky shader, reproducible scene wiring, and complete regression coverage | Mercury and Moon hero architecture implemented and validated |
 | 0.23.0 | 2026-07-25 | Codex, for Tanvir | Expanded the data-driven catalog and reproducible scene pipeline to the approved major moons using JPL parent-relative mean elements, signed synchronous rotation, audited USGS materials, and complete hierarchy/scene regression coverage | Major-moon baseline implemented and validated |
+| 0.24.0 | 2026-07-25 | Codex, for Tanvir | Extended the atmosphere-only layered-body path with a validated deterministic atmosphere phase and added project-owned Titan surface/haze shaders, reproducible authoring, bounded overdraw, live-Sun response, and complete regression coverage | Titan haze hero architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -757,6 +758,19 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   intensity, nightside visibility, and warm color. Both renderers are excluded
   from shadow, light-probe, and reflection-probe work; only the atmosphere
   contributes transparent overdraw.
+- Titan reuses the atmosphere-only layered-body composition with its exact
+  proportional opaque surface and one transparent haze shell at `1.028`
+  surface radius. `Titan Surface` keeps the approved USGS mosaic anchored,
+  attenuates its luminance contrast to `0.12`, and uses the live Sun direction
+  without specular or time-varying surface detail. `Titan Haze` adds one
+  premultiplied transparent pass at `Transparent+12`, a `0.64` full-disk haze
+  contribution, restrained limb/forward-scatter terms, and `0.018`
+  low-amplitude presentation variation. The layer model evaluates the
+  variation at `0.04` cycles per signed Titan rotation from absolute simulation
+  time and writes `_SimulationPhase` through one cached property block. No
+  cloud renderer, volumetric pass, fluid simulation, material instance, or
+  steady-state allocation is introduced. The `1.028` shell is a presentation
+  boundary, not a claim about Titan's physical atmospheric scale height.
 - `GasGiantVisualDefinition` stores a stable body ID, reviewed atmosphere-shell
   multiplier, and band-detail cycles per signed rotation. Startup converts it
   to immutable `GasGiantVisualModel` state. `GasGiantVisualView` evaluates one
@@ -1111,6 +1125,12 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   authoring. Minimum invisible selection radii and logarithmically compressed
   parent-relative distance preserve usability without changing rendered body
   proportions or physical source data.
+- **[IMPLEMENTED REPRESENTATIVE SLICE]** Titan now extends the existing
+  atmosphere-only layered-body path with a haze-dominant material pair. Its
+  source data, Saturn hierarchy, exact radius ratio, deterministic orbit,
+  positive synchronous rotation, selection, focus, HUD, and scale behavior
+  remain unchanged. Dedicated evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Titan Haze Hero Rendering Validation.md`.
 - Particle-scale ring simulation, labels/navigation, player-facing audio
   settings, final audio mix approval, and accessibility options remain Slice 4
   work.

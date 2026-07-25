@@ -77,13 +77,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Ice Giant Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Ice%20Giant%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Airless Rocky Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Airless%20Rocky%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Major Moon Content Validation](Docs/ProjectManagement/Slice%204%20Major%20Moon%20Content%20Validation.md)
+- [Slice 4 Titan Haze Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Titan%20Haze%20Hero%20Rendering%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/seven-moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 156 Edit Mode cases and
-16 real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 157 Edit Mode cases and
+17 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -128,6 +129,12 @@ selectable views, educational fact cards, and cached orbit paths. Triton's
 157.3-degree orbital inclination and signed spin preserve its retrograde
 behavior. These are deterministic educational mean orbits, not date-exact
 ephemerides; source-image coverage and color limitations remain disclosed.
+Titan now adds a haze-dominant hero treatment through the reusable
+atmosphere-only layered-body path: its audited USGS mosaic remains anchored but
+subdued beneath one bounded transparent amber shell with live-Sun day/night
+response and deterministic low-amplitude presentation motion. Its approved
+Saturn hierarchy, exact Earth-relative radius, analytical orbit, synchronous
+rotation, selection, focus, and educational facts remain unchanged.
 Uranus and Neptune now use a reusable ice-giant authoring/model/view path with
 distinct anchored source materials, restrained source-derived band response,
 signed deterministic presentation detail, one thin Sun-aware atmosphere shell

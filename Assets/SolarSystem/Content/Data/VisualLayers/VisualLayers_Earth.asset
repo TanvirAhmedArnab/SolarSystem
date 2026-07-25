@@ -17,3 +17,4 @@ MonoBehaviour:
   cloudShellRadiusMultiplier: 1.004
   atmosphereShellRadiusMultiplier: 1.018
   cloudRotationMultiplier: 1.025
+  atmosphereCyclesPerRotation: 0
