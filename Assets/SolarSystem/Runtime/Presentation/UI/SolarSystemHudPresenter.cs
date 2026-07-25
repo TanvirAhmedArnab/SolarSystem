@@ -41,6 +41,10 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private CinematicTourController tourController;
         private CinematicTourService cinematicTour;
         private PresentationMotionPreferenceService motionPreference;
+        private ExplorerSettingsController settingsController;
+        private ExplorerSettingsService settings;
+        private ExplorerMenuController menuController;
+        private ExplorerMenuService menu;
         private SelectionService selection;
         private CelestialSelectionController selectionController;
         private SolarSystemCameraController cameraController;
@@ -60,7 +64,33 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private Label selectionTarget;
         private Label scaleMode;
         private Label labelsState;
+        private Label orbitState;
+        private Label motionState;
         private Label pauseAction;
+        private Button menuButton;
+        private VisualElement menuOverlay;
+        private Label menuTitle;
+        private Button menuCloseButton;
+        private Button menuHelpTab;
+        private Button menuSettingsTab;
+        private Button menuCreditsTab;
+        private ScrollView helpPage;
+        private ScrollView settingsPage;
+        private ScrollView creditsPage;
+        private Label onboardingLabel;
+        private Slider masterVolumeSlider;
+        private Slider musicVolumeSlider;
+        private Slider uiVolumeSlider;
+        private Slider celestialVolumeSlider;
+        private Label masterVolumeValue;
+        private Label musicVolumeValue;
+        private Label uiVolumeValue;
+        private Label celestialVolumeValue;
+        private Toggle muteToggle;
+        private Toggle reducedMotionToggle;
+        private Toggle orbitGuidesToggle;
+        private Toggle worldLabelsToggle;
+        private Button restoreDefaultsButton;
         private VisualElement comparisonPanel;
         private Label comparisonProgress;
         private Label comparisonTitle;
@@ -166,6 +196,22 @@ namespace Tanvir.SolarSystem.Presentation.UI
         /// <summary>Gets the current label-state disclosure.</summary>
         public string LabelsStateText => labelsState?.text ?? string.Empty;
 
+        /// <summary>Gets the current orbit-guide preference disclosure.</summary>
+        public string OrbitStateText => orbitState?.text ?? string.Empty;
+
+        /// <summary>Gets the current motion-accessibility disclosure.</summary>
+        public string MotionStateText => motionState?.text ?? string.Empty;
+
+        /// <summary>Gets whether the unified Explorer Menu is visible.</summary>
+        public bool IsExplorerMenuVisible => menu?.IsOpen == true;
+
+        /// <summary>Gets the active Explorer Menu page.</summary>
+        public ExplorerMenuPage ActiveMenuPage =>
+            menu?.ActivePage ?? ExplorerMenuPage.Help;
+
+        /// <summary>Gets the currently presented master-volume value.</summary>
+        public float MasterVolumeValue => masterVolumeSlider?.value ?? 0f;
+
         /// <summary>Gets the active HUD root bounds for responsive validation.</summary>
         public Rect HudWorldBound => hudRoot?.worldBound ?? Rect.zero;
 
@@ -224,7 +270,9 @@ namespace Tanvir.SolarSystem.Presentation.UI
             GuidedScaleComparisonService guidedScaleComparison,
             SolarSystemCameraController explorerCameraController,
             CelestialNavigationController celestialNavigationController,
-            CinematicTourController cinematicTourController)
+            CinematicTourController cinematicTourController,
+            ExplorerSettingsController explorerSettingsController,
+            ExplorerMenuController explorerMenuController)
         {
             Release();
             timeControls = simulationTimeControls ??
@@ -256,6 +304,16 @@ namespace Tanvir.SolarSystem.Presentation.UI
             motionPreference = tourController.MotionPreference ??
                 throw new InvalidOperationException(
                     "Motion preference must be initialized before the HUD.");
+            settingsController = explorerSettingsController ??
+                throw new ArgumentNullException(nameof(explorerSettingsController));
+            settings = settingsController.Service ??
+                throw new InvalidOperationException(
+                    "Explorer settings must be initialized before the HUD.");
+            menuController = explorerMenuController ??
+                throw new ArgumentNullException(nameof(explorerMenuController));
+            menu = menuController.Service ??
+                throw new InvalidOperationException(
+                    "Explorer menu must be initialized before the HUD.");
 
             if (document == null || styleSheet == null)
             {
@@ -269,6 +327,8 @@ namespace Tanvir.SolarSystem.Presentation.UI
             cinematicTour.Changed += Refresh;
             motionPreference.Changed += Refresh;
             navigation.Changed += OnNavigationChanged;
+            settings.Changed += OnSettingsChanged;
+            menu.Changed += OnMenuChanged;
             TryConnectDocument();
         }
 
@@ -324,10 +384,19 @@ namespace Tanvir.SolarSystem.Presentation.UI
             labelsState.text = navigation.AreWorldLabelsEnabled
                 ? "LABELS / ON / L TO TOGGLE"
                 : "LABELS / OFF / L TO TOGGLE";
+            orbitState.text = settings.Current.AreOrbitGuidesEnabled
+                ? "ORBITS / ON / O TO TOGGLE"
+                : "ORBITS / OFF / O TO TOGGLE";
+            motionState.text =
+                settings.Current.MotionMode == PresentationMotionMode.ReducedMotion
+                    ? "MOTION / REDUCED / M TO TOGGLE"
+                    : "MOTION / FULL / M TO TOGGLE";
             RefreshScaleComparison();
             RefreshCinematicTour();
             RefreshBodyInformation();
             RefreshNavigator();
+            RefreshSettings();
+            RefreshMenu();
         }
 
         private void OnSelectionChanged(CelestialBodyId? selectedId)
@@ -353,6 +422,16 @@ namespace Tanvir.SolarSystem.Presentation.UI
             RefreshWorldLabels();
         }
 
+        private void OnSettingsChanged()
+        {
+            Refresh();
+        }
+
+        private void OnMenuChanged()
+        {
+            RefreshMenu();
+        }
+
         private void Release()
         {
             if (tourNextButton != null)
@@ -369,6 +448,49 @@ namespace Tanvir.SolarSystem.Presentation.UI
             {
                 tourMotionButton.clicked -= OnTourMotionClicked;
             }
+
+            if (menuButton != null)
+            {
+                menuButton.clicked -= OnMenuButtonClicked;
+            }
+
+            if (menuCloseButton != null)
+            {
+                menuCloseButton.clicked -= OnMenuCloseClicked;
+            }
+
+            if (menuHelpTab != null)
+            {
+                menuHelpTab.clicked -= OnHelpTabClicked;
+            }
+
+            if (menuSettingsTab != null)
+            {
+                menuSettingsTab.clicked -= OnSettingsTabClicked;
+            }
+
+            if (menuCreditsTab != null)
+            {
+                menuCreditsTab.clicked -= OnCreditsTabClicked;
+            }
+
+            if (restoreDefaultsButton != null)
+            {
+                restoreDefaultsButton.clicked -= OnRestoreDefaultsClicked;
+            }
+
+            masterVolumeSlider?.UnregisterValueChangedCallback(OnMasterVolumeChanged);
+            musicVolumeSlider?.UnregisterValueChangedCallback(OnMusicVolumeChanged);
+            uiVolumeSlider?.UnregisterValueChangedCallback(OnUiVolumeChanged);
+            celestialVolumeSlider?.UnregisterValueChangedCallback(
+                OnCelestialVolumeChanged);
+            muteToggle?.UnregisterValueChangedCallback(OnMuteChanged);
+            reducedMotionToggle?.UnregisterValueChangedCallback(
+                OnReducedMotionChanged);
+            orbitGuidesToggle?.UnregisterValueChangedCallback(
+                OnOrbitGuidesChanged);
+            worldLabelsToggle?.UnregisterValueChangedCallback(
+                OnWorldLabelsChanged);
 
             if (timeControls != null)
             {
@@ -400,6 +522,16 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 navigation.Changed -= OnNavigationChanged;
             }
 
+            if (settings != null)
+            {
+                settings.Changed -= OnSettingsChanged;
+            }
+
+            if (menu != null)
+            {
+                menu.Changed -= OnMenuChanged;
+            }
+
             timeControls = null;
             selection = null;
             selectionController = null;
@@ -411,6 +543,10 @@ namespace Tanvir.SolarSystem.Presentation.UI
             tourController = null;
             cinematicTour = null;
             motionPreference = null;
+            settingsController = null;
+            settings = null;
+            menuController = null;
+            menu = null;
             IsInitialized = false;
             IsBodyInformationVisible = false;
             IsSelectionReticleVisible = false;
@@ -431,7 +567,33 @@ namespace Tanvir.SolarSystem.Presentation.UI
             selectionTarget = null;
             scaleMode = null;
             labelsState = null;
+            orbitState = null;
+            motionState = null;
             pauseAction = null;
+            menuButton = null;
+            menuOverlay = null;
+            menuTitle = null;
+            menuCloseButton = null;
+            menuHelpTab = null;
+            menuSettingsTab = null;
+            menuCreditsTab = null;
+            helpPage = null;
+            settingsPage = null;
+            creditsPage = null;
+            onboardingLabel = null;
+            masterVolumeSlider = null;
+            musicVolumeSlider = null;
+            uiVolumeSlider = null;
+            celestialVolumeSlider = null;
+            masterVolumeValue = null;
+            musicVolumeValue = null;
+            uiVolumeValue = null;
+            celestialVolumeValue = null;
+            muteToggle = null;
+            reducedMotionToggle = null;
+            orbitGuidesToggle = null;
+            worldLabelsToggle = null;
+            restoreDefaultsButton = null;
             comparisonProgress = null;
             comparisonTitle = null;
             comparisonMetric = null;
@@ -495,6 +657,8 @@ namespace Tanvir.SolarSystem.Presentation.UI
             selectionTarget = RequireLabel(root, "selection-target");
             scaleMode = RequireLabel(root, "scale-mode");
             labelsState = RequireLabel(root, "labels-state");
+            orbitState = RequireLabel(root, "orbit-state");
+            motionState = RequireLabel(root, "motion-state");
             pauseAction = RequireLabel(root, "pause-action");
             comparisonProgress = RequireLabel(root, "comparison-progress");
             comparisonTitle = RequireLabel(root, "comparison-title");
@@ -511,6 +675,51 @@ namespace Tanvir.SolarSystem.Presentation.UI
             tourNextButton.clicked += OnTourNextClicked;
             tourMotionButton.clicked += OnTourMotionClicked;
             tourExitButton.clicked += OnTourExitClicked;
+            menuButton = RequireButton(root, "menu-button");
+            menuOverlay = RequireElement(root, "menu-overlay");
+            menuTitle = RequireLabel(root, "menu-title");
+            menuCloseButton = RequireButton(root, "menu-close-button");
+            menuHelpTab = RequireButton(root, "menu-help-tab");
+            menuSettingsTab = RequireButton(root, "menu-settings-tab");
+            menuCreditsTab = RequireButton(root, "menu-credits-tab");
+            helpPage = RequireScrollView(root, "help-page");
+            settingsPage = RequireScrollView(root, "settings-page");
+            creditsPage = RequireScrollView(root, "credits-page");
+            onboardingLabel = RequireLabel(root, "onboarding-label");
+            masterVolumeSlider = RequireSlider(root, "master-volume-slider");
+            musicVolumeSlider = RequireSlider(root, "music-volume-slider");
+            uiVolumeSlider = RequireSlider(root, "ui-volume-slider");
+            celestialVolumeSlider =
+                RequireSlider(root, "celestial-volume-slider");
+            masterVolumeValue = RequireLabel(root, "master-volume-value");
+            musicVolumeValue = RequireLabel(root, "music-volume-value");
+            uiVolumeValue = RequireLabel(root, "ui-volume-value");
+            celestialVolumeValue =
+                RequireLabel(root, "celestial-volume-value");
+            muteToggle = RequireToggle(root, "mute-toggle");
+            reducedMotionToggle = RequireToggle(root, "reduced-motion-toggle");
+            orbitGuidesToggle = RequireToggle(root, "orbit-guides-toggle");
+            worldLabelsToggle = RequireToggle(root, "world-labels-toggle");
+            restoreDefaultsButton =
+                RequireButton(root, "restore-defaults-button");
+            menuButton.clicked += OnMenuButtonClicked;
+            menuCloseButton.clicked += OnMenuCloseClicked;
+            menuHelpTab.clicked += OnHelpTabClicked;
+            menuSettingsTab.clicked += OnSettingsTabClicked;
+            menuCreditsTab.clicked += OnCreditsTabClicked;
+            restoreDefaultsButton.clicked += OnRestoreDefaultsClicked;
+            masterVolumeSlider.RegisterValueChangedCallback(OnMasterVolumeChanged);
+            musicVolumeSlider.RegisterValueChangedCallback(OnMusicVolumeChanged);
+            uiVolumeSlider.RegisterValueChangedCallback(OnUiVolumeChanged);
+            celestialVolumeSlider.RegisterValueChangedCallback(
+                OnCelestialVolumeChanged);
+            muteToggle.RegisterValueChangedCallback(OnMuteChanged);
+            reducedMotionToggle.RegisterValueChangedCallback(
+                OnReducedMotionChanged);
+            orbitGuidesToggle.RegisterValueChangedCallback(
+                OnOrbitGuidesChanged);
+            worldLabelsToggle.RegisterValueChangedCallback(
+                OnWorldLabelsChanged);
             bodyName = RequireLabel(root, "body-name");
             bodyCategory = RequireLabel(root, "body-category");
             bodySummary = RequireLabel(root, "body-summary");
@@ -1069,6 +1278,131 @@ namespace Tanvir.SolarSystem.Presentation.UI
             tourController.ToggleReducedMotion();
         }
 
+        private void RefreshMenu()
+        {
+            if (!IsInitialized || menuOverlay == null || menu == null)
+            {
+                return;
+            }
+
+            bool visible = menu.IsOpen;
+            menuOverlay.EnableInClassList("is-hidden", !visible);
+            hudRoot.EnableInClassList("menu-active", visible);
+            if (!visible)
+            {
+                return;
+            }
+
+            ExplorerMenuPage page = menu.ActivePage;
+            menuTitle.text = page switch
+            {
+                ExplorerMenuPage.Help => "HELP & ORIENTATION",
+                ExplorerMenuPage.Settings => "SETTINGS",
+                ExplorerMenuPage.CreditsAndSources => "CREDITS & SOURCES",
+                _ => throw new InvalidOperationException(
+                    $"Unsupported Explorer Menu page '{page}'.")
+            };
+            helpPage.EnableInClassList(
+                "is-hidden",
+                page != ExplorerMenuPage.Help);
+            settingsPage.EnableInClassList(
+                "is-hidden",
+                page != ExplorerMenuPage.Settings);
+            creditsPage.EnableInClassList(
+                "is-hidden",
+                page != ExplorerMenuPage.CreditsAndSources);
+            menuHelpTab.EnableInClassList(
+                "is-active",
+                page == ExplorerMenuPage.Help);
+            menuSettingsTab.EnableInClassList(
+                "is-active",
+                page == ExplorerMenuPage.Settings);
+            menuCreditsTab.EnableInClassList(
+                "is-active",
+                page == ExplorerMenuPage.CreditsAndSources);
+            onboardingLabel.EnableInClassList(
+                "is-hidden",
+                settings.Current.HasCompletedOnboarding);
+            menuCloseButton.Focus();
+        }
+
+        private void RefreshSettings()
+        {
+            if (!IsInitialized || settings == null || masterVolumeSlider == null)
+            {
+                return;
+            }
+
+            ExplorerSettingsSnapshot current = settings.Current;
+            masterVolumeSlider.SetValueWithoutNotify(current.MasterVolume);
+            musicVolumeSlider.SetValueWithoutNotify(current.MusicVolume);
+            uiVolumeSlider.SetValueWithoutNotify(current.UiVolume);
+            celestialVolumeSlider.SetValueWithoutNotify(current.CelestialVolume);
+            masterVolumeValue.text =
+                current.MasterVolume.ToString("P0", CultureInfo.InvariantCulture);
+            musicVolumeValue.text =
+                current.MusicVolume.ToString("P0", CultureInfo.InvariantCulture);
+            uiVolumeValue.text =
+                current.UiVolume.ToString("P0", CultureInfo.InvariantCulture);
+            celestialVolumeValue.text =
+                current.CelestialVolume.ToString("P0", CultureInfo.InvariantCulture);
+            muteToggle.SetValueWithoutNotify(current.IsMuted);
+            reducedMotionToggle.SetValueWithoutNotify(
+                current.MotionMode == PresentationMotionMode.ReducedMotion);
+            orbitGuidesToggle.SetValueWithoutNotify(
+                current.AreOrbitGuidesEnabled);
+            worldLabelsToggle.SetValueWithoutNotify(
+                current.AreWorldLabelsEnabled);
+        }
+
+        private void OnMenuButtonClicked()
+        {
+            if (menu.IsOpen)
+            {
+                menuController.Close();
+            }
+            else
+            {
+                menuController.Open(ExplorerMenuPage.Help);
+            }
+        }
+
+        private void OnMenuCloseClicked() => menuController.Close();
+        private void OnHelpTabClicked() =>
+            menuController.SetPage(ExplorerMenuPage.Help);
+        private void OnSettingsTabClicked() =>
+            menuController.SetPage(ExplorerMenuPage.Settings);
+        private void OnCreditsTabClicked() =>
+            menuController.SetPage(ExplorerMenuPage.CreditsAndSources);
+        private void OnRestoreDefaultsClicked() => settingsController.ResetToDefaults();
+
+        private void OnMasterVolumeChanged(ChangeEvent<float> evt) =>
+            settingsController.SetMasterVolume(evt.newValue);
+
+        private void OnMusicVolumeChanged(ChangeEvent<float> evt) =>
+            settingsController.SetMusicVolume(evt.newValue);
+
+        private void OnUiVolumeChanged(ChangeEvent<float> evt) =>
+            settingsController.SetUiVolume(evt.newValue);
+
+        private void OnCelestialVolumeChanged(ChangeEvent<float> evt) =>
+            settingsController.SetCelestialVolume(evt.newValue);
+
+        private void OnMuteChanged(ChangeEvent<bool> evt) =>
+            settingsController.SetMuted(evt.newValue);
+
+        private void OnReducedMotionChanged(ChangeEvent<bool> evt) =>
+            settingsController.SetMotionMode(
+                evt.newValue
+                    ? PresentationMotionMode.ReducedMotion
+                    : PresentationMotionMode.FullMotion);
+
+        private void OnOrbitGuidesChanged(ChangeEvent<bool> evt) =>
+            settingsController.SetOrbitGuidesEnabled(evt.newValue);
+
+        private void OnWorldLabelsChanged(ChangeEvent<bool> evt) =>
+            settingsController.SetWorldLabelsEnabled(evt.newValue);
+
         private static Label RequireLabel(VisualElement root, string name)
         {
             Label label = root.Q<Label>(name);
@@ -1101,6 +1435,24 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 ? scrollView
                 : throw new InvalidOperationException(
                     $"HUD is missing scroll view '{name}'.");
+        }
+
+        private static Slider RequireSlider(VisualElement root, string name)
+        {
+            Slider slider = root.Q<Slider>(name);
+            return slider != null
+                ? slider
+                : throw new InvalidOperationException(
+                    $"HUD is missing slider '{name}'.");
+        }
+
+        private static Toggle RequireToggle(VisualElement root, string name)
+        {
+            Toggle toggle = root.Q<Toggle>(name);
+            return toggle != null
+                ? toggle
+                : throw new InvalidOperationException(
+                    $"HUD is missing toggle '{name}'.");
         }
     }
 }

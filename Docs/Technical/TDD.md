@@ -7,7 +7,7 @@
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
 **Document status:** Living technical authority; Sun, eight-planet, seven-moon, Titan haze, Galilean-moon, and Triton hero baselines validated  
-**Version:** 0.30.0  
+**Version:** 0.31.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -56,6 +56,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.28.0 | 2026-07-25 | Codex, for Tanvir | Added event-driven celestial navigation state, parent-first selection/focus routing, cached UI Toolkit navigator entries, allocation-stable projected labels, deterministic overlap priorities, responsive safe areas, explicit input, and real-scene regression coverage | Navigator and label architecture implemented and validated |
 | 0.29.0 | 2026-07-25 | Codex, for Tanvir | Added immutable cinematic-tour authoring/runtime data, shared guided ownership, allocation-stable live group framing, exact moving-target camera restoration, responsive UI, and full asset/service/scene coverage | Cinematic-tour architecture implemented and validated |
 | 0.30.0 | 2026-07-25 | Codex, for Tanvir | Added authored composition/easing, phase-robust screen-plane group framing, persisted reduced motion, reversible orbit/body visibility ownership, and exact restoration coverage | Cinematic-tour polish architecture implemented and validated |
+| 0.31.0 | 2026-07-25 | Codex, for Tanvir | Added a pure persistent-settings model, versioned PlayerPrefs adapter, unified modal menu state, sole contextual Escape router, input gating, and responsive UI Toolkit surfaces | Explorer UX architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -204,6 +205,11 @@ sequenceDiagram
 - `CelestialNavigationService` owns transient navigator visibility and the
   projected-label preference. Its controller routes body activation through
   the existing selection and camera services.
+- `ExplorerSettingsService` owns the immutable persisted presentation and
+  audio preferences; its controller applies them to existing runtime services.
+- `ExplorerMenuService` owns only modal visibility and the active page.
+  `ExplorerMenuController` is the sole contextual Escape router and coordinates
+  onboarding completion and modal input gating.
 - UI owns element caches and derived screen placement, not authoritative
   selection, camera, simulation, or scientific state.
 
@@ -471,14 +477,21 @@ The implemented map covers:
 - N open/close for the parent-first celestial navigator.
 - L on/off for projected celestial labels.
 - T start/advance/finish for the deterministic cinematic tour.
+- M Full Motion/Reduced Motion, O orbit-guide visibility, and H Help/menu.
 
 `SimulationTimeInputController` translates the three time intents into an
 application service. Input code does not access the clock or simulation
 controller. During comparison, the application adapter temporarily disables
 selection, focus, free-flight, zoom, and time commands; Escape remains active
 for cancellation. Guided comparison also closes and locks the navigator while
-temporarily suppressing projected labels. Help/settings actions remain
-pending.
+temporarily suppressing projected labels.
+
+`ExplorerMenuController` owns contextual Escape priority: close menu, cancel
+tour, cancel comparison, cancel focus, then open Help in free flight. While the
+menu is open, `SolarSystemInputAdapter` gates all explorer commands except Help
+and Escape. This removes competing Escape subscriptions from the camera, tour,
+and comparison controllers and gives the interaction contract one auditable
+owner.
 
 ### 6.8.1 Guided presentation ownership and cinematic tour
 
@@ -531,9 +544,25 @@ renderer states are restored. Selection state, the simulation clock, and
 
 ### 6.9 UI
 
-**[IMPLEMENTED/PARTIAL]** Runtime UI Toolkit is validated for the portfolio HUD.
-`PanelSettings_SolarSystem` uses a 1920x1080 Scale With Screen Size reference,
-while a project-owned UXML/USS pair defines the status and control-hint layout.
+**[IMPLEMENTED]** Runtime UI Toolkit is validated for the portfolio HUD and
+unified Explorer Menu. `PanelSettings_SolarSystem` uses a 1920x1080 Scale With
+Screen Size reference, while a project-owned UXML/USS pair defines status,
+controls, onboarding, Help, Settings, and Credits & Sources.
+
+`ExplorerSettingsSnapshot` is an immutable value. `ExplorerSettingsService`
+validates/clamps effective changes and persists through
+`IExplorerSettingsStore`; `PlayerPrefsExplorerSettingsStore` serializes one
+versioned JSON record under a project-owned key. Restore Defaults preserves the
+onboarding-complete flag. The controller applies four normalized audio gains,
+mute, motion mode, orbit-guide visibility, and label visibility to existing
+services. External `M`, `O`, and `L` changes are synchronized back without
+reapplying unrelated values.
+
+`ExplorerMenuService` is a pure state model for Help, Settings, and Credits &
+Sources. The controller opens Help on first launch, records onboarding when
+the menu closes, and sets the input adapter's modal gate. The presenter caches
+all menu elements, updates only effective state, and uses event suppression
+when reflecting saved slider/toggle values.
 
 `SolarSystemHudPresenter` reads `SimulationTimeControlService` and
 `SelectionService`, converts their snapshots into display strings with explicit
@@ -583,8 +612,9 @@ During scale comparison, the presenter hides the quick-control and body
 information cards, retains the status card, and shows a bottom-center teaching
 card with stage progress, the numeric transformation, a concise explanation,
 and separate next/exit keycaps. The navigator and labels are suppressed to
-protect the guided composition. Settings, Help, live current-distance/speed
-fields, and licensed typography remain release work.
+protect the guided composition. Help, Settings, Credits & Sources, first-launch
+orientation, visible slider values, and responsive menu styling are complete.
+Live current-distance/speed fields and licensed typography remain later work.
 
 ### 6.10 Audio
 
@@ -610,8 +640,8 @@ gameplay state.
   removes prior subscriptions.
 
 The current baseline uses explicit `AudioSource` channel routing. A Unity
-`AudioMixer` asset and player-facing settings bindings are future work and
-must not be implied by the implemented API.
+`AudioMixer` asset remains optional future work. Player-facing settings now
+bind to the existing explicit channel-gain API; no mixer asset is implied.
 
 ## 7. Data Model and Authoring
 
@@ -999,9 +1029,9 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Orbit paths use cached geometry and update only when scale/settings change.
 - Post-processing respects accessibility toggles; motion blur defaults off.
 - Quality tiers and LODs are introduced from measured screen-space need.
-- Audio uses explicit master, music, UI, and celestial channel gains. A future
-  `AudioMixer` may expose the same contract after profiling and settings-UI
-  requirements justify the asset.
+- Audio uses explicit master, music, UI, and celestial channel gains exposed by
+  the persisted Settings page. A future `AudioMixer` may implement the same
+  contract only if profiling justifies the extra asset.
 
 ## 11. Error Handling, Diagnostics, and Validation
 
@@ -1177,8 +1207,9 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
 - The parent-first navigator and projected-label baseline are implemented with
   explicit `N`/`L` actions, selection/focus routing, overlap suppression,
   responsive safe areas, focus/guided-state rules, and cached UI elements.
-  Help/settings, licensed typography, and reduced-motion behavior remain
-  release work and do not block continued visual/content production.
+- The unified Explorer Menu, first-launch Help, versioned persistent settings,
+  contextual Escape router, modal input gate, visible audio percentages, and
+  Credits & Sources are implemented. Licensed typography remains later work.
 - Detailed evidence is recorded in
   `Docs/ProjectManagement/Slice 3 Interaction Proof Validation.md`.
 - Time-control and HUD evidence is recorded in
@@ -1295,9 +1326,10 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   and guided-comparison suppression without altering presentation scale.
 - Celestial navigation/label evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Celestial Navigator and World Labels Validation.md`.
-- Particle-scale ring simulation, player-facing audio settings, final audio mix
-  approval, cinematic routing, Help/settings/credits/sources surfaces, and
-  remaining accessibility options remain Slice 4 work.
+- Particle-scale ring simulation, final audio mix approval, licensed
+  typography, and remaining optional accessibility enhancements remain Slice 4
+  work. Player-facing audio settings, cinematic routing, Help, onboarding,
+  credits, and sources surfaces are implemented and validated.
 
 ### Slice 5 - Portfolio release
 

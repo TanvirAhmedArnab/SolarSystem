@@ -14,6 +14,7 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             Array.Empty<CelestialOrbitPathView>();
         private bool? appliedVisibility;
         private bool isCinematicTourSuppressed;
+        private bool arePathsEnabledByUser = true;
 
         /// <summary>Gets whether required camera and path references are available.</summary>
         public bool IsInitialized =>
@@ -22,8 +23,14 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         /// <summary>Gets the last visibility state applied to every orbit path.</summary>
         public bool ArePathsVisible => appliedVisibility ?? true;
 
+        /// <summary>Gets whether the persisted player preference enables orbit guides.</summary>
+        public bool ArePathsEnabledByUser => arePathsEnabledByUser;
+
         /// <summary>Gets whether the tour currently owns the visibility override.</summary>
         public bool IsCinematicTourSuppressed => isCinematicTourSuppressed;
+
+        /// <summary>Raised after the player's orbit-guide preference changes.</summary>
+        public event Action UserVisibilityChanged;
 
         private void OnEnable()
         {
@@ -44,7 +51,8 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
                 return;
             }
 
-            bool visible = !isCinematicTourSuppressed &&
+            bool visible = arePathsEnabledByUser &&
+                !isCinematicTourSuppressed &&
                 cameraController.Mode != SolarSystemCameraMode.FocusTransition &&
                 cameraController.Mode != SolarSystemCameraMode.Focused;
             if (appliedVisibility == visible)
@@ -62,6 +70,25 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
             }
 
             appliedVisibility = visible;
+        }
+
+        /// <summary>Applies the player's persistent orbit-guide preference.</summary>
+        public void SetUserVisibility(bool visible)
+        {
+            if (arePathsEnabledByUser == visible)
+            {
+                return;
+            }
+
+            arePathsEnabledByUser = visible;
+            RefreshVisibility();
+            UserVisibilityChanged?.Invoke();
+        }
+
+        /// <summary>Toggles the player's persistent orbit-guide preference.</summary>
+        public void ToggleUserVisibility()
+        {
+            SetUserVisibility(!arePathsEnabledByUser);
         }
 
         /// <summary>Suppresses every orbit guide for an active cinematic shot.</summary>

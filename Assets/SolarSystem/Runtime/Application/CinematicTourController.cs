@@ -96,7 +96,6 @@ namespace Tanvir.SolarSystem.Application
             Service.Changed += OnTourChanged;
             input.CinematicTourPerformed += StartOrAdvance;
             input.ToggleReducedMotionPerformed += ToggleReducedMotion;
-            input.CancelPerformed += Cancel;
         }
 
         public void StartOrAdvance()
@@ -445,7 +444,6 @@ namespace Tanvir.SolarSystem.Application
             {
                 input.CinematicTourPerformed -= StartOrAdvance;
                 input.ToggleReducedMotionPerformed -= ToggleReducedMotion;
-                input.CancelPerformed -= Cancel;
             }
 
             if (Service != null)

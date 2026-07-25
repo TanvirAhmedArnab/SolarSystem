@@ -75,6 +75,12 @@ namespace Tanvir.SolarSystem.Application
         /// <summary>Gets the runtime audio director after bootstrap.</summary>
         public AudioDirector AudioDirector => audioDirector;
 
+        /// <summary>Gets the unified persisted explorer-settings controller.</summary>
+        public ExplorerSettingsController ExplorerSettings { get; private set; }
+
+        /// <summary>Gets the unified Help, Settings, and Credits menu controller.</summary>
+        public ExplorerMenuController ExplorerMenu { get; private set; }
+
         /// <summary>Gets whether the full interaction graph initialized successfully.</summary>
         public bool IsInitialized =>
             inputAdapter != null &&
@@ -98,7 +104,9 @@ namespace Tanvir.SolarSystem.Application
             hudPresenter != null &&
             hudPresenter.IsInitialized &&
             audioDirector != null &&
-            audioDirector.IsInitialized;
+            audioDirector.IsInitialized &&
+            ExplorerSettings != null &&
+            ExplorerMenu != null;
 
         private void Awake()
         {
@@ -109,6 +117,11 @@ namespace Tanvir.SolarSystem.Application
         [ContextMenu("Rebuild Interaction Graph")]
         public void RebuildInteractionGraph()
         {
+            ExplorerMenu?.Dispose();
+            ExplorerSettings?.Dispose();
+            ExplorerMenu = null;
+            ExplorerSettings = null;
+
             if (inputActions == null ||
                 explorerCamera == null ||
                 inputAdapter == null ||
@@ -172,6 +185,24 @@ namespace Tanvir.SolarSystem.Application
                 tourDefinition,
                 bodyViews,
                 guidedPresentation);
+            audioDirector.Initialize(
+                selectionService,
+                timeControls,
+                cameraController,
+                scaleComparison);
+            ExplorerSettings = new ExplorerSettingsController(
+                inputAdapter,
+                audioDirector,
+                motionPreference,
+                navigationController,
+                orbitPathVisibility,
+                new PlayerPrefsExplorerSettingsStore());
+            ExplorerMenu = new ExplorerMenuController(
+                inputAdapter,
+                ExplorerSettings,
+                cameraController,
+                scaleComparison,
+                tourController);
             hudPresenter.Initialize(
                 timeControls,
                 selectionController,
@@ -179,12 +210,17 @@ namespace Tanvir.SolarSystem.Application
                 scaleComparison,
                 cameraController,
                 navigationController,
-                tourController);
-            audioDirector.Initialize(
-                selectionService,
-                timeControls,
-                cameraController,
-                scaleComparison);
+                tourController,
+                ExplorerSettings,
+                ExplorerMenu);
+        }
+
+        private void OnDestroy()
+        {
+            ExplorerMenu?.Dispose();
+            ExplorerSettings?.Dispose();
+            ExplorerMenu = null;
+            ExplorerSettings = null;
         }
     }
 }

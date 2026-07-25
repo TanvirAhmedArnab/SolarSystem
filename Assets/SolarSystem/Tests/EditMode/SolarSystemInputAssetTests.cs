@@ -34,6 +34,8 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             AssertAction(explorer, "ToggleReducedMotion");
             AssertAction(explorer, "ToggleNavigator");
             AssertAction(explorer, "ToggleWorldLabels");
+            AssertAction(explorer, "ToggleHelp");
+            AssertAction(explorer, "ToggleOrbitGuides");
         }
 
         [TestCase("Move", "<Keyboard>/w")]
@@ -49,6 +51,8 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         [TestCase("ToggleReducedMotion", "<Keyboard>/m")]
         [TestCase("ToggleNavigator", "<Keyboard>/n")]
         [TestCase("ToggleWorldLabels", "<Keyboard>/l")]
+        [TestCase("ToggleHelp", "<Keyboard>/h")]
+        [TestCase("ToggleOrbitGuides", "<Keyboard>/o")]
         public void ProjectInputAsset_ActionContainsExpectedBinding(
             string actionName,
             string expectedPath)

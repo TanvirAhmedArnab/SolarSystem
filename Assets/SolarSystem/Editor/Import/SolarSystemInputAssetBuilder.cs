@@ -10,7 +10,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string InputFolder = "Assets/SolarSystem/Settings/Input";
         private const string InputAssetPath = InputFolder + "/IA_SolarSystem.asset";
         private const string AssetName = "IA_SolarSystem";
-        private const string ContractLabel = "SolarSystemInputContract-v6";
+        private const string ContractLabel = "SolarSystemInputContract-v7";
 
         internal static InputActionAsset Build()
         {
@@ -96,6 +96,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 "CinematicTour",
                 "ToggleNavigator",
                 "ToggleWorldLabels",
+                "ToggleHelp",
+                "ToggleOrbitGuides",
                 "DecreaseTimeSpeed",
                 "IncreaseTimeSpeed",
             };
@@ -179,6 +181,14 @@ namespace Tanvir.SolarSystem.Editor.Import
                 "ToggleWorldLabels",
                 InputActionType.Button,
                 "<Keyboard>/l");
+            explorer.AddAction(
+                "ToggleHelp",
+                InputActionType.Button,
+                "<Keyboard>/h");
+            explorer.AddAction(
+                "ToggleOrbitGuides",
+                InputActionType.Button,
+                "<Keyboard>/o");
             explorer.AddAction(
                 "DecreaseTimeSpeed",
                 InputActionType.Button,

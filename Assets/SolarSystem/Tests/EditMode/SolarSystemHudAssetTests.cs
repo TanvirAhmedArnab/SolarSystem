@@ -31,6 +31,8 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(root.Q<Label>("selection-target"), Is.Not.Null);
             Assert.That(root.Q<Label>("scale-mode"), Is.Not.Null);
             Assert.That(root.Q<Label>("labels-state"), Is.Not.Null);
+            Assert.That(root.Q<Label>("orbit-state"), Is.Not.Null);
+            Assert.That(root.Q<Label>("motion-state"), Is.Not.Null);
             Assert.That(root.Q<VisualElement>("control-hints"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-click"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-focus"), Is.Not.Null);
@@ -41,6 +43,9 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(root.Q<Label>("control-key-tour"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-navigator"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-labels"), Is.Not.Null);
+            Assert.That(root.Q<Label>("control-key-orbits"), Is.Not.Null);
+            Assert.That(root.Q<Label>("control-key-motion"), Is.Not.Null);
+            Assert.That(root.Q<Label>("control-key-help"), Is.Not.Null);
             Assert.That(root.Q<Label>("pause-action"), Is.Not.Null);
             Assert.That(root.Q<VisualElement>("body-information-panel"), Is.Not.Null);
             Assert.That(root.Q<VisualElement>("selection-reticle"), Is.Not.Null);
@@ -77,6 +82,28 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(root.Q<Button>("tour-next-button"), Is.Not.Null);
             Assert.That(root.Q<Button>("tour-motion-button"), Is.Not.Null);
             Assert.That(root.Q<Button>("tour-exit-button"), Is.Not.Null);
+            Assert.That(root.Q<Button>("menu-button"), Is.Not.Null);
+            Assert.That(root.Q<VisualElement>("menu-overlay"), Is.Not.Null);
+            Assert.That(root.Q<Button>("menu-close-button"), Is.Not.Null);
+            Assert.That(root.Q<Button>("menu-help-tab"), Is.Not.Null);
+            Assert.That(root.Q<Button>("menu-settings-tab"), Is.Not.Null);
+            Assert.That(root.Q<Button>("menu-credits-tab"), Is.Not.Null);
+            Assert.That(root.Q<ScrollView>("help-page"), Is.Not.Null);
+            Assert.That(root.Q<ScrollView>("settings-page"), Is.Not.Null);
+            Assert.That(root.Q<ScrollView>("credits-page"), Is.Not.Null);
+            Assert.That(root.Q<Slider>("master-volume-slider"), Is.Not.Null);
+            Assert.That(root.Q<Slider>("music-volume-slider"), Is.Not.Null);
+            Assert.That(root.Q<Slider>("ui-volume-slider"), Is.Not.Null);
+            Assert.That(root.Q<Slider>("celestial-volume-slider"), Is.Not.Null);
+            Assert.That(root.Q<Label>("master-volume-value"), Is.Not.Null);
+            Assert.That(root.Q<Label>("music-volume-value"), Is.Not.Null);
+            Assert.That(root.Q<Label>("ui-volume-value"), Is.Not.Null);
+            Assert.That(root.Q<Label>("celestial-volume-value"), Is.Not.Null);
+            Assert.That(root.Q<Toggle>("mute-toggle"), Is.Not.Null);
+            Assert.That(root.Q<Toggle>("reduced-motion-toggle"), Is.Not.Null);
+            Assert.That(root.Q<Toggle>("orbit-guides-toggle"), Is.Not.Null);
+            Assert.That(root.Q<Toggle>("world-labels-toggle"), Is.Not.Null);
+            Assert.That(root.Q<Button>("restore-defaults-button"), Is.Not.Null);
         }
 
         [Test]

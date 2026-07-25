@@ -10,7 +10,11 @@
             <ui:Label name="simulation-rate" text="TIME RATE / 10x" class="rate" />
             <ui:Label name="scale-mode" text="SCALE / READABLE OVERVIEW / ORBITS COMPRESSED" class="scale-mode" />
             <ui:Label name="labels-state" text="LABELS / ON / L TO TOGGLE" class="labels-state" />
+            <ui:Label name="orbit-state" text="ORBITS / ON / O TO TOGGLE" class="labels-state" />
+            <ui:Label name="motion-state" text="MOTION / FULL / M TO TOGGLE" class="labels-state" />
         </ui:VisualElement>
+
+        <ui:Button name="menu-button" text="H  HELP / MENU" class="menu-launcher" />
 
         <ui:VisualElement name="navigator-panel" class="navigator-panel is-hidden">
             <ui:VisualElement class="navigator-header">
@@ -141,6 +145,109 @@
                     <ui:Label name="control-key-labels" text="L" class="control-key key-labels" />
                     <ui:Label text="LABELS" class="control-action" />
                 </ui:VisualElement>
+                <ui:VisualElement class="control-group">
+                    <ui:Label name="control-key-orbits" text="O" class="control-key key-orbits" />
+                    <ui:Label text="ORBITS" class="control-action" />
+                </ui:VisualElement>
+                <ui:VisualElement class="control-group">
+                    <ui:Label name="control-key-motion" text="M" class="control-key key-motion" />
+                    <ui:Label text="MOTION" class="control-action" />
+                </ui:VisualElement>
+                <ui:VisualElement class="control-group control-group-last">
+                    <ui:Label name="control-key-help" text="H" class="control-key key-help" />
+                    <ui:Label text="HELP" class="control-action" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="menu-overlay" class="menu-overlay is-hidden">
+            <ui:VisualElement name="menu-panel" class="menu-panel">
+                <ui:VisualElement class="menu-header">
+                    <ui:VisualElement>
+                        <ui:Label text="SOLAR SYSTEM EXPLORER" class="eyebrow" />
+                        <ui:Label name="menu-title" text="HELP" class="menu-title" />
+                    </ui:VisualElement>
+                    <ui:Button name="menu-close-button" text="ESC  CLOSE" class="menu-close-button" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="menu-tabs">
+                    <ui:Button name="menu-help-tab" text="HELP" class="menu-tab" />
+                    <ui:Button name="menu-settings-tab" text="SETTINGS" class="menu-tab" />
+                    <ui:Button name="menu-credits-tab" text="CREDITS &amp; SOURCES" class="menu-tab" />
+                </ui:VisualElement>
+
+                <ui:ScrollView name="help-page" class="menu-page">
+                    <ui:Label name="onboarding-label" text="WELCOME / FIRST-LAUNCH ORIENTATION" class="onboarding-label" />
+                    <ui:Label text="EXPLORE WITH PURPOSE" class="menu-section-title" />
+                    <ui:Label text="Select a body with the left mouse button, then press F to focus it. Hold the right mouse button to look or orbit, and use the wheel to zoom while focused." class="menu-copy" />
+
+                    <ui:VisualElement class="help-grid">
+                        <ui:VisualElement class="help-column">
+                            <ui:Label text="FLIGHT &amp; SELECTION" class="menu-section-title" />
+                            <ui:Label text="WASD / ARROWS  Move&#10;Q / E  Down / Up&#10;RIGHT MOUSE  Look or orbit&#10;LEFT CLICK  Select&#10;F  Focus selected body&#10;ESC  Leave focus or open menu" class="menu-copy help-controls" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="help-column">
+                            <ui:Label text="SIMULATION &amp; GUIDES" class="menu-section-title" />
+                            <ui:Label text="SPACE  Pause / Resume&#10;[ / ]  Slower / Faster&#10;C  Scale comparison&#10;T  Cinematic tour&#10;N  Celestial navigator&#10;L / O / M  Labels / Orbits / Motion" class="menu-copy help-controls" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:Label text="UNDERSTANDING SCALE" class="menu-section-title" />
+                    <ui:Label text="Body radii preserve exact Earth-relative ratios. The normal overview compresses the enormous orbital distances for readability. Press C for a guided comparison that explains the difference." class="menu-copy" />
+                    <ui:Label text="Press H at any time to reopen this page. Settings and complete asset provenance remain available from the tabs above." class="menu-note" />
+                </ui:ScrollView>
+
+                <ui:ScrollView name="settings-page" class="menu-page is-hidden">
+                    <ui:Label text="AUDIO" class="menu-section-title" />
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="MASTER" class="setting-label" />
+                        <ui:Slider name="master-volume-slider" low-value="0" high-value="1" class="setting-slider" />
+                        <ui:Label name="master-volume-value" text="65%" class="setting-value" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="MUSIC" class="setting-label" />
+                        <ui:Slider name="music-volume-slider" low-value="0" high-value="1" class="setting-slider" />
+                        <ui:Label name="music-volume-value" text="18%" class="setting-value" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="INTERFACE" class="setting-label" />
+                        <ui:Slider name="ui-volume-slider" low-value="0" high-value="1" class="setting-slider" />
+                        <ui:Label name="ui-volume-value" text="45%" class="setting-value" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="CELESTIAL AMBIENCE" class="setting-label" />
+                        <ui:Slider name="celestial-volume-slider" low-value="0" high-value="1" class="setting-slider" />
+                        <ui:Label name="celestial-volume-value" text="22%" class="setting-value" />
+                    </ui:VisualElement>
+                    <ui:Toggle name="mute-toggle" text="MUTE ALL AUDIO" class="setting-toggle" />
+
+                    <ui:Label text="ACCESSIBILITY &amp; PRESENTATION" class="menu-section-title settings-section" />
+                    <ui:Toggle name="reduced-motion-toggle" text="REDUCED MOTION / INSTANT GUIDED CAMERA CUTS" class="setting-toggle" />
+                    <ui:Toggle name="orbit-guides-toggle" text="SHOW ORBIT GUIDES" class="setting-toggle" />
+                    <ui:Toggle name="world-labels-toggle" text="SHOW PROJECTED BODY LABELS" class="setting-toggle" />
+                    <ui:Label text="All preferences are stored locally on this computer. Scientific simulation state is not changed by these presentation settings." class="menu-note" />
+                    <ui:Button name="restore-defaults-button" text="RESTORE RELEASE DEFAULTS" class="restore-defaults-button" />
+                </ui:ScrollView>
+
+                <ui:ScrollView name="credits-page" class="menu-page is-hidden">
+                    <ui:Label text="PROJECT" class="menu-section-title" />
+                    <ui:Label text="Solar System Simulation&#10;Design, engineering, documentation, and integration by Tanvir. Built with Unity and developed with AI-assisted review through OpenAI Codex and Unity AI." class="menu-copy" />
+
+                    <ui:Label text="PLANET &amp; SPACE TEXTURES / CC BY 4.0" class="menu-section-title credits-section" />
+                    <ui:Label text="Solar System Scope / INOVE. Used and adapted under Creative Commons Attribution 4.0. Enhanced color and fictional fill may appear in unmapped regions." class="menu-copy" />
+
+                    <ui:Label text="PLANETARY MOSAICS / USGS &amp; NASA MISSIONS" class="menu-section-title credits-section" />
+                    <ui:Label text="Selected Io, Europa, Ganymede, Callisto, Titan, and Triton mosaics courtesy of the U.S. Geological Survey Astrogeology Science Center and source NASA missions. Coverage, reconstruction, color, and citation limitations are documented per asset." class="menu-copy" />
+
+                    <ui:Label text="AUDIO / CC0 1.0" class="menu-section-title credits-section" />
+                    <ui:Label text="Outer Space Loop by wipics; Fireplace Sound Loop by PagDev; Forest Ambience by TinyWorlds, sourced through OpenGameArt. Interface sounds by Kenney. Optional attribution is retained as professional provenance." class="menu-copy" />
+
+                    <ui:Label text="SCIENTIFIC SOURCES" class="menu-section-title credits-section" />
+                    <ui:Label text="Physical parameters and educational mean-orbit records are derived from NASA NSSDC and JPL reference material. This simulation is not a date-exact ephemeris." class="menu-copy" />
+
+                    <ui:Label text="LICENSE &amp; COMPLETE RECORD" class="menu-section-title credits-section" />
+                    <ui:Label text="The project code is released under the MIT License. Full URLs, asset IDs, hashes, modification notes, and attribution text are maintained in Docs/Legal/ThirdPartyAssets.md and Docs/Science/Celestial Data Sources.md." class="menu-note" />
+                </ui:ScrollView>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, seven-moon, hero-rendering, and celestial-navigation foundations  
-**Version:** 0.26.0  
+**Status:** Living authority with validated visual, audio, guided-scale, hero-rendering, navigation, and Explorer Menu foundations  
+**Version:** 0.27.0  
 **Last updated:** 2026-07-25  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -479,6 +479,21 @@ Orbit guides and non-featured body renderers are suppressed only during the
 tour, then restored exactly; the skybox, live simulation, and audio remain
 continuous.
 
+**[IMPLEMENTED AND VALIDATED: EXPLORER MENU]** Help, Settings, and Credits &
+Sources share one large observatory panel with the existing navy/cyan visual
+language. Tabs combine borders, surface changes, and text labels, so page state
+does not rely on color. The menu suppresses competing HUD and world-label
+layers while leaving the Solar System visible as subdued context.
+
+Settings group audio separately from accessibility/presentation. Each audio
+slider includes a numeric percentage; checkboxes retain explicit action text.
+The destructive-looking ambiguity of reset is avoided with the label
+`RESTORE RELEASE DEFAULTS` and a restrained amber treatment. Credits use short
+scannable source groups and defer full URLs, hashes, and limitations to the
+versioned ledgers. Compact rules reduce padding and type size without moving
+panels outside the safe area. No new font, icon, image, or audio asset is
+introduced by this slice.
+
 ## 7. Audio Direction
 
 ### Music
@@ -579,6 +594,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.27.0 | 2026-07-25 | Added the responsive unified Explorer Menu language for Help, onboarding, Settings, and Credits & Sources, including visible audio values and non-color-only state | Explorer UX visual baseline implemented and validated |
 | 0.26.0 | 2026-07-25 | Refined all cinematic chapters with responsive lower-left hierarchy, target-only visual spotlighting, reversible orbit-guide suppression, phase-robust group separation, and a visible Full/Reduced Motion control | Cinematic-tour polish implemented and validated at exact 1280x720 and 2560x1440 |
 | 0.25.0 | 2026-07-25 | Added the responsive cinematic-tour card, five reviewed composition priorities, non-color-only keyboard/mouse actions, controlled HUD-density rules, and explicit no-new-media decision | Cinematic-tour visual baseline implemented and validated at exact 1280x720 and 2560x1440 |
 | 0.24.0 | 2026-07-25 | Added the restrained parent-first navigator and projected-label visual language, including moon indentation, non-color-only selection, overlap suppression, HUD safe areas, focus/guided-state density rules, explicit keycaps, and compact responsive treatment without third-party fonts or icons | Celestial navigation and label baseline implemented and visually validated |

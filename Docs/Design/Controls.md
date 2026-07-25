@@ -2,7 +2,7 @@
 
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
-**Status:** Implemented exploration, navigation, labels, guided scale comparison, cinematic-tour, and motion-accessibility controls  
+**Status:** Implemented exploration, navigation, labels, guided presentation, Help, settings, credits, and onboarding controls  
 **Last updated:** 2026-07-25  
 **Input asset:** `Assets/SolarSystem/Settings/Input/IA_SolarSystem.asset`
 
@@ -21,9 +21,12 @@ automated tests.
 | Temporary boost | Left Shift | Increase movement speed while held |
 | Select body | Left mouse button | Raycast from the pointer and select a celestial body |
 | Focus selection | F | Smoothly transition to the selected body |
-| Return to free flight | Escape | Cancel a focus transition or leave focused mode without snapping |
+| Contextual back/menu | Escape | Close the menu, cancel the active guided/focus state, or open Help from free flight |
 | Open or close navigator | N | Show or hide the complete parent-first celestial catalog |
 | Toggle body labels | L | Show or hide projected body-name labels |
+| Toggle orbit guides | O | Show or hide orbit paths without changing simulation state |
+| Toggle reduced motion | M | Switch guided camera transitions between eased movement and instant cuts |
+| Open or close Help | H | Open the unified Explorer Menu directly on Help |
 
 Free-flight velocity accelerates and decelerates rather than changing
 instantaneously. Input and camera updates use unscaled time, so pausing the
@@ -87,6 +90,43 @@ scanning, while the adjacent action text preserves meaning without relying on
 color alone. The `SPACE` action changes from `PAUSE` to `RESUME` when the
 simulation is paused.
 
+## Explorer Menu, Help, Settings, and Credits
+
+`H` opens or closes the unified Explorer Menu on its Help page. The same modal
+surface contains Settings and Credits & Sources. While it is open, world
+selection, camera movement, zoom, time commands, the navigator, and guided
+presentation inputs are gated so one key press cannot affect the simulation
+behind the menu.
+
+Escape follows one predictable priority:
+
+1. close the Explorer Menu;
+2. cancel an active cinematic tour;
+3. cancel an active guided scale comparison;
+4. cancel focus or a focus transition;
+5. open Help when already in free flight.
+
+The first launch opens Help with a short orientation. Closing it records
+completion locally; Help remains available at any time through `H`, Escape
+from free flight, or the visible menu launcher.
+
+The Settings page exposes:
+
+- master, music, interface, and celestial-ambience volume;
+- mute without discarding the four saved channel levels;
+- Full Motion or Reduced Motion;
+- orbit-guide visibility;
+- projected-body-label visibility;
+- restore release defaults.
+
+Numeric percentages accompany the audio sliders. Preferences are saved in a
+versioned local record and applied through the same services used by keyboard
+shortcuts, so UI and keyboard state cannot drift apart. Presentation settings
+do not change scientific data or authoritative simulation state.
+
+Credits & Sources presents concise release-facing attribution and points to the
+complete versioned licensing and scientific-source ledgers in `Docs`.
+
 ## Guided Scale Comparison
 
 | Intent | Binding | Behavior |
@@ -148,5 +188,4 @@ pause state, and audio settings are never changed by the tour.
 The following approved product capabilities remain pending for later release
 slices:
 
-- complete Help, settings, and contextual onboarding;
 - gamepad bindings, which are outside the first public-release baseline.

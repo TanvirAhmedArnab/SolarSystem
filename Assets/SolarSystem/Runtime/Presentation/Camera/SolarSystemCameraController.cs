@@ -78,7 +78,6 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             if (input != null)
             {
                 input.FocusPerformed -= OnFocusPerformed;
-                input.CancelPerformed -= ReturnToFreeFlight;
             }
 
             input = inputAdapter != null
@@ -95,7 +94,6 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             }
 
             input.FocusPerformed += OnFocusPerformed;
-            input.CancelPerformed += OnCancelPerformed;
             Vector3 euler = transform.eulerAngles;
             yaw = euler.y;
             pitch = NormalizePitch(euler.x);
@@ -553,7 +551,6 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             if (input != null)
             {
                 input.FocusPerformed -= OnFocusPerformed;
-                input.CancelPerformed -= OnCancelPerformed;
             }
 
             Cursor.lockState = CursorLockMode.None;
@@ -565,14 +562,6 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             if (!IsGuidedPresentationActive && selection.SelectedView != null)
             {
                 Focus(selection.SelectedView);
-            }
-        }
-
-        private void OnCancelPerformed()
-        {
-            if (!IsGuidedPresentationActive)
-            {
-                ReturnToFreeFlight();
             }
         }
 

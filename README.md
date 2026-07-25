@@ -9,6 +9,8 @@ The project is currently in visual/content development. Its product, engineering
 - Present the Sun, eight planets, and selected major moons with honest educational scaling.
 - Demonstrate deterministic orbital mechanics without Rigidbody-driven orbits.
 - Support free-fly and cinematic exploration with clear scientific overlays.
+- Provide first-launch orientation plus a unified Help, Settings, and Credits
+  experience with persistent audio, motion, orbit-guide, and label preferences.
 - Deliver a stable 60 FPS experience at 1080p on a reasonable mid-range gaming PC.
 - Show professional Unity architecture, testing, documentation, licensing, and Git practices.
 
@@ -86,13 +88,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Cinematic Tour Validation](Docs/ProjectManagement/Slice%204%20Cinematic%20Tour%20Validation.md)
 - [Slice 4 Cinematic Tour Polish Validation](Docs/ProjectManagement/Slice%204%20Cinematic%20Tour%20Polish%20Validation.md)
 - [Repository Publication Cleanup Validation](Docs/ProjectManagement/Repository%20Publication%20Cleanup%20Validation.md)
+- [Explorer Menu and Settings Validation](Docs/ProjectManagement/Explorer%20Menu%20and%20Settings%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/seven-moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 178 Edit Mode cases and
-24 real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 183 Edit Mode cases and
+25 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -116,6 +119,12 @@ easing are authored as data; `M` or the visible Motion control switches between
 full eased travel and a persisted instant reduced-motion mode. Tour-only orbit
 guide suppression and renderer spotlighting preserve visual hierarchy while
 restoring every prior visibility state on completion or cancellation.
+A unified Explorer Menu now provides first-launch orientation, reopenable Help,
+persistent Settings, and Credits & Sources. `H` opens Help, `O` toggles orbit
+guides, and Escape follows one contextual route instead of competing handlers.
+Master/music/interface/celestial volumes, mute, reduced motion, orbit guides,
+and body labels persist locally in a versioned record and remain synchronized
+with their existing keyboard controls.
 Earth now provides the representative layered-rendering proof with a custom
 URP surface, ocean response, nightside-only city lights, independent clouds,
 a restrained atmosphere rim, and close-focus orbit-guide suppression.

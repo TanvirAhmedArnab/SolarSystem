@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.14.0  
+**Version:** 0.15.0  
 **Last reviewed:** 2026-07-25
 
 **Live-source verification:** Rechecked 2026-07-25 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records, including Triton's Voyager 2 mosaic.
@@ -10,6 +10,10 @@
 > Operational provenance record, not legal advice. Re-check source pages before release and reject assets with ambiguous rights.
 
 ## Release Credits and Provenance
+
+The approved concise credit summaries are mirrored in the runtime Explorer
+Menu's Credits & Sources page. This ledger remains authoritative for complete
+URLs, asset IDs, hashes, modifications, limitations, and release rechecks.
 
 ### Solar System Scope
 

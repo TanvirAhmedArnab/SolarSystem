@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.25.0  
+**Version:** 0.26.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -52,6 +52,7 @@
 | 0.23.0 | 2026-07-25 | Codex, for Tanvir | Implemented a deterministic parent-first celestial navigator and restrained projected body labels with selection synchronization, overlap suppression, responsive safe areas, explicit toggles, and guided-comparison rules | Milestone 4 navigation and label baseline implemented and validated |
 | 0.24.0 | 2026-07-25 | Codex, for Tanvir | Implemented the five-chapter deterministic cinematic tour with shared camera/simulation services, accessible controls, live scientific motion, mutual exclusion, and exact explorer-state restoration | Cinematic-tour vertical slice implemented and validated |
 | 0.25.0 | 2026-07-25 | Codex, for Tanvir | Polished all five cinematic chapters with phase-robust authored composition, reversible visual hierarchy, and a persisted keyboard/mouse reduced-motion mode | Cinematic-tour presentation and motion-accessibility candidate implemented and validated |
+| 0.26.0 | 2026-07-25 | Codex, for Tanvir | Implemented the unified Explorer Menu, first-launch orientation, persistent presentation/audio settings, contextual Escape routing, and release-facing credits and sources | Portfolio UX baseline implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -176,7 +177,11 @@ These features require separate approval after the minimum release meets its qua
 
 ### 6.2 First-run experience
 
-**[PROPOSED]** The first launch opens in presentation scale with simulation running at a calm, readable speed. A minimal contextual overlay introduces movement, selection, focus, and time controls. Prompts disappear after successful use and remain available from Help.
+**[APPROVED/IMPLEMENTED]** The first launch opens in presentation scale with
+simulation running at the calibrated readable speed and presents a concise Help
+orientation inside the unified Explorer Menu. Closing the orientation records
+completion locally. The same instructions remain available through `H`, Escape
+from free flight, and the visible menu launcher.
 
 ### 6.3 Interaction states
 
@@ -449,8 +454,13 @@ guided scale comparison.
   scale comparison or cinematic tour.
 - **[IMPLEMENTED]** A scrollable `N` navigator provides keyboard and mouse
   access to every authored star, planet, and moon without enlarging any body.
-- Orbit-path controls, settings, Help, credits, and sources access remain
-  release work.
+- **[IMPLEMENTED]** `O` and a persisted Settings toggle control orbit guides
+  without changing simulation or scale.
+- **[IMPLEMENTED]** The unified Explorer Menu provides Help, Settings, and
+  Credits & Sources. Settings expose four audio levels, mute, reduced motion,
+  orbit guides, labels, and restore defaults with visible numeric values.
+- **[IMPLEMENTED]** Escape uses contextual priority: close the menu, cancel
+  tour, cancel scale comparison, cancel focus, then open Help in free flight.
 
 ### 10.2 Visual direction
 
@@ -465,14 +475,17 @@ guided scale comparison.
 
 ### 10.4 Accessibility baseline
 
-**[PARTIALLY IMPLEMENTED]** Minimum requirements:
+**[IMPLEMENTED BASELINE]** Minimum requirements:
 
 - UI scaling and readable minimum text sizes.
 - Full keyboard operation for primary UI flows.
 - Rebindable gameplay controls where supported by the Input System.
 - **[IMPLEMENTED]** Reduced camera motion through a persisted instant-transition
   option available by keyboard and mouse.
-- Independent bloom and motion-blur controls; motion blur defaults off.
+- Independent audio channels and mute with versioned local persistence.
+- Orbit-guide and projected-label visibility available by keyboard and mouse.
+- Motion blur defaults off; independent post-processing controls remain a
+  later enhancement rather than a release blocker.
 - Do not use color as the sole indicator of selection or state.
 - Captions for any narrated cinematic content.
 
@@ -736,10 +749,12 @@ Earth-relative radii, educational facts, and selection/focus support. The
 parent-first celestial navigator and projected-label baseline are implemented
 with responsive safe areas, overlap suppression, selection synchronization,
 focus/guided-mode rules, and explicit `N`/`L` controls. Cinematic routing,
-settings, Help/credits/sources access, licensed typography, reduced-motion
-behavior, and broader accessibility completion remain. The licensed music,
-Sun/Earth ambience, and event-driven UI feedback baseline is implemented;
-final listening/mix approval and an audio settings UI remain.
+the unified Help/Settings/Credits & Sources menu, first-launch orientation,
+contextual Escape routing, persisted reduced-motion, orbit-guide and label
+controls, and four-channel audio settings are implemented. Licensed typography
+and broader accessibility completion remain. The licensed music, Sun/Earth
+ambience, and event-driven UI feedback baseline is implemented; final
+listening/mix approval remains.
 
 ### Milestone 5 - Portfolio release
 

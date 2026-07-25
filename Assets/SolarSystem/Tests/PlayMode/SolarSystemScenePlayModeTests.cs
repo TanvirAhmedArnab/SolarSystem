@@ -4,6 +4,8 @@ using Tanvir.SolarSystem.Application;
 using Tanvir.SolarSystem.Audio;
 using Tanvir.SolarSystem.Authoring;
 using Tanvir.SolarSystem.Interaction;
+using Tanvir.SolarSystem.Infrastructure.Preferences;
+using Tanvir.SolarSystem.Input;
 using Tanvir.SolarSystem.Mathematics;
 using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
@@ -22,6 +24,8 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
     public sealed class SolarSystemScenePlayModeTests
     {
         private const float FocusTransitionTimeoutSeconds = 2f;
+        private bool hadExplorerSettings;
+        private string savedExplorerSettings;
         private static readonly string[] ExpectedBodyIds =
         {
             "sun",
@@ -41,6 +45,36 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             "neptune",
             "triton"
         };
+
+        [SetUp]
+        public void PreserveAndPrimeExplorerSettings()
+        {
+            hadExplorerSettings =
+                PlayerPrefs.HasKey(PlayerPrefsExplorerSettingsStore.PreferenceKey);
+            savedExplorerSettings = hadExplorerSettings
+                ? PlayerPrefs.GetString(PlayerPrefsExplorerSettingsStore.PreferenceKey)
+                : string.Empty;
+            new PlayerPrefsExplorerSettingsStore().Save(
+                ExplorerSettingsSnapshot.CreateDefaults(true));
+        }
+
+        [TearDown]
+        public void RestoreExplorerSettings()
+        {
+            if (hadExplorerSettings)
+            {
+                PlayerPrefs.SetString(
+                    PlayerPrefsExplorerSettingsStore.PreferenceKey,
+                    savedExplorerSettings);
+            }
+            else
+            {
+                PlayerPrefs.DeleteKey(
+                    PlayerPrefsExplorerSettingsStore.PreferenceKey);
+            }
+
+            PlayerPrefs.Save();
+        }
 
         [UnityTest]
         public IEnumerator SolarSystemScene_BootstrapsMovesAndPausesAllBodies()
@@ -266,6 +300,105 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(
                 Vector3.Distance(resumedPosition, earth.transform.position),
                 Is.GreaterThan(0.001f));
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_ProvidesUnifiedMenuAndPersistentSettings()
+        {
+            PlayerPrefs.DeleteKey(PlayerPrefsExplorerSettingsStore.PreferenceKey);
+            PlayerPrefs.Save();
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            SolarSystemInputAdapter input =
+                Object.FindAnyObjectByType<SolarSystemInputAdapter>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(interaction.IsInitialized, Is.True);
+            Assert.That(input, Is.Not.Null);
+
+            ExplorerMenuController menu = interaction.ExplorerMenu;
+            ExplorerSettingsController settings = interaction.ExplorerSettings;
+            SolarSystemHudPresenter hud = interaction.HudPresenter;
+            Assert.That(menu.Service.IsOpen, Is.True);
+            Assert.That(
+                menu.Service.ActivePage,
+                Is.EqualTo(ExplorerMenuPage.Help));
+            Assert.That(hud.IsExplorerMenuVisible, Is.True);
+            Assert.That(input.IsExplorerInteractionEnabled, Is.False);
+
+            menu.Close();
+            yield return null;
+            Assert.That(menu.Service.IsOpen, Is.False);
+            Assert.That(input.IsExplorerInteractionEnabled, Is.True);
+            Assert.That(
+                settings.Service.Current.HasCompletedOnboarding,
+                Is.True);
+            Assert.That(
+                PlayerPrefs.HasKey(PlayerPrefsExplorerSettingsStore.PreferenceKey),
+                Is.True);
+
+            menu.Open(ExplorerMenuPage.Settings);
+            settings.SetMasterVolume(0.72f);
+            settings.SetMusicVolume(0.31f);
+            settings.SetUiVolume(0.42f);
+            settings.SetCelestialVolume(0.53f);
+            settings.SetMuted(true);
+            settings.SetMotionMode(PresentationMotionMode.ReducedMotion);
+            settings.SetOrbitGuidesEnabled(false);
+            settings.SetWorldLabelsEnabled(false);
+            yield return null;
+
+            Assert.That(hud.ActiveMenuPage, Is.EqualTo(ExplorerMenuPage.Settings));
+            Assert.That(hud.MasterVolumeValue, Is.EqualTo(0.72f).Within(0.0001f));
+            Assert.That(interaction.AudioDirector.IsMuted, Is.True);
+            Assert.That(interaction.AudioDirector.MusicSource.mute, Is.True);
+            Assert.That(interaction.MotionPreference.IsReducedMotion, Is.True);
+            Assert.That(
+                interaction.OrbitPathVisibility.ArePathsEnabledByUser,
+                Is.False);
+            Assert.That(interaction.OrbitPathVisibility.ArePathsVisible, Is.False);
+            Assert.That(
+                interaction.Navigation.Service.AreWorldLabelsEnabled,
+                Is.False);
+            Assert.That(hud.OrbitStateText, Does.Contain("OFF"));
+            Assert.That(hud.MotionStateText, Does.Contain("REDUCED"));
+
+            settings.ResetToDefaults();
+            yield return null;
+            ExplorerSettingsSnapshot defaults = settings.Service.Current;
+            Assert.That(defaults.HasCompletedOnboarding, Is.True);
+            Assert.That(defaults.IsMuted, Is.False);
+            Assert.That(defaults.AreOrbitGuidesEnabled, Is.True);
+            Assert.That(defaults.AreWorldLabelsEnabled, Is.True);
+            Assert.That(
+                defaults.MotionMode,
+                Is.EqualTo(PresentationMotionMode.FullMotion));
+
+            menu.HandleCancel();
+            Assert.That(menu.Service.IsOpen, Is.False);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            interaction.SelectionController.Select(earth);
+            interaction.CameraController.Focus(earth);
+            yield return WaitUntilFocused(interaction.CameraController);
+            menu.HandleCancel();
+            Assert.That(
+                interaction.CameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.FreeFlight));
+            menu.HandleCancel();
+            Assert.That(menu.Service.IsOpen, Is.True);
+            Assert.That(
+                menu.Service.ActivePage,
+                Is.EqualTo(ExplorerMenuPage.Help));
+            menu.Close();
         }
 
         [UnityTest]

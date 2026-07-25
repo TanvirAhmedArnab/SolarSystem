@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Centralized Escape handling under one contextual router: close menu, cancel
+  tour, cancel scale comparison, cancel focus, then open Help in free flight.
+- Expanded validation to 183 Edit Mode and 25 Play Mode cases with a clean
+  Unity Console.
 - Renamed the active PC pipeline fallback volume profile from the misleading
   template name `SampleSceneProfile` to `PC_DefaultVolumeProfile` while
   preserving its GUID, references, and authored settings.
@@ -26,6 +30,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Unified Explorer Menu with Help, Settings, and Credits & Sources pages,
+  including a persistent first-launch orientation.
+- Versioned local settings for master, music, interface, and celestial audio,
+  mute, reduced motion, orbit guides, projected labels, and restore defaults.
+- Visible audio percentages, responsive menu layout, modal input gating, and
+  keyboard shortcuts for Help (`H`) and orbit guides (`O`).
+- Pure menu/settings services, a narrow PlayerPrefs storage adapter, and
+  controller-level synchronization with existing audio, motion, navigation,
+  orbit-visibility, guided-presentation, and camera services.
+- Edit Mode service/asset coverage and a real-scene Play Mode flow for
+  onboarding, settings persistence, reset behavior, and Escape priority.
 - Data-driven cinematic-tour framing spaces, screen offsets, safety padding,
   transition durations, and deterministic easing for all five chapters.
 - Persisted Full Motion/Reduced Motion preference on `M` and the visible Motion

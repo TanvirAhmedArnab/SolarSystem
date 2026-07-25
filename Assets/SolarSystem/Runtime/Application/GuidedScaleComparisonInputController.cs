@@ -65,7 +65,6 @@ namespace Tanvir.SolarSystem.Application
             Service = service ?? throw new ArgumentNullException(nameof(service));
 
             input.ScaleComparisonPerformed += Service.Advance;
-            input.CancelPerformed += OnCancelPerformed;
             Service.Changed += OnComparisonChanged;
         }
 
@@ -165,11 +164,6 @@ namespace Tanvir.SolarSystem.Application
                 farClip);
         }
 
-        private void OnCancelPerformed()
-        {
-            Service.Cancel();
-        }
-
         private void OnDestroy()
         {
             Release();
@@ -180,7 +174,6 @@ namespace Tanvir.SolarSystem.Application
             if (input != null && Service != null)
             {
                 input.ScaleComparisonPerformed -= Service.Advance;
-                input.CancelPerformed -= OnCancelPerformed;
                 Service.Changed -= OnComparisonChanged;
             }
 

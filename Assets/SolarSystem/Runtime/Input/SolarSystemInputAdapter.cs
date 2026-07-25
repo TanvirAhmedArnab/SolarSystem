@@ -50,30 +50,49 @@ namespace Tanvir.SolarSystem.Input
         /// <summary>Raised when the user toggles projected celestial labels.</summary>
         public event Action ToggleWorldLabelsPerformed;
 
+        /// <summary>Raised when the user opens or closes contextual Help.</summary>
+        public event Action ToggleHelpPerformed;
+
+        /// <summary>Raised when the user toggles overview orbit guides.</summary>
+        public event Action ToggleOrbitGuidesPerformed;
+
         /// <summary>Gets planar movement intent.</summary>
-        public Vector2 Move => move?.ReadValue<Vector2>() ?? Vector2.zero;
+        public Vector2 Move => IsExplorerInteractionEnabled
+            ? move?.ReadValue<Vector2>() ?? Vector2.zero
+            : Vector2.zero;
 
         /// <summary>Gets vertical movement intent.</summary>
-        public float Elevate => elevate?.ReadValue<float>() ?? 0f;
+        public float Elevate => IsExplorerInteractionEnabled
+            ? elevate?.ReadValue<float>() ?? 0f
+            : 0f;
 
         /// <summary>Gets pointer-look delta.</summary>
-        public Vector2 LookDelta => look?.ReadValue<Vector2>() ?? Vector2.zero;
+        public Vector2 LookDelta => IsExplorerInteractionEnabled
+            ? look?.ReadValue<Vector2>() ?? Vector2.zero
+            : Vector2.zero;
 
         /// <summary>Gets whether pointer look is currently active.</summary>
-        public bool IsLookActive => lookModifier?.IsPressed() == true;
+        public bool IsLookActive =>
+            IsExplorerInteractionEnabled && lookModifier?.IsPressed() == true;
 
         /// <summary>Gets whether the temporary speed boost is active.</summary>
-        public bool IsBoostActive => boost?.IsPressed() == true;
+        public bool IsBoostActive =>
+            IsExplorerInteractionEnabled && boost?.IsPressed() == true;
 
         /// <summary>Gets the current pointer position in screen coordinates.</summary>
         public Vector2 PointerPosition =>
             pointerPosition?.ReadValue<Vector2>() ?? Vector2.zero;
 
         /// <summary>Gets scroll-wheel focus zoom intent.</summary>
-        public float Zoom => zoom?.ReadValue<float>() ?? 0f;
+        public float Zoom => IsExplorerInteractionEnabled
+            ? zoom?.ReadValue<float>() ?? 0f
+            : 0f;
 
         /// <summary>Gets whether an action map has been resolved and enabled.</summary>
         public bool IsInitialized => explorer != null && explorer.enabled;
+
+        /// <summary>Gets whether non-modal exploration commands are accepted.</summary>
+        public bool IsExplorerInteractionEnabled { get; private set; } = true;
 
         /// <summary>Resolves, subscribes, and enables the project interaction map.</summary>
         public void Initialize(InputActionAsset actions)
@@ -104,7 +123,19 @@ namespace Tanvir.SolarSystem.Input
                 OnToggleReducedMotion;
             explorer.FindAction("ToggleNavigator", true).performed += OnToggleNavigator;
             explorer.FindAction("ToggleWorldLabels", true).performed += OnToggleWorldLabels;
+            explorer.FindAction("ToggleHelp", true).performed += OnToggleHelp;
+            explorer.FindAction("ToggleOrbitGuides", true).performed +=
+                OnToggleOrbitGuides;
+            IsExplorerInteractionEnabled = true;
             explorer.Enable();
+        }
+
+        /// <summary>
+        /// Enables or suppresses every exploration command except Help and Escape.
+        /// </summary>
+        public void SetExplorerInteractionEnabled(bool enabled)
+        {
+            IsExplorerInteractionEnabled = enabled;
         }
 
         private void OnDestroy()
@@ -112,35 +143,51 @@ namespace Tanvir.SolarSystem.Input
             Release();
         }
 
-        private void OnSelect(InputAction.CallbackContext context) => SelectPerformed?.Invoke();
+        private void OnSelect(InputAction.CallbackContext context) =>
+            InvokeWhenExplorerEnabled(SelectPerformed);
 
-        private void OnFocus(InputAction.CallbackContext context) => FocusPerformed?.Invoke();
+        private void OnFocus(InputAction.CallbackContext context) =>
+            InvokeWhenExplorerEnabled(FocusPerformed);
 
         private void OnCancel(InputAction.CallbackContext context) => CancelPerformed?.Invoke();
 
         private void OnTogglePause(InputAction.CallbackContext context) =>
-            TogglePausePerformed?.Invoke();
+            InvokeWhenExplorerEnabled(TogglePausePerformed);
 
         private void OnDecreaseTimeSpeed(InputAction.CallbackContext context) =>
-            DecreaseTimeSpeedPerformed?.Invoke();
+            InvokeWhenExplorerEnabled(DecreaseTimeSpeedPerformed);
 
         private void OnIncreaseTimeSpeed(InputAction.CallbackContext context) =>
-            IncreaseTimeSpeedPerformed?.Invoke();
+            InvokeWhenExplorerEnabled(IncreaseTimeSpeedPerformed);
 
         private void OnScaleComparison(InputAction.CallbackContext context) =>
-            ScaleComparisonPerformed?.Invoke();
+            InvokeWhenExplorerEnabled(ScaleComparisonPerformed);
 
         private void OnCinematicTour(InputAction.CallbackContext context) =>
-            CinematicTourPerformed?.Invoke();
+            InvokeWhenExplorerEnabled(CinematicTourPerformed);
 
         private void OnToggleReducedMotion(InputAction.CallbackContext context) =>
-            ToggleReducedMotionPerformed?.Invoke();
+            InvokeWhenExplorerEnabled(ToggleReducedMotionPerformed);
 
         private void OnToggleNavigator(InputAction.CallbackContext context) =>
-            ToggleNavigatorPerformed?.Invoke();
+            InvokeWhenExplorerEnabled(ToggleNavigatorPerformed);
 
         private void OnToggleWorldLabels(InputAction.CallbackContext context) =>
-            ToggleWorldLabelsPerformed?.Invoke();
+            InvokeWhenExplorerEnabled(ToggleWorldLabelsPerformed);
+
+        private void OnToggleHelp(InputAction.CallbackContext context) =>
+            ToggleHelpPerformed?.Invoke();
+
+        private void OnToggleOrbitGuides(InputAction.CallbackContext context) =>
+            InvokeWhenExplorerEnabled(ToggleOrbitGuidesPerformed);
+
+        private void InvokeWhenExplorerEnabled(Action intent)
+        {
+            if (IsExplorerInteractionEnabled)
+            {
+                intent?.Invoke();
+            }
+        }
 
         private void Release()
         {
@@ -161,8 +208,12 @@ namespace Tanvir.SolarSystem.Input
                 OnToggleReducedMotion;
             explorer.FindAction("ToggleNavigator", true).performed -= OnToggleNavigator;
             explorer.FindAction("ToggleWorldLabels", true).performed -= OnToggleWorldLabels;
+            explorer.FindAction("ToggleHelp", true).performed -= OnToggleHelp;
+            explorer.FindAction("ToggleOrbitGuides", true).performed -=
+                OnToggleOrbitGuides;
             explorer.Disable();
             explorer = null;
+            IsExplorerInteractionEnabled = true;
         }
     }
 }
