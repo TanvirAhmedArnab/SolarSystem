@@ -1,4 +1,4 @@
-Shader "SolarSystem/Celestial/Gas Giant Surface"
+Shader "SolarSystem/Celestial/Giant Planet Surface"
 {
     Properties
     {
@@ -8,6 +8,7 @@ Shader "SolarSystem/Celestial/Gas Giant Surface"
         _BandSampleDistance("Band Sample Distance", Range(0.5, 4)) = 1.5
         _FlowStrength("Periodic Detail Flow", Range(0, 0.01)) = 0.0035
         _AnimatedDetailStrength("Animated Detail Contribution", Range(0, 0.25)) = 0.08
+        _NightsideReadability("Nightside Readability", Range(0, 0.1)) = 0.012
         _Specular("Specular", Range(0, 1)) = 0.08
         _Smoothness("Smoothness", Range(0, 1)) = 0.18
         [HideInInspector] _SimulationPhase("Simulation Phase", Range(0, 1)) = 0
@@ -35,8 +36,8 @@ Shader "SolarSystem/Celestial/Gas Giant Surface"
 
             HLSLPROGRAM
             #pragma target 3.5
-            #pragma vertex GasGiantVertex
-            #pragma fragment GasGiantFragment
+            #pragma vertex GiantPlanetVertex
+            #pragma fragment GiantPlanetFragment
             #pragma multi_compile_instancing
             #pragma multi_compile_fog
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
@@ -59,12 +60,14 @@ Shader "SolarSystem/Celestial/Gas Giant Surface"
                 half _BandSampleDistance;
                 half _FlowStrength;
                 half _AnimatedDetailStrength;
+                half _NightsideReadability;
                 half _Specular;
                 half _Smoothness;
                 half _SimulationPhase;
             CBUFFER_END
 
             float4 _BaseMap_TexelSize;
+            float4 _SolarSystemSunPositionWS;
 
             struct Attributes
             {
@@ -87,7 +90,7 @@ Shader "SolarSystem/Celestial/Gas Giant Surface"
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
-            Varyings GasGiantVertex(Attributes input)
+            Varyings GiantPlanetVertex(Attributes input)
             {
                 Varyings output = (Varyings)0;
                 UNITY_SETUP_INSTANCE_ID(input);
@@ -115,7 +118,7 @@ Shader "SolarSystem/Celestial/Gas Giant Surface"
                 return dot(color, half3(0.2126h, 0.7152h, 0.0722h));
             }
 
-            half4 GasGiantFragment(Varyings input) : SV_Target
+            half4 GiantPlanetFragment(Varyings input) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(input);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
@@ -163,6 +166,10 @@ Shader "SolarSystem/Celestial/Gas Giant Surface"
                     half3x3(tangentWS, bitangentWS, normalWS);
                 normalWS = NormalizeNormalPerPixel(
                     TransformTangentToWorld(normalTS, tangentToWorld));
+                half3 sunDirection = SafeNormalize(
+                    _SolarSystemSunPositionWS.xyz - input.positionWS);
+                half nightsideMask =
+                    1.0h - saturate(dot(normalWS, sunDirection) * 4.0h);
 
                 SurfaceData surfaceData = (SurfaceData)0;
                 surfaceData.albedo = albedo;
@@ -170,7 +177,8 @@ Shader "SolarSystem/Celestial/Gas Giant Surface"
                 surfaceData.metallic = 0;
                 surfaceData.smoothness = _Smoothness;
                 surfaceData.normalTS = normalTS;
-                surfaceData.emission = half3(0, 0, 0);
+                surfaceData.emission =
+                    albedo * _NightsideReadability * nightsideMask;
                 surfaceData.occlusion = 1;
                 surfaceData.alpha = 1;
                 surfaceData.clearCoatMask = 0;

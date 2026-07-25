@@ -74,13 +74,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Saturn Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Saturn%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Venus Atmosphere Rendering Validation](Docs/ProjectManagement/Slice%204%20Venus%20Atmosphere%20Rendering%20Validation.md)
 - [Slice 4 Mars Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Mars%20Hero%20Rendering%20Validation.md)
+- [Slice 4 Ice Giant Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Ice%20Giant%20Hero%20Rendering%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/Earth-Moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 132 Edit Mode cases and
-14 real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 137 Edit Mode cases and
+15 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -116,6 +117,13 @@ with an anchored source-derived rocky surface, restrained rust/ochre balance,
 and one narrow Sun-aware limb. No dummy cloud renderer or non-scientific
 surface motion is introduced, and the exact proportional radius, analytical
 orbit, axial tilt, and prograde rotation remain authoritative.
+Uranus and Neptune now use a reusable ice-giant authoring/model/view path with
+distinct anchored source materials, restrained source-derived band response,
+signed deterministic presentation detail, one thin Sun-aware atmosphere shell
+each, and controlled nightside readability. Uranus remains pale cyan and
+retrograde; Neptune remains a deeper prograde blue. Their exact proportional
+radii, analytical orbits, axial tilts, and source rotation periods remain
+unchanged, and the visual motion is not presented as a wind or fluid model.
 Detailed evidence is recorded in `Docs/ProjectManagement`.
 
 ## License

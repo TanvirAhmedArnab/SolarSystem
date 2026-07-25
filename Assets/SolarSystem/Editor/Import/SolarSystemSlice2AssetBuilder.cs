@@ -38,14 +38,18 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialTextureRoot + "/Mars/T_Mars_Surface_2K.jpg";
         private const string SaturnTexturePath =
             CelestialTextureRoot + "/Saturn/T_Saturn_Surface_2K.jpg";
+        private const string UranusTexturePath =
+            CelestialTextureRoot + "/Uranus/T_Uranus_Surface_2K.jpg";
+        private const string NeptuneTexturePath =
+            CelestialTextureRoot + "/Neptune/T_Neptune_Surface_2K.jpg";
         private const string SolarSurfaceShader =
             "SolarSystem/Celestial/Solar Surface";
         private const string SolarCoronaShader =
             "SolarSystem/Celestial/Solar Corona";
         private const string GasGiantSurfaceShader =
-            "SolarSystem/Celestial/Gas Giant Surface";
+            "SolarSystem/Celestial/Giant Planet Surface";
         private const string GasGiantAtmosphereShader =
-            "SolarSystem/Celestial/Gas Giant Atmosphere";
+            "SolarSystem/Celestial/Giant Planet Atmosphere";
         private const string SaturnRingShader =
             "SolarSystem/Celestial/Saturn Rings";
         private const string EarthSurfaceShader =
@@ -122,7 +126,11 @@ namespace Tanvir.SolarSystem.Editor.Import
         private static readonly Color SaturnAtmosphereTint =
             new Color(0.82f, 0.7f, 0.5f, 1f);
         private static readonly Color UranusTint = new Color(0.78f, 0.95f, 1f, 1f);
+        private static readonly Color UranusAtmosphereTint =
+            new Color(0.48f, 0.9f, 0.96f, 1f);
         private static readonly Color NeptuneTint = new Color(0.72f, 0.84f, 1f, 1f);
+        private static readonly Color NeptuneAtmosphereTint =
+            new Color(0.2f, 0.48f, 0.98f, 1f);
         private static readonly Color OrbitTint = new Color(0.16f, 0.45f, 0.78f, 1f);
         private static readonly Color SkyboxTint = new Color(0.72f, 0.78f, 0.9f, 1f);
         private static readonly Color ColorFilter = new Color(0.98f, 0.99f, 1f, 1f);
@@ -386,6 +394,10 @@ namespace Tanvir.SolarSystem.Editor.Import
                 JupiterAtmosphereMaterial = CreateJupiterAtmosphereMaterial(),
                 SaturnVisualDefinition = CreateSaturnVisualDefinition(),
                 SaturnAtmosphereMaterial = CreateSaturnAtmosphereMaterial(),
+                UranusVisualDefinition = CreateUranusVisualDefinition(),
+                UranusAtmosphereMaterial = CreateUranusAtmosphereMaterial(),
+                NeptuneVisualDefinition = CreateNeptuneVisualDefinition(),
+                NeptuneAtmosphereMaterial = CreateNeptuneAtmosphereMaterial(),
                 OrbitMaterial = orbitMaterial,
                 SkyboxMaterial = skyboxMaterial,
                 VisualProfile = visualProfile,
@@ -581,6 +593,24 @@ namespace Tanvir.SolarSystem.Editor.Import
                     GasGiantSurfaceShader);
                 ConfigureSaturnSurfaceMaterial(saturnMaterial);
                 return saturnMaterial;
+            }
+
+            if (bodyName == "Uranus")
+            {
+                Material uranusMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Uranus.mat",
+                    GasGiantSurfaceShader);
+                ConfigureUranusSurfaceMaterial(uranusMaterial);
+                return uranusMaterial;
+            }
+
+            if (bodyName == "Neptune")
+            {
+                Material neptuneMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Neptune.mat",
+                    GasGiantSurfaceShader);
+                ConfigureNeptuneSurfaceMaterial(neptuneMaterial);
+                return neptuneMaterial;
             }
 
             Material material = CreateMaterial(
@@ -815,6 +845,9 @@ namespace Tanvir.SolarSystem.Editor.Import
             material.SetFloat(
                 "_AnimatedDetailStrength",
                 GasGiantVisualRenderingContract.AnimatedDetailStrength);
+            material.SetFloat(
+                "_NightsideReadability",
+                GasGiantVisualRenderingContract.NightsideReadability);
             material.SetFloat("_Specular", 0.08f);
             material.SetFloat("_Smoothness", JupiterSmoothness);
             material.enableInstancing = true;
@@ -872,6 +905,9 @@ namespace Tanvir.SolarSystem.Editor.Import
             material.SetFloat(
                 "_AnimatedDetailStrength",
                 GasGiantVisualRenderingContract.SaturnAnimatedDetailStrength);
+            material.SetFloat(
+                "_NightsideReadability",
+                GasGiantVisualRenderingContract.SaturnNightsideReadability);
             material.SetFloat("_Specular", 0.06f);
             material.SetFloat("_Smoothness", SaturnSmoothness);
             material.enableInstancing = true;
@@ -906,6 +942,128 @@ namespace Tanvir.SolarSystem.Editor.Import
             material.SetFloat(
                 "_RimIntensity",
                 GasGiantVisualRenderingContract.SaturnAtmosphereIntensity);
+            material.SetFloat("_NightsideVisibility", 0.035f);
+            material.renderQueue = (int)RenderQueue.Transparent + 11;
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        private static void ConfigureUranusSurfaceMaterial(Material material)
+        {
+            material.SetTexture(
+                "_BaseMap",
+                LoadRequiredAsset<Texture2D>(UranusTexturePath));
+            material.SetColor("_BaseColor", UranusTint);
+            material.SetFloat(
+                "_BandNormalStrength",
+                IceGiantVisualRenderingContract.UranusBandNormalStrength);
+            material.SetFloat("_BandSampleDistance", 2f);
+            material.SetFloat(
+                "_FlowStrength",
+                IceGiantVisualRenderingContract.UranusDetailFlowStrength);
+            material.SetFloat(
+                "_AnimatedDetailStrength",
+                IceGiantVisualRenderingContract.UranusAnimatedDetailStrength);
+            material.SetFloat(
+                "_NightsideReadability",
+                IceGiantVisualRenderingContract.UranusNightsideReadability);
+            material.SetFloat("_Specular", 0.08f);
+            material.SetFloat("_Smoothness", UranusSmoothness);
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+        }
+
+        private static IceGiantVisualDefinition CreateUranusVisualDefinition()
+        {
+            const string path =
+                DataRoot + "/VisualLayers/VisualLayers_Uranus.asset";
+            IceGiantVisualDefinition definition =
+                CreateOrLoad<IceGiantVisualDefinition>(path);
+            var serialized = new SerializedObject(definition);
+            serialized.FindProperty("bodyStableId").stringValue = "uranus";
+            serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =
+                IceGiantVisualRenderingContract
+                    .UranusAtmosphereShellRadiusMultiplier;
+            serialized.FindProperty("detailCyclesPerRotation").floatValue =
+                IceGiantVisualRenderingContract.UranusDetailCyclesPerRotation;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+            return definition;
+        }
+
+        private static Material CreateUranusAtmosphereMaterial()
+        {
+            const string path =
+                MaterialRoot + "/CelestialBodies/M_Uranus_Atmosphere.mat";
+            Material material =
+                CreateOrUpdateMaterial(path, GasGiantAtmosphereShader);
+            material.SetColor("_AtmosphereColor", UranusAtmosphereTint);
+            material.SetFloat("_RimPower", 5.8f);
+            material.SetFloat(
+                "_RimIntensity",
+                IceGiantVisualRenderingContract.UranusAtmosphereIntensity);
+            material.SetFloat("_NightsideVisibility", 0.025f);
+            material.renderQueue = (int)RenderQueue.Transparent + 10;
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        private static void ConfigureNeptuneSurfaceMaterial(Material material)
+        {
+            material.SetTexture(
+                "_BaseMap",
+                LoadRequiredAsset<Texture2D>(NeptuneTexturePath));
+            material.SetColor("_BaseColor", NeptuneTint);
+            material.SetFloat(
+                "_BandNormalStrength",
+                IceGiantVisualRenderingContract.NeptuneBandNormalStrength);
+            material.SetFloat("_BandSampleDistance", 2f);
+            material.SetFloat(
+                "_FlowStrength",
+                IceGiantVisualRenderingContract.NeptuneDetailFlowStrength);
+            material.SetFloat(
+                "_AnimatedDetailStrength",
+                IceGiantVisualRenderingContract.NeptuneAnimatedDetailStrength);
+            material.SetFloat(
+                "_NightsideReadability",
+                IceGiantVisualRenderingContract.NeptuneNightsideReadability);
+            material.SetFloat("_Specular", 0.08f);
+            material.SetFloat("_Smoothness", NeptuneSmoothness);
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+        }
+
+        private static IceGiantVisualDefinition CreateNeptuneVisualDefinition()
+        {
+            const string path =
+                DataRoot + "/VisualLayers/VisualLayers_Neptune.asset";
+            IceGiantVisualDefinition definition =
+                CreateOrLoad<IceGiantVisualDefinition>(path);
+            var serialized = new SerializedObject(definition);
+            serialized.FindProperty("bodyStableId").stringValue = "neptune";
+            serialized.FindProperty("atmosphereShellRadiusMultiplier").floatValue =
+                IceGiantVisualRenderingContract
+                    .NeptuneAtmosphereShellRadiusMultiplier;
+            serialized.FindProperty("detailCyclesPerRotation").floatValue =
+                IceGiantVisualRenderingContract.NeptuneDetailCyclesPerRotation;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+            return definition;
+        }
+
+        private static Material CreateNeptuneAtmosphereMaterial()
+        {
+            const string path =
+                MaterialRoot + "/CelestialBodies/M_Neptune_Atmosphere.mat";
+            Material material =
+                CreateOrUpdateMaterial(path, GasGiantAtmosphereShader);
+            material.SetColor("_AtmosphereColor", NeptuneAtmosphereTint);
+            material.SetFloat("_RimPower", 5f);
+            material.SetFloat(
+                "_RimIntensity",
+                IceGiantVisualRenderingContract.NeptuneAtmosphereIntensity);
             material.SetFloat("_NightsideVisibility", 0.035f);
             material.renderQueue = (int)RenderQueue.Transparent + 11;
             material.enableInstancing = true;

@@ -40,6 +40,22 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Saturn_Atmosphere.mat";
         private const string SaturnVisualDefinitionPath =
             "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Saturn.asset";
+        private const string UranusTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Uranus/T_Uranus_Surface_2K.jpg";
+        private const string UranusMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Uranus.mat";
+        private const string UranusAtmosphereMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Uranus_Atmosphere.mat";
+        private const string UranusVisualDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Uranus.asset";
+        private const string NeptuneTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Neptune/T_Neptune_Surface_2K.jpg";
+        private const string NeptuneMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Neptune.mat";
+        private const string NeptuneAtmosphereMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Neptune_Atmosphere.mat";
+        private const string NeptuneVisualDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Neptune.asset";
         private const string VenusSurfaceTexturePath =
             "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Venus/T_Venus_Surface_2K.jpg";
         private const string VenusAtmosphereTexturePath =
@@ -239,7 +255,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(surface, Is.Not.Null);
             Assert.That(
                 surface.shader.name,
-                Is.EqualTo("SolarSystem/Celestial/Gas Giant Surface"));
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Surface"));
             Assert.That(surface.GetTexture("_BaseMap"), Is.SameAs(texture));
             Assert.That(
                 surface.GetFloat("_FlowStrength"),
@@ -254,12 +270,16 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 surface.GetFloat("_BandNormalStrength"),
                 Is.EqualTo(GasGiantVisualRenderingContract.BandNormalStrength)
                     .Within(0.0001f));
+            Assert.That(
+                surface.GetFloat("_NightsideReadability"),
+                Is.EqualTo(GasGiantVisualRenderingContract.NightsideReadability)
+                    .Within(0.0001f));
             Assert.That(surface.enableInstancing, Is.True);
 
             Assert.That(atmosphere, Is.Not.Null);
             Assert.That(
                 atmosphere.shader.name,
-                Is.EqualTo("SolarSystem/Celestial/Gas Giant Atmosphere"));
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Atmosphere"));
             Assert.That(
                 atmosphere.GetFloat("_RimIntensity"),
                 Is.EqualTo(GasGiantVisualRenderingContract.AtmosphereIntensity)
@@ -302,7 +322,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(surface, Is.Not.Null);
             Assert.That(
                 surface.shader.name,
-                Is.EqualTo("SolarSystem/Celestial/Gas Giant Surface"));
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Surface"));
             Assert.That(surface.GetTexture("_BaseMap"), Is.SameAs(texture));
             Assert.That(
                 surface.GetFloat("_FlowStrength"),
@@ -319,12 +339,17 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 Is.EqualTo(
                     GasGiantVisualRenderingContract.SaturnBandNormalStrength)
                     .Within(0.0001f));
+            Assert.That(
+                surface.GetFloat("_NightsideReadability"),
+                Is.EqualTo(
+                    GasGiantVisualRenderingContract.SaturnNightsideReadability)
+                    .Within(0.0001f));
             Assert.That(surface.enableInstancing, Is.True);
 
             Assert.That(atmosphere, Is.Not.Null);
             Assert.That(
                 atmosphere.shader.name,
-                Is.EqualTo("SolarSystem/Celestial/Gas Giant Atmosphere"));
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Atmosphere"));
             Assert.That(
                 atmosphere.GetFloat("_RimIntensity"),
                 Is.EqualTo(
@@ -353,6 +378,41 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(importer.sRGBTexture, Is.True);
             Assert.That(importer.mipmapEnabled, Is.True);
             Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Repeat));
+        }
+
+        [Test]
+        public void IceGiantMaterials_PreserveDistinctAnchoredSourcesAndContracts()
+        {
+            AssertIceGiantMaterial(
+                "uranus",
+                UranusTexturePath,
+                UranusMaterialPath,
+                UranusAtmosphereMaterialPath,
+                UranusVisualDefinitionPath,
+                IceGiantVisualRenderingContract.UranusDetailFlowStrength,
+                IceGiantVisualRenderingContract.UranusAnimatedDetailStrength,
+                IceGiantVisualRenderingContract.UranusBandNormalStrength,
+                IceGiantVisualRenderingContract.UranusNightsideReadability,
+                IceGiantVisualRenderingContract.UranusAtmosphereIntensity,
+                IceGiantVisualRenderingContract
+                    .UranusAtmosphereShellRadiusMultiplier,
+                IceGiantVisualRenderingContract.UranusDetailCyclesPerRotation,
+                (int)RenderQueue.Transparent + 10);
+            AssertIceGiantMaterial(
+                "neptune",
+                NeptuneTexturePath,
+                NeptuneMaterialPath,
+                NeptuneAtmosphereMaterialPath,
+                NeptuneVisualDefinitionPath,
+                IceGiantVisualRenderingContract.NeptuneDetailFlowStrength,
+                IceGiantVisualRenderingContract.NeptuneAnimatedDetailStrength,
+                IceGiantVisualRenderingContract.NeptuneBandNormalStrength,
+                IceGiantVisualRenderingContract.NeptuneNightsideReadability,
+                IceGiantVisualRenderingContract.NeptuneAtmosphereIntensity,
+                IceGiantVisualRenderingContract
+                    .NeptuneAtmosphereShellRadiusMultiplier,
+                IceGiantVisualRenderingContract.NeptuneDetailCyclesPerRotation,
+                (int)RenderQueue.Transparent + 11);
         }
 
         [Test]
@@ -518,6 +578,86 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(importer.sRGBTexture, Is.True);
             Assert.That(importer.mipmapEnabled, Is.True);
             Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Repeat));
+        }
+
+        private static void AssertIceGiantMaterial(
+            string stableId,
+            string texturePath,
+            string surfacePath,
+            string atmospherePath,
+            string definitionPath,
+            float flowStrength,
+            float animatedDetailStrength,
+            float normalStrength,
+            float nightsideReadability,
+            float atmosphereIntensity,
+            float shellRadius,
+            float cyclesPerRotation,
+            int renderQueue)
+        {
+            Texture2D texture =
+                AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+            Material surface =
+                AssetDatabase.LoadAssetAtPath<Material>(surfacePath);
+            Material atmosphere =
+                AssetDatabase.LoadAssetAtPath<Material>(atmospherePath);
+            IceGiantVisualDefinition definition =
+                AssetDatabase.LoadAssetAtPath<IceGiantVisualDefinition>(
+                    definitionPath);
+            var importer =
+                AssetImporter.GetAtPath(texturePath) as TextureImporter;
+
+            Assert.That(texture, Is.Not.Null, stableId);
+            Assert.That(surface, Is.Not.Null, stableId);
+            Assert.That(
+                surface.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Surface"),
+                stableId);
+            Assert.That(surface.GetTexture("_BaseMap"), Is.SameAs(texture), stableId);
+            Assert.That(
+                surface.GetFloat("_FlowStrength"),
+                Is.EqualTo(flowStrength).Within(0.0001f),
+                stableId);
+            Assert.That(
+                surface.GetFloat("_AnimatedDetailStrength"),
+                Is.EqualTo(animatedDetailStrength).Within(0.0001f),
+                stableId);
+            Assert.That(
+                surface.GetFloat("_BandNormalStrength"),
+                Is.EqualTo(normalStrength).Within(0.0001f),
+                stableId);
+            Assert.That(
+                surface.GetFloat("_NightsideReadability"),
+                Is.EqualTo(nightsideReadability).Within(0.0001f),
+                stableId);
+            Assert.That(surface.enableInstancing, Is.True, stableId);
+
+            Assert.That(atmosphere, Is.Not.Null, stableId);
+            Assert.That(
+                atmosphere.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Atmosphere"),
+                stableId);
+            Assert.That(
+                atmosphere.GetFloat("_RimIntensity"),
+                Is.EqualTo(atmosphereIntensity).Within(0.0001f),
+                stableId);
+            Assert.That(atmosphere.renderQueue, Is.EqualTo(renderQueue), stableId);
+            Assert.That(atmosphere.enableInstancing, Is.True, stableId);
+
+            Assert.That(definition, Is.Not.Null, stableId);
+            Assert.That(definition.BodyStableId, Is.EqualTo(stableId));
+            Assert.That(
+                definition.AtmosphereShellRadiusMultiplier,
+                Is.EqualTo(shellRadius).Within(0.0001f),
+                stableId);
+            Assert.That(
+                definition.DetailCyclesPerRotation,
+                Is.EqualTo(cyclesPerRotation).Within(0.0001f),
+                stableId);
+            Assert.That(importer, Is.Not.Null, stableId);
+            Assert.That(importer.sRGBTexture, Is.True, stableId);
+            Assert.That(importer.mipmapEnabled, Is.True, stableId);
+            Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Repeat), stableId);
         }
     }
 }

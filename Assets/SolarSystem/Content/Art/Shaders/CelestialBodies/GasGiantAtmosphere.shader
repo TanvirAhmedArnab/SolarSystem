@@ -1,4 +1,4 @@
-Shader "SolarSystem/Celestial/Gas Giant Atmosphere"
+Shader "SolarSystem/Celestial/Giant Planet Atmosphere"
 {
     Properties
     {
@@ -19,7 +19,7 @@ Shader "SolarSystem/Celestial/Gas Giant Atmosphere"
 
         Pass
         {
-            Name "GasGiantAtmosphere"
+            Name "GiantPlanetAtmosphere"
             Tags { "LightMode" = "UniversalForward" }
 
             Blend One OneMinusSrcAlpha

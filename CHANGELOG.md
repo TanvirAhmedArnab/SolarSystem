@@ -110,6 +110,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Edit Mode Mars model/material/import contracts and real-scene Play Mode
   coverage for proportional scale, hierarchy, focus, Sun-origin lighting,
   renderer policy, and simulation-time state preservation.
+- Reusable immutable ice-giant authoring, runtime model, and cached
+  property-block view for Uranus and Neptune.
+- Distinct anchored Uranus and Neptune surface/atmosphere assets using shared
+  scientifically neutral giant-planet shaders, restrained source-derived
+  detail, signed absolute-time phase, and Sun-aware nightside readability.
+- Edit Mode ice-giant model/material/import contracts and real-scene Play Mode
+  coverage for exact proportional radii, source identity, shell hierarchy,
+  axial tilts, retrograde/prograde direction, pause, focus, Sun-origin
+  lighting, renderer policy, and state preservation.
 
 ### Changed
 
@@ -162,6 +171,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   and restrained atmosphere shell while retaining both approved texture
   derivatives, exact proportional radius, analytical orbit, signed retrograde
   rotation, axial tilt, selection, focus, UI, audio, and comparison behavior.
+- Replaced the generic Lit Uranus and Neptune materials with distinct
+  reusable ice-giant hero treatments while preserving approved texture
+  pixels, scientific data, exact proportional radii, analytical orbits,
+  axial tilts, and signed rotations.
+- Generalized the project-owned gas-giant shader menu identity to
+  `Giant Planet` so the shared implementation accurately covers both gas and
+  ice giants without changing established shader asset GUIDs.
 - Suppressed cached orbit guides only during close camera focus and restored
   them in free flight so overview geometry cannot obscure hero views.
 - Paused simulation and temporarily locked selection, time, and navigation

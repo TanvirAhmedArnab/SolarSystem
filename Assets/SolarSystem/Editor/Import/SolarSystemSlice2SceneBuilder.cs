@@ -34,6 +34,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string MarsStableId = "mars";
         private const string JupiterStableId = "jupiter";
         private const string SaturnStableId = "saturn";
+        private const string UranusStableId = "uranus";
+        private const string NeptuneStableId = "neptune";
         private const float EarthAmbienceMinimumDistance = 1.5f;
         private const float EarthAmbienceMaximumDistance = 12f;
         private const float SolarRadialIntensityCandela = 165000f;
@@ -71,6 +73,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialBodyView marsView = null;
             CelestialBodyView jupiterView = null;
             CelestialBodyView saturnView = null;
+            CelestialBodyView uranusView = null;
+            CelestialBodyView neptuneView = null;
             foreach (SolarSystemSlice2BodyContent body in content.Bodies)
             {
                 bool isSaturn = body.Definition.StableId == "saturn";
@@ -104,6 +108,14 @@ namespace Tanvir.SolarSystem.Editor.Import
                 else if (body.Definition.StableId == SaturnStableId)
                 {
                     saturnView = view;
+                }
+                else if (body.Definition.StableId == UranusStableId)
+                {
+                    uranusView = view;
+                }
+                else if (body.Definition.StableId == NeptuneStableId)
+                {
+                    neptuneView = view;
                 }
 
                 if (body.Definition.HasOrbit)
@@ -147,6 +159,16 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Saturn.");
             }
 
+            if (uranusView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Uranus.");
+            }
+
+            if (neptuneView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Neptune.");
+            }
+
             CreateSunVisual(sunView, content);
             CreateLayeredBodyVisual(
                 earthView,
@@ -176,6 +198,16 @@ namespace Tanvir.SolarSystem.Editor.Import
                 content.SaturnVisualDefinition,
                 content.SaturnAtmosphereMaterial,
                 "Saturn");
+            CreateIceGiantVisual(
+                uranusView,
+                content.UranusVisualDefinition,
+                content.UranusAtmosphereMaterial,
+                "Uranus");
+            CreateIceGiantVisual(
+                neptuneView,
+                content.NeptuneVisualDefinition,
+                content.NeptuneAtmosphereMaterial,
+                "Neptune");
             ConfigureSimulationComposition(
                 composition,
                 controller,
@@ -442,6 +474,51 @@ namespace Tanvir.SolarSystem.Editor.Import
             var serializedBody = new SerializedObject(body);
             serializedBody.FindProperty("gasGiantVisualView").objectReferenceValue =
                 gasGiantView;
+            serializedBody.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void CreateIceGiantVisual(
+            CelestialBodyView body,
+            IceGiantVisualDefinition definition,
+            Material atmosphereMaterial,
+            string displayName)
+        {
+            if (definition == null || atmosphereMaterial == null)
+            {
+                throw new InvalidOperationException(
+                    $"{displayName} ice-giant presentation assets are incomplete.");
+            }
+
+            Transform visualRoot = body.VisualRoot;
+            MeshRenderer surfaceRenderer =
+                visualRoot.GetComponent<MeshRenderer>();
+            surfaceRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            surfaceRenderer.receiveShadows = false;
+            surfaceRenderer.lightProbeUsage = LightProbeUsage.Off;
+            surfaceRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+
+            Transform atmosphereShell = CreateLayerSphere(
+                "Atmosphere Layer",
+                visualRoot,
+                atmosphereMaterial,
+                definition.AtmosphereShellRadiusMultiplier);
+
+            IceGiantVisualView iceGiantView =
+                body.gameObject.AddComponent<IceGiantVisualView>();
+            var serializedIceGiant = new SerializedObject(iceGiantView);
+            serializedIceGiant.FindProperty("definition").objectReferenceValue =
+                definition;
+            serializedIceGiant.FindProperty("atmosphereShell").objectReferenceValue =
+                atmosphereShell;
+            serializedIceGiant.FindProperty("surfaceRenderer").objectReferenceValue =
+                surfaceRenderer;
+            serializedIceGiant.FindProperty("atmosphereRenderer").objectReferenceValue =
+                atmosphereShell.GetComponent<MeshRenderer>();
+            serializedIceGiant.ApplyModifiedPropertiesWithoutUndo();
+
+            var serializedBody = new SerializedObject(body);
+            serializedBody.FindProperty("iceGiantVisualView").objectReferenceValue =
+                iceGiantView;
             serializedBody.ApplyModifiedPropertiesWithoutUndo();
         }
 

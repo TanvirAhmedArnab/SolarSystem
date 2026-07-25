@@ -21,6 +21,9 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         /// <summary>Restrained atmospheric limb intensity.</summary>
         public const float AtmosphereIntensity = 0.2f;
 
+        /// <summary>Anchored-color visibility floor on Jupiter's unlit hemisphere.</summary>
+        public const float NightsideReadability = 0.012f;
+
         /// <summary>Saturn atmosphere-shell radius relative to its physical surface.</summary>
         public const float SaturnAtmosphereShellRadiusMultiplier = 1.008f;
 
@@ -38,5 +41,8 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Saturn's restrained atmospheric limb intensity.</summary>
         public const float SaturnAtmosphereIntensity = 0.14f;
+
+        /// <summary>Anchored-color visibility floor on Saturn's unlit hemisphere.</summary>
+        public const float SaturnNightsideReadability = 0.01f;
     }
 }

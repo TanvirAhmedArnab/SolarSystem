@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.15.0  
+**Version:** 0.16.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -42,6 +42,7 @@
 | 0.13.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Saturn hero treatment with readable cream bands, a restrained limb, and two-sided Sun-aware rings while preserving approved scale and scientific motion | Product behavior implemented and validated |
 | 0.14.0 | 2026-07-24 | Codex, for Tanvir | Implemented a cloud-covered Venus hero treatment with warm source-grounded identity, deterministic retrograde cloud presentation, a restrained Sun-aware limb, and explicit atmospheric-simulation limits | Product behavior implemented and validated |
 | 0.15.0 | 2026-07-24 | Codex, for Tanvir | Implemented a Mars hero treatment with anchored source identity, restrained source-derived rocky relief, a thin Sun-aware atmospheric limb, and explicit color and atmosphere limitations | Product behavior implemented and validated |
+| 0.16.0 | 2026-07-24 | Codex, for Tanvir | Implemented distinct Uranus and Neptune hero treatments with anchored source identity, restrained Sun-aware limbs, deterministic signed presentation detail, nightside readability, and explicit non-fluid-simulation limits | Product behavior implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -443,6 +444,18 @@ The treatment does not alter Mars's proportional radius, analytical orbit,
 surface map uses enhanced presentation color, while the `1.008` atmosphere
 shell is a readability layer rather than a physical atmospheric boundary.
 
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Uranus and Neptune now present as
+distinct ice giants rather than generic smooth spheres. Each retains its
+approved anchored source map, exact proportional radius, deterministic
+analytical orbit, axial tilt, and signed sidereal rotation. Uranus remains
+pale cyan with very low-contrast detail and retrograde motion; Neptune remains
+a controlled deeper blue with slightly stronger source-derived band response.
+Both add one thin Sun-aware atmosphere shell and a small source-color
+readability floor restricted to the unlit hemisphere. The detail phase is a
+bounded presentation treatment tied to signed rotation, not a model or claim
+of measured winds, fluid dynamics, atmospheric chemistry, exact scattering,
+or date-specific appearance.
+
 ### 11.4 Asset provenance
 
 Every external asset requires a recorded source URL, creator or organization, license, attribution text, download date, and any modification notes. “Free” is not an acceptable license description. Unverified assets cannot enter a public build.
@@ -602,9 +615,8 @@ Each rule should have one authoritative owner document; other documents link to 
 
 **Current progress:** The Sun, eight planets, and Earth's Moon are populated as
 the deterministic planetary baseline. Major moons beyond Earth's Moon,
-unique visual layers beyond the representative Earth, Sun, Jupiter, Saturn,
-and Venus treatments,
-labels/navigation, cinematic routing, and accessibility completion remain.
+final Mercury and Moon hero fidelity, labels/navigation, cinematic routing,
+and accessibility completion remain.
 The licensed music, Sun/Earth ambience, and
 event-driven UI feedback baseline is implemented; final listening/mix approval
 and a settings UI remain.

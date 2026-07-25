@@ -336,6 +336,14 @@ The literal view renders relative to Earth as its temporary float-space origin.
 This precision strategy changes only the presentation coordinate origin; it
 does not alter the physical positions or the displayed Sun-Earth separation.
 
+Uranus and Neptune retain the radii, orbits, axial tilts, and signed rotation
+periods recorded above. Their hero materials add restrained source-derived
+relief, a tiny signed presentation-detail phase, one exaggerated atmosphere
+shell, and a live-Sun nightside readability floor. None of those rendering
+parameters enters the scientific model or represents measured wind velocity,
+atmospheric-fluid motion, chemistry, physical scale height, or date-exact
+weather.
+
 ## Known Scientific Limitations
 
 - Orbital elements are fixed at their authoring epoch; secular element rates and perturbations are not evaluated.
@@ -349,5 +357,9 @@ does not alter the physical positions or the displayed Sun-Earth separation.
 - Venus and Uranus use signed negative sidereal periods to preserve retrograde
   spin; the visual axial-tilt values are documented presentation conventions,
   not a full IAU pole-orientation model.
+- Uranus and Neptune are rendered as spheres from volumetric mean radii. Their
+  atmosphere shells, source-derived relief, shifted detail samples, and
+  nightside visibility are disclosed presentation treatments rather than
+  physical atmosphere or fluid simulations.
 - The Sun uses one adopted rotation period even though it rotates differentially by latitude.
 - The simulation epoch is an educational reference state, not the current real-world date.

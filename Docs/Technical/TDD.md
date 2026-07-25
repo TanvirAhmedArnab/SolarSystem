@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Earth, Sun, Jupiter, Saturn, Venus, and Mars hero representative slices validated  
-**Version:** 0.20.0  
+**Document status:** Living technical authority; Earth, Sun, Jupiter, Saturn, Venus, Mars, Uranus, and Neptune hero representative slices validated  
+**Version:** 0.21.0  
 **Last updated:** 2026-07-24  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -46,6 +46,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.18.0 | 2026-07-24 | Codex, for Tanvir | Extended the reusable gas-giant path to Saturn and added a project-owned one-sample, two-sided, Sun-aware ring shader with deterministic authoring and complete asset/scene regression coverage | Saturn hero architecture implemented and validated |
 | 0.19.0 | 2026-07-24 | Codex, for Tanvir | Extended the reusable layered-body path to Venus, corrected layer motion to absolute signed simulation time, and added an opaque anchored cloud deck with bounded atmosphere transparency and complete asset/scene regression coverage | Venus atmosphere architecture implemented and validated |
 | 0.20.0 | 2026-07-24 | Codex, for Tanvir | Generalized the layered-body path to explicit atmosphere-only composition and added an anchored rocky-surface shader, thin Mars limb, reproducible assets/scene wiring, and complete regression coverage | Mars hero architecture implemented and validated |
+| 0.21.0 | 2026-07-24 | Codex, for Tanvir | Added reusable ice-giant authoring/model/view architecture, generalized the giant-planet shader identity, distinct Uranus/Neptune material contracts, Sun-aware nightside readability, reproducible scene wiring, and complete regression coverage | Uranus and Neptune hero architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -775,6 +776,30 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   texture sample, premultiplied blending, two-sided live-Sun response, no
   shadows, and no light/reflection probes. Ring UVs remain radial; geometry and
   tilt are inherited from the authored Saturn visual hierarchy.
+- `IceGiantVisualDefinition` stores one stable body ID, reviewed atmosphere
+  shell scale, and bounded presentation-detail cycles per signed rotation.
+  Startup converts it to immutable `IceGiantVisualModel` state.
+  `IceGiantVisualView` evaluates the wrapping phase from authoritative absolute
+  simulation time and the body's signed sidereal period, then writes it through
+  one cached `MaterialPropertyBlock`. It does not accumulate frame delta,
+  instantiate materials, or allocate during steady-state updates.
+- Uranus and Neptune share the project-owned `Giant Planet Surface` and
+  `Giant Planet Atmosphere` shaders with Jupiter and Saturn but own separate
+  immutable authoring assets and materials. The surface keeps each approved
+  source texture anchored, derives restrained latitudinal relief from source
+  luminance, and limits the shifted sample contribution to `0.012` for Uranus
+  and `0.035` for Neptune. A live-Sun nightside mask applies small anchored
+  color readability floors of `0.035` and `0.04`; it does not add a second
+  light, flatten the terminator, or affect scientific state.
+- Uranus uses a `1.009` atmosphere shell, `0.0002` presentation-detail cycles
+  per signed rotation, and `0.12` rim intensity. Neptune uses a `1.01` shell,
+  `0.0009` cycles, and `0.17` rim intensity. Uranus's negative source rotation
+  period reverses its presentation phase; Neptune remains prograde. These
+  constants are visual readability parameters, not wind speeds, fluid
+  velocities, scale heights, atmospheric boundaries, or photometric models.
+  All four giant-planet surfaces and shells cast no shadows and use no light
+  or reflection probes; only the atmosphere shells add bounded transparent
+  overdraw.
 - `CelestialOrbitPathVisibilityController` suppresses cached overview paths
   during `FocusTransition` and `Focused`, then restores them in free flight.
   It changes renderer visibility only; geometry, scale-mode data, and
@@ -1022,8 +1047,21 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   axial tilt, selection, focus, and state restoration remain unchanged.
 - Venus atmosphere evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Venus Atmosphere Rendering Validation.md`.
-- The broader proposed moon set, unique atmosphere/advanced shaders for other
-  bodies, particle-scale ring simulation, labels/navigation, player-facing audio
+- **[IMPLEMENTED REPRESENTATIVE SLICE]** Mars now uses atmosphere-only layered
+  composition with an anchored rocky surface and one thin Sun-aware limb.
+  Scientific scale, orbit, axial tilt, signed rotation, selection, focus, and
+  time state remain unchanged.
+- Mars hero evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Mars Hero Rendering Validation.md`.
+- **[IMPLEMENTED REPRESENTATIVE SLICE]** Uranus and Neptune now use reusable
+  immutable ice-giant authoring/model/view components, distinct anchored
+  materials, signed absolute-time detail, controlled nightside readability,
+  and one restrained Sun-aware shell each. Their exact radii, orbits, axial
+  tilts, and signed rotations remain authoritative.
+- Ice-giant evidence is recorded in
+  `Docs/ProjectManagement/Slice 4 Ice Giant Hero Rendering Validation.md`.
+- The broader proposed moon set, final Mercury/Moon hero fidelity,
+  particle-scale ring simulation, labels/navigation, player-facing audio
   settings, final audio mix approval, and accessibility options remain Slice 4
   work.
 
@@ -1090,6 +1128,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-019 | 2026-07-24 | Extend the gas-giant contract to Saturn and render its generated annulus with anchored radial alpha, one-sample premultiplied transparency, symmetric live-Sun response, and no shadow/probe cost | Implemented candidate | Tanvir | Distinct Saturn identity and readable rings without duplicating runtime architecture or claiming particle-scale/self-shadow photometry |
 | TDD-020 | 2026-07-24 | Reuse the layered-body contract for Venus, anchor an opaque source cloud deck above the hidden surface, derive retrograde shell motion from absolute signed simulation time, and bound transparency to one restrained atmosphere rim | Implemented candidate | Tanvir | Recognizable cloud-covered Venus without false surface exposure, wrapped-angle discontinuities, duplicated adapters, or unbounded overdraw |
 | TDD-021 | 2026-07-24 | Extend the layered-body contract with explicit atmosphere-only composition, prove it on Mars with an anchored source-derived rocky surface and one thin Sun-aware limb, and retain exact scientific transform state | Implemented candidate | Tanvir | Reuses the validated composition boundary without inventing a Mars cloud layer or introducing a one-body runtime adapter |
+| TDD-022 | 2026-07-24 | Use a dedicated immutable ice-giant definition/model/view path for Uranus and Neptune while sharing scientifically neutral giant-planet shaders; preserve anchored sources and signed rotation, and limit nightside fill and moving detail to disclosed presentation values | Implemented candidate | Tanvir | Distinct reusable ice-giant semantics without duplicating shaders, changing scientific state, or claiming wind/fluid simulation |
 
 ## 19. Definition of Done for TDD Version 1.0
 

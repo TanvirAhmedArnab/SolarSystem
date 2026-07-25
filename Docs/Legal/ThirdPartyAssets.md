@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.9.0  
+**Version:** 0.10.0  
 **Last reviewed:** 2026-07-24
 
 **Live-source verification:** Rechecked 2026-07-22 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records.
@@ -200,6 +200,39 @@ material, tests, and reproducible scene wiring are project-authored. They add
 no third-party media or license and do not change the existing attribution
 obligation for `TEX-SSS-010`.
 
+### Active Uranus and Neptune hero-rendering records
+
+- Uranus source ID: `TEX-SSS-014`.
+- Uranus source:
+  `SourceAssets/ThirdParty/Textures/SolarSystemScope/2k_uranus.jpg`.
+- Uranus Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Uranus/T_Uranus_Surface_2K.jpg`.
+- Uranus active materials: `M_Uranus.mat` and project-authored
+  `M_Uranus_Atmosphere.mat`.
+- Uranus source and derivative SHA-256:
+  `D15239D46F82D3EA13D2B260B5B29B2A382F42F2916DAE0694D0387B1204A09D`.
+- Neptune source ID: `TEX-SSS-015`.
+- Neptune source:
+  `SourceAssets/ThirdParty/Textures/SolarSystemScope/2k_neptune.jpg`.
+- Neptune Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Neptune/T_Neptune_Surface_2K.jpg`.
+- Neptune active materials: `M_Neptune.mat` and project-authored
+  `M_Neptune_Atmosphere.mat`.
+- Neptune source and derivative SHA-256:
+  `CB42EA82709741D28B0AF44D8B283CBC6DBD0C521A7F0E1E1E010ADE00977DF6`.
+- License: Solar System Scope, CC BY 4.0; release attribution remains required.
+- Modification status: all source and derivative hashes match. Texture pixels
+  are unchanged. Project-authored shaders apply reviewed tints, restrained
+  source-derived relief, bounded shifted-sample detail, a live-Sun nightside
+  readability mask, and atmosphere colors without introducing another media
+  source.
+
+The ice-giant definition/model/view architecture, generic giant-planet shader
+extension, atmosphere materials, tests, and reproducible scene wiring are
+project-authored. They add no third-party media or license and do not change
+the existing CC BY 4.0 attribution obligations for `TEX-SSS-014` or
+`TEX-SSS-015`.
+
 ### Active eight-planet material records
 
 The baseline activates the following byte-identical Unity derivatives from the
@@ -219,8 +252,8 @@ already approved Solar System Scope CC BY 4.0 working set:
 | TEX-SSS-011 | Jupiter surface | `CelestialBodies/Jupiter/T_Jupiter_Surface_2K.jpg` | `M_Jupiter.mat` |
 | TEX-SSS-012 | Saturn surface | `CelestialBodies/Saturn/T_Saturn_Surface_2K.jpg` | `M_Saturn.mat` |
 | TEX-SSS-013 | Saturn ring alpha | `CelestialBodies/Saturn/T_Saturn_RingsAlpha_2K.png` | `M_Saturn_Rings.mat` |
-| TEX-SSS-014 | Uranus surface | `CelestialBodies/Uranus/T_Uranus_Surface_2K.jpg` | `M_Uranus.mat` |
-| TEX-SSS-015 | Neptune surface | `CelestialBodies/Neptune/T_Neptune_Surface_2K.jpg` | `M_Neptune.mat` |
+| TEX-SSS-014 | Uranus surface | `CelestialBodies/Uranus/T_Uranus_Surface_2K.jpg` | `M_Uranus.mat`, `M_Uranus_Atmosphere.mat` |
+| TEX-SSS-015 | Neptune surface | `CelestialBodies/Neptune/T_Neptune_Surface_2K.jpg` | `M_Neptune.mat`, `M_Neptune_Atmosphere.mat` |
 
 The generated `SM_Saturn_Rings.asset` contains project-authored geometry only;
 its appearance remains a derivative use of TEX-SSS-013 and therefore retains

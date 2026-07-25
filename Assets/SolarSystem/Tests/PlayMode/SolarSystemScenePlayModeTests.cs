@@ -826,10 +826,10 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                     .Within(0.0001f));
             Assert.That(
                 gasGiant.SurfaceRenderer.sharedMaterial.shader.name,
-                Is.EqualTo("SolarSystem/Celestial/Gas Giant Surface"));
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Surface"));
             Assert.That(
                 gasGiant.AtmosphereRenderer.sharedMaterial.shader.name,
-                Is.EqualTo("SolarSystem/Celestial/Gas Giant Atmosphere"));
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Atmosphere"));
             Assert.That(
                 gasGiant.SurfaceRenderer.shadowCastingMode,
                 Is.EqualTo(ShadowCastingMode.Off));
@@ -992,6 +992,158 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 interaction.CameraController.Mode,
                 Is.EqualTo(SolarSystemCameraMode.FreeFlight));
             AssertReceivesSunOriginLight(radialLight, sun, saturn);
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_UsesDistinctDeterministicIceGiantHeroes()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "uranus",
+                    out CelestialBodyView uranus),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "neptune",
+                    out CelestialBodyView neptune),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+
+            IceGiantVisualView uranusVisual = uranus.IceGiantVisualView;
+            IceGiantVisualView neptuneVisual = neptune.IceGiantVisualView;
+            Assert.That(uranusVisual, Is.Not.Null);
+            Assert.That(neptuneVisual, Is.Not.Null);
+            Assert.That(uranusVisual.IsInitialized, Is.True);
+            Assert.That(neptuneVisual.IsInitialized, Is.True);
+            Assert.That(uranus.GasGiantVisualView, Is.Null);
+            Assert.That(neptune.GasGiantVisualView, Is.Null);
+            Assert.That(uranus.Definition.RotationPeriodSeconds, Is.LessThan(0d));
+            Assert.That(neptune.Definition.RotationPeriodSeconds, Is.GreaterThan(0d));
+            Assert.That(uranus.Definition.AxialTiltDeg, Is.EqualTo(97.77d));
+            Assert.That(neptune.Definition.AxialTiltDeg, Is.EqualTo(28d));
+
+            Assert.That(
+                uranusVisual.AtmosphereShell.parent,
+                Is.SameAs(uranus.VisualRoot));
+            Assert.That(
+                neptuneVisual.AtmosphereShell.parent,
+                Is.SameAs(neptune.VisualRoot));
+            Assert.That(
+                uranusVisual.AtmosphereShell.localScale.x,
+                Is.EqualTo(
+                    IceGiantVisualRenderingContract
+                        .UranusAtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                neptuneVisual.AtmosphereShell.localScale.x,
+                Is.EqualTo(
+                    IceGiantVisualRenderingContract
+                        .NeptuneAtmosphereShellRadiusMultiplier)
+                    .Within(0.0001f));
+            Assert.That(
+                uranusVisual.SurfaceRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Surface"));
+            Assert.That(
+                neptuneVisual.SurfaceRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Surface"));
+            Assert.That(
+                uranusVisual.AtmosphereRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Atmosphere"));
+            Assert.That(
+                neptuneVisual.AtmosphereRenderer.sharedMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Giant Planet Atmosphere"));
+            Assert.That(
+                uranusVisual.SurfaceRenderer.sharedMaterial,
+                Is.Not.SameAs(neptuneVisual.SurfaceRenderer.sharedMaterial));
+            Assert.That(
+                uranusVisual.AtmosphereRenderer.sharedMaterial,
+                Is.Not.SameAs(neptuneVisual.AtmosphereRenderer.sharedMaterial));
+            Assert.That(
+                uranus.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(25362f / 6371.0084f).Within(0.001f));
+            Assert.That(
+                neptune.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(24622f / 6371.0084f).Within(0.001f));
+
+            Light radialLight =
+                GameObject.Find("Solar Radial Light")?.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            AssertReceivesSunOriginLight(radialLight, sun, uranus);
+            AssertReceivesSunOriginLight(radialLight, sun, neptune);
+
+            float uranusBefore = uranusVisual.DetailPhase;
+            float neptuneBefore = neptuneVisual.DetailPhase;
+            yield return new WaitForSecondsRealtime(0.25f);
+            Assert.That(
+                SignedPhaseDelta(uranusBefore, uranusVisual.DetailPhase),
+                Is.LessThan(-0.00001f),
+                "Uranus detail must follow its authoritative retrograde sign.");
+            Assert.That(
+                SignedPhaseDelta(neptuneBefore, neptuneVisual.DetailPhase),
+                Is.GreaterThan(0.00001f),
+                "Neptune detail must follow its authoritative prograde sign.");
+
+            simulation.SimulationController.SetPaused(true);
+            yield return null;
+            float pausedUranus = uranusVisual.DetailPhase;
+            float pausedNeptune = neptuneVisual.DetailPhase;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(
+                PhaseDistance(pausedUranus, uranusVisual.DetailPhase),
+                Is.LessThan(0.000001f));
+            Assert.That(
+                PhaseDistance(pausedNeptune, neptuneVisual.DetailPhase),
+                Is.LessThan(0.000001f));
+
+            interaction.SelectionController.Select(uranus);
+            interaction.CameraController.Focus(uranus);
+            yield return WaitUntilFocused(interaction.CameraController);
+            yield return null;
+            Assert.That(uranusVisual.SurfaceRenderer.enabled, Is.True);
+            Assert.That(uranusVisual.AtmosphereRenderer.enabled, Is.True);
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+
+            interaction.SelectionController.Select(neptune);
+            interaction.CameraController.Focus(neptune);
+            yield return WaitUntilFocused(interaction.CameraController);
+            yield return null;
+            Assert.That(neptuneVisual.SurfaceRenderer.enabled, Is.True);
+            Assert.That(neptuneVisual.AtmosphereRenderer.enabled, Is.True);
+            Assert.That(
+                simulation.SimulationController.ClockSnapshot.IsPaused,
+                Is.True);
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+
+            var properties = new MaterialPropertyBlock();
+            uranusVisual.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_SimulationPhase")),
+                Is.EqualTo(uranusVisual.DetailPhase).Within(0.000001f));
+            properties.Clear();
+            neptuneVisual.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_SimulationPhase")),
+                Is.EqualTo(neptuneVisual.DetailPhase).Within(0.000001f));
         }
 
         [UnityTest]
@@ -1237,6 +1389,11 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         private static float PhaseDistance(float first, float second)
         {
             return Mathf.Abs(Mathf.DeltaAngle(first * 360f, second * 360f)) / 360f;
+        }
+
+        private static float SignedPhaseDelta(float first, float second)
+        {
+            return Mathf.DeltaAngle(first * 360f, second * 360f) / 360f;
         }
 
         private static IEnumerator WaitUntilFocused(

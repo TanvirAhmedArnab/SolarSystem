@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, Earth, Sun, Jupiter, Saturn, Venus, and Mars hero foundations  
-**Version:** 0.16.0  
+**Status:** Living authority with validated visual, audio, guided-scale, Earth, Sun, Jupiter, Saturn, Venus, Mars, Uranus, and Neptune hero foundations  
+**Version:** 0.17.0  
 **Last updated:** 2026-07-24  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -243,12 +243,30 @@ USGS near-global browse below a dense amber atmosphere. Surface detail remains s
 ### Uranus
 Pale cyan-blue, low-contrast bands, never neon. Rings remain conditional.
 
-The baseline uses the audited 2K surface map with `0.28` smoothness.
+The validated hero treatment keeps the audited 2K source map anchored, uses
+`0.28` smoothness, `0.07` source-derived band relief, and only `0.012`
+moving-detail contribution. A pale-cyan atmosphere shell at `1.009` surface
+radius uses `0.12` limb intensity. A `0.035` source-color floor applies only
+on the unlit hemisphere so close focus preserves identity without flattening
+the Sun-facing terminator. Absolute-time detail follows Uranus's signed
+retrograde rotation. Rings remain conditional and are not invented by this
+slice.
 
 ### Neptune
 Controlled deep blue with subtle bands; nightside must not become electric blue.
 
-The baseline uses the audited 2K surface map with `0.30` smoothness.
+The validated hero treatment keeps the distinct audited 2K source map
+anchored, uses `0.30` smoothness, `0.16` source-derived band relief, and a
+bounded `0.035` moving-detail contribution. A deeper-blue atmosphere shell at
+`1.01` surface radius uses `0.17` limb intensity. A `0.04` anchored-color
+floor applies only on the unlit hemisphere; live review confirms that it
+preserves a dark blue nightside rather than producing electric-blue emission.
+Absolute-time detail follows Neptune's prograde signed rotation.
+
+For both ice giants, the shell thickness, relief, moving sample, tint, and
+nightside floor are presentation controls. They do not claim measured wind
+speed, fluid simulation, atmospheric chemistry, physical scale height,
+volumetric scattering, exact photometry, or date-specific appearance.
 
 ### Triton
 USGS color browse mosaic with pale pink, cream, and gray. Disclose incomplete and gap-filled regions.
@@ -394,7 +412,8 @@ An asset is ready only when:
 2. **[OPEN] Icon family:** project-authored or compatible open-license set.
 3. **[OPEN] Moon upgrades:** identify browse maps needing higher resolution after hero shots.
 4. **[OPEN] Remaining shader fidelity:** profile the validated Earth, Sun,
-   Jupiter, Saturn, Venus, and Mars patterns, then prioritize remaining bodies
+   Jupiter, Saturn, Venus, Mars, Uranus, and Neptune patterns, then prioritize
+   Mercury and Moon
    against release screenshots and measured screen-space need.
 5. **[OPEN] Audio mix:** approve music, Sun, Earth, and UI loudness after in-scene audition.
 
@@ -402,6 +421,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.17.0 | 2026-07-24 | Added distinct anchored Uranus/Neptune treatments, restrained source-derived detail, signed deterministic presentation motion, thin Sun-aware limbs, controlled nightside readability, and explicit non-fluid-simulation limits | Ice-giant hero slice implemented and visually validated |
 | 0.16.0 | 2026-07-24 | Added Mars's anchored rocky surface, restrained source-derived relief, atmosphere-only layered composition, thin Sun-aware limb, and explicit color/atmosphere limitations | Mars hero slice implemented and visually validated |
 | 0.15.0 | 2026-07-24 | Added Venus's anchored opaque cloud deck, deterministic retrograde cloud presentation, restrained Sun-aware limb, bounded transparency, and explicit scientific limitations | Venus atmosphere slice implemented and visually validated |
 | 0.14.0 | 2026-07-24 | Added Saturn's anchored gas-giant surface, restrained limb, and two-sided Sun-aware radial ring treatment with explicit scientific limitations | Saturn hero slice implemented and visually validated |
