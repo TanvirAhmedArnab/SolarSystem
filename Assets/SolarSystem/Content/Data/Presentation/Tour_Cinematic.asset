@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ade05f0a129aeb40957d7711711977c, type: 3}
+  m_Name: Tour_Cinematic
+  m_EditorClassIdentifier: Tanvir.SolarSystem.Runtime::Tanvir.SolarSystem.Authoring.CinematicTourDefinition
+  chapters:
+  - stableId: sun
+    title: Our Star
+    subtitle: The Sun
+    description: The Sun contains almost all of the Solar System's mass and anchors
+      every planetary orbit shown here.
+    targetIds:
+    - sun
+    durationSeconds: 10
+    framingPadding: 1.35
+    framingDirection: {x: 0.12, y: 0.22, z: -1}
+  - stableId: earth-moon
+    title: A Paired World
+    subtitle: Earth and Moon
+    description: 'Earth and its Moon move as a hierarchy: the Moon follows Earth
+      while both continue their journey around the Sun.'
+    targetIds:
+    - earth
+    - moon
+    durationSeconds: 12
+    framingPadding: 1.45
+    framingDirection: {x: 0.32, y: 0.24, z: -1}
+  - stableId: jupiter-system
+    title: The Giant System
+    subtitle: Jupiter and the Galilean Moons
+    description: "Jupiter is presented with Io, Europa, Ganymede, and Callisto\u2014four
+      distinct worlds orbiting the largest planet."
+    targetIds:
+    - jupiter
+    - io
+    - europa
+    - ganymede
+    - callisto
+    durationSeconds: 14
+    framingPadding: 1.25
+    framingDirection: {x: -0.3, y: 0.2, z: -1}
+  - stableId: saturn
+    title: A World of Rings
+    subtitle: Saturn
+    description: Saturn's broad ring plane makes the planet one of the Solar System's
+      clearest examples of orbital structure at a glance.
+    targetIds:
+    - saturn
+    durationSeconds: 12
+    framingPadding: 2.15
+    framingDirection: {x: 0.38, y: 0.38, z: -1}
+  - stableId: outer-system
+    title: The Distant Frontier
+    subtitle: Uranus, Neptune, and Triton
+    description: The tour closes among the ice giants and Neptune's retrograde moon
+      Triton, at the edge of the authored planetary system.
+    targetIds:
+    - uranus
+    - neptune
+    - triton
+    durationSeconds: 12
+    framingPadding: 1.3
+    framingDirection: {x: -0.24, y: 0.28, z: -1}

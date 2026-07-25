@@ -10,7 +10,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string InputFolder = "Assets/SolarSystem/Settings/Input";
         private const string InputAssetPath = InputFolder + "/IA_SolarSystem.asset";
         private const string AssetName = "IA_SolarSystem";
-        private const string ContractLabel = "SolarSystemInputContract-v4";
+        private const string ContractLabel = "SolarSystemInputContract-v5";
 
         internal static InputActionAsset Build()
         {
@@ -30,16 +30,28 @@ namespace Tanvir.SolarSystem.Editor.Import
                 return actions;
             }
 
-            while (actions.actionMaps.Count > 0)
+            actions.name = AssetName;
+            InputActionMap explorer = actions.FindActionMap("Explorer", false);
+            if (!HasRequiredBaselineActions(explorer))
             {
-                actions.RemoveActionMap(actions.actionMaps[0]);
+                while (actions.actionMaps.Count > 0)
+                {
+                    actions.RemoveActionMap(actions.actionMaps[0]);
+                }
+
+                explorer = actions.AddActionMap("Explorer");
+                AddMovementActions(explorer);
+                AddPointerActions(explorer);
+                AddDiscreteActions(explorer);
+            }
+            else if (explorer.FindAction("CinematicTour", false) == null)
+            {
+                explorer.AddAction(
+                    "CinematicTour",
+                    InputActionType.Button,
+                    "<Keyboard>/t");
             }
 
-            actions.name = AssetName;
-            InputActionMap explorer = actions.AddActionMap("Explorer");
-            AddMovementActions(explorer);
-            AddPointerActions(explorer);
-            AddDiscreteActions(explorer);
             AssetDatabase.SetLabels(actions, new[] { ContractLabel });
             EditorUtility.SetDirty(actions);
             AssetDatabase.SaveAssetIfDirty(actions);
@@ -58,6 +70,44 @@ namespace Tanvir.SolarSystem.Editor.Import
             }
 
             return false;
+        }
+
+        private static bool HasRequiredBaselineActions(InputActionMap explorer)
+        {
+            if (explorer == null)
+            {
+                return false;
+            }
+
+            string[] requiredActions =
+            {
+                "Move",
+                "Elevate",
+                "Boost",
+                "Look",
+                "LookModifier",
+                "PointerPosition",
+                "Zoom",
+                "Select",
+                "Focus",
+                "Cancel",
+                "TogglePause",
+                "ScaleComparison",
+                "ToggleNavigator",
+                "ToggleWorldLabels",
+                "DecreaseTimeSpeed",
+                "IncreaseTimeSpeed",
+            };
+
+            foreach (string actionName in requiredActions)
+            {
+                if (explorer.FindAction(actionName, false) == null)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static void AddMovementActions(InputActionMap explorer)
@@ -112,6 +162,10 @@ namespace Tanvir.SolarSystem.Editor.Import
                 "ScaleComparison",
                 InputActionType.Button,
                 "<Keyboard>/c");
+            explorer.AddAction(
+                "CinematicTour",
+                InputActionType.Button,
+                "<Keyboard>/t");
             explorer.AddAction(
                 "ToggleNavigator",
                 InputActionType.Button,

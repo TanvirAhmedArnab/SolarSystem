@@ -90,6 +90,17 @@
             </ui:VisualElement>
         </ui:VisualElement>
 
+        <ui:VisualElement name="cinematic-tour-panel" class="cinematic-tour-panel is-hidden">
+            <ui:Label name="tour-progress" text="CINEMATIC TOUR / CHAPTER 1 OF 5" class="tour-progress" />
+            <ui:Label name="tour-title" text="OUR STAR" class="tour-title" />
+            <ui:Label name="tour-subtitle" text="THE SUN" class="tour-subtitle" />
+            <ui:Label name="tour-description" text="" class="tour-description" />
+            <ui:VisualElement class="tour-controls">
+                <ui:Button name="tour-next-button" text="T  NEXT" class="tour-button tour-next-button" />
+                <ui:Button name="tour-exit-button" text="ESC  EXIT" class="tour-button tour-exit-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
         <ui:VisualElement name="hint-panel" class="hint-panel" picking-mode="Ignore">
             <ui:Label text="QUICK CONTROLS" class="hint-title" />
             <ui:VisualElement name="control-hints" class="control-hints">
@@ -116,6 +127,10 @@
                 <ui:VisualElement class="control-group">
                     <ui:Label name="control-key-compare" text="C" class="control-key key-compare" />
                     <ui:Label text="COMPARE" class="control-action" />
+                </ui:VisualElement>
+                <ui:VisualElement class="control-group">
+                    <ui:Label name="control-key-tour" text="T" class="control-key key-tour" />
+                    <ui:Label text="TOUR" class="control-action" />
                 </ui:VisualElement>
                 <ui:VisualElement class="control-group">
                     <ui:Label name="control-key-navigator" text="N" class="control-key key-navigator" />

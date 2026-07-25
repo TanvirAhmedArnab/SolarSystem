@@ -173,6 +173,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         {
             EnsureFolder($"{DataRoot}/CelestialBodies");
             EnsureFolder($"{DataRoot}/Scale");
+            EnsureFolder($"{DataRoot}/Presentation");
             EnsureFolder($"{DataRoot}/VisualLayers");
             EnsureFolder($"{MaterialRoot}/CelestialBodies");
             EnsureFolder($"{MaterialRoot}/Environment");
@@ -509,6 +510,10 @@ namespace Tanvir.SolarSystem.Editor.Import
             PresentationScaleDefinition scale = CreateOrLoad<PresentationScaleDefinition>(
                 $"{DataRoot}/Scale/Scale_PresentationGraybox.asset");
             ConfigureScale(scale);
+            CinematicTourDefinition cinematicTour =
+                CreateOrLoad<CinematicTourDefinition>(
+                    $"{DataRoot}/Presentation/Tour_Cinematic.asset");
+            ConfigureCinematicTour(cinematicTour);
             Material orbitMaterial = CreateMaterial(
                 $"{MaterialRoot}/Environment/M_OrbitPath.mat",
                 "Universal Render Pipeline/Unlit",
@@ -524,6 +529,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 Bodies = bodies,
                 Catalog = catalog,
                 Scale = scale,
+                CinematicTour = cinematicTour,
                 SaturnRingMesh = CreateSaturnRingMesh(),
                 SaturnRingMaterial = CreateSaturnRingMaterial(),
                 SunVisualDefinition = CreateSunVisualDefinition(),
@@ -2110,6 +2116,97 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(body);
             return body;
+        }
+
+        private static void ConfigureCinematicTour(CinematicTourDefinition definition)
+        {
+            var serialized = new SerializedObject(definition);
+            SerializedProperty chapters = serialized.FindProperty("chapters");
+            chapters.arraySize = 5;
+            ConfigureTourChapter(
+                chapters.GetArrayElementAtIndex(0),
+                "sun",
+                "Our Star",
+                "The Sun",
+                "The Sun contains almost all of the Solar System's mass and " +
+                "anchors every planetary orbit shown here.",
+                new[] { "sun" },
+                10f,
+                1.35f,
+                new Vector3(0.12f, 0.22f, -1f));
+            ConfigureTourChapter(
+                chapters.GetArrayElementAtIndex(1),
+                "earth-moon",
+                "A Paired World",
+                "Earth and Moon",
+                "Earth and its Moon move as a hierarchy: the Moon follows Earth " +
+                "while both continue their journey around the Sun.",
+                new[] { "earth", "moon" },
+                12f,
+                1.45f,
+                new Vector3(0.32f, 0.24f, -1f));
+            ConfigureTourChapter(
+                chapters.GetArrayElementAtIndex(2),
+                "jupiter-system",
+                "The Giant System",
+                "Jupiter and the Galilean Moons",
+                "Jupiter is presented with Io, Europa, Ganymede, and Callisto—" +
+                "four distinct worlds orbiting the largest planet.",
+                new[] { "jupiter", "io", "europa", "ganymede", "callisto" },
+                14f,
+                1.25f,
+                new Vector3(-0.30f, 0.20f, -1f));
+            ConfigureTourChapter(
+                chapters.GetArrayElementAtIndex(3),
+                "saturn",
+                "A World of Rings",
+                "Saturn",
+                "Saturn's broad ring plane makes the planet one of the Solar " +
+                "System's clearest examples of orbital structure at a glance.",
+                new[] { "saturn" },
+                12f,
+                2.15f,
+                new Vector3(0.38f, 0.38f, -1f));
+            ConfigureTourChapter(
+                chapters.GetArrayElementAtIndex(4),
+                "outer-system",
+                "The Distant Frontier",
+                "Uranus, Neptune, and Triton",
+                "The tour closes among the ice giants and Neptune's retrograde " +
+                "moon Triton, at the edge of the authored planetary system.",
+                new[] { "uranus", "neptune", "triton" },
+                12f,
+                1.30f,
+                new Vector3(-0.24f, 0.28f, -1f));
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+        }
+
+        private static void ConfigureTourChapter(
+            SerializedProperty chapter,
+            string stableId,
+            string title,
+            string subtitle,
+            string description,
+            string[] targetIds,
+            float durationSeconds,
+            float framingPadding,
+            Vector3 framingDirection)
+        {
+            chapter.FindPropertyRelative("stableId").stringValue = stableId;
+            chapter.FindPropertyRelative("title").stringValue = title;
+            chapter.FindPropertyRelative("subtitle").stringValue = subtitle;
+            chapter.FindPropertyRelative("description").stringValue = description;
+            SerializedProperty targets = chapter.FindPropertyRelative("targetIds");
+            targets.arraySize = targetIds.Length;
+            for (int index = 0; index < targetIds.Length; index++)
+            {
+                targets.GetArrayElementAtIndex(index).stringValue = targetIds[index];
+            }
+
+            chapter.FindPropertyRelative("durationSeconds").floatValue = durationSeconds;
+            chapter.FindPropertyRelative("framingPadding").floatValue = framingPadding;
+            chapter.FindPropertyRelative("framingDirection").vector3Value = framingDirection;
         }
 
         private static void ConfigureScale(PresentationScaleDefinition scale)

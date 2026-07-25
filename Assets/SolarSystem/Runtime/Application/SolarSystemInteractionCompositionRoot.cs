@@ -1,5 +1,6 @@
 using System;
 using Tanvir.SolarSystem.Audio;
+using Tanvir.SolarSystem.Authoring;
 using Tanvir.SolarSystem.Input;
 using Tanvir.SolarSystem.Interaction;
 using Tanvir.SolarSystem.Presentation.Camera;
@@ -25,6 +26,8 @@ namespace Tanvir.SolarSystem.Application
         [SerializeField] private GuidedScaleComparisonInputController
             scaleComparisonController;
         [SerializeField] private CelestialNavigationController navigationController;
+        [SerializeField] private CinematicTourController tourController;
+        [SerializeField] private CinematicTourDefinition tourDefinition;
         [SerializeField] private CelestialBodyView[] bodyViews =
             Array.Empty<CelestialBodyView>();
         [SerializeField] private SolarSystemHudPresenter hudPresenter;
@@ -46,6 +49,9 @@ namespace Tanvir.SolarSystem.Application
         /// <summary>Gets the active celestial navigation controller.</summary>
         public CelestialNavigationController Navigation => navigationController;
 
+        /// <summary>Gets the deterministic cinematic-tour service.</summary>
+        public CinematicTourService CinematicTour => tourController?.Service;
+
         /// <summary>Gets the runtime HUD presenter.</summary>
         public SolarSystemHudPresenter HudPresenter => hudPresenter;
 
@@ -66,6 +72,8 @@ namespace Tanvir.SolarSystem.Application
             scaleComparisonController.IsInitialized &&
             navigationController != null &&
             navigationController.IsInitialized &&
+            tourController != null &&
+            tourController.IsInitialized &&
             hudPresenter != null &&
             hudPresenter.IsInitialized &&
             audioDirector != null &&
@@ -89,6 +97,8 @@ namespace Tanvir.SolarSystem.Application
                 timeInputController == null ||
                 scaleComparisonController == null ||
                 navigationController == null ||
+                tourController == null ||
+                tourDefinition == null ||
                 bodyViews == null ||
                 bodyViews.Length == 0 ||
                 hudPresenter == null ||
@@ -104,9 +114,11 @@ namespace Tanvir.SolarSystem.Application
             cameraController.Initialize(inputAdapter, selectionController);
             var timeControls = new SimulationTimeControlService(simulationController);
             timeInputController.Initialize(inputAdapter, timeControls);
+            var guidedPresentation = new GuidedPresentationCoordinator();
             var scaleComparison = new GuidedScaleComparisonService(
                 simulationController,
-                timeControls);
+                timeControls,
+                guidedPresentation);
             scaleComparisonController.Initialize(
                 inputAdapter,
                 simulationController,
@@ -119,15 +131,26 @@ namespace Tanvir.SolarSystem.Application
                 inputAdapter,
                 selectionController,
                 cameraController,
-                scaleComparison,
+                guidedPresentation,
                 bodyViews);
+            tourController.Initialize(
+                inputAdapter,
+                selectionController,
+                timeInputController,
+                cameraController,
+                navigationController,
+                explorerCamera,
+                tourDefinition,
+                bodyViews,
+                guidedPresentation);
             hudPresenter.Initialize(
                 timeControls,
                 selectionController,
                 explorerCamera,
                 scaleComparison,
                 cameraController,
-                navigationController);
+                navigationController,
+                tourController);
             audioDirector.Initialize(
                 selectionService,
                 timeControls,

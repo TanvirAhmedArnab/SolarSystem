@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.23.0  
+**Version:** 0.24.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -50,6 +50,7 @@
 | 0.21.0 | 2026-07-25 | Codex, for Tanvir | Replaced the generic Ganymede and Callisto materials with distinct source-grounded airless-surface hero treatments while preserving approved hierarchy, physical data, synchronous motion, scale, selection, focus, and educational UI | Ganymede and Callisto hero experience implemented and validated |
 | 0.22.0 | 2026-07-25 | Codex, for Tanvir | Replaced Triton's generic material with a distinct source-grounded hero treatment, disclosed incomplete Voyager-era coverage, corrected the outer-system light envelope, and preserved approved retrograde hierarchy, motion, scale, selection, focus, and educational UI | Triton hero experience implemented and validated |
 | 0.23.0 | 2026-07-25 | Codex, for Tanvir | Implemented a deterministic parent-first celestial navigator and restrained projected body labels with selection synchronization, overlap suppression, responsive safe areas, explicit toggles, and guided-comparison rules | Milestone 4 navigation and label baseline implemented and validated |
+| 0.24.0 | 2026-07-25 | Codex, for Tanvir | Implemented the five-chapter deterministic cinematic tour with shared camera/simulation services, accessible controls, live scientific motion, mutual exclusion, and exact explorer-state restoration | Cinematic-tour vertical slice implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -411,7 +412,19 @@ clearly defined live-measurement presentation rather than static source facts.
 
 ### 9.4 Cinematic mode
 
-**[PROPOSED]** A curated, skippable tour visits the Sun, Earth-Moon system, Jupiter and its major moons, Saturn's rings, and the outer planets. The tour uses the same simulation state and camera services as interactive modes rather than a duplicate scene.
+**[IMPLEMENTED AND VALIDATED]** A curated, skippable tour visits the
+Sun, Earth-Moon system, Jupiter and the Galilean moons, Saturn's rings, and an
+outer-system finale with Uranus, Neptune, and Triton. The tour uses the same
+authoritative simulation, body views, camera controller, navigation state, and
+UI document as interactive modes rather than a duplicate scene or camera
+stack.
+
+`T` starts or advances the five deterministic chapters; `Escape` and visible
+mouse-accessible controls cancel or advance. The simulation continues at the
+user's existing rate while the camera tracks live targets. The tour never
+changes selection, time, pause, or audio values. It captures and restores the
+camera/focus state, navigator visibility, and label preference, and it cannot
+run concurrently with guided scale comparison.
 
 ## 10. User Interface and Information Design
 
@@ -423,7 +436,7 @@ clearly defined live-measurement presentation rather than static source facts.
 - **[IMPLEMENTED]** Optional projected body labels, toggled with `L`. Labels
   prioritize selection, planets, then moons; suppress overlaps; avoid HUD safe
   areas; show only the focused target in focus mode; and hide during guided
-  scale comparison.
+  scale comparison or cinematic tour.
 - **[IMPLEMENTED]** A scrollable `N` navigator provides keyboard and mouse
   access to every authored star, planet, and moon without enlarging any body.
 - Orbit-path controls, settings, Help, credits, and sources access remain

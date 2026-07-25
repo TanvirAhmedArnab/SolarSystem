@@ -38,6 +38,9 @@ namespace Tanvir.SolarSystem.Input
         /// <summary>Raised when the user advances the guided scale comparison.</summary>
         public event Action ScaleComparisonPerformed;
 
+        /// <summary>Raised when the user starts or advances the cinematic tour.</summary>
+        public event Action CinematicTourPerformed;
+
         /// <summary>Raised when the user opens or closes the celestial navigator.</summary>
         public event Action ToggleNavigatorPerformed;
 
@@ -93,6 +96,7 @@ namespace Tanvir.SolarSystem.Input
             explorer.FindAction("DecreaseTimeSpeed", true).performed += OnDecreaseTimeSpeed;
             explorer.FindAction("IncreaseTimeSpeed", true).performed += OnIncreaseTimeSpeed;
             explorer.FindAction("ScaleComparison", true).performed += OnScaleComparison;
+            explorer.FindAction("CinematicTour", true).performed += OnCinematicTour;
             explorer.FindAction("ToggleNavigator", true).performed += OnToggleNavigator;
             explorer.FindAction("ToggleWorldLabels", true).performed += OnToggleWorldLabels;
             explorer.Enable();
@@ -121,6 +125,9 @@ namespace Tanvir.SolarSystem.Input
         private void OnScaleComparison(InputAction.CallbackContext context) =>
             ScaleComparisonPerformed?.Invoke();
 
+        private void OnCinematicTour(InputAction.CallbackContext context) =>
+            CinematicTourPerformed?.Invoke();
+
         private void OnToggleNavigator(InputAction.CallbackContext context) =>
             ToggleNavigatorPerformed?.Invoke();
 
@@ -141,6 +148,7 @@ namespace Tanvir.SolarSystem.Input
             explorer.FindAction("DecreaseTimeSpeed", true).performed -= OnDecreaseTimeSpeed;
             explorer.FindAction("IncreaseTimeSpeed", true).performed -= OnIncreaseTimeSpeed;
             explorer.FindAction("ScaleComparison", true).performed -= OnScaleComparison;
+            explorer.FindAction("CinematicTour", true).performed -= OnCinematicTour;
             explorer.FindAction("ToggleNavigator", true).performed -= OnToggleNavigator;
             explorer.FindAction("ToggleWorldLabels", true).performed -= OnToggleWorldLabels;
             explorer.Disable();

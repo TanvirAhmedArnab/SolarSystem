@@ -7,7 +7,7 @@
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
 **Document status:** Living technical authority; Sun, eight-planet, seven-moon, Titan haze, Galilean-moon, and Triton hero baselines validated  
-**Version:** 0.28.0  
+**Version:** 0.29.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -54,6 +54,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.26.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Ganymede and Callisto with distinct immutable contracts, clean material-schema migration, deterministic scene wiring, anchored USGS sources, and full asset/scene regression coverage | Ganymede and Callisto hero architecture implemented and validated |
 | 0.27.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Triton with a disclosed unobserved-coverage fill, preserved retrograde scientific state, corrected outer-system point-light culling, deterministic scene wiring, and full asset/scene regression coverage | Triton hero architecture implemented and validated |
 | 0.28.0 | 2026-07-25 | Codex, for Tanvir | Added event-driven celestial navigation state, parent-first selection/focus routing, cached UI Toolkit navigator entries, allocation-stable projected labels, deterministic overlap priorities, responsive safe areas, explicit input, and real-scene regression coverage | Navigator and label architecture implemented and validated |
+| 0.29.0 | 2026-07-25 | Codex, for Tanvir | Added immutable cinematic-tour authoring/runtime data, shared guided ownership, allocation-stable live group framing, exact moving-target camera restoration, responsive UI, and full asset/service/scene coverage | Cinematic-tour architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -443,11 +444,14 @@ or invalid targets hide the reticle without clearing selection.
 - smooth transitions that can be cancelled or redirected.
 - guided comparison poses with exact pre-guide camera/focus/clip-plane capture
   and restoration.
+- cinematic-tour poses that reuse the same snapshot, transition, clip-plane,
+  and exact restoration path while tracking live multi-body target groups.
 
 Camera transitions and movement use unscaled time so pausing the simulation
 does not trap the camera. Focus distance and zoom limits respond to the target's
 projected radius. Context-sensitive free-flight speed, scripted cinematic
-waypoints, and reduced-motion/instant transitions remain pending.
+waypoints are now data-driven through `CinematicTourDefinition`; contextual
+free-flight speed and reduced-motion/instant transitions remain pending.
 
 ### 6.8 Input
 
@@ -464,6 +468,7 @@ The implemented map covers:
 - C start/advance/finish for guided scale comparison.
 - N open/close for the parent-first celestial navigator.
 - L on/off for projected celestial labels.
+- T start/advance/finish for the deterministic cinematic tour.
 
 `SimulationTimeInputController` translates the three time intents into an
 application service. Input code does not access the clock or simulation
@@ -472,6 +477,37 @@ selection, focus, free-flight, zoom, and time commands; Escape remains active
 for cancellation. Guided comparison also closes and locks the navigator while
 temporarily suppressing projected labels. Help/settings actions remain
 pending.
+
+### 6.8.1 Guided presentation ownership and cinematic tour
+
+**[IMPLEMENTED AND VALIDATED]**
+`GuidedPresentationCoordinator` is the application-level mutual-exclusion
+boundary for camera-owning educational modes. `GuidedScaleComparisonService`
+and `CinematicTourService` must acquire distinct owner tokens before changing
+presentation. Failed acquisition is a no-op, so `C` cannot interrupt a tour
+and `T` cannot interrupt a scale comparison.
+
+`CinematicTourDefinition` is a ScriptableObject authoring contract. Each
+chapter contains a stable ID, display copy, stable body IDs, deterministic
+unscaled duration, framing padding, and viewing direction. Runtime conversion
+produces immutable `CinematicTourChapter` instances and validates all body
+references once during composition.
+
+`CinematicTourService` owns only chapter index and elapsed unscaled time. It
+supports start, deterministic carry-over across chapter boundaries, explicit
+advance, completion, and cancellation without referencing scene objects.
+`CinematicTourController` resolves authored IDs to the existing
+`CelestialBodyView` graph, computes a bounding-sphere camera pose without
+per-frame collections, and updates the existing camera controller as bodies
+move.
+
+On entry, the controller captures navigator visibility and label preference,
+then locks selection and time input. The camera controller captures its exact
+pose, rotation, clip planes, velocity, focus target, focus transition state,
+focus direction/distance, yaw, pitch, and interaction mode. On completion or
+cancellation, the camera restores that snapshot before interaction, navigator,
+and labels are restored. Selection state, the simulation clock, and
+`AudioDirector` settings are never mutated by the tour.
 
 ### 6.9 UI
 
@@ -485,6 +521,15 @@ units, and reacts only to effective settings/selection changes. UI never
 performs orbital math or writes simulation state. The proof displays running or
 paused state, the labeled multiplier and baseline meaning, current selection,
 and concise keyboard hints.
+
+The cinematic-tour card shares the project-owned UXML/USS and presenter. It
+shows chapter number, title, subtitle, educational copy, and mouse-accessible
+next/finish and exit buttons. A compact rule keeps the card inside exact
+1280x720 and 2560x1440 reference surfaces. Body information, reticle, quick
+controls, navigator, and projected labels are suppressed while the tour owns
+presentation; the persistent status panel continues to disclose simulation
+and scale state. Chapter UI changes only at deterministic state transitions,
+so the tour adds no per-frame string or element allocation.
 
 `CelestialBodyInformation` is a display-only formatter. It converts the selected
 definition's verified authoring values into consistent, culture-invariant

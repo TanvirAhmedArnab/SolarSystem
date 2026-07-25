@@ -161,6 +161,15 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
       m_Priority: 0
+    - m_Name: CinematicTour
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: b958104c-2aac-4c77-9be5-69004727d35b
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+      m_Priority: 0
     m_Bindings:
     - m_Name: 2DVector
       m_Id: 93525f18-8f8a-48e8-ae11-42fe0962c997
@@ -377,6 +386,14 @@ MonoBehaviour:
       m_Processors: 
       m_Groups: 
       m_Action: IncreaseTimeSpeed
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 0e9139e1-907b-4e40-9c4f-7a07562fa151
+      m_Path: <Keyboard>/t
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: CinematicTour
       m_Flags: 0
   m_ControlSchemes: []
   m_IsProjectWide: 0

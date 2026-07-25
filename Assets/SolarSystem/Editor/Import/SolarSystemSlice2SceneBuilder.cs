@@ -349,6 +349,7 @@ namespace Tanvir.SolarSystem.Editor.Import
                 controller,
                 hudPresenter,
                 audioDirector,
+                content.CinematicTour,
                 bodyViews.ToArray(),
                 orbitPaths.ToArray());
             CreateLighting(sunView.transform);
@@ -763,6 +764,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             SolarSystemSimulationController simulationController,
             SolarSystemHudPresenter hudPresenter,
             AudioDirector audioDirector,
+            CinematicTourDefinition cinematicTour,
             CelestialBodyView[] bodyViews,
             CelestialOrbitPathView[] orbitPaths)
         {
@@ -786,6 +788,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 interactionObject.AddComponent<GuidedScaleComparisonInputController>();
             CelestialNavigationController navigation =
                 interactionObject.AddComponent<CelestialNavigationController>();
+            CinematicTourController tour =
+                interactionObject.AddComponent<CinematicTourController>();
             SolarSystemCameraController cameraController =
                 camera.gameObject.AddComponent<SolarSystemCameraController>();
             CelestialOrbitPathVisibilityController orbitVisibility =
@@ -812,6 +816,9 @@ namespace Tanvir.SolarSystem.Editor.Import
                 scaleComparison;
             serialized.FindProperty("navigationController").objectReferenceValue =
                 navigation;
+            serialized.FindProperty("tourController").objectReferenceValue = tour;
+            serialized.FindProperty("tourDefinition").objectReferenceValue =
+                cinematicTour;
             SetArray(serialized.FindProperty("bodyViews"), bodyViews);
             serialized.FindProperty("hudPresenter").objectReferenceValue = hudPresenter;
             serialized.FindProperty("audioDirector").objectReferenceValue = audioDirector;

@@ -12,6 +12,7 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal SolarSystemSlice2BodyContent[] Bodies { get; set; }
         internal CelestialCatalogDefinition Catalog { get; set; }
         internal PresentationScaleDefinition Scale { get; set; }
+        internal CinematicTourDefinition CinematicTour { get; set; }
         internal Mesh SaturnRingMesh { get; set; }
         internal Material SaturnRingMaterial { get; set; }
         internal SolarVisualDefinition SunVisualDefinition { get; set; }

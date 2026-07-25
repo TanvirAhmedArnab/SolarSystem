@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Data-driven five-chapter cinematic tour on `T`, covering the Sun,
+  Earth-Moon system, Jupiter and the Galilean moons, Saturn's rings, and an
+  outer-system finale.
+- Deterministic unscaled chapter timing, live multi-body framing,
+  mouse-accessible next/finish and exit controls, responsive educational
+  chapter UI, and exact explorer-state restoration.
+- Shared guided-presentation ownership that prevents the cinematic tour and
+  guided scale comparison from competing for the same camera and UI state.
 - Complete 16-body celestial navigator on `N`, using deterministic parent-first
   order, moon-parent identification, keyboard focus, non-color-only selection
   feedback, and existing selection/focus application services.

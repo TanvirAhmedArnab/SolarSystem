@@ -21,7 +21,7 @@ namespace Tanvir.SolarSystem.Application
         private SolarSystemInputAdapter input;
         private CelestialSelectionController selection;
         private SolarSystemCameraController cameraController;
-        private GuidedScaleComparisonService scaleComparison;
+        private GuidedPresentationCoordinator guidedPresentation;
         private CelestialBodyView[] orderedViews = Array.Empty<CelestialBodyView>();
 
         /// <summary>Gets the navigator visibility service.</summary>
@@ -35,7 +35,7 @@ namespace Tanvir.SolarSystem.Application
             input != null &&
             selection != null &&
             cameraController != null &&
-            scaleComparison != null &&
+            guidedPresentation != null &&
             Service != null &&
             orderedViews.Length > 0;
 
@@ -44,7 +44,7 @@ namespace Tanvir.SolarSystem.Application
             SolarSystemInputAdapter inputAdapter,
             CelestialSelectionController selectionController,
             SolarSystemCameraController explorerCameraController,
-            GuidedScaleComparisonService guidedScaleComparison,
+            GuidedPresentationCoordinator presentationCoordinator,
             CelestialBodyView[] bodyViews)
         {
             Release();
@@ -57,8 +57,8 @@ namespace Tanvir.SolarSystem.Application
             cameraController = explorerCameraController != null
                 ? explorerCameraController
                 : throw new ArgumentNullException(nameof(explorerCameraController));
-            scaleComparison = guidedScaleComparison ??
-                throw new ArgumentNullException(nameof(guidedScaleComparison));
+            guidedPresentation = presentationCoordinator ??
+                throw new ArgumentNullException(nameof(presentationCoordinator));
             if (bodyViews == null || bodyViews.Length == 0)
             {
                 throw new ArgumentException(
@@ -72,7 +72,7 @@ namespace Tanvir.SolarSystem.Application
             Service = new CelestialNavigationService();
             input.ToggleNavigatorPerformed += OnToggleNavigator;
             input.ToggleWorldLabelsPerformed += OnToggleWorldLabels;
-            scaleComparison.Changed += OnScaleComparisonChanged;
+            guidedPresentation.Changed += OnGuidedPresentationChanged;
         }
 
         /// <summary>Selects and focuses a catalog body through existing services.</summary>
@@ -84,7 +84,7 @@ namespace Tanvir.SolarSystem.Application
                     "Celestial navigation controller is not initialized.");
             }
 
-            if (scaleComparison.IsActive ||
+            if (guidedPresentation.IsActive ||
                 string.IsNullOrWhiteSpace(stableId) ||
                 !viewsById.TryGetValue(stableId, out CelestialBodyView view))
             {
@@ -106,7 +106,7 @@ namespace Tanvir.SolarSystem.Application
                     "Celestial navigation controller is not initialized.");
             }
 
-            Service.SetNavigatorVisible(visible && !scaleComparison.IsActive);
+            Service.SetNavigatorVisible(visible && !guidedPresentation.IsActive);
         }
 
         /// <summary>Sets the persistent projected-label preference.</summary>
@@ -128,7 +128,7 @@ namespace Tanvir.SolarSystem.Application
 
         private void OnToggleNavigator()
         {
-            if (!scaleComparison.IsActive)
+            if (!guidedPresentation.IsActive)
             {
                 Service.ToggleNavigator();
             }
@@ -136,12 +136,15 @@ namespace Tanvir.SolarSystem.Application
 
         private void OnToggleWorldLabels()
         {
-            Service.ToggleWorldLabels();
+            if (!guidedPresentation.IsActive)
+            {
+                Service.ToggleWorldLabels();
+            }
         }
 
-        private void OnScaleComparisonChanged()
+        private void OnGuidedPresentationChanged()
         {
-            if (scaleComparison.IsActive)
+            if (guidedPresentation.IsActive)
             {
                 Service.SetNavigatorVisible(false);
             }
@@ -185,15 +188,15 @@ namespace Tanvir.SolarSystem.Application
                 input.ToggleWorldLabelsPerformed -= OnToggleWorldLabels;
             }
 
-            if (scaleComparison != null)
+            if (guidedPresentation != null)
             {
-                scaleComparison.Changed -= OnScaleComparisonChanged;
+                guidedPresentation.Changed -= OnGuidedPresentationChanged;
             }
 
             input = null;
             selection = null;
             cameraController = null;
-            scaleComparison = null;
+            guidedPresentation = null;
             Service = null;
             orderedViews = Array.Empty<CelestialBodyView>();
             viewsById.Clear();

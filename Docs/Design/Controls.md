@@ -2,7 +2,7 @@
 
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
-**Status:** Implemented exploration, navigation, labels, and guided scale-comparison controls  
+**Status:** Implemented exploration, navigation, labels, guided scale comparison, and cinematic-tour controls  
 **Last updated:** 2026-07-25  
 **Input asset:** `Assets/SolarSystem/Settings/Input/IA_SolarSystem.asset`
 
@@ -110,6 +110,29 @@ time commands are temporarily locked so the educational framing cannot be
 accidentally broken. The guide is cancellable and does not discard the user's
 previous selection, camera pose, focus mode, time rate, or paused/running
 state.
+
+## Cinematic Tour
+
+| Intent | Binding | Behavior |
+|---|---|---|
+| Start tour | T | Enter the first authored chapter from the current explorer state |
+| Advance chapter | T or **Next** | Skip to the next deterministic chapter |
+| Finish | T or **Finish** on chapter 5 | Restore the exact pre-tour explorer state |
+| Exit early | Escape or **Exit** | Cancel and restore the exact pre-tour explorer state |
+
+The five chapters frame the Sun, Earth-Moon system, Jupiter and the four
+Galilean moons, Saturn and its rings, and an outer-system finale with Uranus,
+Neptune, and Triton. Chapter timing uses unscaled time. Planetary motion
+continues from the authoritative simulation at the user's existing rate while
+the camera tracks each live target group.
+
+The tour and guided scale comparison are mutually exclusive because they share
+one camera and guided-UI ownership coordinator. During a tour, selection,
+focus, free-flight, zoom, time controls, labels, and the navigator are
+temporarily locked. Completion and cancellation restore the captured camera
+pose, focus target/mode, clip planes, navigator visibility, and label
+preference. Selection, time rate, pause state, and audio settings are never
+changed by the tour.
 
 ## Deferred Controls
 

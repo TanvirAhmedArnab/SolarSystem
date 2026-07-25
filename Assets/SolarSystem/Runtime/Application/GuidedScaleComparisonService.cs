@@ -11,17 +11,34 @@ namespace Tanvir.SolarSystem.Application
     {
         private readonly IScaleModeController scaleController;
         private readonly SimulationTimeControlService timeControls;
+        private readonly GuidedPresentationCoordinator coordinator;
         private bool wasPausedBeforeComparison;
 
         /// <summary>Initializes the guided comparison against explicit application services.</summary>
         public GuidedScaleComparisonService(
             IScaleModeController presentationScaleController,
             SimulationTimeControlService simulationTimeControls)
+            : this(
+                presentationScaleController,
+                simulationTimeControls,
+                new GuidedPresentationCoordinator())
+        {
+        }
+
+        /// <summary>
+        /// Initializes the comparison against shared guided-presentation ownership.
+        /// </summary>
+        public GuidedScaleComparisonService(
+            IScaleModeController presentationScaleController,
+            SimulationTimeControlService simulationTimeControls,
+            GuidedPresentationCoordinator presentationCoordinator)
         {
             scaleController = presentationScaleController ??
                 throw new ArgumentNullException(nameof(presentationScaleController));
             timeControls = simulationTimeControls ??
                 throw new ArgumentNullException(nameof(simulationTimeControls));
+            coordinator = presentationCoordinator ??
+                throw new ArgumentNullException(nameof(presentationCoordinator));
             Stage = GuidedScaleComparisonStage.Inactive;
         }
 
@@ -52,6 +69,12 @@ namespace Tanvir.SolarSystem.Application
             switch (Stage)
             {
                 case GuidedScaleComparisonStage.Inactive:
+                    if (!coordinator.TryAcquire(
+                        GuidedPresentationOwner.ScaleComparison))
+                    {
+                        return;
+                    }
+
                     wasPausedBeforeComparison = timeControls.IsPaused;
                     Stage = GuidedScaleComparisonStage.ReadableOverview;
                     scaleController.SetScaleMode(CelestialScaleMode.ReadableOverview);
@@ -103,6 +126,7 @@ namespace Tanvir.SolarSystem.Application
             scaleController.SetScaleMode(CelestialScaleMode.ReadableOverview);
             timeControls.SetPaused(wasPausedBeforeComparison);
             Stage = GuidedScaleComparisonStage.Inactive;
+            coordinator.Release(GuidedPresentationOwner.ScaleComparison);
             Changed?.Invoke();
         }
     }

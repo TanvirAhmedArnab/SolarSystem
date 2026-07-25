@@ -38,6 +38,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(root.Q<Label>("control-key-space"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-speed"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-compare"), Is.Not.Null);
+            Assert.That(root.Q<Label>("control-key-tour"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-navigator"), Is.Not.Null);
             Assert.That(root.Q<Label>("control-key-labels"), Is.Not.Null);
             Assert.That(root.Q<Label>("pause-action"), Is.Not.Null);
@@ -66,6 +67,15 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(root.Q<VisualElement>("world-label-layer"), Is.Not.Null);
             Assert.That(root.Q<VisualElement>("navigator-panel"), Is.Not.Null);
             Assert.That(root.Q<ScrollView>("navigator-list"), Is.Not.Null);
+            Assert.That(
+                root.Q<VisualElement>("cinematic-tour-panel"),
+                Is.Not.Null);
+            Assert.That(root.Q<Label>("tour-progress"), Is.Not.Null);
+            Assert.That(root.Q<Label>("tour-title"), Is.Not.Null);
+            Assert.That(root.Q<Label>("tour-subtitle"), Is.Not.Null);
+            Assert.That(root.Q<Label>("tour-description"), Is.Not.Null);
+            Assert.That(root.Q<Button>("tour-next-button"), Is.Not.Null);
+            Assert.That(root.Q<Button>("tour-exit-button"), Is.Not.Null);
         }
 
         [Test]

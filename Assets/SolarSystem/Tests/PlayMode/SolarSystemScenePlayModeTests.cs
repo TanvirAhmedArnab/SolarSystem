@@ -541,6 +541,143 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator SolarSystemScene_ToursAuthoredChaptersAndRestoresExplorerState()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot composition =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(composition, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(interaction.IsInitialized, Is.True);
+            Assert.That(
+                composition.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+
+            interaction.SelectionController.Select(earth);
+            interaction.CameraController.Focus(earth);
+            yield return WaitUntilFocused(interaction.CameraController);
+            interaction.TimeControls.SetPresetIndex(2);
+            interaction.Navigation.SetNavigatorVisible(true);
+            interaction.Navigation.SetWorldLabelsEnabled(true);
+            AudioDirector audio = interaction.AudioDirector;
+            audio.SetMasterVolume(0.72f);
+            audio.SetMusicVolume(0.31f);
+            audio.SetUiVolume(0.42f);
+            audio.SetCelestialVolume(0.53f);
+            audio.SetMuted(true);
+            yield return new WaitForEndOfFrame();
+
+            Camera camera = Camera.main;
+            Vector3 savedFocusOffset =
+                camera.transform.position - earth.transform.position;
+            Quaternion savedRotation = camera.transform.rotation;
+            float savedNear = camera.nearClipPlane;
+            float savedFar = camera.farClipPlane;
+            int savedMultiplier = interaction.TimeControls.CurrentMultiplier;
+            bool savedPaused = interaction.TimeControls.IsPaused;
+            int savedFeedbackCount = audio.FeedbackCueCount;
+            CinematicTourService tour = interaction.CinematicTour;
+            CinematicTourController tourController =
+                Object.FindAnyObjectByType<CinematicTourController>();
+
+            Assert.That(tour, Is.Not.Null);
+            Assert.That(tourController, Is.Not.Null);
+            tourController.StartOrAdvance();
+            Assert.That(tour.IsActive, Is.True);
+            yield return WaitUntilCinematic(interaction.CameraController);
+            yield return null;
+
+            Assert.That(tour.CurrentChapter.StableId, Is.EqualTo("sun"));
+            Assert.That(interaction.HudPresenter.IsCinematicTourVisible, Is.True);
+            Assert.That(
+                interaction.HudPresenter.CinematicTourTitleText,
+                Is.EqualTo("OUR STAR"));
+            Assert.That(interaction.Navigation.Service.IsNavigatorVisible, Is.False);
+            Assert.That(interaction.Navigation.Service.AreWorldLabelsEnabled, Is.False);
+            Assert.That(interaction.SelectionController.SelectedView, Is.SameAs(earth));
+            Assert.That(interaction.TimeControls.CurrentMultiplier, Is.EqualTo(savedMultiplier));
+            Assert.That(interaction.TimeControls.IsPaused, Is.EqualTo(savedPaused));
+
+            interaction.ScaleComparison.Advance();
+            Assert.That(interaction.ScaleComparison.IsActive, Is.False);
+            Assert.That(tour.IsActive, Is.True);
+
+            string[] expectedRemainingChapters =
+            {
+                "earth-moon",
+                "jupiter-system",
+                "saturn",
+                "outer-system"
+            };
+            foreach (string expectedChapter in expectedRemainingChapters)
+            {
+                tourController.StartOrAdvance();
+                yield return WaitUntilCinematic(interaction.CameraController);
+                Assert.That(tour.CurrentChapter.StableId, Is.EqualTo(expectedChapter));
+            }
+
+            tourController.StartOrAdvance();
+            yield return WaitUntilAnyGuidedPresentationRestored(
+                interaction.CameraController);
+            float interactionRestoreDeadline =
+                Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
+            while ((!interaction.Navigation.Service.IsNavigatorVisible ||
+                    !interaction.Navigation.Service.AreWorldLabelsEnabled) &&
+                   Time.realtimeSinceStartup < interactionRestoreDeadline)
+            {
+                yield return null;
+            }
+
+            yield return new WaitForEndOfFrame();
+
+            Assert.That(tour.IsActive, Is.False, "Tour state must complete.");
+            Assert.That(
+                interaction.HudPresenter.IsCinematicTourVisible,
+                Is.False,
+                "Tour HUD must hide after completion.");
+            Assert.That(interaction.SelectionController.SelectedView, Is.SameAs(earth));
+            Assert.That(interaction.CameraController.FocusedTarget, Is.SameAs(earth));
+            Assert.That(
+                interaction.CameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.Focused));
+            Assert.That(
+                Vector3.Distance(
+                    camera.transform.position - earth.transform.position,
+                    savedFocusOffset),
+                Is.LessThan(0.001f));
+            Assert.That(
+                Quaternion.Angle(camera.transform.rotation, savedRotation),
+                Is.LessThan(0.001f));
+            Assert.That(camera.nearClipPlane, Is.EqualTo(savedNear).Within(0.001f));
+            Assert.That(camera.farClipPlane, Is.EqualTo(savedFar).Within(0.001f));
+            Assert.That(interaction.TimeControls.CurrentMultiplier, Is.EqualTo(savedMultiplier));
+            Assert.That(
+                interaction.TimeControls.IsPaused,
+                Is.EqualTo(savedPaused),
+                "Pause state must remain unchanged.");
+            Assert.That(
+                interaction.Navigation.Service.IsNavigatorVisible,
+                Is.True,
+                "Navigator visibility must restore after the camera settles.");
+            Assert.That(
+                interaction.Navigation.Service.AreWorldLabelsEnabled,
+                Is.True,
+                "World-label preference must restore after the camera settles.");
+            Assert.That(audio.MasterVolume, Is.EqualTo(0.72f).Within(0.0001f));
+            Assert.That(audio.MusicVolume, Is.EqualTo(0.31f).Within(0.0001f));
+            Assert.That(audio.UiVolume, Is.EqualTo(0.42f).Within(0.0001f));
+            Assert.That(audio.CelestialVolume, Is.EqualTo(0.53f).Within(0.0001f));
+            Assert.That(audio.IsMuted, Is.True, "Audio mute must remain unchanged.");
+            Assert.That(audio.FeedbackCueCount, Is.EqualTo(savedFeedbackCount));
+        }
+
+        [UnityTest]
         public IEnumerator SolarSystemScene_UsesSunOriginRadialIllumination()
         {
             SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
@@ -2289,6 +2426,38 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                 cameraController.Mode,
                 Is.EqualTo(SolarSystemCameraMode.GuidedComparison),
                 "Guided camera did not settle within the transition timeout.");
+        }
+
+        private static IEnumerator WaitUntilCinematic(
+            SolarSystemCameraController cameraController)
+        {
+            float deadline = Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
+            while (cameraController.Mode == SolarSystemCameraMode.GuidedTransition &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+
+            Assert.That(
+                cameraController.Mode,
+                Is.EqualTo(SolarSystemCameraMode.CinematicTour),
+                "Cinematic camera did not settle within the transition timeout.");
+        }
+
+        private static IEnumerator WaitUntilAnyGuidedPresentationRestored(
+            SolarSystemCameraController cameraController)
+        {
+            float deadline = Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
+            while (cameraController.IsGuidedPresentationActive &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+
+            Assert.That(
+                cameraController.IsGuidedPresentationActive,
+                Is.False,
+                "Explorer camera was not restored within the transition timeout.");
         }
 
         private static IEnumerator WaitUntilExplorerRestored(

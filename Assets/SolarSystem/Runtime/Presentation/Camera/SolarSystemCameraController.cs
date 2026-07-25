@@ -38,6 +38,14 @@ namespace Tanvir.SolarSystem.Presentation.Camera
         private float guidedTransitionElapsed;
         private bool guidedRestorePending;
         private CameraSnapshot cameraSnapshot;
+        private GuidedCameraOwner guidedOwner;
+
+        private enum GuidedCameraOwner
+        {
+            None,
+            ScaleComparison,
+            CinematicTour
+        }
 
         /// <summary>Gets the current camera interaction state.</summary>
         public SolarSystemCameraMode Mode { get; private set; }
@@ -46,7 +54,16 @@ namespace Tanvir.SolarSystem.Presentation.Camera
         public CelestialBodyView FocusedTarget { get; private set; }
 
         /// <summary>Gets whether the comparison currently owns camera navigation.</summary>
-        public bool IsGuidedComparisonActive { get; private set; }
+        public bool IsGuidedComparisonActive =>
+            guidedOwner == GuidedCameraOwner.ScaleComparison;
+
+        /// <summary>Gets whether the cinematic tour owns camera navigation.</summary>
+        public bool IsCinematicTourActive =>
+            guidedOwner == GuidedCameraOwner.CinematicTour;
+
+        /// <summary>Gets whether any guided feature owns camera navigation.</summary>
+        public bool IsGuidedPresentationActive =>
+            guidedOwner != GuidedCameraOwner.None;
 
         /// <summary>Gets whether dependencies have been assigned.</summary>
         public bool IsInitialized => input != null && selection != null;
@@ -94,7 +111,7 @@ namespace Tanvir.SolarSystem.Presentation.Camera
                 throw new ArgumentNullException(nameof(target));
             }
 
-            if (IsGuidedComparisonActive)
+            if (IsGuidedPresentationActive)
             {
                 return;
             }
@@ -119,7 +136,7 @@ namespace Tanvir.SolarSystem.Presentation.Camera
         /// <summary>Cancels focus without snapping or changing the current camera pose.</summary>
         public void ReturnToFreeFlight()
         {
-            if (IsGuidedComparisonActive)
+            if (IsGuidedPresentationActive)
             {
                 return;
             }
@@ -135,29 +152,7 @@ namespace Tanvir.SolarSystem.Presentation.Camera
         /// <summary>Captures explorer state and transitions into guided framing.</summary>
         public void BeginGuidedComparison(GuidedCameraPose pose)
         {
-            if (!IsInitialized)
-            {
-                throw new InvalidOperationException("Camera controller is not initialized.");
-            }
-
-            if (!IsGuidedComparisonActive)
-            {
-                cameraSnapshot = new CameraSnapshot(
-                    transform.position,
-                    transform.rotation,
-                    controlledCamera.nearClipPlane,
-                    controlledCamera.farClipPlane,
-                    Mode,
-                    FocusedTarget,
-                    focusDirection,
-                    focusDistance,
-                    yaw,
-                    pitch);
-                IsGuidedComparisonActive = true;
-            }
-
-            guidedRestorePending = false;
-            StartGuidedTransition(pose);
+            BeginGuidedPresentation(pose, GuidedCameraOwner.ScaleComparison);
         }
 
         /// <summary>Transitions between guided stages without replacing the saved explorer state.</summary>
@@ -173,6 +168,42 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             StartGuidedTransition(pose);
         }
 
+        /// <summary>Captures explorer state and transitions into the cinematic tour.</summary>
+        public void BeginCinematicTour(GuidedCameraPose pose)
+        {
+            BeginGuidedPresentation(pose, GuidedCameraOwner.CinematicTour);
+        }
+
+        /// <summary>Transitions to the next authored cinematic-tour pose.</summary>
+        public void SetCinematicTourPose(GuidedCameraPose pose)
+        {
+            if (!IsCinematicTourActive)
+            {
+                throw new InvalidOperationException(
+                    "Cinematic tour must begin before changing its pose.");
+            }
+
+            guidedRestorePending = false;
+            StartGuidedTransition(pose);
+        }
+
+        /// <summary>
+        /// Tracks moving tour targets without restarting the current transition.
+        /// </summary>
+        public void UpdateCinematicTourPose(GuidedCameraPose pose)
+        {
+            if (!IsCinematicTourActive)
+            {
+                return;
+            }
+
+            guidedTargetPose = pose;
+            if (Mode == SolarSystemCameraMode.CinematicTour)
+            {
+                ApplyGuidedPose(pose);
+            }
+        }
+
         /// <summary>Transitions back to the exact explorer state captured at entry.</summary>
         public void EndGuidedComparison()
         {
@@ -182,9 +213,28 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             }
 
             guidedRestorePending = true;
+            Vector3 restoredPosition = GetRestoredExplorerPosition();
             StartGuidedTransition(new GuidedCameraPose(
-                cameraSnapshot.Position,
-                cameraSnapshot.Position +
+                restoredPosition,
+                restoredPosition +
+                    (cameraSnapshot.Rotation * Vector3.forward),
+                cameraSnapshot.NearClipPlane,
+                cameraSnapshot.FarClipPlane));
+        }
+
+        /// <summary>Transitions back to the exact explorer state captured at tour entry.</summary>
+        public void EndCinematicTour()
+        {
+            if (!IsCinematicTourActive)
+            {
+                return;
+            }
+
+            guidedRestorePending = true;
+            Vector3 restoredPosition = GetRestoredExplorerPosition();
+            StartGuidedTransition(new GuidedCameraPose(
+                restoredPosition,
+                restoredPosition +
                     (cameraSnapshot.Rotation * Vector3.forward),
                 cameraSnapshot.NearClipPlane,
                 cameraSnapshot.FarClipPlane));
@@ -236,7 +286,8 @@ namespace Tanvir.SolarSystem.Presentation.Camera
                 return;
             }
 
-            if (Mode == SolarSystemCameraMode.GuidedComparison)
+            if (Mode == SolarSystemCameraMode.GuidedComparison ||
+                Mode == SolarSystemCameraMode.CinematicTour)
             {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
@@ -274,6 +325,47 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             Mode = SolarSystemCameraMode.GuidedTransition;
         }
 
+        private void BeginGuidedPresentation(
+            GuidedCameraPose pose,
+            GuidedCameraOwner requestedOwner)
+        {
+            if (!IsInitialized)
+            {
+                throw new InvalidOperationException("Camera controller is not initialized.");
+            }
+
+            if (IsGuidedPresentationActive && guidedOwner != requestedOwner)
+            {
+                throw new InvalidOperationException(
+                    "Another guided presentation already owns the camera.");
+            }
+
+            if (!IsGuidedPresentationActive)
+            {
+                cameraSnapshot = new CameraSnapshot(
+                    transform.position,
+                    transform.rotation,
+                    controlledCamera.nearClipPlane,
+                    controlledCamera.farClipPlane,
+                    Mode,
+                    FocusedTarget,
+                    FocusedTarget != null
+                        ? FocusedTarget.transform.position
+                        : Vector3.zero,
+                    velocity,
+                    transitionStart,
+                    transitionElapsed,
+                    focusDirection,
+                    focusDistance,
+                    yaw,
+                    pitch);
+                guidedOwner = requestedOwner;
+            }
+
+            guidedRestorePending = false;
+            StartGuidedTransition(pose);
+        }
+
         private void StepGuidedTransition(float deltaTime)
         {
             guidedTransitionElapsed += deltaTime;
@@ -308,26 +400,51 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             }
             else
             {
-                Mode = SolarSystemCameraMode.GuidedComparison;
+                Mode = guidedOwner == GuidedCameraOwner.ScaleComparison
+                    ? SolarSystemCameraMode.GuidedComparison
+                    : SolarSystemCameraMode.CinematicTour;
             }
+        }
+
+        private void ApplyGuidedPose(GuidedCameraPose pose)
+        {
+            transform.position = pose.Position;
+            transform.rotation = pose.Rotation;
+            controlledCamera.nearClipPlane = pose.NearClipPlane;
+            controlledCamera.farClipPlane = pose.FarClipPlane;
         }
 
         private void RestoreExplorerState()
         {
-            transform.position = cameraSnapshot.Position;
+            Vector3 targetOffset = GetFocusedTargetOffset();
+            transform.position = cameraSnapshot.Position + targetOffset;
             transform.rotation = cameraSnapshot.Rotation;
             controlledCamera.nearClipPlane = cameraSnapshot.NearClipPlane;
             controlledCamera.farClipPlane = cameraSnapshot.FarClipPlane;
             FocusedTarget = cameraSnapshot.FocusedTarget;
+            velocity = cameraSnapshot.Velocity;
+            transitionStart = cameraSnapshot.TransitionStart + targetOffset;
+            transitionElapsed = cameraSnapshot.TransitionElapsed;
             focusDirection = cameraSnapshot.FocusDirection;
             focusDistance = cameraSnapshot.FocusDistance;
             yaw = cameraSnapshot.Yaw;
             pitch = cameraSnapshot.Pitch;
-            Mode = cameraSnapshot.Mode == SolarSystemCameraMode.FocusTransition
-                ? SolarSystemCameraMode.Focused
-                : cameraSnapshot.Mode;
+            Mode = cameraSnapshot.Mode;
             guidedRestorePending = false;
-            IsGuidedComparisonActive = false;
+            guidedOwner = GuidedCameraOwner.None;
+        }
+
+        private Vector3 GetRestoredExplorerPosition()
+        {
+            return cameraSnapshot.Position + GetFocusedTargetOffset();
+        }
+
+        private Vector3 GetFocusedTargetOffset()
+        {
+            return cameraSnapshot.FocusedTarget != null
+                ? cameraSnapshot.FocusedTarget.transform.position -
+                    cameraSnapshot.FocusedTargetPosition
+                : Vector3.zero;
         }
 
         private void StepFocus(float deltaTime)
@@ -395,7 +512,7 @@ namespace Tanvir.SolarSystem.Presentation.Camera
 
         private void OnFocusPerformed()
         {
-            if (!IsGuidedComparisonActive && selection.SelectedView != null)
+            if (!IsGuidedPresentationActive && selection.SelectedView != null)
             {
                 Focus(selection.SelectedView);
             }
@@ -403,7 +520,7 @@ namespace Tanvir.SolarSystem.Presentation.Camera
 
         private void OnCancelPerformed()
         {
-            if (!IsGuidedComparisonActive)
+            if (!IsGuidedPresentationActive)
             {
                 ReturnToFreeFlight();
             }
@@ -420,6 +537,10 @@ namespace Tanvir.SolarSystem.Presentation.Camera
                 float farClipPlane,
                 SolarSystemCameraMode mode,
                 CelestialBodyView focusedTarget,
+                Vector3 savedFocusedTargetPosition,
+                Vector3 savedVelocity,
+                Vector3 savedTransitionStart,
+                float savedTransitionElapsed,
                 Vector3 savedFocusDirection,
                 float savedFocusDistance,
                 float savedYaw,
@@ -431,6 +552,10 @@ namespace Tanvir.SolarSystem.Presentation.Camera
                 FarClipPlane = farClipPlane;
                 Mode = mode;
                 FocusedTarget = focusedTarget;
+                FocusedTargetPosition = savedFocusedTargetPosition;
+                Velocity = savedVelocity;
+                TransitionStart = savedTransitionStart;
+                TransitionElapsed = savedTransitionElapsed;
                 FocusDirection = savedFocusDirection;
                 FocusDistance = savedFocusDistance;
                 Yaw = savedYaw;
@@ -443,6 +568,10 @@ namespace Tanvir.SolarSystem.Presentation.Camera
             internal float FarClipPlane { get; }
             internal SolarSystemCameraMode Mode { get; }
             internal CelestialBodyView FocusedTarget { get; }
+            internal Vector3 FocusedTargetPosition { get; }
+            internal Vector3 Velocity { get; }
+            internal Vector3 TransitionStart { get; }
+            internal float TransitionElapsed { get; }
             internal Vector3 FocusDirection { get; }
             internal float FocusDistance { get; }
             internal float Yaw { get; }

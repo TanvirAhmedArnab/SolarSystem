@@ -38,6 +38,8 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         private SimulationTimeControlService timeControls;
         private GuidedScaleComparisonService scaleComparison;
+        private CinematicTourController tourController;
+        private CinematicTourService cinematicTour;
         private SelectionService selection;
         private CelestialSelectionController selectionController;
         private SolarSystemCameraController cameraController;
@@ -64,6 +66,13 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private Label comparisonMetric;
         private Label comparisonDescription;
         private Label comparisonNextAction;
+        private VisualElement tourPanel;
+        private Label tourProgress;
+        private Label tourTitle;
+        private Label tourSubtitle;
+        private Label tourDescription;
+        private Button tourNextButton;
+        private Button tourExitButton;
         private Label bodyName;
         private Label bodyCategory;
         private Label bodySummary;
@@ -125,6 +134,12 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         /// <summary>Gets the guided comparison's primary numeric explanation.</summary>
         public string ScaleComparisonMetricText => comparisonMetric?.text ?? string.Empty;
+
+        /// <summary>Gets whether the cinematic-tour chapter card is visible.</summary>
+        public bool IsCinematicTourVisible { get; private set; }
+
+        /// <summary>Gets the current cinematic-tour chapter title.</summary>
+        public string CinematicTourTitleText => tourTitle?.text ?? string.Empty;
 
         /// <summary>Gets whether the celestial navigator is currently visible.</summary>
         public bool IsNavigatorVisible => navigation?.IsNavigatorVisible == true;
@@ -202,7 +217,8 @@ namespace Tanvir.SolarSystem.Presentation.UI
             UnityEngine.Camera camera,
             GuidedScaleComparisonService guidedScaleComparison,
             SolarSystemCameraController explorerCameraController,
-            CelestialNavigationController celestialNavigationController)
+            CelestialNavigationController celestialNavigationController,
+            CinematicTourController cinematicTourController)
         {
             Release();
             timeControls = simulationTimeControls ??
@@ -226,6 +242,11 @@ namespace Tanvir.SolarSystem.Presentation.UI
             navigation = navigationController.Service ??
                 throw new InvalidOperationException(
                     "Navigation controller must be initialized before the HUD.");
+            tourController = cinematicTourController ??
+                throw new ArgumentNullException(nameof(cinematicTourController));
+            cinematicTour = tourController.Service ??
+                throw new InvalidOperationException(
+                    "Cinematic tour controller must be initialized before the HUD.");
 
             if (document == null || styleSheet == null)
             {
@@ -236,6 +257,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
             timeControls.Changed += Refresh;
             selection.SelectionChanged += OnSelectionChanged;
             scaleComparison.Changed += Refresh;
+            cinematicTour.Changed += Refresh;
             navigation.Changed += OnNavigationChanged;
             TryConnectDocument();
         }
@@ -293,6 +315,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 ? "LABELS / ON / L TO TOGGLE"
                 : "LABELS / OFF / L TO TOGGLE";
             RefreshScaleComparison();
+            RefreshCinematicTour();
             RefreshBodyInformation();
             RefreshNavigator();
         }
@@ -322,6 +345,16 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         private void Release()
         {
+            if (tourNextButton != null)
+            {
+                tourNextButton.clicked -= OnTourNextClicked;
+            }
+
+            if (tourExitButton != null)
+            {
+                tourExitButton.clicked -= OnTourExitClicked;
+            }
+
             if (timeControls != null)
             {
                 timeControls.Changed -= Refresh;
@@ -337,6 +370,11 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 scaleComparison.Changed -= Refresh;
             }
 
+            if (cinematicTour != null)
+            {
+                cinematicTour.Changed -= Refresh;
+            }
+
             if (navigation != null)
             {
                 navigation.Changed -= OnNavigationChanged;
@@ -350,10 +388,13 @@ namespace Tanvir.SolarSystem.Presentation.UI
             navigation = null;
             explorerCamera = null;
             scaleComparison = null;
+            tourController = null;
+            cinematicTour = null;
             IsInitialized = false;
             IsBodyInformationVisible = false;
             IsSelectionReticleVisible = false;
             IsScaleComparisonVisible = false;
+            IsCinematicTourVisible = false;
             hudRoot = null;
             statusPanel = null;
             hintPanel = null;
@@ -363,6 +404,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
             navigatorPanel = null;
             navigatorList = null;
             comparisonPanel = null;
+            tourPanel = null;
             simulationState = null;
             simulationRate = null;
             selectionTarget = null;
@@ -374,6 +416,12 @@ namespace Tanvir.SolarSystem.Presentation.UI
             comparisonMetric = null;
             comparisonDescription = null;
             comparisonNextAction = null;
+            tourProgress = null;
+            tourTitle = null;
+            tourSubtitle = null;
+            tourDescription = null;
+            tourNextButton = null;
+            tourExitButton = null;
             bodyName = null;
             bodyCategory = null;
             bodySummary = null;
@@ -419,6 +467,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
             navigatorPanel = RequireElement(root, "navigator-panel");
             navigatorList = RequireScrollView(root, "navigator-list");
             comparisonPanel = RequireElement(root, "scale-comparison-panel");
+            tourPanel = RequireElement(root, "cinematic-tour-panel");
             simulationState = RequireLabel(root, "simulation-state");
             simulationRate = RequireLabel(root, "simulation-rate");
             selectionTarget = RequireLabel(root, "selection-target");
@@ -430,6 +479,14 @@ namespace Tanvir.SolarSystem.Presentation.UI
             comparisonMetric = RequireLabel(root, "comparison-metric");
             comparisonDescription = RequireLabel(root, "comparison-description");
             comparisonNextAction = RequireLabel(root, "comparison-next-action");
+            tourProgress = RequireLabel(root, "tour-progress");
+            tourTitle = RequireLabel(root, "tour-title");
+            tourSubtitle = RequireLabel(root, "tour-subtitle");
+            tourDescription = RequireLabel(root, "tour-description");
+            tourNextButton = RequireButton(root, "tour-next-button");
+            tourExitButton = RequireButton(root, "tour-exit-button");
+            tourNextButton.clicked += OnTourNextClicked;
+            tourExitButton.clicked += OnTourExitClicked;
             bodyName = RequireLabel(root, "body-name");
             bodyCategory = RequireLabel(root, "body-category");
             bodySummary = RequireLabel(root, "body-summary");
@@ -535,7 +592,8 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private void RefreshNavigator()
         {
             bool visible = navigation.IsNavigatorVisible &&
-                !scaleComparison.IsActive;
+                !scaleComparison.IsActive &&
+                cinematicTour?.IsActive != true;
             navigatorPanel.EnableInClassList("is-hidden", !visible);
             CelestialBodyView selected = selectionController.SelectedView;
             foreach (CelestialUiEntry entry in celestialEntries)
@@ -597,7 +655,8 @@ namespace Tanvir.SolarSystem.Presentation.UI
             if (!IsInitialized ||
                 worldLabelLayer == null ||
                 !navigation.AreWorldLabelsEnabled ||
-                scaleComparison.IsActive)
+                scaleComparison.IsActive ||
+                cinematicTour?.IsActive == true)
             {
                 HideAllWorldLabels();
                 return;
@@ -792,7 +851,8 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         private void RefreshBodyInformation()
         {
-            if (scaleComparison?.IsActive == true)
+            if (scaleComparison?.IsActive == true ||
+                cinematicTour?.IsActive == true)
             {
                 SetBodyInformationVisible(false);
                 return;
@@ -833,7 +893,8 @@ namespace Tanvir.SolarSystem.Presentation.UI
                 return;
             }
 
-            if (scaleComparison?.IsActive == true)
+            if (scaleComparison?.IsActive == true ||
+                cinematicTour?.IsActive == true)
             {
                 SetSelectionReticleVisible(false);
                 return;
@@ -937,12 +998,60 @@ namespace Tanvir.SolarSystem.Presentation.UI
             }
         }
 
+        private void RefreshCinematicTour()
+        {
+            if (!IsInitialized || tourPanel == null)
+            {
+                return;
+            }
+
+            bool visible = cinematicTour.IsActive;
+            IsCinematicTourVisible = visible;
+            tourPanel.EnableInClassList("is-hidden", !visible);
+            hudRoot.EnableInClassList("tour-active", visible);
+            if (!visible)
+            {
+                return;
+            }
+
+            CinematicTourChapter chapter = cinematicTour.CurrentChapter;
+            tourProgress.text =
+                $"CINEMATIC TOUR / CHAPTER {cinematicTour.CurrentChapterNumber} " +
+                $"OF {cinematicTour.ChapterCount}";
+            tourTitle.text = chapter.Title.ToUpperInvariant();
+            tourSubtitle.text = chapter.Subtitle.ToUpperInvariant();
+            tourDescription.text = chapter.Description;
+            tourNextButton.text =
+                cinematicTour.CurrentChapterNumber == cinematicTour.ChapterCount
+                    ? "T  FINISH"
+                    : "T  NEXT";
+        }
+
+        private void OnTourNextClicked()
+        {
+            tourController.StartOrAdvance();
+        }
+
+        private void OnTourExitClicked()
+        {
+            tourController.Cancel();
+        }
+
         private static Label RequireLabel(VisualElement root, string name)
         {
             Label label = root.Q<Label>(name);
             return label != null
                 ? label
                 : throw new InvalidOperationException($"HUD is missing label '{name}'.");
+        }
+
+        private static Button RequireButton(VisualElement root, string name)
+        {
+            Button button = root.Q<Button>(name);
+            return button != null
+                ? button
+                : throw new InvalidOperationException(
+                    $"HUD is missing button '{name}'.");
         }
 
         private static VisualElement RequireElement(VisualElement root, string name)

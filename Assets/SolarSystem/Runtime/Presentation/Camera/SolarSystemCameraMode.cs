@@ -7,6 +7,7 @@ namespace Tanvir.SolarSystem.Presentation.Camera
         FocusTransition,
         Focused,
         GuidedTransition,
-        GuidedComparison
+        GuidedComparison,
+        CinematicTour
     }
 }

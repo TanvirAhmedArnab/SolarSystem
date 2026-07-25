@@ -453,6 +453,28 @@ The comparison deliberately changes visual density:
 Do not add minimum visible body sizes, glow markers, or decorative substitutes
 in the two linear stages; the apparent disappearance is the educational point.
 
+**[IMPLEMENTED AND VALIDATED: CINEMATIC TOUR]** The cinematic tour
+uses a centered lower-third observatory card rather than a second interface
+theme. Cyan identifies chapter/progress context, high-contrast white carries
+the chapter title, muted blue-gray carries the body/system subtitle, and
+separate labeled buttons expose `T / NEXT` or `T / FINISH` and `ESC / EXIT`
+without relying on color alone.
+
+The card suppresses the normal quick controls, selected-body card, reticle,
+navigator, and projected labels while preserving the top-left simulation and
+scale disclosure. At compact resolutions it becomes edge-anchored with reduced
+padding and type size. The five authored compositions prioritize:
+
+1. the Sun's surface and corona;
+2. Earth and Moon as a readable hierarchy;
+3. Jupiter and the four Galilean moons;
+4. Saturn with sufficient padding for its ring plane;
+5. Uranus, Neptune, and Triton as the outer-system finale.
+
+No new font, icon, image, texture, or audio asset is introduced by the tour.
+Camera movement reuses the existing unscaled transition language, and a future
+reduced-motion setting remains required before the public accessibility gate.
+
 ## 7. Audio Direction
 
 ### Music
@@ -553,6 +575,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.25.0 | 2026-07-25 | Added the responsive cinematic-tour card, five reviewed composition priorities, non-color-only keyboard/mouse actions, controlled HUD-density rules, and explicit no-new-media decision | Cinematic-tour visual baseline implemented and validated at exact 1280x720 and 2560x1440 |
 | 0.24.0 | 2026-07-25 | Added the restrained parent-first navigator and projected-label visual language, including moon indentation, non-color-only selection, overlap suppression, HUD safe areas, focus/guided-state density rules, explicit keycaps, and compact responsive treatment without third-party fonts or icons | Celestial navigation and label baseline implemented and visually validated |
 | 0.23.0 | 2026-07-25 | Added Triton's distinct airless hero treatment with anchored synthesized-color USGS/Voyager imagery, a disclosed uniform fill for unobserved black coverage, source-derived non-displacing detail only on observed pixels, corrected outer-system light culling, and explicit atmosphere/activity limits | Triton hero slice implemented and visually validated |
 | 0.22.0 | 2026-07-25 | Added distinct Ganymede and Callisto airless hero treatments with anchored byte-identical USGS mosaics, restrained reconstructed color, source-derived non-displacing relief, mixed-versus-ancient surface separation, and explicit magnetic-field, ocean, atmosphere, coverage, and elevation limits | Ganymede and Callisto hero slice implemented and visually validated |
