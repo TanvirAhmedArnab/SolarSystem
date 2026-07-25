@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.20.0  
+**Version:** 0.21.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -47,6 +47,7 @@
 | 0.18.0 | 2026-07-25 | Codex, for Tanvir | Completed the approved seven-moon roster with deterministic nested orbits, exact proportional radii, educational facts, accessible selection/focus, and audited source-grounded materials | Minimum major-moon content implemented and validated; hero fidelity remains iterative |
 | 0.19.0 | 2026-07-25 | Codex, for Tanvir | Replaced Titan's interim surface-first baseline with a haze-dominant, Sun-aware hero treatment while preserving its approved data, scale, hierarchy, motion, selection, focus, and educational UI | Titan hero experience implemented and validated |
 | 0.20.0 | 2026-07-25 | Codex, for Tanvir | Replaced the generic Io and Europa materials with distinct, source-grounded airless-surface hero treatments while preserving approved hierarchy, physical data, synchronous motion, scale, selection, focus, and educational UI | Io and Europa hero experience implemented and validated |
+| 0.21.0 | 2026-07-25 | Codex, for Tanvir | Replaced the generic Ganymede and Callisto materials with distinct source-grounded airless-surface hero treatments while preserving approved hierarchy, physical data, synchronous motion, scale, selection, focus, and educational UI | Ganymede and Callisto hero experience implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -311,6 +312,22 @@ does not claim a date-specific eruption, active plume, exposed ocean,
 elevation model, literal terrain displacement, or natural-color reconstruction.
 Selection, focus, and the educational overlay use the existing interaction
 path.
+
+**[IMPLEMENTED REPRESENTATIVE SLICE]** Ganymede and Callisto now extend the
+same source-grounded hero path while remaining visually distinct. Ganymede
+uses a restrained warm-neutral reconstruction and moderately smoother
+ice-and-rock response so its bright grooved and older dark terrain remain
+legible. Callisto uses a darker neutral reconstruction, stronger
+source-luminance relief, and a drier low-sheen response to emphasize its
+ancient cratered identity.
+
+Both retain their byte-identical USGS browse mosaics, Jupiter parentage, exact
+Earth-relative radii, approved JPL mean orbits, and positive synchronous
+rotation. A bounded non-emissive nightside color floor keeps focus views
+readable without turning the unlit hemisphere into day. The presentation does
+not expose a subsurface ocean, render Ganymede's magnetosphere, add a visible
+atmosphere or aurora, displace terrain, reconstruct missing coverage, or claim
+natural color, elevation, exact photometry, or date-specific appearance.
 
 ### 8.2 Body information overlay
 

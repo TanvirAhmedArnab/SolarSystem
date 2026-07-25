@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Sun, eight-planet, seven-moon, Titan haze, and Io/Europa hero baselines validated  
-**Version:** 0.25.0  
+**Document status:** Living technical authority; Sun, eight-planet, seven-moon, Titan haze, and Galilean-moon hero baselines validated  
+**Version:** 0.26.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -51,6 +51,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.23.0 | 2026-07-25 | Codex, for Tanvir | Expanded the data-driven catalog and reproducible scene pipeline to the approved major moons using JPL parent-relative mean elements, signed synchronous rotation, audited USGS materials, and complete hierarchy/scene regression coverage | Major-moon baseline implemented and validated |
 | 0.24.0 | 2026-07-25 | Codex, for Tanvir | Extended the atmosphere-only layered-body path with a validated deterministic atmosphere phase and added project-owned Titan surface/haze shaders, reproducible authoring, bounded overdraw, live-Sun response, and complete regression coverage | Titan haze hero architecture implemented and validated |
 | 0.25.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Io and Europa with distinct immutable contracts, clean material-schema migration, deterministic scene wiring, anchored USGS sources, and full asset/scene regression coverage | Io and Europa hero architecture implemented and validated |
+| 0.26.0 | 2026-07-25 | Codex, for Tanvir | Extended the reusable airless-rocky path to Ganymede and Callisto with distinct immutable contracts, clean material-schema migration, deterministic scene wiring, anchored USGS sources, and full asset/scene regression coverage | Ganymede and Callisto hero architecture implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -838,6 +839,14 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
   sample distance `1.1`, specular `0.035`, smoothness `0.16`, and nightside
   readability `0.025`. These are reviewed presentation controls, not measured
   roughness, terrain height, or photometry.
+- Ganymede and Callisto extend the same adapter without a parallel runtime
+  subsystem. Ganymede uses relief `0.26`, sample distance `1.25`, specular
+  `0.028`, smoothness `0.12`, and nightside readability `0.07`. Callisto uses
+  relief `0.30`, sample distance `1.4`, specular `0.014`, smoothness `0.05`,
+  and nightside readability `0.08`. The higher bounded nightside floors
+  compensate for the unusually dark grayscale browse derivatives while
+  preserving a clearly unlit hemisphere; they add source color, not emission.
+  All values are reviewed presentation controls rather than measurements.
 - The shader performs five bounded source samples per fragment: one anchored
   color sample and four neighboring luminance samples for a shallow normal
   estimate. It performs no displacement, time animation, emission, fluid
@@ -847,15 +856,18 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - The airless adapter adds no child render shell. Mercury remains parented to
   the Sun, the Moon to Earth, and Io/Europa to Jupiter. Io retains its
   `421,800 km` semimajor axis and positive `1.762732`-day synchronous period;
-  Europa retains `671,100 km` and positive `3.525463` days. Exact mean-radius
-  projection, parent-relative analytical orbit composition, axial tilt, and
-  signed rotation remain owned by the existing simulation and
-  `CelestialBodyView`.
-- Io and Europa have measured tenuous atmospheres, but no visible atmosphere
-  shell is justified in this presentation. No emissive lava, active plume,
-  exposed subsurface ocean, terrain displacement, or date-specific activity
-  is authored. Browse-image luminance drives readability only and is not
-  interpreted as elevation.
+  Europa retains `671,100 km` and positive `3.525463` days. Ganymede retains
+  `1,070,400 km` and positive `7.155588` days; Callisto retains `1,882,700 km`
+  and positive `16.690440` days. Exact mean-radius projection,
+  parent-relative analytical orbit composition, axial tilt, and signed
+  rotation remain owned by the existing simulation and `CelestialBodyView`.
+- The four Galilean moons have measured tenuous atmospheres or exospheres,
+  but no visible shell is justified in this presentation. No emissive lava,
+  active plume, exposed subsurface ocean, Ganymede aurora or magnetosphere,
+  terrain displacement, or date-specific activity is authored. Browse-image
+  luminance drives readability only and is not interpreted as elevation.
+  The grayscale global tints are presentation reconstructions rather than
+  natural-color or compositional data.
 - `CelestialOrbitPathVisibilityController` suppresses cached overview paths
   during `FocusTransition` and `Focused`, then restores them in free flight.
   It changes renderer visibility only; geometry, scale-mode data, and
@@ -1221,6 +1233,9 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-022 | 2026-07-24 | Use a dedicated immutable ice-giant definition/model/view path for Uranus and Neptune while sharing scientifically neutral giant-planet shaders; preserve anchored sources and signed rotation, and limit nightside fill and moving detail to disclosed presentation values | Implemented candidate | Tanvir | Distinct reusable ice-giant semantics without duplicating shaders, changing scientific state, or claiming wind/fluid simulation |
 | TDD-023 | 2026-07-24 | Use one immutable airless-rocky definition/model/view path for Mercury and the Moon; share the anchored rocky shader with Mars, apply body-specific source-derived relief and dry PBR values through cached property blocks, preserve exact parent-relative scientific state, and create no atmosphere shell | Implemented candidate | Tanvir | Distinct close-focus rocky identity without duplicated shaders, invented atmospheric layers, animated terrain, material instances, or elevation-model claims |
 | TDD-024 | 2026-07-25 | Extend the existing data-driven catalog, parent-relative Kepler evaluation, scale projection, selection/focus, HUD, and cached orbit paths to the approved major moons; use JPL mean elements and physical parameters, signed synchronous rotation, and distinct audited USGS browse materials | Implemented and validated | Tanvir | Completes approved moon scope without a parallel simulation path or false ephemeris, scale, atmosphere, or image-fidelity claims |
+| TDD-025 | 2026-07-25 | Extend the atmosphere-only layered-body path for Titan with one project-owned opaque surface and one bounded transparent haze shell | Implemented and validated | Tanvir | Haze-dominant identity without a Titan-only runtime subsystem or false weather model |
+| TDD-026 | 2026-07-25 | Extend the reusable airless-rocky path to Io and Europa with distinct immutable contracts, anchored sources, and no invented activity or exposed ocean | Implemented and validated | Tanvir | Distinct Galilean-moon identity without duplicated runtime architecture |
+| TDD-027 | 2026-07-25 | Extend the reusable airless-rocky path to Ganymede and Callisto with distinct immutable contracts, anchored sources, bounded non-emissive nightside readability, and no invented atmosphere, magnetosphere, ocean exposure, or terrain | Implemented and validated | Tanvir | Completes four distinct Galilean hero surfaces with one audited allocation-free rendering architecture |
 
 ## 19. Definition of Done for TDD Version 1.0
 

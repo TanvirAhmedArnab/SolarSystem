@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Distinct Ganymede and Callisto hero treatments through the reusable
+  project-owned airless-rocky definition/model/view path and shared
+  bounded-sample URP surface shader.
+- Clean material-schema migration from generic URP/Lit, separate immutable
+  contracts, reproducible visual-definition assets, and deterministic scene
+  wiring for both Jupiter-parented moons.
+- Byte-identical anchored USGS mosaics with restrained reconstructed color,
+  live-Sun day/night response, source-derived non-displacing relief, and
+  explicit magnetic-field, ocean, atmosphere, activity, terrain, color, and
+  coverage limitations.
+- Ganymede/Callisto asset, scientific-state, hierarchy, lighting, selection,
+  focus, and real-scene regression coverage, bringing the complete suites to
+  157 Edit Mode and 19 Play Mode cases.
 - Distinct Io and Europa hero treatments through the reusable project-owned
   airless-rocky definition/model/view path and shared bounded-sample URP
   surface shader.

@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, seven-moon, Titan haze, and Io/Europa hero foundations  
-**Version:** 0.21.0  
+**Status:** Living authority with validated visual, audio, guided-scale, Sun, eight-planet, seven-moon, Titan haze, and Galilean-moon hero foundations  
+**Version:** 0.22.0  
 **Last updated:** 2026-07-25  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -257,8 +257,32 @@ an educational fact beneath the ice, not a visible surface layer.
 ### Ganymede
 USGS browse mosaic; bright grooved terrain and older dark regions distinguished through albedo.
 
+**[IMPLEMENTED REPRESENTATIVE SLICE]** The byte-identical grayscale USGS
+browse mosaic remains anchored. A restrained warm-neutral presentation tint,
+moderate source-derived non-displacing relief, and a modest mixed
+ice-and-rock sheen preserve the contrast between bright grooved terrain and
+older dark cratered regions. The tint is not natural-color or compositional
+data, and browse luminance is not elevation.
+
+Do not add a visible oxygen atmosphere, aurora, magnetosphere, exposed
+subsurface ocean, clouds, terrain displacement, or date-specific activity.
+Ganymede's magnetic field and possible deep ocean belong in the educational
+facts, not as unsupported visible layers.
+
 ### Callisto
 USGS browse mosaic; dark neutral base and bright impact structures, distinct from the Moon.
+
+**[IMPLEMENTED REPRESENTATIVE SLICE]** The byte-identical grayscale USGS
+browse mosaic remains anchored. A darker neutral presentation tint, stronger
+source-derived non-displacing relief, and low dry-surface sheen distinguish
+Callisto's ancient, heavily cratered terrain and bright impact structures
+from Ganymede, Europa, and Earth's Moon.
+
+Preserve Callisto's inherently dark identity. The bounded nightside floor is
+higher than the lighter airless bodies only because this browse derivative is
+very dark; it remains non-emissive and visibly below the Sun-facing response.
+Do not add a visible exosphere, exposed subsurface ocean, clouds, geological
+activity, terrain displacement, fictional gap fill, or date-specific state.
 
 ### Saturn
 Soft cream/gold bands. Ring alpha drives a dedicated flat mesh with tested two-sided rendering, transparency, and shadows.
@@ -492,6 +516,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.22.0 | 2026-07-25 | Added distinct Ganymede and Callisto airless hero treatments with anchored byte-identical USGS mosaics, restrained reconstructed color, source-derived non-displacing relief, mixed-versus-ancient surface separation, and explicit magnetic-field, ocean, atmosphere, coverage, and elevation limits | Ganymede and Callisto hero slice implemented and visually validated |
 | 0.21.0 | 2026-07-25 | Added distinct Io and Europa airless hero treatments with anchored byte-identical USGS mosaics, restrained reconstructed color, source-derived non-displacing relief, dry-versus-icy PBR separation, and explicit activity/ocean/coverage limits | Io and Europa hero slice implemented and visually validated |
 | 0.20.0 | 2026-07-25 | Added Titan's haze-dominant project-owned surface/shell treatment, anchored and subdued USGS source use, live-Sun day/night response, deterministic low-amplitude presentation motion, bounded overdraw, and explicit image/atmosphere limitations | Titan hero slice implemented and visually validated |
 | 0.19.0 | 2026-07-25 | Added the approved major-moon baseline with distinct audited USGS browse mosaics, exact proportional radii, and explicit coverage/color limitations | Major-moon visual baseline implemented and validated |

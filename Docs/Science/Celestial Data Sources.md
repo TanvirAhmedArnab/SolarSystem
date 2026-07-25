@@ -350,6 +350,8 @@ Primary sources:
 - [JPL Planetary Satellite Mean Elements](https://ssd.jpl.nasa.gov/sats/elem/)
 - [NASA Io Facts](https://science.nasa.gov/jupiter/jupiter-moons/io/facts/)
 - [NASA Europa Facts](https://science.nasa.gov/jupiter/jupiter-moons/europa/europa-facts/)
+- [NASA Ganymede Facts](https://science.nasa.gov/jupiter/jupiter-moons/ganymede/facts/)
+- [NASA Callisto Facts](https://science.nasa.gov/jupiter/jupiter-moons/callisto/facts/)
 - [NASA Titan Facts](https://science.nasa.gov/saturn/moons/titan/facts/)
 - [NASA Triton Overview](https://science.nasa.gov/neptune/moons/triton/)
 
@@ -387,6 +389,42 @@ Galileo coverage with uneven observation/control quality. Europa combines
 Galileo and Voyager inputs spanning coarse gap fill through higher-resolution
 coverage before assembly into a `500 m/pixel` map. Both runtime browse images
 are `512 x 256`, grayscale, and byte-identical to the retained downloads.
+
+### Ganymede and Callisto rendering interpretation
+
+NASA describes Ganymede as the Solar System's largest moon and the only moon
+known to generate its own magnetic field. Its surface combines older dark,
+cratered terrain with younger bright grooved terrain, and evidence supports a
+possible deep saltwater ocean. This project preserves those surface contrasts
+through the anchored browse mosaic, but does not render a visible atmosphere,
+aurora, magnetosphere, or exposed ocean.
+
+NASA describes Callisto as an ancient, heavily cratered world with dark
+terrain and brighter impact scars. A deep subsurface ocean is possible but
+uncertain, and its exosphere is extremely thin. The project therefore uses an
+opaque dark airless-surface treatment with no visible atmosphere, active
+geology, or exposed ocean.
+
+The renderer does not change either scientific definition. Ganymede remains
+Jupiter-parented with mean radius `2,631.20 km`, semimajor axis
+`1,070,400 km`, and positive `7.155588`-day synchronous rotation. Callisto
+remains Jupiter-parented with mean radius `2,410.30 km`, semimajor axis
+`1,882,700 km`, and positive `16.690440`-day synchronous rotation. These
+fixed mean elements are deterministic educational orbits, not date-exact
+ephemerides.
+
+USGS product limitations remain authoritative. Ganymede combines Galileo SSI
+and Voyager inputs spanning roughly `20 km/pixel` gap fill through
+`400 m/pixel` detail into a `1 km/pixel` simple-cylindrical map. Callisto
+combines Galileo SSI and Voyager inputs spanning roughly `60 km/pixel` gap
+fill through `400 m/pixel` detail into an approximately `1 km/pixel` average
+simple-cylindrical map. The runtime browse derivatives are grayscale,
+`512 x 256` and `512 x 249`, and byte-identical to the retained downloads.
+
+Global tints are disclosed presentation reconstructions rather than
+natural-color or composition data. Source luminance includes illumination and
+processing effects; its bounded normal perturbation is not elevation,
+measured roughness, terrain displacement, or a photometric reconstruction.
 
 ### Titan rendering interpretation
 

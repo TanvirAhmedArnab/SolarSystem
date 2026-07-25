@@ -38,6 +38,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal AirlessRockyVisualDefinition MoonVisualDefinition { get; set; }
         internal AirlessRockyVisualDefinition IoVisualDefinition { get; set; }
         internal AirlessRockyVisualDefinition EuropaVisualDefinition { get; set; }
+        internal AirlessRockyVisualDefinition GanymedeVisualDefinition { get; set; }
+        internal AirlessRockyVisualDefinition CallistoVisualDefinition { get; set; }
         internal Material OrbitMaterial { get; set; }
         internal Material SkyboxMaterial { get; set; }
         internal VolumeProfile VisualProfile { get; set; }

@@ -108,6 +108,18 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Europa.mat";
         private const string EuropaVisualDefinitionPath =
             "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Europa.asset";
+        private const string GanymedeTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Ganymede/T_Ganymede_Surface_Browse.jpg";
+        private const string GanymedeMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Ganymede.mat";
+        private const string GanymedeVisualDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Ganymede.asset";
+        private const string CallistoTexturePath =
+            "Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Callisto/T_Callisto_Surface_Browse.jpg";
+        private const string CallistoMaterialPath =
+            "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Callisto.mat";
+        private const string CallistoVisualDefinitionPath =
+            "Assets/SolarSystem/Content/Data/VisualLayers/VisualLayers_Callisto.asset";
         private const string EarthMaterialPath =
             "Assets/SolarSystem/Content/Materials/CelestialBodies/M_Earth.mat";
         private const string EarthNormalPath =
@@ -741,6 +753,26 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 AirlessRockyVisualRenderingContract.EuropaSurfaceSpecular,
                 AirlessRockyVisualRenderingContract.EuropaSurfaceSmoothness,
                 AirlessRockyVisualRenderingContract.EuropaNightsideReadability);
+            AssertAirlessRockyMaterial(
+                "ganymede",
+                GanymedeTexturePath,
+                GanymedeMaterialPath,
+                GanymedeVisualDefinitionPath,
+                AirlessRockyVisualRenderingContract.GanymedeReliefStrength,
+                AirlessRockyVisualRenderingContract.GanymedeReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.GanymedeSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.GanymedeSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.GanymedeNightsideReadability);
+            AssertAirlessRockyMaterial(
+                "callisto",
+                CallistoTexturePath,
+                CallistoMaterialPath,
+                CallistoVisualDefinitionPath,
+                AirlessRockyVisualRenderingContract.CallistoReliefStrength,
+                AirlessRockyVisualRenderingContract.CallistoReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.CallistoSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.CallistoSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.CallistoNightsideReadability);
         }
 
         private static void AssertAirlessRockyMaterial(

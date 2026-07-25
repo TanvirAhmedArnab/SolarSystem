@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.12.0  
+**Version:** 0.13.0  
 **Last reviewed:** 2026-07-25
 
 **Live-source verification:** Rechecked 2026-07-22 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records.
@@ -359,6 +359,55 @@ Solar System Scope CC BY 4.0 attribution obligation.
 - Modification status: source pixels are unchanged. The project-authored
   shader adds a pale presentation tint and bounded luminance-derived normal
   response; it does not reconstruct missing imagery.
+
+### Active Ganymede and Callisto hero records
+
+#### Ganymede
+
+- Source ID: `TEX-USGS-003`
+- Product: Voyager/Galileo SSI global mosaic, final `1 km/pixel` map.
+- Product page:
+  https://astrogeology.usgs.gov/search/map/ganymede_voyager_galileo_ssi_global_mosaic_1km
+- Retained source:
+  `SourceAssets/ThirdParty/Textures/USGS/ganymede_global_mosaic_browse.jpg`
+- Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Ganymede/T_Ganymede_Surface_Browse.jpg`
+- Active material: `M_Ganymede.mat`.
+- Integrity: both repository JPEGs are byte-identical with SHA-256
+  `465673D0D789658CE63275C8CCC9EBBDF6B1AEC0A148CAA41052FEBC314A1616`.
+- Usage status: USGS lists the product as public domain; attribution is
+  retained and no endorsement is implied.
+- Coverage limitations: Galileo SSI and Voyager 1/2 inputs span approximately
+  `20 km/pixel` gap fill to `400 m/pixel` detail before assembly; the
+  `512 x 256` browse preserves illumination seams, varying resolution, and
+  incomplete or dark coverage.
+- Modification status: source pixels are unchanged. The project-authored
+  shader adds a warm-neutral global presentation tint and bounded
+  luminance-derived normal response; it does not reconstruct missing data.
+
+#### Callisto
+
+- Source ID: `TEX-USGS-004`
+- Product: Galileo/Voyager simple-cylindrical global map, approximately
+  `1 km/pixel` average output.
+- Product page:
+  https://astrogeology.usgs.gov/search/map/callisto_galileo_voyager_simple_cylindrical_global_map
+- Retained source:
+  `SourceAssets/ThirdParty/Textures/USGS/callisto_global_mosaic_browse.jpg`
+- Unity derivative:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Callisto/T_Callisto_Surface_Browse.jpg`
+- Active material: `M_Callisto.mat`.
+- Integrity: both repository JPEGs are byte-identical with SHA-256
+  `FA60F8305E1B000E4FBC4446CECDD5DF919A778841D9D7354E606889BBAC856F`.
+- Usage status: the retained source is a USGS/NASA product; attribution is
+  retained and no endorsement is implied. Reconfirm the product record before
+  release.
+- Coverage limitations: Galileo SSI and Voyager 1/2 inputs span approximately
+  `60 km/pixel` gap fill to `400 m/pixel` detail; the `512 x 249` browse
+  preserves incomplete dark coverage and illumination/processing variation.
+- Modification status: source pixels are unchanged. The project-authored
+  shader adds a dark-neutral global presentation tint and bounded
+  luminance-derived normal response; it does not reconstruct missing data.
 
 ### Active Titan hero record
 

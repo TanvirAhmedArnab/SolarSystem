@@ -37,6 +37,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string JupiterStableId = "jupiter";
         private const string IoStableId = "io";
         private const string EuropaStableId = "europa";
+        private const string GanymedeStableId = "ganymede";
+        private const string CallistoStableId = "callisto";
         private const string SaturnStableId = "saturn";
         private const string TitanStableId = "titan";
         private const string UranusStableId = "uranus";
@@ -81,6 +83,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialBodyView jupiterView = null;
             CelestialBodyView ioView = null;
             CelestialBodyView europaView = null;
+            CelestialBodyView ganymedeView = null;
+            CelestialBodyView callistoView = null;
             CelestialBodyView saturnView = null;
             CelestialBodyView titanView = null;
             CelestialBodyView uranusView = null;
@@ -130,6 +134,14 @@ namespace Tanvir.SolarSystem.Editor.Import
                 else if (body.Definition.StableId == EuropaStableId)
                 {
                     europaView = view;
+                }
+                else if (body.Definition.StableId == GanymedeStableId)
+                {
+                    ganymedeView = view;
+                }
+                else if (body.Definition.StableId == CallistoStableId)
+                {
+                    callistoView = view;
                 }
                 else if (body.Definition.StableId == SaturnStableId)
                 {
@@ -199,6 +211,16 @@ namespace Tanvir.SolarSystem.Editor.Import
                 throw new InvalidOperationException("The authored content requires Europa.");
             }
 
+            if (ganymedeView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Ganymede.");
+            }
+
+            if (callistoView == null)
+            {
+                throw new InvalidOperationException("The authored content requires Callisto.");
+            }
+
             if (marsView == null)
             {
                 throw new InvalidOperationException("The authored content requires Mars.");
@@ -241,6 +263,14 @@ namespace Tanvir.SolarSystem.Editor.Import
                 europaView,
                 content.EuropaVisualDefinition,
                 "Europa");
+            CreateAirlessRockyVisual(
+                ganymedeView,
+                content.GanymedeVisualDefinition,
+                "Ganymede");
+            CreateAirlessRockyVisual(
+                callistoView,
+                content.CallistoVisualDefinition,
+                "Callisto");
             CreateLayeredBodyVisual(
                 earthView,
                 content.EarthLayerDefinition,

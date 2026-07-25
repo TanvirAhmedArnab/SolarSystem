@@ -153,8 +153,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         private static readonly Color NeptuneTint = new Color(0.72f, 0.84f, 1f, 1f);
         private static readonly Color IoTint = new Color(1f, 0.84f, 0.48f, 1f);
         private static readonly Color EuropaTint = new Color(0.9f, 0.92f, 0.94f, 1f);
-        private static readonly Color GanymedeTint = new Color(0.9f, 0.88f, 0.84f, 1f);
-        private static readonly Color CallistoTint = new Color(0.86f, 0.84f, 0.8f, 1f);
+        private static readonly Color GanymedeTint = new Color(0.92f, 0.86f, 0.78f, 1f);
+        private static readonly Color CallistoTint = new Color(0.76f, 0.74f, 0.7f, 1f);
         private static readonly Color TitanTint = new Color(1f, 0.82f, 0.5f, 1f);
         private static readonly Color TitanHazeTint =
             new Color(1f, 0.56f, 0.18f, 1f);
@@ -548,6 +548,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 MoonVisualDefinition = CreateMoonVisualDefinition(),
                 IoVisualDefinition = CreateIoVisualDefinition(),
                 EuropaVisualDefinition = CreateEuropaVisualDefinition(),
+                GanymedeVisualDefinition = CreateGanymedeVisualDefinition(),
+                CallistoVisualDefinition = CreateCallistoVisualDefinition(),
                 OrbitMaterial = orbitMaterial,
                 SkyboxMaterial = skyboxMaterial,
                 VisualProfile = visualProfile,
@@ -855,6 +857,26 @@ namespace Tanvir.SolarSystem.Editor.Import
                 return europaMaterial;
             }
 
+            if (bodyName == "Ganymede")
+            {
+                Material ganymedeMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Ganymede.mat",
+                    RockySurfaceShader);
+                ResetMaterialSchema(ganymedeMaterial);
+                ConfigureGanymedeSurfaceMaterial(ganymedeMaterial);
+                return ganymedeMaterial;
+            }
+
+            if (bodyName == "Callisto")
+            {
+                Material callistoMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialRoot}/CelestialBodies/M_Callisto.mat",
+                    RockySurfaceShader);
+                ResetMaterialSchema(callistoMaterial);
+                ConfigureCallistoSurfaceMaterial(callistoMaterial);
+                return callistoMaterial;
+            }
+
             if (bodyName == "Saturn")
             {
                 Material saturnMaterial = CreateOrUpdateMaterial(
@@ -1159,6 +1181,32 @@ namespace Tanvir.SolarSystem.Editor.Import
                 AirlessRockyVisualRenderingContract.EuropaNightsideReadability);
         }
 
+        private static void ConfigureGanymedeSurfaceMaterial(Material material)
+        {
+            ConfigureAirlessRockySurfaceMaterial(
+                material,
+                GanymedeTexturePath,
+                GanymedeTint,
+                AirlessRockyVisualRenderingContract.GanymedeReliefStrength,
+                AirlessRockyVisualRenderingContract.GanymedeReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.GanymedeSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.GanymedeSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.GanymedeNightsideReadability);
+        }
+
+        private static void ConfigureCallistoSurfaceMaterial(Material material)
+        {
+            ConfigureAirlessRockySurfaceMaterial(
+                material,
+                CallistoTexturePath,
+                CallistoTint,
+                AirlessRockyVisualRenderingContract.CallistoReliefStrength,
+                AirlessRockyVisualRenderingContract.CallistoReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.CallistoSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.CallistoSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.CallistoNightsideReadability);
+        }
+
         private static void ConfigureAirlessRockySurfaceMaterial(
             Material material,
             string texturePath,
@@ -1234,6 +1282,32 @@ namespace Tanvir.SolarSystem.Editor.Import
                 AirlessRockyVisualRenderingContract.EuropaSurfaceSpecular,
                 AirlessRockyVisualRenderingContract.EuropaSurfaceSmoothness,
                 AirlessRockyVisualRenderingContract.EuropaNightsideReadability);
+        }
+
+        private static AirlessRockyVisualDefinition
+            CreateGanymedeVisualDefinition()
+        {
+            return CreateAirlessRockyVisualDefinition(
+                "Ganymede",
+                "ganymede",
+                AirlessRockyVisualRenderingContract.GanymedeReliefStrength,
+                AirlessRockyVisualRenderingContract.GanymedeReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.GanymedeSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.GanymedeSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.GanymedeNightsideReadability);
+        }
+
+        private static AirlessRockyVisualDefinition
+            CreateCallistoVisualDefinition()
+        {
+            return CreateAirlessRockyVisualDefinition(
+                "Callisto",
+                "callisto",
+                AirlessRockyVisualRenderingContract.CallistoReliefStrength,
+                AirlessRockyVisualRenderingContract.CallistoReliefSampleDistance,
+                AirlessRockyVisualRenderingContract.CallistoSurfaceSpecular,
+                AirlessRockyVisualRenderingContract.CallistoSurfaceSmoothness,
+                AirlessRockyVisualRenderingContract.CallistoNightsideReadability);
         }
 
         private static AirlessRockyVisualDefinition

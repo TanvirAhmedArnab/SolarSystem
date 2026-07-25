@@ -79,13 +79,14 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Major Moon Content Validation](Docs/ProjectManagement/Slice%204%20Major%20Moon%20Content%20Validation.md)
 - [Slice 4 Titan Haze Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Titan%20Haze%20Hero%20Rendering%20Validation.md)
 - [Slice 4 Io and Europa Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Io%20and%20Europa%20Hero%20Rendering%20Validation.md)
+- [Slice 4 Ganymede and Callisto Hero Rendering Validation](Docs/ProjectManagement/Slice%204%20Ganymede%20and%20Callisto%20Hero%20Rendering%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/seven-moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
 compile successfully. The project currently passes 157 Edit Mode cases and
-18 real-scene Play Mode cases. Coverage includes orbital behavior,
+19 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -146,6 +147,17 @@ Jupiter-parented analytical orbits, and positive synchronous rotations remain
 authoritative. Neither moon receives invented emission, active plumes,
 terrain displacement, a visible atmosphere, or an exposed subsurface ocean.
 Browse resolution, coverage, color, and reconstruction limits are documented.
+Ganymede and Callisto now complete the Galilean-moon hero surface set through
+the same reusable airless-rocky path. Ganymede uses a restrained warm-neutral
+mixed ice-and-rock response that preserves bright grooved and older dark
+terrain; Callisto uses a darker, drier, more strongly relief-shaped response
+for its ancient cratered identity. Their audited grayscale USGS browse
+mosaics remain byte-identical and anchored. Live-Sun day/night response,
+exact Earth-relative radii, Jupiter-parented analytical orbits, positive
+synchronous rotation, selection, focus, and educational facts remain
+authoritative. Bounded nightside source-color floors add no emission.
+Neither body receives a visible atmosphere, aurora, magnetosphere, exposed
+ocean, terrain displacement, fictional source fill, or date-specific state.
 Uranus and Neptune now use a reusable ice-giant authoring/model/view path with
 distinct anchored source materials, restrained source-derived band response,
 signed deterministic presentation detail, one thin Sun-aware atmosphere shell

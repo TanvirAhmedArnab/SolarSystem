@@ -1422,6 +1422,190 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator
+            SolarSystemScene_PresentsDistinctGanymedeAndCallistoHeroes()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "ganymede",
+                    out CelestialBodyView ganymede),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "callisto",
+                    out CelestialBodyView callisto),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "earth",
+                    out CelestialBodyView earth),
+                Is.True);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "sun",
+                    out CelestialBodyView sun),
+                Is.True);
+
+            AirlessRockyVisualView ganymedeVisual =
+                ganymede.AirlessRockyVisualView;
+            AirlessRockyVisualView callistoVisual =
+                callisto.AirlessRockyVisualView;
+            Assert.That(ganymedeVisual, Is.Not.Null);
+            Assert.That(callistoVisual, Is.Not.Null);
+            Assert.That(ganymedeVisual.IsInitialized, Is.True);
+            Assert.That(callistoVisual.IsInitialized, Is.True);
+            Assert.That(ganymede.LayeredBodyView, Is.Null);
+            Assert.That(callisto.LayeredBodyView, Is.Null);
+            Assert.That(ganymede.GasGiantVisualView, Is.Null);
+            Assert.That(callisto.GasGiantVisualView, Is.Null);
+            Assert.That(ganymede.IceGiantVisualView, Is.Null);
+            Assert.That(callisto.IceGiantVisualView, Is.Null);
+            Assert.That(ganymede.Definition.ParentId, Is.EqualTo("jupiter"));
+            Assert.That(callisto.Definition.ParentId, Is.EqualTo("jupiter"));
+            Assert.That(
+                ganymede.Definition.RotationPeriodSeconds,
+                Is.EqualTo(7.155588d * 86400d).Within(0.001d));
+            Assert.That(
+                callisto.Definition.RotationPeriodSeconds,
+                Is.EqualTo(16.690440d * 86400d).Within(0.001d));
+            Assert.That(
+                ganymede.Definition.RotationPeriodSeconds,
+                Is.GreaterThan(0d));
+            Assert.That(
+                callisto.Definition.RotationPeriodSeconds,
+                Is.GreaterThan(0d));
+            Assert.That(
+                ganymede.Definition.Orbit.SemiMajorAxisKm,
+                Is.EqualTo(1070400d));
+            Assert.That(
+                callisto.Definition.Orbit.SemiMajorAxisKm,
+                Is.EqualTo(1882700d));
+            Assert.That(
+                ganymede.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(2631.20f / 6371.0084f).Within(0.0001f));
+            Assert.That(
+                callisto.CurrentDisplayRadius / earth.CurrentDisplayRadius,
+                Is.EqualTo(2410.30f / 6371.0084f).Within(0.0001f));
+
+            Material ganymedeMaterial =
+                ganymedeVisual.SurfaceRenderer.sharedMaterial;
+            Material callistoMaterial =
+                callistoVisual.SurfaceRenderer.sharedMaterial;
+            Assert.That(
+                ganymedeMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Rocky Surface"));
+            Assert.That(
+                callistoMaterial.shader.name,
+                Is.EqualTo("SolarSystem/Celestial/Rocky Surface"));
+            Assert.That(ganymedeMaterial, Is.Not.SameAs(callistoMaterial));
+            Assert.That(
+                ganymedeMaterial.GetTexture("_BaseMap").name,
+                Is.EqualTo("T_Ganymede_Surface_Browse"));
+            Assert.That(
+                callistoMaterial.GetTexture("_BaseMap").name,
+                Is.EqualTo("T_Callisto_Surface_Browse"));
+
+            var properties = new MaterialPropertyBlock();
+            ganymedeVisual.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_ReliefStrength")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .GanymedeReliefStrength));
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_Smoothness")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .GanymedeSurfaceSmoothness));
+            properties.Clear();
+            callistoVisual.SurfaceRenderer.GetPropertyBlock(properties);
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_ReliefStrength")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .CallistoReliefStrength));
+            Assert.That(
+                properties.GetFloat(Shader.PropertyToID("_Smoothness")),
+                Is.EqualTo(
+                    AirlessRockyVisualRenderingContract
+                        .CallistoSurfaceSmoothness));
+
+            Assert.That(
+                ganymedeVisual.SurfaceRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(
+                ganymedeVisual.SurfaceRenderer.receiveShadows,
+                Is.False);
+            Assert.That(
+                callistoVisual.SurfaceRenderer.shadowCastingMode,
+                Is.EqualTo(ShadowCastingMode.Off));
+            Assert.That(
+                callistoVisual.SurfaceRenderer.receiveShadows,
+                Is.False);
+
+            Vector4 globalSunPosition =
+                Shader.GetGlobalVector("_SolarSystemSunPositionWS");
+            Assert.That(
+                Vector3.Distance(globalSunPosition, sun.transform.position),
+                Is.LessThan(0.0001f));
+            Light radialLight =
+                GameObject.Find("Solar Radial Light")?.GetComponent<Light>();
+            Assert.That(radialLight, Is.Not.Null);
+            AssertReceivesSunOriginLight(radialLight, sun, ganymede);
+            AssertReceivesSunOriginLight(radialLight, sun, callisto);
+
+            bool wasPaused =
+                simulation.SimulationController.ClockSnapshot.IsPaused;
+            interaction.SelectionController.Select(ganymede);
+            yield return null;
+            Assert.That(
+                interaction.SelectionController.SelectedView,
+                Is.SameAs(ganymede));
+            Assert.That(
+                interaction.HudPresenter.BodyNameText,
+                Is.EqualTo("Ganymede"));
+            Assert.That(
+                interaction.HudPresenter.IsBodyInformationVisible,
+                Is.True);
+            interaction.CameraController.Focus(ganymede);
+            yield return WaitUntilFocused(interaction.CameraController);
+            Assert.That(
+                interaction.CameraController.FocusedTarget,
+                Is.SameAs(ganymede));
+
+            interaction.SelectionController.Select(callisto);
+            yield return null;
+            Assert.That(
+                interaction.HudPresenter.BodyNameText,
+                Is.EqualTo("Callisto"));
+            interaction.CameraController.Focus(callisto);
+            yield return WaitUntilFocused(interaction.CameraController);
+            Assert.That(
+                interaction.SelectionController.SelectedView,
+                Is.SameAs(callisto));
+            Assert.That(
+                interaction.CameraController.FocusedTarget,
+                Is.SameAs(callisto));
+            Assert.That(ganymedeVisual.SurfaceRenderer.enabled, Is.True);
+            Assert.That(callistoVisual.SurfaceRenderer.enabled, Is.True);
+            Assert.That(
+                simulation.SimulationController.ClockSnapshot.IsPaused,
+                Is.EqualTo(wasPaused));
+
+            interaction.CameraController.ReturnToFreeFlight();
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator SolarSystemScene_UsesDeterministicVenusCloudDeckAndLimb()
         {
             SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);

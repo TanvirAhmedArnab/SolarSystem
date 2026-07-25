@@ -184,6 +184,20 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             AirlessRockyVisualRenderingContract.EuropaSurfaceSpecular,
             AirlessRockyVisualRenderingContract.EuropaSurfaceSmoothness,
             AirlessRockyVisualRenderingContract.EuropaNightsideReadability)]
+        [TestCase(
+            "ganymede",
+            AirlessRockyVisualRenderingContract.GanymedeReliefStrength,
+            AirlessRockyVisualRenderingContract.GanymedeReliefSampleDistance,
+            AirlessRockyVisualRenderingContract.GanymedeSurfaceSpecular,
+            AirlessRockyVisualRenderingContract.GanymedeSurfaceSmoothness,
+            AirlessRockyVisualRenderingContract.GanymedeNightsideReadability)]
+        [TestCase(
+            "callisto",
+            AirlessRockyVisualRenderingContract.CallistoReliefStrength,
+            AirlessRockyVisualRenderingContract.CallistoReliefSampleDistance,
+            AirlessRockyVisualRenderingContract.CallistoSurfaceSpecular,
+            AirlessRockyVisualRenderingContract.CallistoSurfaceSmoothness,
+            AirlessRockyVisualRenderingContract.CallistoNightsideReadability)]
         public void MajorMoonContract_CreatesValidatedImmutableModel(
             string stableId,
             float reliefStrength,

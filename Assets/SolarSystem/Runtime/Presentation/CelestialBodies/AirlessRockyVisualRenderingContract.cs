@@ -68,5 +68,35 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
 
         /// <summary>Europa source-color visibility on its unlit hemisphere.</summary>
         public const float EuropaNightsideReadability = 0.025f;
+
+        /// <summary>Ganymede source-derived relief strength.</summary>
+        public const float GanymedeReliefStrength = 0.26f;
+
+        /// <summary>Ganymede source-texel sample distance.</summary>
+        public const float GanymedeReliefSampleDistance = 1.25f;
+
+        /// <summary>Ganymede non-metallic specular response.</summary>
+        public const float GanymedeSurfaceSpecular = 0.028f;
+
+        /// <summary>Ganymede mixed ice-and-rock surface smoothness.</summary>
+        public const float GanymedeSurfaceSmoothness = 0.12f;
+
+        /// <summary>Ganymede source-color visibility on its unlit hemisphere.</summary>
+        public const float GanymedeNightsideReadability = 0.07f;
+
+        /// <summary>Callisto source-derived relief strength.</summary>
+        public const float CallistoReliefStrength = 0.3f;
+
+        /// <summary>Callisto source-texel sample distance.</summary>
+        public const float CallistoReliefSampleDistance = 1.4f;
+
+        /// <summary>Callisto non-metallic specular response.</summary>
+        public const float CallistoSurfaceSpecular = 0.014f;
+
+        /// <summary>Callisto old cratered-surface smoothness.</summary>
+        public const float CallistoSurfaceSmoothness = 0.05f;
+
+        /// <summary>Callisto source-color visibility on its unlit hemisphere.</summary>
+        public const float CallistoNightsideReadability = 0.08f;
     }
 }
