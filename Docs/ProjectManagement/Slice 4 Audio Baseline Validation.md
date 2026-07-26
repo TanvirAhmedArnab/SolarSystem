@@ -3,9 +3,10 @@
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
 **Validation date:** 2026-07-24  
+**Owner approval date:** 2026-07-25  
 **Unity:** 6000.5.3f1  
 **URP:** 17.5.0  
-**Status:** Implemented and automatically validated; final mix awaits owner review
+**Status:** Implemented, automatically validated, and owner-approved
 
 ## Scope
 
@@ -18,8 +19,9 @@ This candidate integrates the previously approved, licensed audio working set:
 - Independent master, music, UI, and celestial runtime levels plus master mute.
 
 The audio is interpretive experience design. It does not claim that sound
-propagates through space. Player-facing settings are implemented; transition
-fades and final mix approval remain outside this candidate.
+propagates through space. Player-facing settings are implemented. The current
+focus behavior requires no dedicated audio fade for the initial release;
+Tanvir approved the release-default mix and transitions during audition.
 
 ## Licensing and provenance
 
@@ -83,18 +85,18 @@ that the music, Sun, and Earth playheads all advance.
 - Console after validation: `0 errors`, `0 warnings`
 - Editor state: Edit Mode
 
-## Owner listening gate
+## Owner listening approval
 
-Automated tests cannot judge sound quality. Before portfolio release, Tanvir
-must audition the scene on the target mid-range PC and approve:
+Automated tests cannot judge sound quality. On 2026-07-25, Tanvir auditioned
+the release-default scene on the target PC and approved:
 
-- Music, Sun, Earth, and UI relative loudness.
-- Loop seams and absence of clicks.
-- Earth attenuation during overview and focus shots.
-- Repetition fatigue for selection, focus, and time cues.
-- Comfortable startup volume and mute behavior.
+- [x] Music, Sun, Earth, and UI relative loudness.
+- [x] Loop seams and absence of clicks.
+- [x] Earth attenuation during overview and focus shots.
+- [x] Repetition comfort for selection, focus, and time cues.
+- [x] Comfortable startup volume and mute behavior.
 
-## Repository preflight
+## Original baseline repository preflight
 
 - Staged files: `28`
 - Generated paths: `0`
@@ -112,4 +114,5 @@ must audition the scene on the target mid-range PC and approve:
 `ProjectSettings/ProjectSettings.asset`, and
 `ProjectSettings/URPProjectSettings.asset` remain deliberately unstaged.
 
-No commit or push has been performed.
+The original baseline was subsequently committed and published. The reliable
+Sun derivative and playback regression were published in commit `cbaa833`.

@@ -54,6 +54,43 @@ New-Item -ItemType Directory -Force -Path $kenneyDestination | Out-Null
 Expand-Archive -LiteralPath $kenneyZip -DestinationPath $kenneyDestination -Force
 $kf=Get-Item -LiteralPath $kenneyZip
 $manifest += [pscustomobject]@{Id='AUD-KEN-001';SourceUrl=$kenneyUrl;RelativePath=$kenneyZip.Substring($ProjectRoot.Length).TrimStart('\');Bytes=$kf.Length;Sha256=(Get-FileHash -LiteralPath $kenneyZip -Algorithm SHA256).Hash;DownloadedUtc=$kf.LastWriteTimeUtc.ToString('o')}
+
+$interUrl='https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip'
+$interArchiveHash='9883FDD4A49D4FB66BD8177BA6625EF9A64AA45899767DDE3D36AA425756B11E'
+$interZip=Join-Path $downloadRoot 'Inter-4.1.zip'
+$interExtractRoot=Join-Path $downloadRoot 'Inter-4.1'
+$interDestination=Join-Path $sourceRoot 'Fonts\Inter'
+if(-not(Test-Path -LiteralPath $interZip)){
+  & curl.exe -L --fail --retry 2 -A "Mozilla/5.0" $interUrl -o $interZip
+  if($LASTEXITCODE -ne 0){throw "Inter download failed"}
+}
+$actualInterArchiveHash=(Get-FileHash -LiteralPath $interZip -Algorithm SHA256).Hash
+if($actualInterArchiveHash -ne $interArchiveHash){
+  throw "Inter archive hash mismatch. Expected $interArchiveHash; got $actualInterArchiveHash"
+}
+if(-not(Test-Path -LiteralPath $interExtractRoot)){
+  Expand-Archive -LiteralPath $interZip -DestinationPath $interExtractRoot
+}
+New-Item -ItemType Directory -Force -Path $interDestination | Out-Null
+$interFiles=@(
+  @{Id='FONT-INTER-REG-001';Relative='extras\ttf\Inter-Regular.ttf';Destination='Inter-Regular.ttf';Sha256='40D692FCE188E4471E2B3CBA937BE967878F631AD3EBBBDCD587687C7EBE0C82'},
+  @{Id='FONT-INTER-SEMIBOLD-001';Relative='extras\ttf\Inter-SemiBold.ttf';Destination='Inter-SemiBold.ttf';Sha256='78A843FADE9D4612A5567302FB595B56976EB5FCEBF4FEA5A5912D638BAFCDE3'},
+  @{Id='FONT-INTER-LICENSE-001';Relative='LICENSE.txt';Destination='LICENSE.txt';Sha256='262481E844521B326F5ECD053E59B98C8B2DA78C8EE1BDBB6E8174305E54935A'}
+)
+foreach($interFile in $interFiles){
+  $interSource=Join-Path $interExtractRoot $interFile.Relative
+  $destination=Join-Path $interDestination $interFile.Destination
+  if(-not(Test-Path -LiteralPath $destination)){
+    Copy-Item -LiteralPath $interSource -Destination $destination
+  }
+  $actualHash=(Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash
+  if($actualHash -ne $interFile.Sha256){
+    throw "Inter file hash mismatch: $destination"
+  }
+  $file=Get-Item -LiteralPath $destination
+  $manifest += [pscustomobject]@{Id=$interFile.Id;SourceUrl=$interUrl;RelativePath=$destination.Substring($ProjectRoot.Length).TrimStart('\');Bytes=$file.Length;Sha256=$actualHash;DownloadedUtc=$file.LastWriteTimeUtc.ToString('o')}
+}
+
 $manifest | Sort-Object Id | Export-Csv -LiteralPath $manifestPath -NoTypeInformation -Encoding UTF8
 Write-Output "Downloaded and verified $($manifest.Count) source packages."
 Write-Output "Manifest: $manifestPath"

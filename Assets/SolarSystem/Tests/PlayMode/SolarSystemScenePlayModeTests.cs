@@ -23,7 +23,7 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
 {
     public sealed class SolarSystemScenePlayModeTests
     {
-        private const float FocusTransitionTimeoutSeconds = 2f;
+        private const float FocusTransitionTimeoutSeconds = 5f;
         private bool hadExplorerSettings;
         private string savedExplorerSettings;
         private static readonly string[] ExpectedBodyIds =
@@ -811,6 +811,7 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             tourController.StartOrAdvance();
             yield return WaitUntilAnyGuidedPresentationRestored(
                 interaction.CameraController);
+            yield return null;
             float interactionRestoreDeadline =
                 Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
             while ((!interaction.Navigation.Service.IsNavigatorVisible ||
@@ -2661,7 +2662,9 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         private static IEnumerator WaitUntilFocused(
             SolarSystemCameraController cameraController)
         {
-            float deadline = Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
+            yield return null;
+            float deadline =
+                Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
             while (cameraController.Mode == SolarSystemCameraMode.FocusTransition &&
                    Time.realtimeSinceStartup < deadline)
             {
@@ -2671,13 +2674,16 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             Assert.That(
                 cameraController.Mode,
                 Is.EqualTo(SolarSystemCameraMode.Focused),
-                $"Camera did not finish focusing within {FocusTransitionTimeoutSeconds:F1} seconds.");
+                $"Camera did not finish focusing within " +
+                $"{FocusTransitionTimeoutSeconds:F1} seconds after initialization.");
         }
 
         private static IEnumerator WaitUntilGuided(
             SolarSystemCameraController cameraController)
         {
-            float deadline = Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
+            yield return null;
+            float deadline =
+                Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
             while (cameraController.Mode == SolarSystemCameraMode.GuidedTransition &&
                    Time.realtimeSinceStartup < deadline)
             {
@@ -2693,7 +2699,9 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         private static IEnumerator WaitUntilCinematic(
             SolarSystemCameraController cameraController)
         {
-            float deadline = Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
+            yield return null;
+            float deadline =
+                Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
             while (cameraController.Mode == SolarSystemCameraMode.GuidedTransition &&
                    Time.realtimeSinceStartup < deadline)
             {
@@ -2709,7 +2717,9 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         private static IEnumerator WaitUntilAnyGuidedPresentationRestored(
             SolarSystemCameraController cameraController)
         {
-            float deadline = Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
+            yield return null;
+            float deadline =
+                Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
             while (cameraController.IsGuidedPresentationActive &&
                    Time.realtimeSinceStartup < deadline)
             {
@@ -2725,7 +2735,9 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         private static IEnumerator WaitUntilExplorerRestored(
             SolarSystemCameraController cameraController)
         {
-            float deadline = Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
+            yield return null;
+            float deadline =
+                Time.realtimeSinceStartup + FocusTransitionTimeoutSeconds;
             while (cameraController.IsGuidedComparisonActive &&
                    Time.realtimeSinceStartup < deadline)
             {

@@ -134,6 +134,5 @@ in the compiled runtime result.
 
 ## Remaining release work
 
-- Owner listening and final audio-mix approval.
 - Licensed typography/icon decision, if the default runtime font is replaced.
 - Formal profiler capture on the approved reference PC.

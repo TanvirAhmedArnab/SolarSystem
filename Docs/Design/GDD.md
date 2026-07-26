@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.26.0  
+**Version:** 0.28.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -53,6 +53,8 @@
 | 0.24.0 | 2026-07-25 | Codex, for Tanvir | Implemented the five-chapter deterministic cinematic tour with shared camera/simulation services, accessible controls, live scientific motion, mutual exclusion, and exact explorer-state restoration | Cinematic-tour vertical slice implemented and validated |
 | 0.25.0 | 2026-07-25 | Codex, for Tanvir | Polished all five cinematic chapters with phase-robust authored composition, reversible visual hierarchy, and a persisted keyboard/mouse reduced-motion mode | Cinematic-tour presentation and motion-accessibility candidate implemented and validated |
 | 0.26.0 | 2026-07-25 | Codex, for Tanvir | Implemented the unified Explorer Menu, first-launch orientation, persistent presentation/audio settings, contextual Escape routing, and release-facing credits and sources | Portfolio UX baseline implemented and validated |
+| 0.27.0 | 2026-07-25 | Codex, for Tanvir | Recorded the product owner's in-scene approval of the release-default music, Sun, Earth, and interface mix | Final audio mix approved |
+| 0.28.0 | 2026-07-25 | Codex, for Tanvir | Approved Inter v4.1 Regular and SemiBold as the final licensed UI typeface and integrated the two-weight hierarchy across the responsive explorer interface | Final UI typography approved; implementation candidate validated |
 
 ### 1.3 Source hierarchy
 
@@ -605,10 +607,12 @@ If audio is included:
 stylized 2D Sun ambience, and spatial 3D Earth ambience. Selection, focus, and
 simulation-time changes produce restrained UI cues. Master, music, UI, and
 celestial levels are independently adjustable through the runtime settings
-surface, and master mute preserves the chosen channel levels. Final loudness,
-loop-seam, and fatigue approval remains an owner listening gate; this
-implementation does not claim
-that sound propagates through space.
+surface, and master mute preserves the chosen channel levels. This
+implementation does not claim that sound propagates through space.
+
+**[APPROVED: 2026-07-25]** Tanvir approved the release-default relative
+loudness, loop behavior, Earth attenuation, UI repetition, startup volume,
+and mute behavior after the in-scene overview/focus audition.
 
 ## 13. Technical Product Constraints
 
@@ -751,10 +755,10 @@ with responsive safe areas, overlap suppression, selection synchronization,
 focus/guided-mode rules, and explicit `N`/`L` controls. Cinematic routing,
 the unified Help/Settings/Credits & Sources menu, first-launch orientation,
 contextual Escape routing, persisted reduced-motion, orbit-guide and label
-controls, and four-channel audio settings are implemented. Licensed typography
-and broader accessibility completion remain. The licensed music, Sun/Earth
-ambience, and event-driven UI feedback baseline is implemented; final
-listening/mix approval remains.
+controls, four-channel audio settings, and the licensed Inter Regular/SemiBold
+UI hierarchy are implemented. Broader accessibility completion remains. The
+licensed music, Sun/Earth ambience, and event-driven UI feedback baseline is
+implemented and the release-default mix is owner-approved.
 
 ### Milestone 5 - Portfolio release
 

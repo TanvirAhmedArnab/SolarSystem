@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Hardened Play Mode transition waits against one-time editor/font
+  initialization stalls by starting the bounded timeout after the first
+  initialized frame; production transition durations are unchanged.
+- Approved the release-default music, Sun, Earth, and interface mix after the
+  product owner's in-scene overview/focus audition.
 - Rebuilt the Sun ambience as a reproducible PCM16 mono derivative with a
   100 ms loop crossfade and controlled `-3 dBFS` peak, then added a runtime
   regression proving that all three continuous-audio playheads advance.
@@ -33,6 +38,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Final Inter v4.1 Regular/SemiBold UI typography, reproducible TextCore font
+  assets, runtime credit, pinned OFL 1.1 license, source hashes, and automated
+  typography-contract coverage.
 - Unified Explorer Menu with Help, Settings, and Credits & Sources pages,
   including a persistent first-launch orientation.
 - Versioned local settings for master, music, interface, and celestial audio,

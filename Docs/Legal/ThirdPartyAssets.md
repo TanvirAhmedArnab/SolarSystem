@@ -2,10 +2,10 @@
 
 **Owner:** Tanvir  
 **Status:** Living licensing ledger  
-**Version:** 0.16.0  
+**Version:** 0.17.0  
 **Last reviewed:** 2026-07-25
 
-**Live-source verification:** Rechecked 2026-07-25 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, and the linked USGS product records, including Triton's Voyager 2 mosaic.
+**Live-source verification:** Rechecked 2026-07-25 against the Solar System Scope texture page, Kenney Interface Sounds page, the three OpenGameArt asset pages, the linked USGS product records, including Triton's Voyager 2 mosaic, and the official Inter repository, v4.1 release, and SIL Open Font License 1.1.
 
 > Operational provenance record, not legal advice. Re-check source pages before release and reject assets with ambiguous rights.
 
@@ -30,6 +30,14 @@ Attribution is not legally required under CC0, but this optional credit is retai
 > Interface sounds by Kenney (https://kenney.nl), dedicated to the public domain under CC0 1.0.
 
 Credit is optional under CC0 but retained as professional provenance.
+
+### Inter
+
+> Inter Regular and SemiBold by Rasmus Andersson (https://github.com/rsms/inter), bundled under the SIL Open Font License 1.1.
+
+The complete OFL text is retained at
+`SourceAssets/ThirdParty/Fonts/Inter/LICENSE.txt`. The project uses unmodified
+official v4.1 static TTF files; `Inter` remains the reserved font name.
 
 ### USGS/NASA
 
@@ -76,6 +84,20 @@ Credit is optional under CC0 but retained as professional provenance.
 - License: CC0 1.0
 - License: https://creativecommons.org/publicdomain/zero/1.0/
 
+### Inter
+
+- Official repository: https://github.com/rsms/inter
+- Pinned release: https://github.com/rsms/inter/releases/tag/v4.1
+- Retained download:
+  https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip
+- Designer/copyright holder: Rasmus Andersson / RSMS
+- License: SIL Open Font License 1.1
+- License source: https://github.com/rsms/inter/blob/v4.1/LICENSE.txt
+- Commercial software bundling, embedding, redistribution, and modification
+  are permitted under the OFL terms. The font may not be sold by itself.
+- The project ships the official, unmodified Regular and SemiBold static TTF
+  files and retains the complete license; no derivative font is represented.
+
 ## Asset Ledger
 
 The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-manifest.csv`.
@@ -93,6 +115,8 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 | AUD-OGA-SUN-001 | Fireplace Sound Loop | PagDev / OpenGameArt | CC0 1.0 | Imported Sun ambience source |
 | AUD-OGA-EARTH-001 | Forest Ambience | TinyWorlds / OpenGameArt | CC0 1.0 | Imported Earth ambience source |
 | AUD-KEN-001 | Interface Sounds | Kenney | CC0 1.0 | Seven-file runtime subset imported |
+| FONT-INTER-REG-001, FONT-INTER-SEMIBOLD-001 | Inter Regular and SemiBold v4.1 | Rasmus Andersson / RSMS | SIL OFL 1.1 | Approved final UI typography; imported as dynamic TextCore font assets |
+| FONT-INTER-LICENSE-001 | Complete Inter v4.1 license text | Rasmus Andersson / RSMS | SIL OFL 1.1 | Retained verbatim with the source fonts |
 
 ## Repository Inclusion Policy
 
@@ -100,6 +124,9 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 - Commit the corresponding source original when it is part of the approved working set.
 - Treat `SourceAssets/_Downloads` as a reproducible, ignored cache rather than permanent repository content.
 - For the 100-file Kenney pack, commit only the seven selected originals plus the bundled license and provider link; leave 93 unused sounds and the archive out of Git.
+- For Inter, commit only the approved Regular and SemiBold static TTF files,
+  their complete OFL text, and their Unity-ready copies; leave the 33 MB release
+  archive and all unused faces in the ignored download cache.
 - Keep the manifest and retrieval script so the complete source package can be reproduced and its archive hash verified.
 
 ## Unity Import Record
@@ -118,6 +145,7 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
 | AUD-OGA-MUS-001 | `Assets/SolarSystem/Content/Audio/Music/A_Music_OuterSpaceLoop.mp3` | Imported; 2D music mix review pending |
 | AUD-OGA-SUN-001 | `Assets/SolarSystem/Content/Audio/Ambience/CelestialBodies/Sun/A_Sun_BurningLoop.wav` | Reproducible PCM16 mono derivative; 2D playback validated; mix review pending |
 | AUD-OGA-EARTH-001 | `Assets/SolarSystem/Content/Audio/Ambience/CelestialBodies/Earth/A_Earth_ForestAmbienceLoop.mp3` | Imported; intended 3D rolloff and mix review pending |
+| FONT-INTER-REG-001, FONT-INTER-SEMIBOLD-001 | `Assets/SolarSystem/Content/UI/Typography` | Byte-identical v4.1 TTF copies imported; reproducible dynamic TextCore assets drive regular and semibold UI roles |
 
 ### Active Sun ambience record
 
@@ -134,6 +162,31 @@ The fetch script records byte size and SHA-256 in `SourceAssets/asset-download-m
   crossfade, and normalizes the peak to `-3 dBFS`.
 - License: PagDev / OpenGameArt, CC0 1.0. Modification, redistribution, and
   commercial use are permitted; optional credit remains in the release.
+
+### Active Inter typography record
+
+- Source IDs: `FONT-INTER-REG-001`, `FONT-INTER-SEMIBOLD-001`, and
+  `FONT-INTER-LICENSE-001`.
+- Release: official Inter v4.1, published 2024-11-16.
+- Retained source:
+  `SourceAssets/ThirdParty/Fonts/Inter`.
+- Unity TTF copies:
+  `Assets/SolarSystem/Content/UI/Typography/Inter-Regular.ttf` and
+  `Inter-SemiBold.ttf`.
+- Runtime TextCore assets: `FA_Inter_Regular.asset` and
+  `FA_Inter_SemiBold.asset`, authored with a 1024-square dynamic SDFAA atlas,
+  multi-atlas fallback, and font-feature discovery enabled.
+- Source/runtime integrity: Regular
+  `40D692FCE188E4471E2B3CBA937BE967878F631AD3EBBBDCD587687C7EBE0C82`;
+  SemiBold
+  `78A843FADE9D4612A5567302FB595B56976EB5FCEBF4FEA5A5912D638BAFCDE3`.
+- Release archive SHA-256:
+  `9883FDD4A49D4FB66BD8177BA6625EF9A64AA45899767DDE3D36AA425756B11E`.
+- License: SIL Open Font License 1.1, retained verbatim with SHA-256
+  `262481E844521B326F5ECD053E59B98C8B2DA78C8EE1BDBB6E8174305E54935A`.
+- Modification status: the TTF bytes are unchanged. Unity-generated TextCore
+  atlas/material assets are runtime rendering data, not renamed or modified
+  font software.
 
 ### Active Jupiter texture record
 
@@ -531,6 +584,7 @@ Unity import settings do not modify the repository binaries.
 - Verify every shipped binary against the SHA-256 manifest.
 - Record each derivative's source ID and modifications.
 - Include CC BY license links and attribution.
+- Include the Inter OFL text and typography credit.
 - Do not imply endorsement or use NASA branding.
 - Re-check source terms immediately before release.
 - Keep unused files out of the distributable build.

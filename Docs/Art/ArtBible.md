@@ -1,8 +1,8 @@
 # Solar System Simulation Art Bible
 
 **Owner:** Tanvir  
-**Status:** Living authority with validated visual, audio, guided-scale, hero-rendering, navigation, and Explorer Menu foundations  
-**Version:** 0.27.0  
+**Status:** Living authority with validated visual, audio, typography, guided-scale, hero-rendering, navigation, and Explorer Menu foundations  
+**Version:** 0.30.0  
 **Last updated:** 2026-07-25  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -408,15 +408,23 @@ body's scale ratio.
 equirectangular map with a restrained cool tint and `0.62` exposure. The camera
 uses skybox clearing, HDR, post-processing, NaN suppression, and dithering.
 
-Use an open-source sans-serif with tabular numerals after license review. Icons use a single consistent line family or project-authored SVG. UI transitions use short fades and translations; reduced-motion mode uses brief fades or cuts.
+**[APPROVED: 2026-07-25]** Inter v4.1 is the final release UI
+typeface. Use Inter Regular for explanatory copy and numeric values, and Inter
+SemiBold for headings, state labels, keycaps, tabs, and controls. The tall
+x-height supports small-screen readability, while the two-weight limit preserves
+the restrained observatory hierarchy. Use the official unmodified static TTF
+files under SIL OFL 1.1; retain the complete license and provenance record.
+Icons use a single consistent line family or project-authored SVG. UI
+transitions use short fades and translations; reduced-motion mode uses brief
+fades or cuts.
 
 **[IMPLEMENTED PROOF]** The first explorer HUD uses a compact observatory card
 with deep navy transparency, a thin cyan instrumentation edge, neutral
 high-contrast text, green running state, amber paused state, and a separate
 low-priority control-hint surface. It preserves the system view at 16:9 and
-uses UI Toolkit scaling from a 1920x1080 reference. Unity's default runtime
-sans-serif remains temporary until the open font decision and license review
-are complete.
+uses UI Toolkit scaling from a 1920x1080 reference. The final Inter
+Regular/SemiBold hierarchy is applied through project-owned TextCore font assets
+and inherited USS typography rules.
 
 **[IMPLEMENTED NAVIGATION BASELINE]** The celestial navigator extends the same
 observatory language as a scrollable left-side instrument panel. Star and
@@ -431,9 +439,8 @@ restrained by deterministic overlap suppression and HUD safe areas. Labels do
 not enlarge bodies, block world picking, or add iconography; overview favors
 selection and planets before moons, focus view shows one target, and guided
 comparison hides the layer. The interface switches to narrower panels and
-wrapped hints at compact logical dimensions. This slice deliberately retains
-Unity's default runtime sans-serif and introduces no third-party font or icon
-before those open licensing decisions are approved.
+wrapped hints at compact logical dimensions. The navigation surfaces now share
+the approved Inter hierarchy; no third-party icon set is introduced.
 
 **[IMPLEMENTED GUIDED COMPARISON]** A wide bottom-center teaching card replaces
 the normal quick-control strip and selected-body card while scale comparison is
@@ -593,19 +600,23 @@ An asset is ready only when:
 
 ## 10. Open Art Decisions
 
-1. **[OPEN] Font family:** decide after UI wireframes and license review.
+1. **[APPROVED: 2026-07-25] Font family:** Inter v4.1 Regular and SemiBold,
+   sourced from the official RSMS release and bundled under SIL OFL 1.1.
 2. **[OPEN] Icon family:** project-authored or compatible open-license set.
 3. **[OPEN] Moon upgrade:** compare the current validated 2K focus shot against
    the NASA CGI Moon Kit only if release capture reveals a visible limitation.
 4. **[OPEN] Remaining shader fidelity:** profile the validated Earth, Sun,
    eight-planet, and Earth-Moon patterns against release screenshots and
    measured screen-space need; add no unique shader without evidence.
-5. **[OPEN] Audio mix:** approve music, Sun, Earth, and UI loudness after in-scene audition.
+5. **[APPROVED: 2026-07-25] Audio mix:** Tanvir approved the release-default
+   music, Sun, Earth, and UI balance after the in-scene audition.
 
 ## Revision History
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.30.0 | 2026-07-25 | Approved and integrated Inter v4.1 Regular/SemiBold as the final two-weight UI hierarchy, with official-source provenance, complete OFL retention, TextCore runtime assets, and responsive validation | Final UI typography approved by Tanvir; implementation candidate validated |
+| 0.29.0 | 2026-07-25 | Recorded Tanvir's approval of the release-default music, celestial ambience, and interface mix after the overview/focus audition | Final audio mix approved |
 | 0.28.0 | 2026-07-25 | Recorded the reproducible Sun ambience derivative, reliable playback policy, shared celestial-level contract, and playhead regression | Technical audio fix implemented and validated; final mix awaits owner review |
 | 0.27.0 | 2026-07-25 | Added the responsive unified Explorer Menu language for Help, onboarding, Settings, and Credits & Sources, including visible audio values and non-color-only state | Explorer UX visual baseline implemented and validated |
 | 0.26.0 | 2026-07-25 | Refined all cinematic chapters with responsive lower-left hierarchy, target-only visual spotlighting, reversible orbit-guide suppression, phase-robust group separation, and a visible Full/Reduced Motion control | Cinematic-tour polish implemented and validated at exact 1280x720 and 2560x1440 |

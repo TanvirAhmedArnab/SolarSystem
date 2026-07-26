@@ -1,5 +1,9 @@
+using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEngine;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
 
 namespace Tanvir.SolarSystem.Tests.EditMode
@@ -12,6 +16,14 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             "Assets/SolarSystem/Content/UI/SolarSystemHud.uxml";
         private const string StylePath =
             "Assets/SolarSystem/Content/UI/SolarSystemHud.uss";
+        private const string RegularFontPath =
+            "Assets/SolarSystem/Content/UI/Typography/Inter-Regular.ttf";
+        private const string SemiBoldFontPath =
+            "Assets/SolarSystem/Content/UI/Typography/Inter-SemiBold.ttf";
+        private const string RegularFontAssetPath =
+            "Assets/SolarSystem/Content/UI/Typography/FA_Inter_Regular.asset";
+        private const string SemiBoldFontAssetPath =
+            "Assets/SolarSystem/Content/UI/Typography/FA_Inter_SemiBold.asset";
 
         [Test]
         public void HudAssets_ProvideRequiredRuntimeContract()
@@ -104,6 +116,11 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(root.Q<Toggle>("orbit-guides-toggle"), Is.Not.Null);
             Assert.That(root.Q<Toggle>("world-labels-toggle"), Is.Not.Null);
             Assert.That(root.Q<Button>("restore-defaults-button"), Is.Not.Null);
+            string creditsCopy = string.Join(
+                "\n",
+                root.Query<Label>().ToList().Select(label => label.text));
+            Assert.That(creditsCopy, Does.Contain("Inter Regular and SemiBold"));
+            Assert.That(creditsCopy, Does.Contain("SIL Open Font License 1.1"));
         }
 
         [Test]
@@ -114,6 +131,47 @@ namespace Tanvir.SolarSystem.Tests.EditMode
             Assert.That(panel.scaleMode, Is.EqualTo(PanelScaleMode.ScaleWithScreenSize));
             Assert.That(panel.referenceResolution.x, Is.EqualTo(1920));
             Assert.That(panel.referenceResolution.y, Is.EqualTo(1080));
+        }
+
+        [Test]
+        public void TypographyAssets_UseApprovedInterFaces()
+        {
+            Font regularSource = AssetDatabase.LoadAssetAtPath<Font>(RegularFontPath);
+            Font semiBoldSource = AssetDatabase.LoadAssetAtPath<Font>(SemiBoldFontPath);
+            FontAsset regular =
+                AssetDatabase.LoadAssetAtPath<FontAsset>(RegularFontAssetPath);
+            FontAsset semiBold =
+                AssetDatabase.LoadAssetAtPath<FontAsset>(SemiBoldFontAssetPath);
+
+            Assert.That(regularSource, Is.Not.Null);
+            Assert.That(semiBoldSource, Is.Not.Null);
+            Assert.That(regular, Is.Not.Null);
+            Assert.That(semiBold, Is.Not.Null);
+            Assert.That(regularSource.fontNames, Does.Contain("Inter"));
+            Assert.That(semiBoldSource.fontNames, Does.Contain("Inter"));
+            Assert.That(regular.sourceFontFile, Is.SameAs(regularSource));
+            Assert.That(semiBold.sourceFontFile, Is.SameAs(semiBoldSource));
+            Assert.That(
+                regular.atlasPopulationMode,
+                Is.EqualTo(AtlasPopulationMode.Dynamic));
+            Assert.That(
+                semiBold.atlasPopulationMode,
+                Is.EqualTo(AtlasPopulationMode.Dynamic));
+            Assert.That(regular.atlasWidth, Is.EqualTo(1024));
+            Assert.That(regular.atlasHeight, Is.EqualTo(1024));
+            Assert.That(semiBold.atlasWidth, Is.EqualTo(1024));
+            Assert.That(semiBold.atlasHeight, Is.EqualTo(1024));
+            Assert.That(regular.isMultiAtlasTexturesEnabled, Is.True);
+            Assert.That(semiBold.isMultiAtlasTexturesEnabled, Is.True);
+        }
+
+        [Test]
+        public void StyleSheet_AppliesRegularAndSemiBoldFontAssets()
+        {
+            string styleSheet = File.ReadAllText(StylePath);
+
+            Assert.That(styleSheet, Does.Contain(RegularFontAssetPath));
+            Assert.That(styleSheet, Does.Contain(SemiBoldFontAssetPath));
         }
     }
 }

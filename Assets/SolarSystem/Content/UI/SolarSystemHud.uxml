@@ -242,6 +242,9 @@
                     <ui:Label text="AUDIO / CC0 1.0" class="menu-section-title credits-section" />
                     <ui:Label text="Outer Space Loop by wipics; Fireplace Sound Loop by PagDev; Forest Ambience by TinyWorlds, sourced through OpenGameArt. Interface sounds by Kenney. Optional attribution is retained as professional provenance." class="menu-copy" />
 
+                    <ui:Label text="TYPOGRAPHY / SIL OPEN FONT LICENSE 1.1" class="menu-section-title credits-section" />
+                    <ui:Label text="Inter Regular and SemiBold by Rasmus Andersson. Bundled under the SIL Open Font License 1.1; the complete license and file hashes are retained in the repository." class="menu-copy" />
+
                     <ui:Label text="SCIENTIFIC SOURCES" class="menu-section-title credits-section" />
                     <ui:Label text="Physical parameters and educational mean-orbit records are derived from NASA NSSDC and JPL reference material. This simulation is not a date-exact ephemeris." class="menu-copy" />
 

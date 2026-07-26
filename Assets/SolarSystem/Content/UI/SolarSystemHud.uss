@@ -1,4 +1,5 @@
 .hud-root {
+    -unity-font-definition: url("/Assets/SolarSystem/Content/UI/Typography/FA_Inter_Regular.asset");
     position: absolute;
     top: 32px;
     left: 32px;
@@ -985,4 +986,45 @@
 
 .hud-root.is-compact .body-summary {
     font-size: 11px;
+}
+
+.eyebrow,
+.target,
+.status,
+.scale-mode,
+.labels-state,
+.menu-launcher,
+.world-label,
+.navigator-title,
+.navigator-close-action,
+.navigator-keyboard-hint,
+.navigator-row-name,
+.navigator-row-type,
+.hint-title,
+.control-key,
+.control-action,
+.body-name,
+.body-category,
+.fact-key,
+.scale-note,
+.source-key,
+.comparison-progress,
+.comparison-title,
+.comparison-metric,
+.comparison-control-action,
+.menu-title,
+.menu-close-button,
+.menu-tab,
+.onboarding-label,
+.menu-section-title,
+.setting-label,
+.setting-value,
+.setting-toggle,
+.restore-defaults-button,
+.tour-progress,
+.tour-title,
+.tour-subtitle,
+.tour-button {
+    -unity-font-definition: url("/Assets/SolarSystem/Content/UI/Typography/FA_Inter_SemiBold.asset");
+    -unity-font-style: normal;
 }

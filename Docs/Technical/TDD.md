@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; Sun, eight-planet, seven-moon, Titan haze, Galilean-moon, and Triton hero baselines validated  
-**Version:** 0.31.0  
+**Document status:** Living technical authority; celestial hero, Explorer UX, audio, and typography baselines validated  
+**Version:** 0.33.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -57,6 +57,8 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.29.0 | 2026-07-25 | Codex, for Tanvir | Added immutable cinematic-tour authoring/runtime data, shared guided ownership, allocation-stable live group framing, exact moving-target camera restoration, responsive UI, and full asset/service/scene coverage | Cinematic-tour architecture implemented and validated |
 | 0.30.0 | 2026-07-25 | Codex, for Tanvir | Added authored composition/easing, phase-robust screen-plane group framing, persisted reduced motion, reversible orbit/body visibility ownership, and exact restoration coverage | Cinematic-tour polish architecture implemented and validated |
 | 0.31.0 | 2026-07-25 | Codex, for Tanvir | Added a pure persistent-settings model, versioned PlayerPrefs adapter, unified modal menu state, sole contextual Escape router, input gating, and responsive UI Toolkit surfaces | Explorer UX architecture implemented and validated |
+| 0.32.0 | 2026-07-25 | Codex, for Tanvir | Recorded the owner-approved release-default audio mix after validated overview/focus audition | Final audio mix approved; technical audio baseline unchanged |
+| 0.33.0 | 2026-07-25 | Codex, for Tanvir | Added pinned Inter v4.1 Regular/SemiBold sources, reproducible dynamic TextCore font assets, explicit USS role mapping, runtime credits, provenance, and regression coverage | Final UI typography approved and technically validated |
 
 ### 1.3 Status vocabulary
 
@@ -549,6 +551,15 @@ unified Explorer Menu. `PanelSettings_SolarSystem` uses a 1920x1080 Scale With
 Screen Size reference, while a project-owned UXML/USS pair defines status,
 controls, onboarding, Help, Settings, and Credits & Sources.
 
+The final type system uses the official Inter v4.1 Regular and SemiBold static
+TTFs. `SolarSystemUiAssetBuilder` reproducibly validates or creates two dynamic
+TextCore SDFAA font assets with 1024-square atlases, multi-atlas fallback, and
+font-feature discovery. The root USS rule inherits Regular through the complete
+HUD; one explicit semantic selector group overrides headings, state labels,
+keycaps, tabs, and controls with the actual SemiBold face rather than synthetic
+bold. Raw TTFs and generated TextCore assets remain separate so provenance,
+Unity import, and runtime rendering responsibilities are auditable.
+
 `ExplorerSettingsSnapshot` is an immutable value. `ExplorerSettingsService`
 validates/clamps effective changes and persists through
 `IExplorerSettingsStore`; `PlayerPrefsExplorerSettingsStore` serializes one
@@ -613,8 +624,8 @@ information cards, retains the status card, and shows a bottom-center teaching
 card with stage progress, the numeric transformation, a concise explanation,
 and separate next/exit keycaps. The navigator and labels are suppressed to
 protect the guided composition. Help, Settings, Credits & Sources, first-launch
-orientation, visible slider values, and responsive menu styling are complete.
-Live current-distance/speed fields and licensed typography remain later work.
+orientation, visible slider values, responsive menu styling, and licensed Inter
+typography are complete. Live current-distance/speed fields remain later work.
 
 ### 6.10 Audio
 
@@ -1215,7 +1226,7 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   responsive safe areas, focus/guided-state rules, and cached UI elements.
 - The unified Explorer Menu, first-launch Help, versioned persistent settings,
   contextual Escape router, modal input gate, visible audio percentages, and
-  Credits & Sources are implemented. Licensed typography remains later work.
+  Credits & Sources and licensed Inter typography are implemented.
 - Detailed evidence is recorded in
   `Docs/ProjectManagement/Slice 3 Interaction Proof Validation.md`.
 - Time-control and HUD evidence is recorded in
@@ -1332,10 +1343,13 @@ Formal frame-time, memory, loading, and VRAM budgets are set after the first rep
   and guided-comparison suppression without altering presentation scale.
 - Celestial navigation/label evidence is recorded in
   `Docs/ProjectManagement/Slice 4 Celestial Navigator and World Labels Validation.md`.
-- Particle-scale ring simulation, final audio mix approval, licensed
-  typography, and remaining optional accessibility enhancements remain Slice 4
-  work. Player-facing audio settings, cinematic routing, Help, onboarding,
-  credits, and sources surfaces are implemented and validated.
+- Final typography source, TextCore, responsive-layout, and license evidence is
+  recorded in `Docs/ProjectManagement/Final Typography Validation.md`.
+- Particle-scale ring simulation and remaining optional accessibility
+  enhancements remain Slice 4 work. Player-facing audio
+  settings, cinematic routing, Help, onboarding, credits, sources, and the
+  owner-approved release-default mix and typography are implemented and
+  validated.
 
 ### Slice 5 - Portfolio release
 
