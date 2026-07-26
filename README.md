@@ -9,6 +9,8 @@ The project is currently in visual/content development. Its product, engineering
 - Present the Sun, eight planets, and selected major moons with honest educational scaling.
 - Demonstrate deterministic orbital mechanics without Rigidbody-driven orbits.
 - Support free-fly and cinematic exploration with clear scientific overlays.
+- Add restrained pooled comet fly-throughs without colliders or physics-driven
+  orbital claims.
 - Provide first-launch orientation plus a unified Help, Settings, and Credits
   experience with persistent audio, motion, orbit-guide, and label preferences.
 - Deliver a stable 60 FPS experience at 1080p on a reasonable mid-range gaming PC.
@@ -90,13 +92,18 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Repository Publication Cleanup Validation](Docs/ProjectManagement/Repository%20Publication%20Cleanup%20Validation.md)
 - [Explorer Menu and Settings Validation](Docs/ProjectManagement/Explorer%20Menu%20and%20Settings%20Validation.md)
 - [Performance Profiling Harness Validation](Docs/ProjectManagement/Performance%20Profiling%20Harness%20Validation.md)
+- [Assignment and Publication Readiness Audit](Docs/ProjectManagement/Assignment%20and%20Publication%20Readiness%20Audit.md)
+- [Assignment Comet Spawner Validation](Docs/ProjectManagement/Assignment%20Comet%20Spawner%20Validation.md)
+- [Proposed itch.io Page Copy](Docs/Release/itch.io%20Page%20Draft.md)
+- [Release Evidence Checklist](Docs/Release/Release%20Evidence%20Checklist.md)
+- [Release Player Settings Proposal](Docs/Release/Release%20Player%20Settings%20Proposal.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/seven-moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 197 Edit Mode cases and
-25 real-scene Play Mode cases. Coverage includes orbital behavior,
+compile successfully. The project currently passes 203 Edit Mode cases and
+26 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
 full-system overview framing, Sun-origin radial illumination, and preserved
@@ -106,7 +113,11 @@ readability compression with tested adjacent-orbit clearances. At `1x`, one
 real second advances exactly one Earth sidereal rotation; all bodies derive
 their spin rate and direction from signed source periods. The scene also
 includes licensed event-driven music, spatial celestial ambience, and UI
-feedback with independent runtime levels and mute. A cancellable three-stage
+feedback with independent runtime levels and mute. A deterministic rotating
+spawner reuses six collider-free comet instances, producing restrained
+project-authored trails and automatically returning expired or safely
+off-camera comets to the pool. These fly-throughs are illustrative rather than
+date-specific scientific comet trajectories. A cancellable three-stage
 comparison now teaches the scale problem by moving from the readable overview
 to one shared linear orbit unit and then to literal `Earth radius = 1`
 spacing, while preserving the prior selection, time, audio, and camera state.

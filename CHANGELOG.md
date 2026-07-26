@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   regression proving that all three continuous-audio playheads advance.
 - Centralized Escape handling under one contextual router: close menu, cancel
   tour, cancel scale comparison, cancel focus, then open Help in free flight.
-- Expanded validation to 183 Edit Mode and 25 Play Mode cases with a clean
+- Expanded validation to 203 Edit Mode and 26 Play Mode cases with a clean
   Unity Console.
 - Renamed the active PC pipeline fallback volume profile from the misleading
   template name `SampleSceneProfile` to `PC_DefaultVolumeProfile` while
@@ -41,6 +41,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Added a deterministic, ScriptableObject-authored comet spawner with a
+  six-instance object pool, seeded bounded spawn variation, pause-aware motion,
+  collider-free comet prefabs, automatic off-camera/lifetime despawn, and a
+  project-authored procedural flame-like nucleus and flowing URP trail shaders.
+- Added six Edit Mode comet contracts and one real-scene Play Mode journey;
+  the complete suites now pass 203 Edit Mode and 26 Play Mode cases with zero
+  Unity Console errors or warnings.
+- Peer-review assignment compliance audit and an offline itch.io page draft
+  with verified project descriptions, controls, credits, limitations, upload
+  classifications, media requirements, pre-publication gates, and an
+  exact-commit release-evidence checklist.
+- Proposed a deliberate public release identity and Windows/WebGL Player
+  Settings baseline, including responsive first-launch dimensions, IL2CPP,
+  Brotli compression, and the assignment-required Decompression Fallback.
 - Dormant project-owned performance harness with 11 production-state
   scenarios, configurable command-line capture, preallocated sampling,
   `ProfilerRecorder` metrics, raw percentile evidence, explicit unavailable

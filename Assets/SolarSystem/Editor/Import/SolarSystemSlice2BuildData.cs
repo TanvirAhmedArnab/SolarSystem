@@ -1,4 +1,5 @@
 using Tanvir.SolarSystem.Authoring;
+using Tanvir.SolarSystem.Presentation.TransientBodies;
 using Tanvir.SolarSystem.Simulation;
 using UnityEditor;
 using UnityEngine;
@@ -43,6 +44,8 @@ namespace Tanvir.SolarSystem.Editor.Import
         internal AirlessRockyVisualDefinition CallistoVisualDefinition { get; set; }
         internal AirlessRockyVisualDefinition TritonVisualDefinition { get; set; }
         internal Material OrbitMaterial { get; set; }
+        internal CometSpawnerDefinition CometSpawnerDefinition { get; set; }
+        internal CometView CometPrefab { get; set; }
         internal Material SkyboxMaterial { get; set; }
         internal VolumeProfile VisualProfile { get; set; }
         internal AudioClip MusicClip { get; set; }

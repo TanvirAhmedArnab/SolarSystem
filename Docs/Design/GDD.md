@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.29.0  
-**Last updated:** 2026-07-25  
+**Version:** 0.31.0  
+**Last updated:** 2026-07-26  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
 
@@ -56,6 +56,8 @@
 | 0.27.0 | 2026-07-25 | Codex, for Tanvir | Recorded the product owner's in-scene approval of the release-default music, Sun, Earth, and interface mix | Final audio mix approved |
 | 0.28.0 | 2026-07-25 | Codex, for Tanvir | Approved Inter v4.1 Regular and SemiBold as the final licensed UI typeface and integrated the two-weight hierarchy across the responsive explorer interface | Final UI typography approved; implementation candidate validated |
 | 0.29.0 | 2026-07-25 | Codex, for Tanvir | Approved the release performance contract, reference hardware class, representative scenarios, and distinction between Editor diagnostics and standalone certification | Performance targets approved; reproducible profiling harness implemented and diagnostic evidence captured |
+| 0.30.0 | 2026-07-26 | Codex, for Tanvir | Integrated the peer-review assignment requirements, added Windows and WebGL deliverables, and made a verified itch.io submission part of release acceptance | Assignment scope approved; camera/comet interpretation and release execution remain |
+| 0.31.0 | 2026-07-26 | Codex, for Tanvir | Retained the single adaptive camera, added a simple pooled comet presentation system, and recorded that Mercury, Venus, and Mars require no body-specific selection audio | Assignment interpretation approved; comet slice implemented and validated |
 
 ### 1.3 Source hierarchy
 
@@ -143,7 +145,12 @@ The first public portfolio release includes:
 - Solar emission, restrained bloom, exposure control, and atmospheric effects where relevant.
 - Saturn's ring system; Uranus's rings if quality and schedule allow.
 - Professional onboarding, settings, credits, source attribution, and accessibility essentials.
-- A stable desktop build and portfolio-ready repository documentation.
+- Stable Windows and WebGL builds, with macOS optional when build support and
+  test access are available.
+- Portfolio-ready repository documentation and a verified itch.io assignment
+  page.
+- A restrained, collider-free comet presentation system with pooled transient
+  bodies, readable trails, bounded spawning, and automatic off-camera despawn.
 
 ### 5.2 Candidate moon set
 
@@ -155,9 +162,12 @@ These features require separate approval after the minimum release meets its qua
 
 - **[DEFERRED]** Asteroid belt with density-aware instancing.
 - **[DEFERRED]** Dwarf planets, beginning with Pluto and Charon.
-- **[DEFERRED]** Comets and reusable pooled transient-body behavior.
+- **[DEFERRED]** Scientifically propagated comet catalogs, named comet data,
+  and parabolic or hyperbolic comet trajectories.
 - **[DEFERRED]** Educational guided lessons or quizzes.
-- **[DEFERRED]** VR, mobile, console, or WebGL releases.
+- **[DEFERRED]** VR, mobile, or console releases.
+- **[DEFERRED]** A macOS build unless the required Unity module and suitable
+  test access are added.
 - **[DEFERRED]** Full N-body gravity, spacecraft, collisions, or procedural galaxy content.
 
 ### 5.4 Explicit non-goals
@@ -627,13 +637,22 @@ These constraints define product quality; implementation details belong in the T
 - Runtime discovery calls and global mutable singletons are not default architecture choices.
 - Scene and build behavior is deterministic and testable.
 - No built-in physics simulation is used to maintain orbits.
-- Dynamic populations such as future comets use pooling only when introduced and justified.
+- The approved illustrative comet population uses a fixed object pool and
+  automatically returns off-camera or expired comets to that pool.
 
 ## 14. Performance and Quality Targets
 
 ### 14.1 Target platform
 
-**[APPROVED]** First release target: Windows 10/11, x86-64 desktop, keyboard and mouse, 1920x1080 reference resolution.
+**[APPROVED]** First release targets:
+
+- Windows 10/11, x86-64 desktop, keyboard and mouse, with 1920x1080 as the
+  performance reference resolution.
+- WebGL for browser play on itch.io, with decompression fallback enabled and a
+  responsive embedded-player presentation.
+
+Windows remains the performance-certification platform. WebGL requires its own
+build, browser smoke test, and assignment upload classification.
 
 **[APPROVED]** Use this reasonable mid-range gaming PC baseline:
 
@@ -695,6 +714,15 @@ class plus external process, GPU-memory, and cold-launch evidence.
 - README explains the problem, experience, architecture, verification, and asset licensing.
 - Screenshots and a short video demonstrate system scale, close-focus detail, UI, and cinematic framing.
 - The approved release package includes a public GitHub repository, downloadable Windows build, recorded portfolio video, screenshots and animated clips, and a personal portfolio page or case study.
+- The assignment package includes at least two platform builds, currently
+  Windows and WebGL, each archived and uploaded with the correct itch.io
+  platform classification.
+- Assignment evidence includes a fully expanded scene-hierarchy screenshot,
+  a fully expanded project-asset-organization screenshot, gameplay media,
+  modification notes, and the credit `Created by Tanvir`.
+- The itch.io page is verified in its player-facing state with release status
+  `Released`, pricing `No Payment`, screenshot layout `Sidebar`, and public or
+  intentionally unlisted visibility.
 - Code samples shown publicly represent the shipping architecture, not throwaway prototypes.
 - Known limitations are stated honestly.
 
@@ -813,7 +841,7 @@ implemented and the release-default mix is owner-approved.
 
 ## 20. Open Decisions
 
-No owner-level product decisions are currently open from the first GDD review. Project inspection may identify new decisions; any such decisions must be added here with an owner and milestone gate rather than being assumed silently.
+No product decision currently blocks assignment-compliance implementation.
 
 
 
@@ -838,6 +866,9 @@ Record owner decisions here at the time they are made. Link to a separate ADR or
 | GDD-013 | 2026-07-22 | Retain the complete portfolio-release scope, use 2026-07-29 as the initial inspection and planning milestone, and set the final schedule after project inspection | Approved | Tanvir |
 | GDD-014 | 2026-07-24 | Make visible body radii exact Earth-relative proportions, compress only orbital distance, and enforce readable orbit clearances | Approved and implemented | Tanvir |
 | GDD-015 | 2026-07-24 | Use one Earth sidereal rotation per real second as the `1x` reference and preserve signed proportional spin directions | Approved and implemented | Tanvir |
+| GDD-016 | 2026-07-26 | Add the peer-review assignment rubric to release acceptance and publish at least Windows and WebGL builds through itch.io | Approved | Tanvir |
+| GDD-017 | 2026-07-26 | Keep macOS optional unless its Unity build-support module and suitable test access become available | Approved | Tanvir |
+| GDD-018 | 2026-07-26 | Retain the single adaptive multi-mode camera, add a simple pooled collider-free comet spawner, and do not add body-specific selection audio for Mercury, Venus, or Mars | Approved and implemented | Tanvir |
 
 ## 22. Definition of Done for GDD Version 1.0
 

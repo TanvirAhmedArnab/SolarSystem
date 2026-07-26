@@ -9,6 +9,7 @@ using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
 using Tanvir.SolarSystem.Presentation.Lighting;
 using Tanvir.SolarSystem.Presentation.Scale;
+using Tanvir.SolarSystem.Presentation.TransientBodies;
 using Tanvir.SolarSystem.Presentation.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -26,6 +27,10 @@ namespace Tanvir.SolarSystem.Editor.Import
         private const string ScenePath = "Assets/SolarSystem/Scenes/SolarSystem.unity";
         private const string InputAssetPath =
             "Assets/SolarSystem/Settings/Input/IA_SolarSystem.asset";
+        private const string CometSpawnerDefinitionPath =
+            "Assets/SolarSystem/Content/Data/TransientBodies/DEF_CometSpawner.asset";
+        private const string CometPrefabPath =
+            "Assets/SolarSystem/Content/Prefabs/TransientBodies/PF_Comet.prefab";
         private const string SolarRadialLightName = "Solar Radial Light";
         private const string LegacySolarKeyLightName = "Sun Key Light";
         private const string SunStableId = "sun";
@@ -61,6 +66,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             Transform simulationRoot = CreateGroup("_Simulation", sceneRoot.transform);
             Transform bodyRoot = CreateGroup("CelestialBodies", simulationRoot);
             Transform orbitRoot = CreateGroup("OrbitPaths", simulationRoot);
+            Transform transientRoot = CreateGroup("TransientBodies", simulationRoot);
             Transform environmentRoot = CreateGroup("_Environment", sceneRoot.transform);
             Transform audioRoot = CreateGroup("_Audio", sceneRoot.transform);
             Transform interfaceRoot = CreateGroup("_Interface", sceneRoot.transform);
@@ -339,6 +345,12 @@ namespace Tanvir.SolarSystem.Editor.Import
                 orbitPaths.ToArray());
 
             Camera camera = CreateCamera(environmentRoot);
+            CreateCometSystem(
+                transientRoot,
+                sunView.transform,
+                camera,
+                controller,
+                content);
             SolarSystemHudPresenter hudPresenter =
                 SolarSystemHudSceneBuilder.Create(interfaceRoot);
             AudioDirector audioDirector =
@@ -361,6 +373,54 @@ namespace Tanvir.SolarSystem.Editor.Import
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
             return sceneRoot;
+        }
+
+        private static CometSpawner CreateCometSystem(
+            Transform transientRoot,
+            Transform sun,
+            Camera camera,
+            SolarSystemSimulationController simulationController,
+            SolarSystemSlice2Content content)
+        {
+            CometSpawnerDefinition definition =
+                content.CometSpawnerDefinition != null
+                    ? content.CometSpawnerDefinition
+                    : AssetDatabase.LoadAssetAtPath<CometSpawnerDefinition>(
+                        CometSpawnerDefinitionPath);
+            CometView cometPrefab = content.CometPrefab;
+            if (cometPrefab == null)
+            {
+                GameObject prefab =
+                    AssetDatabase.LoadAssetAtPath<GameObject>(CometPrefabPath);
+                cometPrefab =
+                    prefab == null ? null : prefab.GetComponent<CometView>();
+            }
+
+            if (definition == null || cometPrefab == null)
+            {
+                throw new InvalidOperationException(
+                    "Comet presentation assets are incomplete: " +
+                    $"definition={(definition != null)}, " +
+                    $"prefab={(cometPrefab != null)}.");
+            }
+
+            Transform poolRoot = CreateGroup("Comet Pool", transientRoot);
+            GameObject spawnerObject = new GameObject("Comet Spawner");
+            spawnerObject.transform.SetParent(transientRoot, false);
+            CometSpawner spawner = spawnerObject.AddComponent<CometSpawner>();
+            var serialized = new SerializedObject(spawner);
+            serialized.FindProperty("definition").objectReferenceValue =
+                definition;
+            serialized.FindProperty("sun").objectReferenceValue = sun;
+            serialized.FindProperty("visibilityCamera").objectReferenceValue =
+                camera;
+            serialized.FindProperty("simulationController").objectReferenceValue =
+                simulationController;
+            serialized.FindProperty("cometPrefab").objectReferenceValue =
+                cometPrefab;
+            serialized.FindProperty("poolRoot").objectReferenceValue = poolRoot;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            return spawner;
         }
 
         internal static void ApplyVisualFoundation(SolarSystemSlice2Content content)

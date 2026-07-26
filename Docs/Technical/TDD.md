@@ -7,8 +7,8 @@
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
 **Document status:** Living technical authority; release performance contract and diagnostic harness validated  
-**Version:** 0.34.0  
-**Last updated:** 2026-07-25  
+**Version:** 0.35.0  
+**Last updated:** 2026-07-26  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
 **Art authority:** `Docs/Art/ArtBible.md`
@@ -60,6 +60,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.32.0 | 2026-07-25 | Codex, for Tanvir | Recorded the owner-approved release-default audio mix after validated overview/focus audition | Final audio mix approved; technical audio baseline unchanged |
 | 0.33.0 | 2026-07-25 | Codex, for Tanvir | Added pinned Inter v4.1 Regular/SemiBold sources, reproducible dynamic TextCore font assets, explicit USS role mapping, runtime credits, provenance, and regression coverage | Final UI typography approved and technically validated |
 | 0.34.0 | 2026-07-25 | Codex, for Tanvir | Added an opt-in, allocation-conscious performance harness, approved budgets and scenario matrix, raw JSON evidence, Editor diagnostic routing, and explicit external-certification boundaries | Harness implementation and Editor diagnostics validated; standalone reference-hardware certification remains |
+| 0.35.0 | 2026-07-26 | Codex, for Tanvir | Added a deterministic pooled comet presentation system with ScriptableObject authoring, a project-owned trail shader, bounded off-camera despawn, pause behavior, and Edit/Play Mode coverage | Assignment comet slice implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -101,7 +102,8 @@ When sources disagree, use this order:
 - ECS/DOTS, Burst, Jobs, or compute-based simulation for the initial body count.
 - A general-purpose astronomy engine or reusable framework extracted before demonstrated reuse.
 - Networking, save games, procedural universe generation, or cross-platform release in the first version.
-- Object pooling for static celestial bodies; pooling is deferred until a recurring dynamic population exists.
+- Object pooling for static celestial bodies; only recurring transient
+  populations such as the approved illustrative comets use pooling.
 - Runtime modification of source ScriptableObject assets.
 
 ### 2.3 Quality attributes
@@ -113,7 +115,8 @@ In priority order:
 3. Visual stability across extreme scale.
 4. Maintainability and portfolio readability.
 5. Performance on the approved hardware category.
-6. Extensibility for optional dwarf planets, comets, and asteroid belts without prebuilding them.
+6. Extensibility for optional dwarf planets, scientific comet catalogs, and
+   asteroid belts without prebuilding them.
 
 ## 3. Constraints and Baseline
 
@@ -751,7 +754,7 @@ y = a sqrt(1 - e^2) sin(E)
 
 The orbital-plane position is rotated by argument of periapsis, inclination, and longitude of the ascending node into the parent coordinate space.
 
-Use Newton-Raphson iteration for eccentric anomaly with a documented maximum iteration count and tolerance. All approved planets and moons have eccentricities safely below 1; parabolic and hyperbolic trajectories are deferred for future comets.
+Use Newton-Raphson iteration for eccentric anomaly with a documented maximum iteration count and tolerance. All approved planets and moons have eccentricities safely below 1; parabolic and hyperbolic trajectories are deferred for a future scientific comet catalog. The assignment comet system is an explicitly illustrative transient presentation and does not claim Keplerian comet propagation.
 
 **[IMPLEMENTED] Numerical contract:** `KeplerOrbitEvaluator` uses at most 20 Newton-Raphson iterations and a correction tolerance of `1e-12` radians. Circular and high-eccentricity elliptical fixtures, analytical speed, inclined/node rotations, hierarchy composition, repeatability, and invalid inputs are covered by Edit Mode tests.
 
@@ -1218,7 +1221,18 @@ Current diagnostic evidence and limitations are recorded in
 - Texture import sizes are chosen from measured screen-space demand.
 - Optimization work starts from captured evidence, not speculative rewrites.
 
-The small static body count requires neither pooling nor data-oriented technology. Pooling becomes relevant only for approved dynamic comets/asteroids with recurring spawn/despawn behavior.
+The small static body count requires neither pooling nor data-oriented
+technology. The approved comet system is the first recurring transient
+population and therefore uses a fixed six-instance pool. A seeded
+`DeterministicCometSpawnSequence` produces bounded spawn intervals, positions,
+aim points, speeds, and nucleus sizes from immutable
+`CometSpawnerDefinition` data. `CometSpawner` owns the pool and pause-aware
+schedule; `CometView` owns motion and its cached `TrailRenderer`; project-owned
+procedural nucleus and flowing-trail shaders provide the flame-like presentation
+without textures, particles, lights, or collision systems;
+`CometDespawnPolicy` returns expired or safely off-camera comets to the pool.
+No comet has a collider, Rigidbody, selection record, or scientific catalog
+entry.
 
 ## 14. Repository, Licensing, and Build Constraints
 
@@ -1493,6 +1507,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-027 | 2026-07-25 | Extend the reusable airless-rocky path to Ganymede and Callisto with distinct immutable contracts, anchored sources, bounded non-emissive nightside readability, and no invented atmosphere, magnetosphere, ocean exposure, or terrain | Implemented and validated | Tanvir | Completes four distinct Galilean hero surfaces with one audited allocation-free rendering architecture |
 | TDD-028 | 2026-07-25 | Extend the reusable airless-rocky path to Triton, preserve anchored observed imagery, use an explicitly disclosed uniform fill only for near-black unobserved coverage, and widen the existing Sun-light culling envelope without changing inverse-square attenuation | Implemented and validated | Tanvir | Completes the approved major-moon hero set without inventing global imagery, active geology, atmosphere scale, or a parallel renderer |
 | TDD-029 | 2026-07-25 | Own navigator/label visibility in a small event-driven application service, validate one parent-first view list, route activation through existing selection/focus services, and cache all UI elements and overlap rectangles | Implemented and validated | Tanvir | Adds complete-body navigation and readable labels without duplicating simulation/camera logic, changing body scale, adding third-party UI assets, or introducing steady-state managed allocations |
+| TDD-030 | 2026-07-26 | Retain one adaptive production camera and implement assignment comets as deterministic, pooled, collider-free transient visuals with bounded TrailRenderer output and off-camera/lifetime despawn | Approved, implemented, and validated | Tanvir | Satisfies the lesson feature without duplicating camera architecture or misrepresenting illustrative comets as scientific orbital bodies |
 
 ## 19. Definition of Done for TDD Version 1.0
 

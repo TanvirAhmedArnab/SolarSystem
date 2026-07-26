@@ -11,6 +11,7 @@ using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
 using Tanvir.SolarSystem.Presentation.Lighting;
 using Tanvir.SolarSystem.Presentation.Scale;
+using Tanvir.SolarSystem.Presentation.TransientBodies;
 using Tanvir.SolarSystem.Presentation.UI;
 using Tanvir.SolarSystem.Simulation;
 using UnityEngine;
@@ -151,6 +152,58 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                     Is.True);
                 AssertWithinViewport(camera, framedView);
             }
+        }
+
+        [UnityTest]
+        public IEnumerator SolarSystemScene_PoolsColliderFreeCometsAndRespectsPause()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            CometSpawner spawner =
+                Object.FindAnyObjectByType<CometSpawner>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(spawner, Is.Not.Null);
+            Assert.That(spawner.IsInitialized, Is.True);
+            Assert.That(spawner.PoolCount, Is.EqualTo(6));
+            Assert.That(spawner.ActiveCount, Is.Zero);
+
+            CometView[] pooled = Object.FindObjectsByType<CometView>(
+                FindObjectsInactive.Include);
+            Assert.That(pooled, Has.Length.EqualTo(6));
+            Assert.That(
+                pooled,
+                Has.All.Matches<CometView>(
+                    comet =>
+                        comet.NucleusRenderer != null &&
+                        comet.TrailRenderer != null &&
+                        comet.GetComponentInChildren<Collider>(true) == null));
+
+            Assert.That(spawner.TrySpawnComet(), Is.True);
+            Assert.That(spawner.ActiveCount, Is.EqualTo(1));
+            CometView active = System.Array.Find(pooled, comet => comet.IsActive);
+            Assert.That(active, Is.Not.Null);
+            Assert.That(active.TrailRenderer.emitting, Is.True);
+
+            simulation.SimulationController.SetPaused(true);
+            yield return null;
+            Vector3 pausedPosition = active.transform.position;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(
+                Vector3.Distance(pausedPosition, active.transform.position),
+                Is.LessThan(0.00001f));
+
+            simulation.SimulationController.SetPaused(false);
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(
+                Vector3.Distance(pausedPosition, active.transform.position),
+                Is.GreaterThan(0.001f));
+
+            spawner.DespawnAll();
+            Assert.That(spawner.ActiveCount, Is.Zero);
+            Assert.That(spawner.TotalSpawnedCount, Is.EqualTo(1));
         }
 
         [UnityTest]

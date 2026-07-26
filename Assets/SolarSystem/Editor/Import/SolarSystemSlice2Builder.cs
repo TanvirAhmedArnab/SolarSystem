@@ -21,6 +21,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             }
 
             SolarSystemUiAssetBuilder.Build();
+            SolarSystemSlice2AssetBuilder.ReloadCometContent(content);
             GameObject sceneRoot = SolarSystemSlice2SceneBuilder.Build(content);
 
             AssetDatabase.SaveAssets();

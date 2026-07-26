@@ -581,6 +581,15 @@ Unity import settings do not modify the repository binaries.
 
 ## Release Audit
 
+### Project-authored comet presentation
+
+The comet nucleus material, additive trail shader/material, prefab, authoring
+definition, runtime pooling and motion code, editor wiring, and tests are
+project-authored. They contain no downloaded texture, mesh, audio, font, or
+other third-party media and therefore introduce no new attribution or license
+obligation. Their inclusion does not alter the existing third-party asset
+ledger.
+
 - Verify every shipped binary against the SHA-256 manifest.
 - Record each derivative's source ID and modifications.
 - Include CC BY license links and attribution.

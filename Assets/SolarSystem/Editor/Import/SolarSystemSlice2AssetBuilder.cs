@@ -5,6 +5,7 @@ using Tanvir.SolarSystem.Authoring;
 using Tanvir.SolarSystem.Presentation.Camera;
 using Tanvir.SolarSystem.Presentation.CelestialBodies;
 using Tanvir.SolarSystem.Presentation.Scale;
+using Tanvir.SolarSystem.Presentation.TransientBodies;
 using Tanvir.SolarSystem.Simulation;
 using UnityEditor;
 using UnityEngine;
@@ -84,6 +85,10 @@ namespace Tanvir.SolarSystem.Editor.Import
             "SolarSystem/Celestial/Titan Surface";
         private const string TitanHazeShader =
             "SolarSystem/Celestial/Titan Haze";
+        private const string CometTrailShader =
+            "SolarSystem/Transient/Comet Trail";
+        private const string CometNucleusShader =
+            "SolarSystem/Transient/Comet Nucleus";
         private const string SaturnRingTexturePath =
             CelestialTextureRoot + "/Saturn/T_Saturn_RingsAlpha_2K.png";
         private const string SpaceTexturePath =
@@ -102,6 +107,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             "Assets/SolarSystem/Content/Audio/SFX/UI/A_UI_TimeTick.ogg";
         private const string ScaleComparisonClipPath =
             "Assets/SolarSystem/Content/Audio/SFX/UI/A_UI_ToggleScale.ogg";
+        private const string CometPrefabPath =
+            "Assets/SolarSystem/Content/Prefabs/TransientBodies/PF_Comet.prefab";
         private const float SunSmoothness = 0f;
         private const float MercurySmoothness = 0.08f;
         private const float VenusSmoothness = 0.24f;
@@ -177,8 +184,11 @@ namespace Tanvir.SolarSystem.Editor.Import
             EnsureFolder($"{DataRoot}/Scale");
             EnsureFolder($"{DataRoot}/Presentation");
             EnsureFolder($"{DataRoot}/VisualLayers");
+            EnsureFolder($"{DataRoot}/TransientBodies");
             EnsureFolder($"{MaterialRoot}/CelestialBodies");
             EnsureFolder($"{MaterialRoot}/Environment");
+            EnsureFolder($"{MaterialRoot}/TransientBodies");
+            EnsureFolder("Assets/SolarSystem/Content/Prefabs/TransientBodies");
             EnsureFolder(RenderingSettingsRoot);
             EnsureFolder("Assets/SolarSystem/Scenes");
             ConfigureTextureImports();
@@ -525,6 +535,13 @@ namespace Tanvir.SolarSystem.Editor.Import
             Material skyboxMaterial = CreateSkyboxMaterial();
             VolumeProfile visualProfile = CreateVisualProfile();
             ConfigureAudioImporters();
+            CometSpawnerDefinition cometSpawnerDefinition =
+                CreateCometSpawnerDefinition();
+            Material cometNucleusMaterial = CreateCometNucleusMaterial();
+            Material cometTrailMaterial = CreateCometTrailMaterial();
+            CreateCometPrefab(
+                cometNucleusMaterial,
+                cometTrailMaterial);
 
             return new SolarSystemSlice2Content
             {
@@ -562,6 +579,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                 CallistoVisualDefinition = CreateCallistoVisualDefinition(),
                 TritonVisualDefinition = CreateTritonVisualDefinition(),
                 OrbitMaterial = orbitMaterial,
+                CometSpawnerDefinition = cometSpawnerDefinition,
+                CometPrefab = LoadCometPrefab(),
                 SkyboxMaterial = skyboxMaterial,
                 VisualProfile = visualProfile,
                 MusicClip = LoadRequiredAsset<AudioClip>(MusicClipPath),
@@ -573,6 +592,187 @@ namespace Tanvir.SolarSystem.Editor.Import
                 ScaleComparisonClip =
                     LoadRequiredAsset<AudioClip>(ScaleComparisonClipPath)
             };
+        }
+
+        internal static void ReloadCometContent(
+            SolarSystemSlice2Content content)
+        {
+            if (content == null)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+            content.CometSpawnerDefinition =
+                LoadRequiredAsset<CometSpawnerDefinition>(
+                    DataRoot + "/TransientBodies/DEF_CometSpawner.asset");
+            content.CometPrefab = LoadCometPrefab();
+        }
+
+        private static CometSpawnerDefinition CreateCometSpawnerDefinition()
+        {
+            const string path =
+                DataRoot + "/TransientBodies/DEF_CometSpawner.asset";
+            CometSpawnerDefinition definition =
+                CreateOrLoad<CometSpawnerDefinition>(path);
+            var serialized = new SerializedObject(definition);
+            serialized.FindProperty("randomSeed").intValue = 20260726;
+            serialized.FindProperty("poolSize").intValue = 6;
+            serialized.FindProperty("initialSpawnDelaySeconds").floatValue = 2f;
+            serialized.FindProperty("spawnIntervalSeconds").vector2Value =
+                new Vector2(8f, 14f);
+            serialized.FindProperty("orbitRadius").floatValue = 680f;
+            serialized.FindProperty("orbitPeriodSimulationDays").floatValue =
+                240f;
+            serialized.FindProperty("orbitInclinationDegrees").floatValue = 14f;
+            serialized.FindProperty("targetRadius").floatValue = 100f;
+            serialized.FindProperty("speedRange").vector2Value =
+                new Vector2(40f, 58f);
+            serialized.FindProperty("radiusRange").vector2Value =
+                new Vector2(1.2f, 2f);
+            serialized.FindProperty("spinRange").vector2Value =
+                new Vector2(30f, 90f);
+            serialized.FindProperty("maximumLifetimeSeconds").floatValue = 45f;
+            serialized.FindProperty("solarDespawnRadius").floatValue = 900f;
+            serialized.FindProperty("viewportMargin").floatValue = 0.15f;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+            definition.ToModel();
+            return definition;
+        }
+
+        private static Material CreateCometNucleusMaterial()
+        {
+            const string path =
+                MaterialRoot + "/TransientBodies/M_Comet_Nucleus.mat";
+            Material material =
+                CreateOrUpdateMaterial(path, CometNucleusShader);
+            material.SetColor(
+                "_CoreColor",
+                new Color(3.4f, 2.1f, 0.65f, 1f));
+            material.SetColor(
+                "_FlameColor",
+                new Color(1.8f, 0.28f, 0.035f, 1f));
+            material.SetColor(
+                "_RimColor",
+                new Color(1.2f, 0.42f, 0.08f, 1f));
+            material.SetFloat("_Intensity", 2.2f);
+            material.SetFloat("_NoiseScale", 6f);
+            material.SetFloat("_FlickerSpeed", 1.7f);
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        private static Material CreateCometTrailMaterial()
+        {
+            const string path =
+                MaterialRoot + "/TransientBodies/M_Comet_Trail.mat";
+            Material material =
+                CreateOrUpdateMaterial(path, CometTrailShader);
+            material.SetColor(
+                "_HeadColor",
+                new Color(2f, 1.1f, 0.28f, 1f));
+            material.SetColor(
+                "_TailColor",
+                new Color(0.55f, 0.025f, 0.005f, 1f));
+            material.SetFloat("_Intensity", 1.15f);
+            material.SetFloat("_FlowSpeed", 2.4f);
+            material.SetFloat("_NoiseScale", 11f);
+            material.renderQueue = (int)RenderQueue.Transparent + 25;
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        private static void CreateCometPrefab(
+            Material nucleusMaterial,
+            Material trailMaterial)
+        {
+            GameObject source = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            source.name = "PF_Comet";
+            Object.DestroyImmediate(source.GetComponent<Collider>());
+
+            MeshRenderer nucleus = source.GetComponent<MeshRenderer>();
+            nucleus.sharedMaterial = nucleusMaterial;
+            nucleus.shadowCastingMode = ShadowCastingMode.Off;
+            nucleus.receiveShadows = false;
+            nucleus.lightProbeUsage = LightProbeUsage.Off;
+            nucleus.reflectionProbeUsage = ReflectionProbeUsage.Off;
+
+            TrailRenderer trail = source.AddComponent<TrailRenderer>();
+            trail.sharedMaterial = trailMaterial;
+            trail.time = 2.8f;
+            trail.minVertexDistance = 0.18f;
+            trail.widthMultiplier = 1.3f;
+            trail.widthCurve = new AnimationCurve(
+                new Keyframe(0f, 1.35f),
+                new Keyframe(0.18f, 1f),
+                new Keyframe(0.7f, 0.3f),
+                new Keyframe(1f, 0f));
+            trail.colorGradient = CreateCometTrailGradient();
+            trail.alignment = LineAlignment.View;
+            trail.textureMode = LineTextureMode.Stretch;
+            trail.numCornerVertices = 6;
+            trail.numCapVertices = 4;
+            trail.generateLightingData = false;
+            trail.shadowCastingMode = ShadowCastingMode.Off;
+            trail.receiveShadows = false;
+            trail.lightProbeUsage = LightProbeUsage.Off;
+            trail.reflectionProbeUsage = ReflectionProbeUsage.Off;
+
+            CometView view = source.AddComponent<CometView>();
+            var serialized = new SerializedObject(view);
+            serialized.FindProperty("nucleusRenderer").objectReferenceValue = nucleus;
+            serialized.FindProperty("trailRenderer").objectReferenceValue = trail;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+
+            GameObject savedPrefab = PrefabUtility.SaveAsPrefabAsset(
+                source,
+                CometPrefabPath,
+                out bool success);
+            Object.DestroyImmediate(source);
+            if (!success || savedPrefab == null)
+            {
+                throw new InvalidOperationException(
+                    $"Failed to create comet prefab '{CometPrefabPath}'.");
+            }
+
+        }
+
+        private static CometView LoadCometPrefab()
+        {
+            GameObject persistedPrefab =
+                AssetDatabase.LoadAssetAtPath<GameObject>(CometPrefabPath);
+            CometView persistedView =
+                persistedPrefab == null
+                    ? null
+                    : persistedPrefab.GetComponent<CometView>();
+            if (persistedView == null)
+            {
+                throw new InvalidOperationException(
+                    $"Comet prefab '{CometPrefabPath}' did not persist its view component.");
+            }
+
+            return persistedView;
+        }
+
+        private static Gradient CreateCometTrailGradient()
+        {
+            var gradient = new Gradient();
+            gradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(new Color(1f, 0.95f, 0.72f), 0f),
+                    new GradientColorKey(new Color(1f, 0.46f, 0.08f), 0.45f),
+                    new GradientColorKey(new Color(0.48f, 0.055f, 0.01f), 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(0.52f, 0f),
+                    new GradientAlphaKey(0.24f, 0.45f),
+                    new GradientAlphaKey(0f, 1f)
+                });
+            return gradient;
         }
 
         private static void ConfigureAudioImporters()
