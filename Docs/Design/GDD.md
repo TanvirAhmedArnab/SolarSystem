@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.32.0  
+**Version:** 0.33.0  
 **Last updated:** 2026-07-26  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -59,6 +59,7 @@
 | 0.30.0 | 2026-07-26 | Codex, for Tanvir | Integrated the peer-review assignment requirements, added Windows and WebGL deliverables, and made a verified itch.io submission part of release acceptance | Assignment scope approved; camera/comet interpretation and release execution remain |
 | 0.31.0 | 2026-07-26 | Codex, for Tanvir | Retained the single adaptive camera, added a simple pooled comet presentation system, and recorded that Mercury, Venus, and Mars require no body-specific selection audio | Assignment interpretation approved; comet slice implemented and validated |
 | 0.32.0 | 2026-07-26 | Codex, for Tanvir | Distributed the opening planet composition through one shared deterministic presentation epoch while retaining the approved J2000 source elements and analytical motion | Owner-requested opening composition implemented as an educational presentation choice |
+| 0.33.0 | 2026-07-26 | Codex, for Tanvir | Approved the public release identity and three-platform delivery contract for Windows, WebGL, and an unsigned Universal macOS build | Release settings and build automation implemented; platform builds remain |
 
 ### 1.3 Source hierarchy
 
@@ -146,8 +147,7 @@ The first public portfolio release includes:
 - Solar emission, restrained bloom, exposure control, and atmospheric effects where relevant.
 - Saturn's ring system; Uranus's rings if quality and schedule allow.
 - Professional onboarding, settings, credits, source attribution, and accessibility essentials.
-- Stable Windows and WebGL builds, with macOS optional when build support and
-  test access are available.
+- Stable Windows and WebGL builds plus an unsigned Universal macOS build.
 - Portfolio-ready repository documentation and a verified itch.io assignment
   page.
 - A restrained, collider-free comet presentation system with pooled transient
@@ -167,8 +167,6 @@ These features require separate approval after the minimum release meets its qua
   and parabolic or hyperbolic comet trajectories.
 - **[DEFERRED]** Educational guided lessons or quizzes.
 - **[DEFERRED]** VR, mobile, or console releases.
-- **[DEFERRED]** A macOS build unless the required Unity module and suitable
-  test access are added.
 - **[DEFERRED]** Full N-body gravity, spacecraft, collisions, or procedural galaxy content.
 
 ### 5.4 Explicit non-goals
@@ -651,9 +649,13 @@ These constraints define product quality; implementation details belong in the T
   performance reference resolution.
 - WebGL for browser play on itch.io, with decompression fallback enabled and a
   responsive embedded-player presentation.
+- macOS Universal for Intel 64-bit and Apple silicon as an unsigned,
+  unnotarized assignment artifact produced from Windows.
 
 Windows remains the performance-certification platform. WebGL requires its own
-build, browser smoke test, and assignment upload classification.
+build, browser smoke test, and assignment upload classification. The macOS
+artifact cannot be certified because the owner has no Mac test access or Apple
+Developer Program membership; this limitation must accompany the download.
 
 **[APPROVED]** Use this reasonable mid-range gaming PC baseline:
 
@@ -715,9 +717,9 @@ class plus external process, GPU-memory, and cold-launch evidence.
 - README explains the problem, experience, architecture, verification, and asset licensing.
 - Screenshots and a short video demonstrate system scale, close-focus detail, UI, and cinematic framing.
 - The approved release package includes a public GitHub repository, downloadable Windows build, recorded portfolio video, screenshots and animated clips, and a personal portfolio page or case study.
-- The assignment package includes at least two platform builds, currently
-  Windows and WebGL, each archived and uploaded with the correct itch.io
-  platform classification.
+- The assignment package includes Windows, WebGL, and unsigned Universal
+  macOS builds, each archived and uploaded with the correct itch.io platform
+  classification.
 - Assignment evidence includes a fully expanded scene-hierarchy screenshot,
   a fully expanded project-asset-organization screenshot, gameplay media,
   modification notes, and the credit `Created by Tanvir`.
@@ -868,9 +870,10 @@ Record owner decisions here at the time they are made. Link to a separate ADR or
 | GDD-014 | 2026-07-24 | Make visible body radii exact Earth-relative proportions, compress only orbital distance, and enforce readable orbit clearances | Approved and implemented | Tanvir |
 | GDD-015 | 2026-07-24 | Use one Earth sidereal rotation per real second as the `1x` reference and preserve signed proportional spin directions | Approved and implemented | Tanvir |
 | GDD-016 | 2026-07-26 | Add the peer-review assignment rubric to release acceptance and publish at least Windows and WebGL builds through itch.io | Approved | Tanvir |
-| GDD-017 | 2026-07-26 | Keep macOS optional unless its Unity build-support module and suitable test access become available | Approved | Tanvir |
+| GDD-017 | 2026-07-26 | Keep macOS optional unless its Unity build-support module and suitable test access become available | Superseded by GDD-020 | Tanvir |
 | GDD-018 | 2026-07-26 | Retain the single adaptive multi-mode camera, add a simple pooled collider-free comet spawner, and do not add body-specific selection audio for Mercury, Venus, or Mars | Approved and implemented | Tanvir |
 | GDD-019 | 2026-07-26 | Begin the readable overview at one shared J2000-plus-4,904-day presentation epoch so planets open in clearly separated directions; retain all source orbital elements and do not claim current-date positions | Approved and implemented | Tanvir |
+| GDD-020 | 2026-07-26 | Release as version `1.0.0` under `Tanvir Ahmed Arnab`, target Windows x86-64, WebGL, and unsigned Universal macOS, and disclose that macOS cannot be tested, signed, or notarized for this release | Approved and implemented | Tanvir |
 
 ## 22. Definition of Done for GDD Version 1.0
 

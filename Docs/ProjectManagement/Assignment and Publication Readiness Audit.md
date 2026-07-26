@@ -29,8 +29,8 @@ direct project, build, media, or publication evidence proves it.
 - A project-authored pooled comet spawner is present under the simulation
   hierarchy. Its six collider-free instances use bounded TrailRenderer VFX and
   return to the pool when expired or safely outside the camera.
-- Installed platform modules include Windows Standalone and WebGL. macOS build
-  support is not installed.
+- Installed platform modules include Windows Standalone, WebGL, and macOS
+  Standalone.
 - The repository is clean and synchronized with `origin/main`.
 
 ## Assignment Compliance Matrix
@@ -46,11 +46,11 @@ direct project, build, media, or publication evidence proves it.
 | Adjust two cameras | One adaptive camera supports free flight, focus, guided comparison, and five cinematic chapters | Complete | Explain the intentional stronger single-camera architecture in the submission |
 | Adjust comet spawner if necessary | A rotating Sun-relative spawner produces deterministic randomized pooled comets with project-authored nucleus/trail materials, no colliders, and automatic despawn | Complete | Disclose that comet paths and visual scale are illustrative rather than ephemeris-driven |
 | Additional creative modifications | Eight planets, seven moons, scale comparison, navigator, labels, facts, settings, audio, and cinematic tour | Exceeded | Select highlights for the itch.io description |
-| At least two builds | Windows and WebGL modules are installed; no release builds exist yet | Incomplete | Build and validate Windows and WebGL |
-| WebGL decompression fallback | `webGLDecompressionFallback: 0` | Incomplete | Set to enabled before the WebGL build and test the serialized setting |
+| At least two builds | Windows, WebGL, and macOS modules are installed; no release builds exist yet | Incomplete | Build all three; validate Windows and hosted WebGL |
+| WebGL decompression fallback | `webGLDecompressionFallback: 1`; protected by Edit Mode regression | Complete | Verify `.unityweb` output and hosted loading after the WebGL build |
 | Test at least one desktop build | No current release build | Incomplete | Test Windows build locally |
 | Test WebGL on itch.io | No current WebGL build/page | Incomplete | Upload and smoke-test the embedded player |
-| ZIP every build folder | No current release archives | Incomplete | Produce deterministic Windows and WebGL ZIP archives |
+| ZIP every build folder | No current release archives | Incomplete | Produce deterministic Windows, macOS, and WebGL ZIP archives |
 | itch.io page | No authenticated publication evidence | Incomplete | Owner creates/signs into account; Codex configures page after approval |
 | Expanded scene-hierarchy screenshot | Current hierarchy is suitable but no release evidence image exists | Incomplete | Expand every parent and capture readable evidence |
 | Expanded project-assets screenshot | Folder organization exists but no release evidence image exists | Incomplete | Expand relevant authored folders and capture readable evidence |
@@ -83,28 +83,21 @@ Release evidence still required:
 
 ## Release Settings Gaps
 
-The following serialized settings require correction before a release build:
-
-- `companyName` is still `DefaultCompany`;
-- Standalone application identifiers still use Unity template values;
-- WebGL decompression fallback is disabled;
-- version remains `0.1.0` and needs a deliberate release-candidate policy;
-- the desktop default resolution is `1024x768` despite the 1080p reference;
-- the desktop window is not resizable.
-
-These are intentional release-setting changes and require Unity compilation,
-build, and player-smoke validation before commit.
+The approved identity, version, application identifiers, window policy,
+desktop/WebGL resolutions, Windows IL2CPP backend, Brotli compression, and
+WebGL Decompression Fallback are now serialized and protected by Edit Mode
+tests. Player smoke validation remains pending.
 
 ## Platform Decision
 
-The evidence supports Windows plus WebGL as the required two-platform
-submission:
+The evidence supports a three-platform submission:
 
-- both build-support modules are installed;
+- all three build-support modules are installed;
 - Windows can be tested locally and remains the performance authority;
 - WebGL can be tested after itch.io upload;
-- macOS build support is absent and a macOS player cannot be validated on this
-  Windows machine.
+- macOS Universal can be built from Windows but remains unsigned,
+  unnotarized, and untested because no Mac or Apple Developer membership is
+  available.
 
 ## Required Publication Sequence
 

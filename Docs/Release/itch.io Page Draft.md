@@ -142,8 +142,12 @@ Extract the complete ZIP archive before launching the executable.
 
 ### macOS
 
-A macOS build is not included in this release because the required Unity
-module and suitable macOS test access are not currently available.
+`[PENDING UNSIGNED UNIVERSAL MACOS BUILD]`
+
+This additional build targets Intel 64-bit and Apple silicon. It is unsigned,
+unnotarized, and not tested on macOS because no Mac test device or Apple
+Developer Program membership is available. macOS may show Gatekeeper warnings;
+no compatibility certification is claimed.
 
 ## Known Limitations
 
@@ -161,6 +165,7 @@ module and suitable macOS test access are not currently available.
   interpolation, seams, synthesized color, or documented fill.
 - WebGL performance and browser compatibility remain unverified until the
   hosted release candidate is tested.
+- The macOS Universal artifact is unsigned, unnotarized, and untested.
 
 ## Credits
 
@@ -195,6 +200,7 @@ No endorsement by NASA, USGS, or any asset provider is implied.
 |---|---|---|---|
 | `SolarSystem-[VERSION]-WebGL.zip` | This file will be played in the browser | Build report, hosted smoke test, SHA-256 | Pending |
 | `SolarSystem-[VERSION]-Windows-x86_64.zip` | Executable / Windows | Build report, local smoke test, SHA-256 | Pending |
+| `SolarSystem-[VERSION]-macOS-Universal.zip` | Executable / macOS | Build report, SHA-256, unsigned/untested disclosure | Pending |
 
 ## Media Manifest
 

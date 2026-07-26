@@ -21,12 +21,12 @@ recorded under `Docs/Release`.
 
 | Field | Required value | Current state |
 |---|---|---|
-| Release version | Owner-approved semantic version | Pending owner decision |
+| Release version | `1.0.0` | Approved and serialized |
 | Release commit | Full Git SHA, clean and pushed | Pending |
 | Unity version | `6000.5.3f1` | Verified project baseline |
 | Render pipeline | URP `17.5.0` | Verified project baseline |
-| Required platforms | Windows x86-64 and WebGL | Approved |
-| Optional platform | macOS | Deferred until module and test access exist |
+| Required platforms | Windows x86-64, WebGL, and macOS Universal | Approved |
+| macOS limitation | Unsigned, unnotarized, and untested | Approved and must be disclosed |
 | itch.io page URL | Public, player-facing URL | Pending |
 | Creator credit | `Created by Tanvir` | Approved copy; publication pending |
 
@@ -44,14 +44,14 @@ recorded under `Docs/Release`.
 ## Gate 1 — Source Release Candidate
 
 - [ ] All approved content is implemented.
-- [ ] `companyName`, product name, application identifiers, version, desktop
+- [x] `companyName`, product name, application identifiers, version, desktop
       resolution, window policy, and WebGL settings are intentionally authored.
-- [ ] WebGL Decompression Fallback is enabled.
-- [ ] The production scene is the only enabled release scene.
-- [ ] Unity finishes compilation with zero Console errors.
-- [ ] Console warnings are zero or individually reviewed and documented.
-- [ ] Complete Edit Mode suite passes.
-- [ ] Complete Play Mode suite passes.
+- [x] WebGL Decompression Fallback is enabled.
+- [x] The production scene is the only enabled release scene.
+- [x] Unity finishes compilation with zero Console errors.
+- [x] Console warnings are zero.
+- [x] Complete Edit Mode suite passes.
+- [x] Complete Play Mode suite passes.
 - [ ] Keyboard-only menu and simulation walkthrough passes.
 - [ ] Focus order and visible focus indicators are inspected.
 - [ ] UI passes at 1280×720, 1920×1080, and the approved small-window case.
@@ -67,9 +67,9 @@ recorded under `Docs/Release`.
 | Evidence | Exact source | Result |
 |---|---|---|
 | Commit SHA | `[PENDING]` | Pending |
-| Unity Console report | `[PENDING]` | Pending |
-| Edit Mode report and count | `[PENDING]` | Pending |
-| Play Mode report and count | `[PENDING]` | Pending |
+| Unity Console report | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 0 errors, 0 warnings |
+| Edit Mode report and count | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 208 passed |
+| Play Mode report and count | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 26 passed |
 | Responsive UI report | `[PENDING]` | Pending |
 | Accessibility walkthrough | `[PENDING]` | Pending |
 | Repository preflight | `[PENDING]` | Pending |
@@ -138,6 +138,33 @@ recorded under `Docs/Release`.
 | ZIP path | `<release-root>/Archives/SolarSystem-[VERSION]-WebGL.zip` |
 | ZIP SHA-256 | `[PENDING]` |
 | itch.io classification | This file will be played in the browser |
+
+## Gate 3B — macOS Universal
+
+- [x] macOS Standalone build support is installed.
+- [ ] Universal Intel 64-bit plus Apple silicon build is produced from the
+      same release commit as Windows and WebGL.
+- [ ] Build report records target, result, warnings, errors, duration, size,
+      Unity version, release version, source commit, and output.
+- [ ] The complete `.app` bundle is archived without losing executable
+      permissions.
+- [ ] itch.io upload is classified for macOS.
+- [ ] Download description clearly states that the artifact is unsigned,
+      unnotarized, and not tested on macOS.
+- [ ] No macOS functionality or Gatekeeper certification claim is made.
+
+### macOS Artifact Record
+
+| Field | Value |
+|---|---|
+| Source commit | `[PENDING]` |
+| Build output | `<release-root>/SolarSystem-[VERSION]-macOS-Universal/` |
+| Application | `Solar System Simulation.app` |
+| Test device | Unavailable |
+| Signing/notarization | Unavailable |
+| ZIP path | `<release-root>/Archives/SolarSystem-[VERSION]-macOS-Universal.zip` |
+| ZIP SHA-256 | `[PENDING]` |
+| itch.io classification | Executable / macOS |
 
 ## Gate 4 — Documentation, Licensing, and Credits
 

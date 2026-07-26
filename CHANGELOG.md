@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Applied the approved `1.0.0` public identity, 1280x720 resizable Windows
+  launch policy, 960x540 WebGL canvas, Windows IL2CPP backend, Brotli
+  compression, and assignment-required WebGL Decompression Fallback.
 - Distributed the eight planets at startup through one shared deterministic
   J2000-plus-4,904-day presentation epoch; source orbital elements, analytical
   motion, distances, periods, sizes, and spin remain unchanged.
@@ -44,6 +47,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Added centralized release contracts, settings/module validation, and
+  non-development build commands for Windows x86-64, unsigned Universal
+  macOS, WebGL, and an ordered all-platform build with JSON evidence.
 - Added a deterministic, ScriptableObject-authored comet spawner with a
   six-instance object pool, seeded bounded spawn variation, pause-aware motion,
   collider-free comet prefabs, automatic off-camera/lifetime despawn, and a

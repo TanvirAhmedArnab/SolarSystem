@@ -7,7 +7,7 @@
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
 **Document status:** Living technical authority; release performance contract and diagnostic harness validated  
-**Version:** 0.36.0  
+**Version:** 0.37.0  
 **Last updated:** 2026-07-26  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -62,6 +62,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.34.0 | 2026-07-25 | Codex, for Tanvir | Added an opt-in, allocation-conscious performance harness, approved budgets and scenario matrix, raw JSON evidence, Editor diagnostic routing, and explicit external-certification boundaries | Harness implementation and Editor diagnostics validated; standalone reference-hardware certification remains |
 | 0.35.0 | 2026-07-26 | Codex, for Tanvir | Added a deterministic pooled comet presentation system with ScriptableObject authoring, a project-owned trail shader, bounded off-camera despawn, pause behavior, and Edit/Play Mode coverage | Assignment comet slice implemented and validated |
 | 0.36.0 | 2026-07-26 | Codex, for Tanvir | Added a centralized readable-opening epoch contract and regression coverage that distributes all eight planet directions without altering per-body scientific authoring | Owner-requested initial composition implemented and validated |
+| 0.37.0 | 2026-07-26 | Codex, for Tanvir | Added a centralized release identity, deterministic Windows/macOS/WebGL build commands, settings and module validation, platform-specific backend policy, and JSON build evidence | Three-platform release architecture approved and implemented |
 
 ### 1.3 Status vocabulary
 
@@ -330,6 +331,28 @@ focused visual command is `Tools > Solar System > Apply Visual Foundation`.
 A full rebuild may assign new Unity local file IDs because it creates a fresh
 scene. Focused visual iteration uses the in-place command to avoid unrelated
 scene and rendering-subasset churn.
+
+### 5.6 Release build automation
+
+**[IMPLEMENTED]** `ReleaseBuildContract` owns the public identity, version,
+scene order, resolutions, platform names, and ignored output paths.
+`ReleaseSettingsManager` applies and validates the serialized Player Settings
+without starting a build. `SolarSystemReleaseBuilder` exposes separate
+non-development build commands for Windows x86-64, macOS Universal, WebGL, and
+an ordered all-platform sequence.
+
+Windows uses IL2CPP. The Windows-hosted macOS build temporarily uses Mono,
+targets Intel 64-bit plus Apple silicon, and restores the serialized Windows
+backend after completion. WebGL uses Brotli with Decompression Fallback and
+data caching. Every build report records the source commit, Unity version,
+release version, target, result, warnings, errors, duration, size, and output
+path as JSON beside the ignored artifact. A build is rejected before platform
+mutation unless the working tree is clean and `HEAD` matches its configured
+upstream.
+
+The macOS artifact is intentionally unsigned and unnotarized because the owner
+has neither Mac test access nor Apple Developer Program membership. It must not
+be represented as tested or Gatekeeper-certified.
 
 ## 6. Runtime Systems
 
@@ -1510,6 +1533,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-029 | 2026-07-25 | Own navigator/label visibility in a small event-driven application service, validate one parent-first view list, route activation through existing selection/focus services, and cache all UI elements and overlap rectangles | Implemented and validated | Tanvir | Adds complete-body navigation and readable labels without duplicating simulation/camera logic, changing body scale, adding third-party UI assets, or introducing steady-state managed allocations |
 | TDD-030 | 2026-07-26 | Retain one adaptive production camera and implement assignment comets as deterministic, pooled, collider-free transient visuals with bounded TrailRenderer output and off-camera/lifetime despawn | Approved, implemented, and validated | Tanvir | Satisfies the lesson feature without duplicating camera architecture or misrepresenting illustrative comets as scientific orbital bodies |
 | TDD-031 | 2026-07-26 | Keep J2000 orbital elements immutable and obtain the readable opening composition from one shared `423,705,600`-second clock offset, with a tested 30-degree minimum opening separation between every planet direction | Approved, implemented, and validated | Tanvir | Preserves coherent analytical motion while avoiding the visually clustered J2000 opening configuration |
+| TDD-032 | 2026-07-26 | Centralize release identity and build outputs, validate settings and modules before building, use Windows IL2CPP, WebGL Brotli with fallback, and an unsigned Universal macOS Mono artifact with explicit test/signing limitations | Approved and implemented | Tanvir | Reproducible three-platform assignment delivery without implying unavailable Apple certification |
 
 ## 19. Definition of Done for TDD Version 1.0
 

@@ -20,7 +20,7 @@ The project is currently in visual/content development. Its product, engineering
 
 - Unity `6000.5.3f1`
 - Universal Render Pipeline `17.5.0`
-- Windows 10/11 x86-64
+- Windows 10/11 x86-64, WebGL, and unsigned macOS Universal release targets
 - Keyboard and mouse
 - ScriptableObject-authored celestial data
 - Double-precision domain calculations with float-space rendering
@@ -42,7 +42,8 @@ Tools/                     Reproducible project tooling
 
 ## Open the project
 
-1. Install Unity Hub and Unity Editor `6000.5.3f1` with Windows build support.
+1. Install Unity Hub and Unity Editor `6000.5.3f1` with Windows, WebGL, and
+   macOS desktop build support.
 2. Clone the repository with Git LFS installed: `git lfs install`, then
    `git clone https://github.com/TanvirAhmedArnab/SolarSystem.git`.
 3. Add the cloned folder in Unity Hub and open it with the exact editor version above.
@@ -50,6 +51,15 @@ Tools/                     Reproducible project tooling
 5. Confirm the Console has no errors or warnings, then run the Edit Mode tests in Test Runner.
 
 Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and IDE project files are intentionally not versioned.
+
+## Release build commands
+
+After validating settings through
+`Tools > Solar System > Release > Validate Release Settings`, use the adjacent
+Build menu for Windows x86-64, macOS Universal, WebGL, or all three platforms.
+Artifacts and JSON build reports are written under the ignored
+`Builds/Release` directory. The macOS artifact is unsigned, unnotarized, and
+not tested on macOS; Windows remains the certified desktop platform.
 
 ## Documentation
 
@@ -103,7 +113,7 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 
 The deterministic simulation, full Sun/eight-planet/seven-moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 204 Edit Mode cases and
+compile successfully. The project currently passes 208 Edit Mode cases and
 26 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
