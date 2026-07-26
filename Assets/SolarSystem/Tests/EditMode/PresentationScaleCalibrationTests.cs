@@ -139,6 +139,46 @@ namespace Tanvir.SolarSystem.Tests.EditMode
         }
 
         [Test]
+        public void ReadableInitialEpoch_DistributesEveryPlanetDirection()
+        {
+            var directions = new Dictionary<string, Vector3>();
+            foreach (string planetId in PlanetOrder)
+            {
+                CelestialBodyModel planet = Find(planetId);
+                CelestialState state = evaluator.Evaluate(
+                    planet,
+                    Double3.Zero,
+                    ReadableInitialCompositionContract.InitialSimulationTimeSeconds);
+                directions.Add(
+                    planetId,
+                    projector.ProjectRelativePosition(
+                        state.ParentRelativePositionKm).normalized);
+            }
+
+            for (int firstIndex = 0; firstIndex < PlanetOrder.Length - 1; firstIndex++)
+            {
+                for (
+                    int secondIndex = firstIndex + 1;
+                    secondIndex < PlanetOrder.Length;
+                    secondIndex++)
+                {
+                    string firstId = PlanetOrder[firstIndex];
+                    string secondId = PlanetOrder[secondIndex];
+                    float angularSeparation = Vector3.Angle(
+                        directions[firstId],
+                        directions[secondId]);
+                    Assert.That(
+                        angularSeparation,
+                        Is.GreaterThanOrEqualTo(
+                            ReadableInitialCompositionContract
+                                .MinimumPlanetAngularSeparationDegrees),
+                        $"{firstId}-{secondId} begin only " +
+                        $"{angularSeparation:F2} degrees apart.");
+                }
+            }
+        }
+
+        [Test]
         public void SunMercuryAndEarthMoon_HierarchyMaintainsReadableClearance()
         {
             CelestialBodyModel sun = Find("sun");

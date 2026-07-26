@@ -3656,7 +3656,7 @@ MonoBehaviour:
   - {fileID: 93681236}
   - {fileID: 26114504}
   - {fileID: 2012592981}
-  initialSimulationTimeSeconds: 0
+  initialSimulationTimeSeconds: 423705600
   simulationSecondsPerRealSecond: 86164.2
   beginPaused: 0
 --- !u!4 &513431187

@@ -10,6 +10,15 @@
 
 This record maps every scientific value in the serialized graybox catalog to an authoritative source and documents conversions or approximations. The Unity assets contain stable source-record IDs that resolve to the sections below.
 
+## Readable opening epoch
+
+All serialized planetary orbital elements remain authored at J2000.0. The
+explorer scene starts its analytical clock at a single shared offset of
+4,904 days (`423,705,600` simulated seconds) after J2000. This produces a more
+legible opening distribution without manually changing any planet's anomaly,
+orbit, period, or hierarchy. It is a deterministic educational presentation
+epoch, not a current-date or date-exact ephemeris.
+
 ## Sun
 
 **Source record ID:** `NASA_NSSDC_SUN_EARTH_FACT_SHEET`

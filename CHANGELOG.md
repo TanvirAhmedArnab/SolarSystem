@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Distributed the eight planets at startup through one shared deterministic
+  J2000-plus-4,904-day presentation epoch; source orbital elements, analytical
+  motion, distances, periods, sizes, and spin remain unchanged.
 - Approved the Windows 1080p performance contract for a mid-range gaming-PC
   baseline, including percentile frame-time, allocation, process-memory,
   GPU-memory, and cold-launch budgets.

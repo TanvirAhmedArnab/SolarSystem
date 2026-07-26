@@ -584,6 +584,11 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
 
             double simulationTime = composition.SimulationController
                 .ClockSnapshot.ElapsedSimulationTimeSeconds;
+            Assert.That(
+                simulationTime,
+                Is.GreaterThanOrEqualTo(
+                    ReadableInitialCompositionContract
+                        .InitialSimulationTimeSeconds));
             var evaluator = new KeplerOrbitEvaluator();
             foreach (string stableId in ExpectedBodyIds)
             {

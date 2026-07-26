@@ -7,7 +7,7 @@
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
 **Document status:** Living technical authority; release performance contract and diagnostic harness validated  
-**Version:** 0.35.0  
+**Version:** 0.36.0  
 **Last updated:** 2026-07-26  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -61,6 +61,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.33.0 | 2026-07-25 | Codex, for Tanvir | Added pinned Inter v4.1 Regular/SemiBold sources, reproducible dynamic TextCore font assets, explicit USS role mapping, runtime credits, provenance, and regression coverage | Final UI typography approved and technically validated |
 | 0.34.0 | 2026-07-25 | Codex, for Tanvir | Added an opt-in, allocation-conscious performance harness, approved budgets and scenario matrix, raw JSON evidence, Editor diagnostic routing, and explicit external-certification boundaries | Harness implementation and Editor diagnostics validated; standalone reference-hardware certification remains |
 | 0.35.0 | 2026-07-26 | Codex, for Tanvir | Added a deterministic pooled comet presentation system with ScriptableObject authoring, a project-owned trail shader, bounded off-camera despawn, pause behavior, and Edit/Play Mode coverage | Assignment comet slice implemented and validated |
+| 0.36.0 | 2026-07-26 | Codex, for Tanvir | Added a centralized readable-opening epoch contract and regression coverage that distributes all eight planet directions without altering per-body scientific authoring | Owner-requested initial composition implemented and validated |
 
 ### 1.3 Status vocabulary
 
@@ -1508,6 +1509,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-028 | 2026-07-25 | Extend the reusable airless-rocky path to Triton, preserve anchored observed imagery, use an explicitly disclosed uniform fill only for near-black unobserved coverage, and widen the existing Sun-light culling envelope without changing inverse-square attenuation | Implemented and validated | Tanvir | Completes the approved major-moon hero set without inventing global imagery, active geology, atmosphere scale, or a parallel renderer |
 | TDD-029 | 2026-07-25 | Own navigator/label visibility in a small event-driven application service, validate one parent-first view list, route activation through existing selection/focus services, and cache all UI elements and overlap rectangles | Implemented and validated | Tanvir | Adds complete-body navigation and readable labels without duplicating simulation/camera logic, changing body scale, adding third-party UI assets, or introducing steady-state managed allocations |
 | TDD-030 | 2026-07-26 | Retain one adaptive production camera and implement assignment comets as deterministic, pooled, collider-free transient visuals with bounded TrailRenderer output and off-camera/lifetime despawn | Approved, implemented, and validated | Tanvir | Satisfies the lesson feature without duplicating camera architecture or misrepresenting illustrative comets as scientific orbital bodies |
+| TDD-031 | 2026-07-26 | Keep J2000 orbital elements immutable and obtain the readable opening composition from one shared `423,705,600`-second clock offset, with a tested 30-degree minimum opening separation between every planet direction | Approved, implemented, and validated | Tanvir | Preserves coherent analytical motion while avoiding the visually clustered J2000 opening configuration |
 
 ## 19. Definition of Done for TDD Version 1.0
 

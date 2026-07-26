@@ -1055,6 +1055,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             serialized.FindProperty("simulationController").objectReferenceValue = controller;
             SetArray(serialized.FindProperty("bodyViews"), views);
             SetArray(serialized.FindProperty("orbitPaths"), paths);
+            serialized.FindProperty("initialSimulationTimeSeconds").doubleValue =
+                ReadableInitialCompositionContract.InitialSimulationTimeSeconds;
             serialized.FindProperty("simulationSecondsPerRealSecond").doubleValue =
                 SimulationTimeControlService.BaselineSecondsPerRealSecond;
             serialized.FindProperty("beginPaused").boolValue = false;

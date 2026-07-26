@@ -94,6 +94,7 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Performance Profiling Harness Validation](Docs/ProjectManagement/Performance%20Profiling%20Harness%20Validation.md)
 - [Assignment and Publication Readiness Audit](Docs/ProjectManagement/Assignment%20and%20Publication%20Readiness%20Audit.md)
 - [Assignment Comet Spawner Validation](Docs/ProjectManagement/Assignment%20Comet%20Spawner%20Validation.md)
+- [Readable Initial Orbit Composition Validation](Docs/ProjectManagement/Readable%20Initial%20Orbit%20Composition%20Validation.md)
 - [Proposed itch.io Page Copy](Docs/Release/itch.io%20Page%20Draft.md)
 - [Release Evidence Checklist](Docs/Release/Release%20Evidence%20Checklist.md)
 - [Release Player Settings Proposal](Docs/Release/Release%20Player%20Settings%20Proposal.md)
@@ -102,7 +103,7 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 
 The deterministic simulation, full Sun/eight-planet/seven-moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 203 Edit Mode cases and
+compile successfully. The project currently passes 204 Edit Mode cases and
 26 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
@@ -112,6 +113,9 @@ Earth's mean radius (`Earth = 1`), while orbital distances use a disclosed
 readability compression with tested adjacent-orbit clearances. At `1x`, one
 real second advances exactly one Earth sidereal rotation; all bodies derive
 their spin rate and direction from signed source periods. The scene also
+opens at one shared J2000-plus-4,904-day deterministic presentation epoch,
+which distributes all eight planet directions without changing their source
+orbital elements or claiming current-date positions. It also
 includes licensed event-driven music, spatial celestial ambience, and UI
 feedback with independent runtime levels and mute. A deterministic rotating
 spawner reuses six collider-free comet instances, producing restrained

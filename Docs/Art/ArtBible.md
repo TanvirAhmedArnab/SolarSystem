@@ -2,7 +2,7 @@
 
 **Owner:** Tanvir  
 **Status:** Living authority with validated visual, audio, typography, guided-scale, hero-rendering, navigation, Explorer Menu, and transient-comet foundations  
-**Version:** 0.31.0  
+**Version:** 0.32.0  
 **Last updated:** 2026-07-26  
 **Baseline:** Unity 6000.5.3f1, URP 17.5.0  
 **Related:** `Docs/Design/GDD.md`, `Docs/Legal/ThirdPartyAssets.md`
@@ -22,6 +22,14 @@ Present the Solar System as a restrained contemporary observatory experience: so
 - **Cohesive instrumentation:** UI feels calm and precise, not militaristic or arcade-like.
 
 ## 2. Visual Language
+
+### Opening orbital composition
+
+The readable overview opens at one shared deterministic presentation epoch,
+J2000 plus 4,904 days. This distributes the eight planet directions around the
+Sun and avoids an accidental row of neighboring silhouettes. Do not hand-place
+individual planets or change their orbital data for a screenshot. Natural
+alignments may still occur later as the analytical simulation advances.
 
 ### Palette
 
@@ -632,6 +640,7 @@ An asset is ready only when:
 
 | Version | Date | Summary | Approval |
 |---|---|---|---|
+| 0.32.0 | 2026-07-26 | Added the shared readable-opening epoch and prohibited per-body screenshot posing while retaining natural later alignments | Opening system composition implemented and validated |
 | 0.31.0 | 2026-07-26 | Added the restrained illustrative-comet language: cool-gray nucleus, pale blue-white additive trail, bounded visual hierarchy, explicit scientific limits, and project-authored licensing status | Comet visual baseline approved, implemented, and validated |
 | 0.30.0 | 2026-07-25 | Approved and integrated Inter v4.1 Regular/SemiBold as the final two-weight UI hierarchy, with official-source provenance, complete OFL retention, TextCore runtime assets, and responsive validation | Final UI typography approved by Tanvir; implementation candidate validated |
 | 0.29.0 | 2026-07-25 | Recorded Tanvir's approval of the release-default music, celestial ambience, and interface mix after the overview/focus audition | Final audio mix approved |

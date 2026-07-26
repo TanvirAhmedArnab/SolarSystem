@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.31.0  
+**Version:** 0.32.0  
 **Last updated:** 2026-07-26  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -58,6 +58,7 @@
 | 0.29.0 | 2026-07-25 | Codex, for Tanvir | Approved the release performance contract, reference hardware class, representative scenarios, and distinction between Editor diagnostics and standalone certification | Performance targets approved; reproducible profiling harness implemented and diagnostic evidence captured |
 | 0.30.0 | 2026-07-26 | Codex, for Tanvir | Integrated the peer-review assignment requirements, added Windows and WebGL deliverables, and made a verified itch.io submission part of release acceptance | Assignment scope approved; camera/comet interpretation and release execution remain |
 | 0.31.0 | 2026-07-26 | Codex, for Tanvir | Retained the single adaptive camera, added a simple pooled comet presentation system, and recorded that Mercury, Venus, and Mars require no body-specific selection audio | Assignment interpretation approved; comet slice implemented and validated |
+| 0.32.0 | 2026-07-26 | Codex, for Tanvir | Distributed the opening planet composition through one shared deterministic presentation epoch while retaining the approved J2000 source elements and analytical motion | Owner-requested opening composition implemented as an educational presentation choice |
 
 ### 1.3 Source hierarchy
 
@@ -869,6 +870,7 @@ Record owner decisions here at the time they are made. Link to a separate ADR or
 | GDD-016 | 2026-07-26 | Add the peer-review assignment rubric to release acceptance and publish at least Windows and WebGL builds through itch.io | Approved | Tanvir |
 | GDD-017 | 2026-07-26 | Keep macOS optional unless its Unity build-support module and suitable test access become available | Approved | Tanvir |
 | GDD-018 | 2026-07-26 | Retain the single adaptive multi-mode camera, add a simple pooled collider-free comet spawner, and do not add body-specific selection audio for Mercury, Venus, or Mars | Approved and implemented | Tanvir |
+| GDD-019 | 2026-07-26 | Begin the readable overview at one shared J2000-plus-4,904-day presentation epoch so planets open in clearly separated directions; retain all source orbital elements and do not claim current-date positions | Approved and implemented | Tanvir |
 
 ## 22. Definition of Done for GDD Version 1.0
 
