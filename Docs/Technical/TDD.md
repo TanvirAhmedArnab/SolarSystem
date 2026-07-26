@@ -6,8 +6,8 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
-**Document status:** Living technical authority; celestial hero, Explorer UX, audio, and typography baselines validated  
-**Version:** 0.33.0  
+**Document status:** Living technical authority; release performance contract and diagnostic harness validated  
+**Version:** 0.34.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -59,6 +59,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.31.0 | 2026-07-25 | Codex, for Tanvir | Added a pure persistent-settings model, versioned PlayerPrefs adapter, unified modal menu state, sole contextual Escape router, input gating, and responsive UI Toolkit surfaces | Explorer UX architecture implemented and validated |
 | 0.32.0 | 2026-07-25 | Codex, for Tanvir | Recorded the owner-approved release-default audio mix after validated overview/focus audition | Final audio mix approved; technical audio baseline unchanged |
 | 0.33.0 | 2026-07-25 | Codex, for Tanvir | Added pinned Inter v4.1 Regular/SemiBold sources, reproducible dynamic TextCore font assets, explicit USS role mapping, runtime credits, provenance, and regression coverage | Final UI typography approved and technically validated |
+| 0.34.0 | 2026-07-25 | Codex, for Tanvir | Added an opt-in, allocation-conscious performance harness, approved budgets and scenario matrix, raw JSON evidence, Editor diagnostic routing, and explicit external-certification boundaries | Harness implementation and Editor diagnostics validated; standalone reference-hardware certification remains |
 
 ### 1.3 Status vocabulary
 
@@ -1136,18 +1137,88 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 
 ## 13. Performance and Memory Plan
 
-Initial budgets:
+### 13.1 Approved reference contract
 
-- 60 FPS at 1920x1080 on the eventual documented mid-range reference PC.
-- No avoidable managed allocations during steady-state simulation/camera operation.
-- No visible transform jitter in supported views.
-- UI text updates throttled when per-frame refresh has no visible benefit.
-- Orbit path meshes cached by configuration.
-- Texture import sizes chosen from measured screen-space demand.
+The release reference is Windows 10/11 at 1920x1080, PC quality, on an
+Intel Core i5-12400F or AMD Ryzen 5 5600 class CPU, NVIDIA GeForce RTX 3060
+or AMD Radeon RX 6600 class GPU, 16 GB RAM, and SSD.
+
+| Gate | Approved budget |
+|---|---:|
+| Total frame time P95 | 16.67 ms |
+| Total frame time P99 | 25.00 ms |
+| Main-thread frame time P95 | 13.33 ms |
+| GPU frame time P95 | 13.33 ms |
+| Steady-state managed allocation P95 | 0 bytes/frame |
+| Steady process memory | 1.5 GiB |
+| Peak process memory | 2 GiB |
+| Dedicated application GPU memory | 2 GiB |
+| Cold launch to interactive | 10 seconds |
+
+The matrix includes readable overview, Earth close focus, Credits & Sources,
+the three guided scale stages, and all five cinematic chapters. No visible
+transform jitter is acceptable in supported views.
+
+### 13.2 Capture architecture
+
+`SolarSystemPerformanceHarness` is dormant in normal play and starts only
+through `-solarSystemPerformance` or the project-owned Editor diagnostic menu.
+It resolves the production composition root and drives the same public
+selection, camera, menu, scale-comparison, and cinematic-tour services used by
+the player. No parallel benchmark scene or benchmark-only simulation is
+maintained.
+
+Responsibilities remain separated: the harness owns capture lifecycle and
+frame phases, `PerformanceScenarioDriver` owns production-state preparation
+and stability checks, and `PerformanceEvidenceFactory` owns metric-source and
+JSON-document construction.
+
+Each scenario completes a configurable warmup, samples for both a minimum
+frame count and minimum duration, and writes a versioned JSON document
+containing:
+
+- build, commit, Unity, quality, display, CPU, GPU, and operating-system
+  identity;
+- raw samples plus nearest-rank median, P95, P99, maximum, and non-zero count;
+- metric source and availability, with unavailable counters recorded as
+  `not measured` instead of zero;
+- scenario status, capture limitations, and the approved budgets.
+
+The hot capture path uses preallocated buffers and disposes every
+`ProfilerRecorder`. Total frame time is sampled from
+`Time.unscaledDeltaTime`; available CPU, GPU, memory, allocation, draw-call,
+SetPass, and triangle counters use Unity's `ProfilerRecorder` API. Deep
+Profiling is excluded from acceptance captures because its instrumentation
+changes measured behavior.
+
+### 13.3 Evidence levels
+
+The Editor menu
+`Tools > Solar System > Validation > Run Performance Diagnostic` writes an
+ignored result to
+`Temp/Performance/solar-system-editor-diagnostic.json`. Editor results reveal
+regressions and counter availability but never certify a release player.
+
+Formal certification requires:
+
+1. a clean Windows standalone build from the candidate commit;
+2. an automated player capture at 1920x1080 on the approved hardware class;
+3. operating-system or vendor evidence for dedicated application VRAM;
+4. external process timing for cold launch;
+5. an allocation investigation in a development player when any steady-state
+   allocation is reported.
+
+Current diagnostic evidence and limitations are recorded in
+`Docs/ProjectManagement/Performance Profiling Harness Validation.md`.
+
+### 13.4 Ongoing optimization policy
+
+- UI text updates are throttled when per-frame refresh has no visible benefit.
+- Orbit path meshes are cached by configuration.
+- Texture import sizes are chosen from measured screen-space demand.
+- Optimization work starts from captured evidence, not speculative rewrites.
 
 The small static body count requires neither pooling nor data-oriented technology. Pooling becomes relevant only for approved dynamic comets/asteroids with recurring spawn/despawn behavior.
-
-Formal frame-time, memory, loading, and VRAM budgets are set after the first representative visual slice.
 
 ## 14. Repository, Licensing, and Build Constraints
 

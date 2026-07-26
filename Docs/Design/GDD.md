@@ -6,7 +6,7 @@
 **Author and product owner:** Tanvir  
 **Document owner:** Tanvir  
 **Document status:** Draft with owner decisions recorded  
-**Version:** 0.28.0  
+**Version:** 0.29.0  
 **Last updated:** 2026-07-25  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Repository:** `C:\Users\taarn\Desktop\Unity\SolarSystem`
@@ -55,6 +55,7 @@
 | 0.26.0 | 2026-07-25 | Codex, for Tanvir | Implemented the unified Explorer Menu, first-launch orientation, persistent presentation/audio settings, contextual Escape routing, and release-facing credits and sources | Portfolio UX baseline implemented and validated |
 | 0.27.0 | 2026-07-25 | Codex, for Tanvir | Recorded the product owner's in-scene approval of the release-default music, Sun, Earth, and interface mix | Final audio mix approved |
 | 0.28.0 | 2026-07-25 | Codex, for Tanvir | Approved Inter v4.1 Regular and SemiBold as the final licensed UI typeface and integrated the two-weight hierarchy across the responsive explorer interface | Final UI typography approved; implementation candidate validated |
+| 0.29.0 | 2026-07-25 | Codex, for Tanvir | Approved the release performance contract, reference hardware class, representative scenarios, and distinction between Editor diagnostics and standalone certification | Performance targets approved; reproducible profiling harness implemented and diagnostic evidence captured |
 
 ### 1.3 Source hierarchy
 
@@ -634,17 +635,34 @@ These constraints define product quality; implementation details belong in the T
 
 **[APPROVED]** First release target: Windows 10/11, x86-64 desktop, keyboard and mouse, 1920x1080 reference resolution.
 
-**[APPROVED]** Use a reasonable mid-range gaming PC as the performance category. The exact representative CPU, GPU, and RAM configuration will be recorded in the TDD or performance test plan before formal profiling begins.
+**[APPROVED]** Use this reasonable mid-range gaming PC baseline:
+
+- CPU: Intel Core i5-12400F or AMD Ryzen 5 5600 class.
+- GPU: NVIDIA GeForce RTX 3060 or AMD Radeon RX 6600 class.
+- Memory: 16 GB system RAM.
+- Storage: SSD.
+- Presentation: PC quality tier at 1920x1080.
 
 ### 14.2 Runtime targets
 
-**[PROPOSED]** On the selected representative mid-range gaming PC:
+**[APPROVED]** On the selected representative mid-range gaming PC:
 
-- 60 frames per second at 1920x1080 during normal exploration.
-- No sustained frame-time spikes during focus or scale transitions.
+- Total frame time is at or below 16.67 ms at the 95th percentile and
+  25.00 ms at the 99th percentile.
+- Main-thread and GPU frame time are each at or below 13.33 ms at the
+  95th percentile.
+- Steady-state project runtime creates no managed allocation per frame.
+- Steady process memory is at or below 1.5 GiB and peak process memory is at
+  or below 2 GiB.
+- Dedicated application GPU-memory usage is at or below 2 GiB.
+- Cold launch reaches the interactive experience within 10 seconds.
 - No visible transform jitter in supported camera ranges.
-- No avoidable per-frame managed allocations during steady-state simulation.
-- Initial load and peak memory targets are established after the first representative art vertical slice.
+
+The representative matrix covers the readable overview, Earth close focus,
+Credits & Sources, all three guided scale stages, and all five cinematic
+chapters. Editor captures are diagnostic only. Formal release acceptance
+requires a development or release Windows player on the approved hardware
+class plus external process, GPU-memory, and cold-launch evidence.
 
 ### 14.3 Visual quality bar
 

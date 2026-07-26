@@ -89,12 +89,13 @@ Generated folders such as `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`, and 
 - [Slice 4 Cinematic Tour Polish Validation](Docs/ProjectManagement/Slice%204%20Cinematic%20Tour%20Polish%20Validation.md)
 - [Repository Publication Cleanup Validation](Docs/ProjectManagement/Repository%20Publication%20Cleanup%20Validation.md)
 - [Explorer Menu and Settings Validation](Docs/ProjectManagement/Explorer%20Menu%20and%20Settings%20Validation.md)
+- [Performance Profiling Harness Validation](Docs/ProjectManagement/Performance%20Profiling%20Harness%20Validation.md)
 
 ## Current validation state
 
 The deterministic simulation, full Sun/eight-planet/seven-moon baseline,
 Slice 3 interaction vertical slice, and first visual-production foundation
-compile successfully. The project currently passes 183 Edit Mode cases and
+compile successfully. The project currently passes 197 Edit Mode cases and
 25 real-scene Play Mode cases. Coverage includes orbital behavior,
 interaction, UI, selected-body facts, project-owned skybox and URP profile
 contracts, audited planet textures and materials, generated Saturn rings,
@@ -125,6 +126,12 @@ guides, and Escape follows one contextual route instead of competing handlers.
 Master/music/interface/celestial volumes, mute, reduced motion, orbit guides,
 and body labels persist locally in a versioned record and remain synchronized
 with their existing keyboard controls.
+A dormant profiling harness now traverses 11 production states and records raw
+frame, CPU, GPU, allocation, memory, and rendering-counter samples to versioned
+JSON. A 1920x1080 Editor diagnostic has verified the harness and scenario
+routing; release certification still requires a standalone Windows player on
+the approved mid-range hardware class plus external VRAM and cold-launch
+measurement.
 Earth now provides the representative layered-rendering proof with a custom
 URP surface, ocean response, nightside-only city lights, independent clouds,
 a restrained atmosphere rim, and close-focus orbit-guide suppression.

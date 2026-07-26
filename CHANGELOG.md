@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Approved the Windows 1080p performance contract for a mid-range gaming-PC
+  baseline, including percentile frame-time, allocation, process-memory,
+  GPU-memory, and cold-launch budgets.
 - Hardened Play Mode transition waits against one-time editor/font
   initialization stalls by starting the bounded timeout after the first
   initialized frame; production transition durations are unchanged.
@@ -38,6 +41,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Dormant project-owned performance harness with 11 production-state
+  scenarios, configurable command-line capture, preallocated sampling,
+  `ProfilerRecorder` metrics, raw percentile evidence, explicit unavailable
+  counters, and versioned JSON output.
+- Editor-only performance diagnostic command and validation report that keep
+  Editor evidence separate from standalone reference-hardware certification.
 - Final Inter v4.1 Regular/SemiBold UI typography, reproducible TextCore font
   assets, runtime credit, pinned OFL 1.1 license, source hashes, and automated
   typography-contract coverage.
