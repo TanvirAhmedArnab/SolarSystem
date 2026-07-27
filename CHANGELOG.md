@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Stabilized the selection reticle for rapidly moving focused bodies by
   updating HUD projection after camera tracking and locking focused reticles
   to the viewport center.
+- Consolidated the remaining Unity-root assets beneath `Assets/SolarSystem`:
+  preserved URP and input-action GUIDs while moving them into owned settings
+  folders, and removed the empty template `Assets/Scenes` folder.
 - Replaced fixed-distance focused mouse-wheel zoom with bounded proportional
   zoom so every wheel step produces the same relative camera-distance change
   for the Moon, planets, and Sun.

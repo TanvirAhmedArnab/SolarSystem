@@ -67,6 +67,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.39.0 | 2026-07-26 | Codex, for Tanvir | Added deterministic cross-platform artifact validation and ZIP packaging with source-commit and version enforcement, Windows exclusions, WebGL structure checks, unsafe-entry rejection, fail-before-write protection, macOS Unix-mode preservation, and checksum manifests | Release packaging architecture implemented and fixture-tested; final same-commit artifacts pending |
 | 0.40.0 | 2026-07-26 | Codex, for Tanvir | Replaced scale-dependent fixed-distance focus zoom with bounded exponential distance scaling and deterministic input/math coverage | Owner-reported release acceptance issue corrected; rebuilt Windows retest pending |
 | 0.41.0 | 2026-07-27 | Codex, for Tanvir | Ordered HUD projection after camera tracking and viewport-locked focused-body reticles with a maximum-speed Titan regression | Owner-reported fast-body reticle instability corrected; rebuilt Windows retest pending |
+| 0.42.0 | 2026-07-27 | Codex, for Tanvir | Consolidated the remaining root-level Unity assets into project-owned input and rendering settings folders while preserving every asset and folder GUID | Folder cleanup implemented and Unity reimport validated |
 
 ### 1.3 Status vocabulary
 
@@ -271,9 +272,18 @@ Assets/
       UI/
     Scenes/
     Settings/
+      Input/
+      Rendering/
+        Pipeline/
 ```
 
-Create folders only when the first file needs them. Original downloaded sources remain in `SourceAssets`; reviewed Unity-ready derivatives enter `Assets/SolarSystem/Content`. Third-party Unity packages, if introduced, live under `Assets/ThirdParty` and retain provenance.
+Create folders only when the first file needs them. Project-owned input
+contracts, UI settings, volume profiles, and render-pipeline resources remain
+beneath `Assets/SolarSystem/Settings`; no template-level `Assets/Scenes` or
+`Assets/Settings` roots are retained. Original downloaded sources remain in
+`SourceAssets`; reviewed Unity-ready derivatives enter
+`Assets/SolarSystem/Content`. Third-party Unity packages, if introduced, live
+under `Assets/ThirdParty` and retain provenance.
 
 ### 5.2 Assemblies
 
@@ -1574,6 +1584,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-034 | 2026-07-26 | Validate and package all three ignored release builds through a deterministic repository-owned tool that enforces one source commit and release version, correct ZIP roots, platform exclusions, unsafe-entry rejection, fail-before-write protection, Unix metadata, and SHA-256 evidence | Implemented and fixture-tested; final artifact run pending | Tanvir | Makes assignment uploads repeatable and prevents stale, malformed, partial, or non-portable archives |
 | TDD-035 | 2026-07-26 | Calculate focused mouse-wheel zoom as a bounded proportional distance change rather than a fixed world-space subtraction | Owner acceptance failure corrected and Edit Mode validated; rebuilt Windows retest pending | Tanvir | Keeps zoom perceptible and directionally consistent from small moons through the Sun without weakening body-relative collision limits |
 | TDD-036 | 2026-07-27 | Run HUD projection after camera tracking and anchor a selected focused body's reticle to viewport center while retaining projected tracking outside focus | Editor suites validated; rebuilt Windows owner retest pending | Tanvir | Removes update-order jitter without adding lag, hiding real unfocused motion, or coupling selection identity to the camera |
+| TDD-037 | 2026-07-27 | Keep project-owned input and render-pipeline settings beneath `Assets/SolarSystem/Settings`, preserve GUIDs during moves, and remove only verified-empty template folders | Implemented and Unity-validated | Tanvir | Keeps the Project window portfolio-ready without breaking serialized references or discarding active URP configuration |
 
 ## 19. Definition of Done for TDD Version 1.0
 
