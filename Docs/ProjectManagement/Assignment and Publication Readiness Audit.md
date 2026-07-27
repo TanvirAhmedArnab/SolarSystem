@@ -3,9 +3,9 @@
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
 **Audit date:** 2026-07-26  
-**Repository commit inspected:** `81ca928`  
-**Status:** Windows and macOS builds verified; full Windows acceptance, WebGL
-build, packaging, and publication evidence remain
+**Repository commit inspected:** `bf807333`  
+**Status:** Windows and macOS builds verified; final synchronized builds, full
+Windows acceptance, WebGL build, packaging, and publication evidence remain
 
 ## Purpose
 
@@ -35,12 +35,13 @@ direct project, build, media, or publication evidence proves it.
 - A Windows x86-64 IL2CPP release player has been built successfully from
   clean pushed commit `81ca928`, launched, log-smoke-tested, and measured with
   the project-owned 11-scenario performance harness.
-- A macOS Universal application has been built from the same commit. Its
-  bundle structure and Intel x86-64 plus Apple silicon arm64 launcher slices
-  are verified; it remains unsigned, unnotarized, and untested on macOS.
-- The source commit used for both builds was clean and synchronized with
-  `origin/main`; this audit update is the only intended post-build source
-  change.
+- A macOS Universal application has been regenerated from clean pushed
+  target-restoration commit `bf807333`. Its bundle structure and Intel x86-64
+  plus Apple silicon arm64 launcher slices are verified; it remains unsigned,
+  unnotarized, and untested on macOS.
+- Both source commits used for the verified desktop builds were clean and
+  synchronized with `origin/main`. Final publication artifacts must later be
+  regenerated from one final release commit.
 
 ## Assignment Compliance Matrix
 
@@ -55,7 +56,7 @@ direct project, build, media, or publication evidence proves it.
 | Adjust two cameras | One adaptive camera supports free flight, focus, guided comparison, and five cinematic chapters | Complete | Explain the intentional stronger single-camera architecture in the submission |
 | Adjust comet spawner if necessary | A rotating Sun-relative spawner produces deterministic randomized pooled comets with project-authored nucleus/trail materials, no colliders, and automatic despawn | Complete | Disclose that comet paths and visual scale are illustrative rather than ephemeris-driven |
 | Additional creative modifications | Eight planets, seven moons, scale comparison, navigator, labels, facts, settings, audio, and cinematic tour | Exceeded | Select highlights for the itch.io description |
-| At least two builds | Windows x86-64 and macOS Universal release builds exist from the same pushed source commit | Complete | Build WebGL to deliver the approved third platform |
+| At least two builds | Verified Windows x86-64 and macOS Universal release builds exist from clean pushed source commits | Complete | Build WebGL, then regenerate all final artifacts from one release commit |
 | WebGL decompression fallback | `webGLDecompressionFallback: 1`; protected by Edit Mode regression | Complete | Verify `.unityweb` output and hosted loading after the WebGL build |
 | Test at least one desktop build | Windows player launches, remains responsive, initializes production systems, and has no release-blocking log entry | Partial | Complete the owner-visible input, audio, settings, motion, and responsive-layout walkthrough |
 | Test WebGL on itch.io | No current WebGL build/page | Incomplete | Upload and smoke-test the embedded player |
@@ -117,8 +118,8 @@ The evidence supports a three-platform submission:
 2. Compile, test, and build Windows.
 3. Run player performance certification and Windows smoke QA.
 4. Build WebGL with decompression fallback and browser-safe settings.
-5. Approve, commit, and push the validated macOS target-restoration hardening,
-   then regenerate the unsigned Universal bundle.
+5. Build WebGL, then regenerate Windows, WebGL, and the unsigned Universal
+   macOS bundle from one final release commit.
 6. Complete release licensing, documentation, and known limitations.
 7. Capture hierarchy, assets, gameplay, and cover media.
 8. Package and hash all three build archives.

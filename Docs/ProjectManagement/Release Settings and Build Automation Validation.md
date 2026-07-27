@@ -86,22 +86,23 @@ See:
 
 ## Subsequent macOS evidence
 
-The macOS Universal builder was subsequently executed from the same clean,
-pushed commit `81ca928`. The build succeeded with zero errors and produced a
-valid `.app` bundle whose launcher contains both Intel x86-64 and Apple silicon
-arm64 slices. The artifact remains unsigned, unnotarized, and untested because
-no Mac test device or Apple Developer membership is available.
+The macOS Universal builder was regenerated from clean, pushed hardening
+commit `bf807333`. The build succeeded with zero errors and produced a valid
+`.app` bundle whose launcher contains both Intel x86-64 and Apple silicon arm64
+slices. The artifact remains unsigned, unnotarized, and untested because no
+Mac test device or Apple Developer membership is available.
 
-Unity recorded one non-blocking warning while the builder restored the prior
-Windows target before a deferred platform switch had settled. The editor was
-then restored and verified explicitly. The target-restoration timing remains
-an automation-hardening item in that first artifact.
+Unity counted one non-blocking `Hidden/Core/DebugOccluder` shader warning from
+the installed render-pipeline package. The previous deferred-target-switch
+diagnostic did not recur. The editor returned automatically to
+`StandaloneWindows64` with IL2CPP, architecture `0`, no pending restoration,
+and a zero-warning/error Console.
 
 See:
 
 `Docs/Release/macOS Universal Build Validation.md`
 
-## Target-restoration hardening candidate
+## Target-restoration hardening validation
 
 The release builder no longer writes `selectedStandaloneTarget` directly.
 Restoration now uses a two-phase, `SessionState`-backed coordinator that first
@@ -120,5 +121,7 @@ Final candidate validation:
   observation required, busy-editor wait required, asynchronous switch
   requested only when safe, and already-restored completion verified.
 
-The fix is not yet committed or pushed. The release guard therefore correctly
-blocks a macOS rebuild until owner approval, commit, and push are complete.
+The fix was committed and pushed as `bf807333`, then exercised by the clean
+macOS rebuild described above. The final Windows, WebGL, and macOS publication
+artifacts must still be regenerated from one final release commit after the
+remaining release work is complete.

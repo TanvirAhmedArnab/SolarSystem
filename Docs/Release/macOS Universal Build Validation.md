@@ -4,21 +4,23 @@
 **Owner:** Tanvir  
 **Validation support:** Codex, subject to owner review  
 **Validation date:** 2026-07-26  
-**Source commit:** `81ca928932d9d695ad019888c5abeabd0fb18baa`  
+**Source commit:** `bf80733370a847f05f41d6a0d8fb879fb6940eb1`  
 **Status:** Build and bundle-structure validation complete; macOS runtime,
 signing, and notarization remain unavailable
 
 ## Purpose
 
-This record preserves the first macOS Universal release build produced on the
-Windows development machine. Generated players, raw logs, and future archives
-remain outside Git. This document does not claim that the application has run
-on macOS.
+This record preserves the macOS Universal release build regenerated on the
+Windows development machine after hardening editor-target restoration.
+Generated players, raw logs, and future archives remain outside Git. This
+document does not claim that the application has run on macOS.
 
 ## Release Build
 
 The committed release builder produced an unsigned macOS application bundle
-from the same clean, pushed source commit as the Windows release build.
+from clean, pushed target-restoration commit `bf807333`. The final Windows,
+WebGL, and macOS publication artifacts will later be regenerated from one
+final release commit.
 
 | Field | Result |
 |---|---|
@@ -26,7 +28,7 @@ from the same clean, pushed source commit as the Windows release build.
 | Version | `1.0.0` |
 | Target | `StandaloneOSX` |
 | Result | Succeeded |
-| Build duration | `190.746` seconds |
+| Build duration | `15.649` seconds |
 | Build warnings | `1` |
 | Build errors | `0` |
 | Reported output bytes | `129,771,983` |
@@ -34,7 +36,7 @@ from the same clean, pushed source commit as the Windows release build.
 | Application files | `177` |
 | Bundle identifier | `com.tanvirahmedarnab.solarsystem` |
 | Minimum macOS version | `12.0` |
-| Launcher SHA-256 | `E722AE1E3FFACAE6DC16F2A66A311D2F15753CB1516492FAB1179CA9A45A6EBF` |
+| Launcher SHA-256 | `6FFBED3E4AE2911CB1AEF7D5D53680260348D771C7A22D264DB4B28703930E68` |
 
 Local ignored evidence:
 
@@ -56,26 +58,32 @@ The bundle also contains the expected `Contents/Info.plist`,
 Its `Info.plist` identifies the product, version, application category,
 supported macOS platform, and minimum OS version.
 
-## Build Warning
+## Build Warning and Editor Restoration
 
-The player build itself succeeded with zero errors. Unity counted one warning
-after producing the bundle because the release builder attempted to restore
-the selected Windows standalone target while Unity's deferred macOS target
-switch was still completing:
+The player build succeeded with zero errors. Unity counted one non-blocking
+shader warning from its installed render-pipeline package:
 
-`A previous deferred switch build target has not been completed`
+`Hidden/Core/DebugOccluder: implicit truncation of vector type`
 
-The editor target was subsequently restored explicitly and verified as
-`StandaloneWindows64` with IL2CPP and the approved architecture. This warning
-did not invalidate the generated `.app`, but the target-restoration timing
-required hardening before the final release-candidate rebuild.
+The warning originates from
+`Packages/com.unity.render-pipelines.core/Runtime/RenderPipelineResources/GPUDriven/DebugOccluder.shader`
+and does not come from project-authored shader code.
 
-The hardening candidate now replaces direct target assignment with a
-domain-reload-safe, two-phase asynchronous coordinator. Compilation, all `213`
-Edit Mode tests, all `26` Play Mode tests, and a fresh zero-warning/error
-Console check pass. Because release builds require clean pushed source, the
-macOS artifact must be rebuilt only after Tanvir approves this candidate and
-the fix is committed and pushed.
+The previous deferred-target-switch diagnostic did not recur. The two-phase,
+domain-reload-safe coordinator observed macOS activation before requesting
+restoration and then completed the asynchronous return to
+`StandaloneWindows64`. Post-build inspection verified:
+
+- active target: `StandaloneWindows64`;
+- selected standalone target: `StandaloneWindows64`;
+- scripting backend: `IL2CPP`;
+- standalone architecture: `0`;
+- pending restoration: `false`; and
+- Unity Console: `0 errors`, `0 warnings`.
+
+Compilation, all `213` Edit Mode tests, all `26` Play Mode tests, and the
+focused restoration-policy tests had already passed before the clean pushed
+build.
 
 ## Required Limitations
 

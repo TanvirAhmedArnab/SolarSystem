@@ -153,8 +153,11 @@ recorded under `Docs/Release`.
 ## Gate 3B — macOS Universal
 
 - [x] macOS Standalone build support is installed.
-- [x] Universal Intel 64-bit plus Apple silicon build is produced from the
-      same release commit as Windows and WebGL.
+- [x] Universal Intel 64-bit plus Apple silicon build is produced from clean,
+      pushed target-restoration commit
+      `bf80733370a847f05f41d6a0d8fb879fb6940eb1`.
+- [ ] Final macOS artifact is regenerated from the same final release commit
+      as Windows and WebGL.
 - [x] Build report records target, result, warnings, errors, duration, size,
       Unity version, release version, source commit, and output.
 - [x] Bundle structure and Universal Mach-O architecture records are verified.
@@ -169,7 +172,7 @@ recorded under `Docs/Release`.
 
 | Field | Value |
 |---|---|
-| Source commit | `81ca928932d9d695ad019888c5abeabd0fb18baa` |
+| Source commit | `bf80733370a847f05f41d6a0d8fb879fb6940eb1` |
 | Build output | `Builds/Release/SolarSystem-1.0.0-macOS-Universal/` |
 | Application | `Solar System Simulation.app` |
 | Build evidence | `Docs/Release/macOS Universal Build Validation.md` |
