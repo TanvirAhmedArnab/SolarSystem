@@ -17,7 +17,6 @@ namespace Tanvir.SolarSystem.Presentation.Camera
         private const float FocusDuration = 0.65f;
         private const float FocusDistanceMultiplier = 3.5f;
         private const float MinimumFocusDistance = 1.5f;
-        private const float ZoomSensitivity = 0.004f;
         private SolarSystemInputAdapter input;
         private CelestialSelectionController selection;
         private Vector3 velocity;
@@ -528,10 +527,17 @@ namespace Tanvir.SolarSystem.Presentation.Camera
                 focusDirection = (orbit * focusDirection).normalized;
             }
 
-            focusDistance = Mathf.Clamp(
-                focusDistance - (input.Zoom * ZoomSensitivity),
-                Mathf.Max(MinimumFocusDistance, FocusedTarget.CurrentDisplayRadius * 1.5f),
-                Mathf.Max(MinimumFocusDistance * 2f, FocusedTarget.CurrentDisplayRadius * 12f));
+            float minimumDistance = Mathf.Max(
+                MinimumFocusDistance,
+                FocusedTarget.CurrentDisplayRadius * 1.5f);
+            float maximumDistance = Mathf.Max(
+                MinimumFocusDistance * 2f,
+                FocusedTarget.CurrentDisplayRadius * 12f);
+            focusDistance = FocusZoomMath.CalculateDistance(
+                focusDistance,
+                input.Zoom,
+                minimumDistance,
+                maximumDistance);
             transform.position =
                 FocusedTarget.transform.position + (focusDirection * focusDistance);
             LookAtFocus();

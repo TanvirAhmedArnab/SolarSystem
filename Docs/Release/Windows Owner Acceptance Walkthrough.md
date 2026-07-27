@@ -78,11 +78,14 @@ Expected:
 - Earth remains framed while focused.
 - `Esc` returns to free flight without opening Help on the same press.
 
-**Owner result:** Partial pass — Tanvir confirmed on 2026-07-26 that `F`
-focuses the selected body. The visible state confirmed that `Esc` ended focus
-and cleared the target. A subsequent visible frame confirmed that the wheel
-moved the focused camera close to the Sun without crossing through it.
-Reverse wheel zoom remains pending.
+**Owner result:** Pass after correction — Tanvir confirmed on 2026-07-26 that
+`F` focuses the selected body and that mouse-wheel zoom now works. The visible
+state also confirmed that `Esc` ended focus and cleared the target. The
+original fixed world-space offset changed the Sun focus distance by only about
+`0.13%` per standard Windows wheel notch; bounded proportional zoom now makes
+the same input perceptible across every body scale while preserving safe
+body-relative limits. A final confirmation against the rebuilt Windows player
+will be recorded with the release artifact.
 
 ## WIN-ACC-04 — Camera Movement
 

@@ -65,6 +65,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.37.0 | 2026-07-26 | Codex, for Tanvir | Added a centralized release identity, deterministic Windows/macOS/WebGL build commands, settings and module validation, platform-specific backend policy, and JSON build evidence | Three-platform release architecture approved and implemented |
 | 0.38.0 | 2026-07-26 | Codex, for Tanvir | Replaced immediate post-build standalone-target assignment with a SessionState-backed, two-phase asynchronous restoration coordinator and focused regression coverage | Owner-requested hardening implemented and validated; clean macOS rebuild pending commit and push |
 | 0.39.0 | 2026-07-26 | Codex, for Tanvir | Added deterministic cross-platform artifact validation and ZIP packaging with source-commit and version enforcement, Windows exclusions, WebGL structure checks, unsafe-entry rejection, fail-before-write protection, macOS Unix-mode preservation, and checksum manifests | Release packaging architecture implemented and fixture-tested; final same-commit artifacts pending |
+| 0.40.0 | 2026-07-26 | Codex, for Tanvir | Replaced scale-dependent fixed-distance focus zoom with bounded exponential distance scaling and deterministic input/math coverage | Owner-reported release acceptance issue corrected; rebuilt Windows retest pending |
 
 ### 1.3 Status vocabulary
 
@@ -503,7 +504,8 @@ or invalid targets hide the reticle without clearing selection.
 
 - damped free-flight navigation with a temporary boost;
 - focus and pointer orbit around a selected body;
-- body-relative zoom limits;
+- body-relative zoom limits with proportional wheel response independent of
+  target radius;
 - smooth transitions that can be cancelled or redirected.
 - guided comparison poses with exact pre-guide camera/focus/clip-plane capture
   and restoration.
@@ -511,9 +513,12 @@ or invalid targets hide the reticle without clearing selection.
   and exact restoration path while tracking live multi-body target groups.
 
 Camera transitions and movement use unscaled time so pausing the simulation
-does not trap the camera. Focus distance and zoom limits respond to the target's
-projected radius. Context-sensitive free-flight speed, scripted cinematic
-waypoints, and cinematic transition timing/easing are data-driven through
+does not trap the camera. Focus distance and zoom limits respond to the
+target's projected radius. Mouse-wheel zoom multiplies the current focus
+distance by a bounded exponential factor, preserving direction and limits while
+making one input step feel consistent across radically different body radii.
+Context-sensitive free-flight speed, scripted cinematic waypoints, and
+cinematic transition timing/easing are data-driven through
 `CinematicTourDefinition`. Reduced-motion instant transitions are implemented;
 context-sensitive free-flight speed remains pending.
 
@@ -1562,6 +1567,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-032 | 2026-07-26 | Centralize release identity and build outputs, validate settings and modules before building, use Windows IL2CPP, WebGL Brotli with fallback, and an unsigned Universal macOS Mono artifact with explicit test/signing limitations | Approved and implemented | Tanvir | Reproducible three-platform assignment delivery without implying unavailable Apple certification |
 | TDD-033 | 2026-07-26 | Persist post-build standalone restoration across domain reloads, observe the built target before completion, and switch back asynchronously only after Unity becomes idle | Owner-requested, implemented, and validated | Tanvir | Prevents the deferred-platform-switch Console diagnostic and false early restoration while keeping release builds tied to clean pushed source |
 | TDD-034 | 2026-07-26 | Validate and package all three ignored release builds through a deterministic repository-owned tool that enforces one source commit and release version, correct ZIP roots, platform exclusions, unsafe-entry rejection, fail-before-write protection, Unix metadata, and SHA-256 evidence | Implemented and fixture-tested; final artifact run pending | Tanvir | Makes assignment uploads repeatable and prevents stale, malformed, partial, or non-portable archives |
+| TDD-035 | 2026-07-26 | Calculate focused mouse-wheel zoom as a bounded proportional distance change rather than a fixed world-space subtraction | Owner acceptance failure corrected and Edit Mode validated; rebuilt Windows retest pending | Tanvir | Keeps zoom perceptible and directionally consistent from small moons through the Sun without weakening body-relative collision limits |
 
 ## 19. Definition of Done for TDD Version 1.0
 

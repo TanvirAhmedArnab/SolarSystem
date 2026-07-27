@@ -40,6 +40,7 @@ namespace Tanvir.SolarSystem.Tests.EditMode
 
         [TestCase("Move", "<Keyboard>/w")]
         [TestCase("LookModifier", "<Mouse>/rightButton")]
+        [TestCase("Zoom", "<Mouse>/scroll/y")]
         [TestCase("Select", "<Mouse>/leftButton")]
         [TestCase("Focus", "<Keyboard>/f")]
         [TestCase("Cancel", "<Keyboard>/escape")]
