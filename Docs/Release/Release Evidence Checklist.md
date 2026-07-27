@@ -70,7 +70,7 @@ recorded under `Docs/Release`.
 | Commit SHA | `[PENDING]` | Pending |
 | Unity Console report | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 0 errors, 0 warnings |
 | Edit Mode report and count | Unity Test Runner validation on `2026-07-26` | 222 passed |
-| Play Mode report and count | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 26 passed |
+| Play Mode report and count | Unity Test Runner validation on `2026-07-27` | 27 passed |
 | Responsive UI report | `Docs/Release/Windows Release Build and Performance Validation.md` | Pass at exact 960×540, 1280×720, and 1920×1080 client areas |
 | Accessibility walkthrough | `Docs/Release/Windows Owner Acceptance Walkthrough.md` | Owner input/audio checks in progress |
 | Repository preflight | `[PENDING]` | Pending |

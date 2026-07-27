@@ -356,6 +356,45 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator SolarSystemScene_FocusedFastMoonReticleRemainsViewportLocked()
+        {
+            SceneManager.LoadScene("SolarSystem", LoadSceneMode.Single);
+            yield return null;
+
+            SolarSystemCompositionRoot simulation =
+                Object.FindAnyObjectByType<SolarSystemCompositionRoot>();
+            SolarSystemInteractionCompositionRoot interaction =
+                Object.FindAnyObjectByType<SolarSystemInteractionCompositionRoot>();
+            Assert.That(simulation, Is.Not.Null);
+            Assert.That(interaction, Is.Not.Null);
+            Assert.That(
+                simulation.SimulationController.TryGetView(
+                    "titan",
+                    out CelestialBodyView titan),
+                Is.True);
+
+            SolarSystemHudPresenter hud = interaction.HudPresenter;
+            interaction.SelectionController.Select(titan);
+            interaction.CameraController.Focus(titan);
+            yield return WaitUntilFocused(interaction.CameraController);
+            interaction.TimeControls.SetPresetIndex(
+                interaction.TimeControls.PresetCount - 1);
+            yield return null;
+
+            for (int frame = 0; frame < 20; frame++)
+            {
+                yield return null;
+                Assert.That(hud.IsSelectionReticleVisible, Is.True);
+                Assert.That(
+                    Vector2.Distance(
+                        hud.SelectionReticleWorldBound.center,
+                        hud.HudWorldBound.center),
+                    Is.LessThan(0.5f),
+                    $"Focused Titan reticle drifted on frame {frame}.");
+            }
+        }
+
+        [UnityTest]
         public IEnumerator SolarSystemScene_ProvidesUnifiedMenuAndPersistentSettings()
         {
             PlayerPrefs.DeleteKey(PlayerPrefsExplorerSettingsStore.PreferenceKey);

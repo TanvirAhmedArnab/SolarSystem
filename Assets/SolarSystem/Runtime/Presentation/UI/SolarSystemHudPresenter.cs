@@ -11,6 +11,7 @@ using UnityEngine.UIElements;
 namespace Tanvir.SolarSystem.Presentation.UI
 {
     /// <summary>Presents read-only explorer state through a runtime UI Toolkit document.</summary>
+    [DefaultExecutionOrder(100)]
     [DisallowMultipleComponent]
     public sealed class SolarSystemHudPresenter : MonoBehaviour
     {
@@ -139,6 +140,10 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         /// <summary>Gets whether the screen-space selection reticle is visible.</summary>
         public bool IsSelectionReticleVisible { get; private set; }
+
+        /// <summary>Gets the selection reticle's latest panel-space bounds.</summary>
+        public Rect SelectionReticleWorldBound =>
+            selectionReticle?.worldBound ?? Rect.zero;
 
         /// <summary>Gets the selected body's presented name.</summary>
         public string BodyNameText => bodyName?.text ?? string.Empty;
@@ -1162,9 +1167,16 @@ namespace Tanvir.SolarSystem.Presentation.UI
             float projectedDiameter =
                 Mathf.Abs(radiusViewport.y - viewportPosition.y) * panelHeight * 2f;
             float size = Mathf.Clamp(projectedDiameter + 24f, 38f, 180f);
-            selectionReticle.style.left = viewportPosition.x * panelWidth - size * 0.5f;
+            bool isFocusedSelection =
+                cameraController != null &&
+                cameraController.FocusedTarget == selectedView &&
+                (cameraController.Mode == SolarSystemCameraMode.FocusTransition ||
+                 cameraController.Mode == SolarSystemCameraMode.Focused);
+            float anchorX = isFocusedSelection ? 0.5f : viewportPosition.x;
+            float anchorY = isFocusedSelection ? 0.5f : viewportPosition.y;
+            selectionReticle.style.left = anchorX * panelWidth - size * 0.5f;
             selectionReticle.style.top =
-                (1f - viewportPosition.y) * panelHeight - size * 0.5f;
+                (1f - anchorY) * panelHeight - size * 0.5f;
             selectionReticle.style.width = size;
             selectionReticle.style.height = size;
             SetSelectionReticleVisible(true);

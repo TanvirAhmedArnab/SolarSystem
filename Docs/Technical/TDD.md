@@ -66,6 +66,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.38.0 | 2026-07-26 | Codex, for Tanvir | Replaced immediate post-build standalone-target assignment with a SessionState-backed, two-phase asynchronous restoration coordinator and focused regression coverage | Owner-requested hardening implemented and validated; clean macOS rebuild pending commit and push |
 | 0.39.0 | 2026-07-26 | Codex, for Tanvir | Added deterministic cross-platform artifact validation and ZIP packaging with source-commit and version enforcement, Windows exclusions, WebGL structure checks, unsafe-entry rejection, fail-before-write protection, macOS Unix-mode preservation, and checksum manifests | Release packaging architecture implemented and fixture-tested; final same-commit artifacts pending |
 | 0.40.0 | 2026-07-26 | Codex, for Tanvir | Replaced scale-dependent fixed-distance focus zoom with bounded exponential distance scaling and deterministic input/math coverage | Owner-reported release acceptance issue corrected; rebuilt Windows retest pending |
+| 0.41.0 | 2026-07-27 | Codex, for Tanvir | Ordered HUD projection after camera tracking and viewport-locked focused-body reticles with a maximum-speed Titan regression | Owner-reported fast-body reticle instability corrected; rebuilt Windows retest pending |
 
 ### 1.3 Status vocabulary
 
@@ -495,8 +496,12 @@ Focus may follow selection but remains a separate command so cinematic mode can 
 `SolarSystemHudPresenter` consumes the controller's selected view only as a
 presentation adapter: it projects the selected body's world position into
 panel space and sizes a four-corner reticle from the projected display radius.
-The selection service remains the sole owner of selected identity. Off-screen
-or invalid targets hide the reticle without clearing selection.
+HUD projection runs after camera tracking. When the selected body is also the
+active focus target, the reticle anchors to viewport center so rapid orbital
+motion or spin cannot introduce a one-frame camera/projection disagreement.
+Selection without focus still follows the body's projected position. The
+selection service remains the sole owner of selected identity. Off-screen or
+invalid targets hide the reticle without clearing selection.
 
 ### 6.7 Camera
 
@@ -1568,6 +1573,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-033 | 2026-07-26 | Persist post-build standalone restoration across domain reloads, observe the built target before completion, and switch back asynchronously only after Unity becomes idle | Owner-requested, implemented, and validated | Tanvir | Prevents the deferred-platform-switch Console diagnostic and false early restoration while keeping release builds tied to clean pushed source |
 | TDD-034 | 2026-07-26 | Validate and package all three ignored release builds through a deterministic repository-owned tool that enforces one source commit and release version, correct ZIP roots, platform exclusions, unsafe-entry rejection, fail-before-write protection, Unix metadata, and SHA-256 evidence | Implemented and fixture-tested; final artifact run pending | Tanvir | Makes assignment uploads repeatable and prevents stale, malformed, partial, or non-portable archives |
 | TDD-035 | 2026-07-26 | Calculate focused mouse-wheel zoom as a bounded proportional distance change rather than a fixed world-space subtraction | Owner acceptance failure corrected and Edit Mode validated; rebuilt Windows retest pending | Tanvir | Keeps zoom perceptible and directionally consistent from small moons through the Sun without weakening body-relative collision limits |
+| TDD-036 | 2026-07-27 | Run HUD projection after camera tracking and anchor a selected focused body's reticle to viewport center while retaining projected tracking outside focus | Editor suites validated; rebuilt Windows owner retest pending | Tanvir | Removes update-order jitter without adding lag, hiding real unfocused motion, or coupling selection identity to the camera |
 
 ## 19. Definition of Done for TDD Version 1.0
 

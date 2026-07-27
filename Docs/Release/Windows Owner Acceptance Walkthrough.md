@@ -59,7 +59,12 @@ Expected:
 - The facts and scale disclosure remain readable.
 - Each selection produces a restrained interface response.
 
-**Owner result:** Pending
+**Owner result:** Partial failure — Tanvir confirmed on 2026-07-27 that Earth,
+Sun, and Mercury selection, information, readability, and scale disclosure all
+pass. A subsequent Titan focus check exposed rapid one-frame reticle movement
+on fast small bodies. The corrective candidate orders HUD projection after
+camera tracking and locks a focused body's reticle to the viewport center.
+Rebuilt-player retest remains pending.
 
 ## WIN-ACC-03 — Focus and Zoom
 
