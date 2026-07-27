@@ -520,6 +520,8 @@ product page's citation wording during the final release audit.
   `SourceAssets/ThirdParty/Textures/USGS/triton_global_color_mosaic_browse.jpg`.
 - Unity derivative:
   `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Triton/T_Triton_Surface_Browse.jpg`.
+- Project-owned derived mask:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Triton/T_Triton_ObservedCoverageMask.png`.
 - Active material: `M_Triton.mat`.
 - Integrity: both repository JPEGs are byte-identical with SHA-256
   `A71DF5E3DE28BA755200E0E9DB2633E0529CD2CDF344299715660F3DA37D1FCE`.
@@ -533,11 +535,13 @@ product page's citation wording during the final release audit.
   violet, and ultraviolet filter observations. It is not natural-color,
   globally complete, current, or date-general imagery.
 - Modification status: the retained and runtime JPEG pixels are unchanged.
-  The project-owned shader applies a restrained presentation tint and
-  source-luminance normal response on observed pixels. Near-black unobserved
-  coverage receives a uniform neutral shader-side fill; that fill is not
-  third-party imagery, observed terrain, elevation, albedo, or scientific
-  reconstruction.
+  The project-owned grayscale mask is mechanically derived from near-black
+  border-connected pixels in the public-domain browse, with an `8`-pixel
+  spatial feather at the coverage boundary. The project-owned shader applies a
+  restrained presentation tint and source-luminance normal response on
+  observed pixels. Unobserved coverage receives a uniform near-black
+  shader-side fill; neither the mask nor fill is third-party imagery, observed
+  terrain, elevation, albedo, or scientific reconstruction.
 
 The 2026 USGS high-resolution Voyager 2 release is recorded as a possible
 future source upgrade but is not represented as the active runtime asset.

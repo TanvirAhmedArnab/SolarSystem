@@ -65,9 +65,11 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.37.0 | 2026-07-26 | Codex, for Tanvir | Added a centralized release identity, deterministic Windows/macOS/WebGL build commands, settings and module validation, platform-specific backend policy, and JSON build evidence | Three-platform release architecture approved and implemented |
 | 0.38.0 | 2026-07-26 | Codex, for Tanvir | Replaced immediate post-build standalone-target assignment with a SessionState-backed, two-phase asynchronous restoration coordinator and focused regression coverage | Owner-requested hardening implemented and validated; clean macOS rebuild pending commit and push |
 | 0.39.0 | 2026-07-26 | Codex, for Tanvir | Added deterministic cross-platform artifact validation and ZIP packaging with source-commit and version enforcement, Windows exclusions, WebGL structure checks, unsafe-entry rejection, fail-before-write protection, macOS Unix-mode preservation, and checksum manifests | Release packaging architecture implemented and fixture-tested; final same-commit artifacts pending |
-| 0.40.0 | 2026-07-26 | Codex, for Tanvir | Replaced scale-dependent fixed-distance focus zoom with bounded exponential distance scaling and deterministic input/math coverage | Owner-reported release acceptance issue corrected; rebuilt Windows retest pending |
-| 0.41.0 | 2026-07-27 | Codex, for Tanvir | Ordered HUD projection after camera tracking and viewport-locked focused-body reticles with a maximum-speed Titan regression | Owner-reported fast-body reticle instability corrected; rebuilt Windows retest pending |
+| 0.40.0 | 2026-07-26 | Codex, for Tanvir | Replaced scale-dependent fixed-distance focus zoom with bounded exponential distance scaling and deterministic input/math coverage | Implemented, test-covered, and owner-validated in the rebuilt Windows player |
+| 0.41.0 | 2026-07-27 | Codex, for Tanvir | Ordered HUD projection after camera tracking and viewport-locked focused-body reticles with a maximum-speed Titan regression | Implemented, test-covered, and owner-validated in the rebuilt Windows player |
 | 0.42.0 | 2026-07-27 | Codex, for Tanvir | Consolidated the remaining root-level Unity assets into project-owned input and rendering settings folders while preserving every asset and folder GUID | Folder cleanup implemented and Unity reimport validated |
+| 0.43.0 | 2026-07-27 | Codex, for Tanvir | Replaced Triton's abrupt runtime luminance threshold with a dedicated linear observed-coverage mask, an 8-pixel source-honest feather, and a uniform near-black unknown-region fill | Implemented, test-covered, and owner-validated |
+| 0.44.0 | 2026-07-27 | Codex, for Tanvir | Added explicit focused-row Enter activation and measured status-to-navigator spacing with real-scene keyboard and responsive-layout regressions | Implemented, test-covered, and owner-validated |
 
 ### 1.3 Status vocabulary
 
@@ -680,7 +682,12 @@ Navigator activation calls `CelestialSelectionController.Select` and
 motion, or simulation logic. `CelestialNavigationService` emits only effective
 visibility changes. The navigator opens with `N`, is keyboard-focusable,
 identifies moons by parent, reflects selection without relying on color alone,
-and closes after successful activation.
+and closes after successful activation. The HUD explicitly routes `Return` and
+numeric-keypad `Enter` from the focused row through the same navigator
+activation path used by pointer selection. The navigator's absolute top edge
+is recalculated from the status card's resolved geometry with a fixed
+12-pixel gap, so typography, compact layout, or longer status copy cannot make
+the two cards overlap.
 
 `SolarSystemHudPresenter` creates one cached `Button` and projected `Label` per
 catalog body at initialization. Its steady-state label pass reuses the cached
@@ -1071,18 +1078,20 @@ The Art Bible owns visual targets and asset choices. This TDD owns runtime behav
 - Triton extends the same adapter with relief `0.21`, sample distance `1.25`,
   specular `0.03`, smoothness `0.18`, and nightside readability `0.06`.
   Its `512 x 256` Voyager-era browse contains substantial near-black
-  unobserved coverage, so the shared shader optionally derives a coverage mask
-  from anchored source luminance at threshold `0.015` and blends a uniform
-  neutral fill at strength `0.85`. Existing airless materials keep the new
-  option disabled. The fill adds no texture sample, terrain, elevation,
-  composition, observed detail, or scientific state; source-derived normal
-  perturbation is suppressed wherever the fill applies.
+  unobserved coverage. A project-owned linear grayscale mask is derived from
+  near-black border-connected source pixels at threshold `0.015` and uses an
+  `8`-pixel spatial feather. The shared shader samples the mask and blends a
+  uniform near-black neutral fill at strength `1.0`. Existing airless
+  materials keep the option disabled. The mask and fill add no terrain,
+  elevation, composition, observed detail, or scientific state;
+  source-derived normal perturbation is suppressed wherever the fill applies.
 - The shader performs five bounded source samples per fragment: one anchored
   color sample and four neighboring luminance samples for a shallow normal
-  estimate. It performs no displacement, time animation, emission, fluid
-  simulation, or extra transparent pass. The shared view owns one cached
-  `MaterialPropertyBlock`, creates no material instance, and does no
-  steady-state work after initialization.
+  estimate. Triton performs one additional linear mask sample. It performs no
+  displacement, time animation, emission, fluid simulation, or extra
+  transparent pass. The shared view owns one cached `MaterialPropertyBlock`,
+  creates no material instance, and does no steady-state work after
+  initialization.
 - The airless adapter adds no child render shell. Mercury remains parented to
   the Sun, the Moon to Earth, and Io/Europa to Jupiter. Io retains its
   `421,800 km` semimajor axis and positive `1.762732`-day synchronous period;
@@ -1582,9 +1591,11 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-032 | 2026-07-26 | Centralize release identity and build outputs, validate settings and modules before building, use Windows IL2CPP, WebGL Brotli with fallback, and an unsigned Universal macOS Mono artifact with explicit test/signing limitations | Approved and implemented | Tanvir | Reproducible three-platform assignment delivery without implying unavailable Apple certification |
 | TDD-033 | 2026-07-26 | Persist post-build standalone restoration across domain reloads, observe the built target before completion, and switch back asynchronously only after Unity becomes idle | Owner-requested, implemented, and validated | Tanvir | Prevents the deferred-platform-switch Console diagnostic and false early restoration while keeping release builds tied to clean pushed source |
 | TDD-034 | 2026-07-26 | Validate and package all three ignored release builds through a deterministic repository-owned tool that enforces one source commit and release version, correct ZIP roots, platform exclusions, unsafe-entry rejection, fail-before-write protection, Unix metadata, and SHA-256 evidence | Implemented and fixture-tested; final artifact run pending | Tanvir | Makes assignment uploads repeatable and prevents stale, malformed, partial, or non-portable archives |
-| TDD-035 | 2026-07-26 | Calculate focused mouse-wheel zoom as a bounded proportional distance change rather than a fixed world-space subtraction | Owner acceptance failure corrected and Edit Mode validated; rebuilt Windows retest pending | Tanvir | Keeps zoom perceptible and directionally consistent from small moons through the Sun without weakening body-relative collision limits |
-| TDD-036 | 2026-07-27 | Run HUD projection after camera tracking and anchor a selected focused body's reticle to viewport center while retaining projected tracking outside focus | Editor suites validated; rebuilt Windows owner retest pending | Tanvir | Removes update-order jitter without adding lag, hiding real unfocused motion, or coupling selection identity to the camera |
+| TDD-035 | 2026-07-26 | Calculate focused mouse-wheel zoom as a bounded proportional distance change rather than a fixed world-space subtraction | Implemented, test-covered, and owner-validated in the rebuilt Windows player | Tanvir | Keeps zoom perceptible and directionally consistent from small moons through the Sun without weakening body-relative collision limits |
+| TDD-036 | 2026-07-27 | Run HUD projection after camera tracking and anchor a selected focused body's reticle to viewport center while retaining projected tracking outside focus | Implemented, test-covered, and owner-validated in the rebuilt Windows player | Tanvir | Removes update-order jitter without adding lag, hiding real unfocused motion, or coupling selection identity to the camera |
 | TDD-037 | 2026-07-27 | Keep project-owned input and render-pipeline settings beneath `Assets/SolarSystem/Settings`, preserve GUIDs during moves, and remove only verified-empty template folders | Implemented and Unity-validated | Tanvir | Keeps the Project window portfolio-ready without breaking serialized references or discarding active URP configuration |
+| TDD-038 | 2026-07-27 | Preserve Triton's byte-identical Voyager browse, derive a separate linear observed-coverage mask from border-connected near-black pixels, feather only that mask boundary, and render unknown coverage as a uniform near-black neutral | Implemented, test-covered, and owner-validated | Tanvir | Removes the broken-looking coverage seam without fabricating global imagery or terrain |
+| TDD-039 | 2026-07-27 | Route focused-row Enter activation explicitly and position the navigator from measured status-card geometry rather than a fixed top offset | Implemented, test-covered, and owner-validated | Tanvir | Makes keyboard focus actionable and prevents responsive status/navigation overlap without duplicating selection or camera logic |
 
 ## 19. Definition of Done for TDD Version 1.0
 

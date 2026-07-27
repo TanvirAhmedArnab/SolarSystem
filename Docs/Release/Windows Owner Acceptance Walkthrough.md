@@ -3,9 +3,10 @@
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
 **Assisted by:** Codex  
-**Candidate build source:** `81ca928932d9d695ad019888c5abeabd0fb18baa`  
-**Validation date:** 2026-07-26  
-**Status:** In progress; owner-performed input and audible checks remain pending
+**Candidate build source:** `f6f4d61d9f8a652851735b58edd5aed546f6c970`  
+**Validation date:** 2026-07-27  
+**Status:** In progress; corrected focus interactions pass and the remaining
+owner-performed walkthrough checks are pending
 
 ## Purpose
 
@@ -59,12 +60,18 @@ Expected:
 - The facts and scale disclosure remain readable.
 - Each selection produces a restrained interface response.
 
-**Owner result:** Partial failure — Tanvir confirmed on 2026-07-27 that Earth,
-Sun, and Mercury selection, information, readability, and scale disclosure all
-pass. A subsequent Titan focus check exposed rapid one-frame reticle movement
-on fast small bodies. The corrective candidate orders HUD projection after
-camera tracking and locks a focused body's reticle to the viewport center.
-Rebuilt-player retest remains pending.
+**Owner result:** Pass after correction — Tanvir confirmed on 2026-07-27 that
+Earth, Sun, Mercury, and fast-moving Titan selection/focus feedback work as
+intended in the rebuilt Windows player from `f6f4d61`. HUD projection now runs
+after camera tracking, and a focused body's reticle remains locked to the
+viewport center without rapid movement.
+
+Follow-up visual issue: close Triton inspection exposed a sharp
+observed/unobserved source-coverage seam. A dedicated feathered coverage-mask
+now replaces that seam while preserving the Voyager source. Tanvir approved
+the resulting soft transition and neutral near-black unknown region on
+2026-07-27; the final synchronized Windows rebuild retains a concise smoke
+recheck before packaging.
 
 ## WIN-ACC-03 — Focus and Zoom
 
@@ -83,14 +90,13 @@ Expected:
 - Earth remains framed while focused.
 - `Esc` returns to free flight without opening Help on the same press.
 
-**Owner result:** Pass after correction — Tanvir confirmed on 2026-07-26 that
-`F` focuses the selected body and that mouse-wheel zoom now works. The visible
-state also confirmed that `Esc` ended focus and cleared the target. The
-original fixed world-space offset changed the Sun focus distance by only about
-`0.13%` per standard Windows wheel notch; bounded proportional zoom now makes
-the same input perceptible across every body scale while preserving safe
-body-relative limits. A final confirmation against the rebuilt Windows player
-will be recorded with the release artifact.
+**Owner result:** Pass after correction — Tanvir confirmed on 2026-07-27 that
+`F`, mouse-wheel zoom, and stable body-relative focus all work as intended in
+the rebuilt Windows player from `f6f4d61`. The original fixed world-space
+offset changed the Sun focus distance by only about `0.13%` per standard
+Windows wheel notch; bounded proportional zoom now makes the same input
+perceptible across every body scale while preserving safe body-relative
+limits.
 
 ## WIN-ACC-04 — Camera Movement
 
@@ -108,7 +114,10 @@ Expected:
 - Focus orbit keeps the selected body as the visual subject.
 - No sudden inversion, uncontrollable drift, clipping, or camera jump occurs.
 
-**Owner result:** Pending
+**Owner result:** Pass — Tanvir confirmed on 2026-07-27 that free-flight
+right-mouse look, `WASD`, `Q`/`E`, and focused-body orbiting all behave as
+intended without sudden inversion, uncontrollable drift, clipping, or camera
+jumps in the rebuilt Windows player from `f6f4d61`.
 
 ## WIN-ACC-05 — Simulation Time
 
@@ -126,9 +135,11 @@ Expected:
 - Slow and fast controls change the displayed rate and visible motion.
 - Resume continues cleanly without a positional jump.
 
-**Owner result:** Partial pass — Tanvir confirmed on 2026-07-26 that `Space`
-pauses and resumes the simulation as intended. Slower/faster rate controls
-remain pending.
+**Owner result:** Pass — Tanvir confirmed on 2026-07-27 that `Space` pauses
+and resumes simulation while camera/UI interaction remains available, `[` and
+`]` change the displayed and visible time rate correctly, and resumption
+continues without a positional jump in the rebuilt Windows player from
+`f6f4d61`.
 
 ## WIN-ACC-06 — Navigation and Keyboard Focus
 
@@ -146,7 +157,13 @@ Expected:
 - Activating an entry selects or focuses the intended body.
 - `Esc` closes the navigator before affecting a deeper interaction state.
 
-**Owner result:** Pending
+**Owner result:** Pass after correction — Tanvir confirmed on 2026-07-27 that
+forward `Tab`, reverse `Shift+Tab`, `Enter`, and `Esc` behave correctly, the
+activated row selects and focuses the intended body, and the expanded
+navigator no longer overlaps the status card. The correction explicitly
+handles `Return` and numeric-keypad `Enter` at the focused row, derives the
+navigator's top edge from the status card's measured height, and preserves a
+12-pixel gap. Real-scene keyboard and responsive-layout regressions also pass.
 
 ## WIN-ACC-07 — Learning Modes and Guides
 
@@ -168,7 +185,11 @@ Expected:
 - The tour frames its subjects, advances correctly, and restores the prior
   camera state when finished or cancelled.
 
-**Owner result:** Pending
+**Owner result:** Pass — Tanvir confirmed on 2026-07-27 that `L` and `O` hide
+and restore projected labels and orbit guides, `M` switches between Full and
+Reduced Motion, the `C` guided physical-scale comparison advances and restores
+the explorer view cleanly, and the `T` cinematic tour frames its chapters and
+returns to normal exploration correctly.
 
 ## WIN-ACC-08 — Menu, Settings, and Persistence
 
@@ -192,7 +213,11 @@ Expected:
 - Reduced Motion replaces guided camera animation with immediate cuts.
 - Restored values persist after relaunch.
 
-**Owner result:** Pending
+**Owner result:** Pass — Tanvir confirmed on 2026-07-27 that menu navigation
+and page layout work correctly, mute and all four audio sliders affect their
+intended mix contributions, Reduced Motion switches between immediate cuts
+and smooth transitions, and the selected settings persist across relaunch.
+The approved unmuted audio state was restored after the persistence check.
 
 ## WIN-ACC-09 — Spatial and Interface Audio
 
@@ -210,7 +235,11 @@ Expected:
 - No channel clips, loops with a noticeable seam, or persists incorrectly
   after leaving its context.
 
-**Owner result:** Pending
+**Owner result:** Pass — Tanvir confirmed on 2026-07-27 that the Sun's
+burning loop remains stable and non-directional without clicks, abrupt level
+changes, or an obvious seam; Earth's ambience responds smoothly to 3D camera
+distance and position; and interface sounds remain clear, brief, appropriately
+quiet, and confined to their interactions.
 
 ## WIN-ACC-10 — Responsive Presentation
 
@@ -225,7 +254,9 @@ panel, Help, Settings, and Credits & Sources remained within frame. Compact
 mode activated at the two smaller cases. The owner still confirms that manual
 resize dragging feels stable and does not leave a panel stranded.
 
-**Owner resize result:** Pending
+**Owner resize result:** Pass — Tanvir confirmed on 2026-07-27 that the
+smaller-display presentation remains contained while resizing narrower,
+shorter, and back to a larger window, with no overlap or stranded panels.
 
 ## WIN-ACC-11 — Perceived Performance and Exit
 
@@ -247,14 +278,21 @@ Automated available-hardware evidence already passes frame, CPU, GPU, process
 memory, dedicated GPU memory, and cold-launch budgets. Managed-allocation and
 approved mid-range-hardware certification remain explicitly incomplete.
 
-**Owner result:** Pending
+**Owner result:** Pass — Tanvir confirmed on 2026-07-27 that extended use of
+free flight, body focus, labels, scale comparison, tour, menus, audio, and
+comets remains smooth and free of recurring stutter, visual corruption,
+runaway populations, or audio breakup, and that the simulation exits normally
+without hanging or displaying an error.
 
 ## Final Owner Decision
 
-**Decision:** Pending  
+**Decision:** Pass for the current release-source candidate  
 **Owner:** Tanvir  
-**Date:** Pending  
-**Notes:** Pending
+**Date:** 2026-07-27  
+**Notes:** All eleven owner-visible Windows acceptance groups pass. The final
+Windows player must still be regenerated from the eventual clean, pushed
+release commit and receive a concise launch/focus/exit smoke check before
+packaging.
 
 If the final release-source commit changes runtime behavior, repeat the
 affected checks against the regenerated Windows player before packaging.

@@ -114,10 +114,13 @@ namespace Tanvir.SolarSystem.Presentation.CelestialBodies
         /// <summary>Triton source-color visibility on its unlit hemisphere.</summary>
         public const float TritonNightsideReadability = 0.06f;
 
-        /// <summary>Strength of Triton's disclosed neutral unobserved-coverage fill.</summary>
-        public const float TritonCoverageFallbackStrength = 0.85f;
+        /// <summary>Strength of Triton's disclosed near-black unobserved-coverage fill.</summary>
+        public const float TritonCoverageFallbackStrength = 1f;
 
-        /// <summary>Source-luminance threshold used to identify unobserved black coverage.</summary>
+        /// <summary>Source-luminance threshold used to derive the observed-coverage mask.</summary>
         public const float TritonCoverageThreshold = 0.015f;
+
+        /// <summary>Mask-edge feather radius used by the reviewed derived asset.</summary>
+        public const int TritonCoverageFeatherRadiusPixels = 8;
     }
 }

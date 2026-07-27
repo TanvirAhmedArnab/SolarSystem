@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Routed `Enter` and numeric-keypad `Enter` explicitly from the focused
+  celestial-navigator row to the existing selection/focus controller, and
+  positioned the navigator from the status card's measured height so the two
+  responsive panels retain a consistent gap instead of overlapping.
+- Replaced Triton's abrupt luminance-threshold coverage cap with a dedicated
+  linear grayscale coverage mask, an `8`-pixel source-honest feather, and a
+  uniform near-black unknown-region fill while leaving the Voyager JPEG
+  byte-identical and adding no inferred terrain.
 - Stabilized the selection reticle for rapidly moving focused bodies by
   updating HUD projection after camera tracking and locking focused reticles
   to the viewport center.

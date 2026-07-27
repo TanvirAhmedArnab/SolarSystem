@@ -61,6 +61,8 @@ namespace Tanvir.SolarSystem.Editor.Import
             CelestialTextureRoot + "/Titan/T_Titan_Surface_Browse.jpg";
         private const string TritonTexturePath =
             CelestialTextureRoot + "/Triton/T_Triton_Surface_Browse.jpg";
+        private const string TritonCoverageMaskPath =
+            CelestialTextureRoot + "/Triton/T_Triton_ObservedCoverageMask.png";
         private const string SolarSurfaceShader =
             "SolarSystem/Celestial/Solar Surface";
         private const string SolarCoronaShader =
@@ -169,7 +171,7 @@ namespace Tanvir.SolarSystem.Editor.Import
             new Color(1f, 0.56f, 0.18f, 1f);
         private static readonly Color TritonTint = new Color(1f, 0.84f, 0.9f, 1f);
         private static readonly Color TritonCoverageFallback =
-            new Color(0.78f, 0.72f, 0.74f, 1f);
+            new Color(0.06f, 0.065f, 0.075f, 1f);
         private static readonly Color NeptuneAtmosphereTint =
             new Color(0.2f, 0.48f, 0.98f, 1f);
         private static readonly Color OrbitTint = new Color(0.16f, 0.45f, 0.78f, 1f);
@@ -1208,6 +1210,8 @@ namespace Tanvir.SolarSystem.Editor.Import
                     TextureWrapMode.Repeat);
             }
 
+            ConfigureCoverageMaskImporter(TritonCoverageMaskPath);
+
             ConfigureTextureImporter(
                 SpaceTexturePath,
                 TextureImporterType.Default,
@@ -1261,6 +1265,34 @@ namespace Tanvir.SolarSystem.Editor.Import
             importer.textureType = textureType;
             importer.sRGBTexture = sRgb;
             importer.wrapMode = wrapMode;
+            importer.mipmapEnabled = true;
+            importer.SaveAndReimport();
+        }
+
+        private static void ConfigureCoverageMaskImporter(string path)
+        {
+            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null)
+            {
+                throw new InvalidOperationException(
+                    $"Required coverage-mask importer is unavailable at '{path}'.");
+            }
+
+            bool changed =
+                importer.textureType != TextureImporterType.Default ||
+                importer.sRGBTexture ||
+                importer.wrapModeU != TextureWrapMode.Repeat ||
+                importer.wrapModeV != TextureWrapMode.Clamp ||
+                !importer.mipmapEnabled;
+            if (!changed)
+            {
+                return;
+            }
+
+            importer.textureType = TextureImporterType.Default;
+            importer.sRGBTexture = false;
+            importer.wrapModeU = TextureWrapMode.Repeat;
+            importer.wrapModeV = TextureWrapMode.Clamp;
             importer.mipmapEnabled = true;
             importer.SaveAndReimport();
         }
@@ -1477,13 +1509,13 @@ namespace Tanvir.SolarSystem.Editor.Import
             material.SetColor(
                 "_CoverageFallbackColor",
                 TritonCoverageFallback);
+            material.SetTexture(
+                "_CoverageMask",
+                LoadRequiredAsset<Texture2D>(TritonCoverageMaskPath));
             material.SetFloat(
                 "_CoverageFallbackStrength",
                 AirlessRockyVisualRenderingContract
                     .TritonCoverageFallbackStrength);
-            material.SetFloat(
-                "_CoverageThreshold",
-                AirlessRockyVisualRenderingContract.TritonCoverageThreshold);
             EditorUtility.SetDirty(material);
         }
 

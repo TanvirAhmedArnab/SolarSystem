@@ -370,11 +370,15 @@ market the result as natural color or a globally observed modern map.
 
 The validated hero material uses a pale rose-neutral tint, relief `0.21`,
 sample distance `1.25`, specular `0.03`, smoothness `0.18`, and nightside
-readability `0.06`. Near-black unobserved source coverage receives a uniform
-neutral mauve-gray fill at strength `0.85` using a `0.015` luminance
-threshold. This is a disclosed presentation reconstruction, not inferred
-terrain or spacecraft imagery. Relief is disabled on the reconstructed region
-so the shader does not manufacture surface detail.
+readability `0.06`. A project-owned linear grayscale mask identifies observed
+coverage without repainting the Voyager browse. The mask is derived from
+near-black border-connected source pixels at luminance threshold `0.015` and
+uses an `8`-pixel spatial feather so the irregular coverage boundary does not
+read as a torn material seam. Unobserved coverage receives a uniform
+near-black neutral fill at full strength. This is a disclosed presentation
+reconstruction, not inferred terrain or spacecraft imagery. Relief is
+disabled on the reconstructed region so the shader does not manufacture
+surface detail.
 
 Triton remains one opaque sphere with no atmosphere shell. Its measured
 nitrogen atmosphere is too thin to justify a visible layer at this scale.

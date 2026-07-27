@@ -481,11 +481,14 @@ Its displayed color is synthesized from orange, violet, and ultraviolet
 filters and is not natural color. Voyager 2 photographed roughly two-thirds
 of Triton, leaving substantial black/unobserved coverage in the browse.
 
-The project-owned shader detects only near-black source coverage and applies
-a uniform neutral presentation fill so the unobserved side does not disappear
-against space. This fill is not spacecraft imagery, inferred terrain, albedo,
-composition, elevation, global coverage, or a scientific reconstruction.
-Source-derived normal perturbation is suppressed on the fill. No visible
+The project-owned shader samples a separate linear grayscale mask derived from
+near-black source pixels connected to the browse boundary. An `8`-pixel
+spatial feather softens only the observed/unobserved transition; the retained
+Voyager JPEG remains byte-identical. The unknown region receives a uniform
+near-black neutral fill rather than invented surface detail. This fill and
+mask are not spacecraft imagery, inferred terrain, albedo, composition,
+elevation, global coverage, or a scientific reconstruction. Source-derived
+normal perturbation is suppressed on the fill. No visible
 atmosphere shell, cloud, active plume, emission, terrain displacement, exposed
 subsurface layer, fluid simulation, or date-specific state is authored.
 

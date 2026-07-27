@@ -19,6 +19,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UIElements;
 
 namespace Tanvir.SolarSystem.Tests.PlayMode
 {
@@ -2206,10 +2207,14 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                     AirlessRockyVisualRenderingContract
                         .TritonCoverageFallbackStrength));
             Assert.That(
-                material.GetFloat("_CoverageThreshold"),
-                Is.EqualTo(
-                    AirlessRockyVisualRenderingContract
-                        .TritonCoverageThreshold));
+                material.GetTexture("_CoverageMask"),
+                Is.Not.Null);
+            Assert.That(
+                Mathf.Max(
+                    material.GetColor("_CoverageFallbackColor").r,
+                    material.GetColor("_CoverageFallbackColor").g,
+                    material.GetColor("_CoverageFallbackColor").b),
+                Is.LessThan(0.1f));
 
             Assert.That(
                 tritonVisual.SurfaceRenderer.shadowCastingMode,
@@ -2633,7 +2638,18 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             yield return null;
             Assert.That(hud.IsNavigatorVisible, Is.True);
 
-            Assert.That(hud.NavigateTo("moon"), Is.True);
+            UIDocument uiDocument = Object.FindAnyObjectByType<UIDocument>();
+            Assert.That(uiDocument, Is.Not.Null);
+            Button moonButton = uiDocument.rootVisualElement.Q<Button>(
+                "navigator-entry-moon");
+            Assert.That(moonButton, Is.Not.Null);
+            moonButton.Focus();
+            KeyDownEvent enterEvent = KeyDownEvent.GetPooled(
+                '\n',
+                KeyCode.Return,
+                EventModifiers.None);
+            moonButton.SendEvent(enterEvent);
+            enterEvent.Dispose();
             yield return WaitUntilFocused(interaction.CameraController);
             yield return null;
 
@@ -2696,9 +2712,15 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
             hud.SetNavigatorVisible(true);
             yield return null;
             Rect rootBounds = hud.HudWorldBound;
+            Rect statusBounds = hud.StatusPanelWorldBound;
             Rect navigatorBounds = hud.NavigatorWorldBound;
+            Assert.That(statusBounds.height, Is.GreaterThan(0f));
             Assert.That(navigatorBounds.width, Is.GreaterThan(0f));
             Assert.That(navigatorBounds.height, Is.GreaterThan(0f));
+            Assert.That(
+                navigatorBounds.yMin,
+                Is.GreaterThanOrEqualTo(statusBounds.yMax + 8f),
+                "The navigator must reserve space below the measured status card.");
             Assert.That(
                 navigatorBounds.xMin,
                 Is.GreaterThanOrEqualTo(rootBounds.xMin));

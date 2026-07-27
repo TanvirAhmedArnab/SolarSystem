@@ -19,6 +19,7 @@ namespace Tanvir.SolarSystem.Presentation.UI
         private const float WorldLabelHeight = 28f;
         private const float WorldLabelGap = 6f;
         private const float WorldLabelEdgeMargin = 8f;
+        private const float NavigatorStatusGap = 12f;
         private const float CompactWidthThreshold = 1500f;
         private const float CompactHeightThreshold = 820f;
 
@@ -219,6 +220,9 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         /// <summary>Gets the active HUD root bounds for responsive validation.</summary>
         public Rect HudWorldBound => hudRoot?.worldBound ?? Rect.zero;
+
+        /// <summary>Gets the status card bounds for responsive validation.</summary>
+        public Rect StatusPanelWorldBound => statusPanel?.worldBound ?? Rect.zero;
 
         /// <summary>Gets the navigator bounds for responsive validation.</summary>
         public Rect NavigatorWorldBound => navigatorPanel?.worldBound ?? Rect.zero;
@@ -439,6 +443,12 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         private void Release()
         {
+            statusPanel?.UnregisterCallback<GeometryChangedEvent>(
+                OnStatusPanelGeometryChanged);
+            navigatorPanel?.UnregisterCallback<KeyDownEvent>(
+                OnNavigatorKeyDown,
+                TrickleDown.TrickleDown);
+
             if (tourNextButton != null)
             {
                 tourNextButton.clicked -= OnTourNextClicked;
@@ -654,6 +664,11 @@ namespace Tanvir.SolarSystem.Presentation.UI
             selectionReticle = RequireElement(root, "selection-reticle");
             worldLabelLayer = RequireElement(root, "world-label-layer");
             navigatorPanel = RequireElement(root, "navigator-panel");
+            statusPanel.RegisterCallback<GeometryChangedEvent>(
+                OnStatusPanelGeometryChanged);
+            navigatorPanel.RegisterCallback<KeyDownEvent>(
+                OnNavigatorKeyDown,
+                TrickleDown.TrickleDown);
             navigatorList = RequireScrollView(root, "navigator-list");
             comparisonPanel = RequireElement(root, "scale-comparison-panel");
             tourPanel = RequireElement(root, "cinematic-tour-panel");
@@ -799,6 +814,31 @@ namespace Tanvir.SolarSystem.Presentation.UI
             }
         }
 
+        private void OnStatusPanelGeometryChanged(GeometryChangedEvent evt)
+        {
+            if (navigatorPanel == null || evt.newRect.height <= 0f)
+            {
+                return;
+            }
+
+            navigatorPanel.style.top = evt.newRect.yMax + NavigatorStatusGap;
+        }
+
+        private void OnNavigatorKeyDown(KeyDownEvent evt)
+        {
+            if (evt.keyCode != KeyCode.Return &&
+                evt.keyCode != KeyCode.KeypadEnter)
+            {
+                return;
+            }
+
+            if (TryNavigateFromNavigatorElement(evt.target as VisualElement))
+            {
+                evt.PreventDefault();
+                evt.StopImmediatePropagation();
+            }
+        }
+
         private string BuildNavigatorType(CelestialBodyView view)
         {
             if (view.Definition.Category != CelestialBodyCategory.Moon)
@@ -820,11 +860,23 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
         private void OnNavigatorEntryClicked(ClickEvent evt)
         {
-            if (evt.currentTarget is VisualElement element &&
-                element.userData is string stableId)
+            TryNavigateFromNavigatorElement(evt.currentTarget as VisualElement);
+        }
+
+        private bool TryNavigateFromNavigatorElement(VisualElement element)
+        {
+            VisualElement candidate = element;
+            while (candidate != null && candidate != navigatorPanel)
             {
-                navigationController.NavigateTo(stableId);
+                if (candidate.userData is string stableId)
+                {
+                    return navigationController.NavigateTo(stableId);
+                }
+
+                candidate = candidate.parent;
             }
+
+            return false;
         }
 
         private void RefreshNavigator()

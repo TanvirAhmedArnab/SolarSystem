@@ -3,6 +3,7 @@ Shader "SolarSystem/Celestial/Rocky Surface"
     Properties
     {
         [MainTexture] _BaseMap("Anchored Surface", 2D) = "white" {}
+        [NoScaleOffset] _CoverageMask("Observed Coverage Mask", 2D) = "white" {}
         [MainColor] _BaseColor("Surface Tint", Color) = (1, 1, 1, 1)
         _ReliefStrength("Source Relief", Range(0, 1)) = 0.28
         _ReliefSampleDistance("Relief Sample Distance", Range(0.5, 4)) = 1.5
@@ -11,7 +12,6 @@ Shader "SolarSystem/Celestial/Rocky Surface"
         _NightsideReadability("Nightside Readability", Range(0, 0.1)) = 0.018
         _CoverageFallbackColor("Unobserved Coverage Fill", Color) = (0, 0, 0, 1)
         _CoverageFallbackStrength("Unobserved Coverage Fill Strength", Range(0, 1)) = 0
-        _CoverageThreshold("Unobserved Coverage Threshold", Range(0, 0.1)) = 0
         [HideInInspector] _Cutoff("Cutoff", Range(0, 1)) = 0.5
     }
 
@@ -52,6 +52,8 @@ Shader "SolarSystem/Celestial/Rocky Surface"
 
             TEXTURE2D(_BaseMap);
             SAMPLER(sampler_BaseMap);
+            TEXTURE2D(_CoverageMask);
+            SAMPLER(sampler_CoverageMask);
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
@@ -63,7 +65,6 @@ Shader "SolarSystem/Celestial/Rocky Surface"
                 half _NightsideReadability;
                 half4 _CoverageFallbackColor;
                 half _CoverageFallbackStrength;
-                half _CoverageThreshold;
             CBUFFER_END
 
             float4 _BaseMap_TexelSize;
@@ -132,11 +133,11 @@ Shader "SolarSystem/Celestial/Rocky Surface"
                 half coverageMask = 0;
                 if (_CoverageFallbackStrength > 0.0001h)
                 {
-                    half threshold = max(_CoverageThreshold, 0.0001h);
-                    coverageMask = 1.0h - smoothstep(
-                        threshold * 0.5h,
-                        threshold,
-                        Luminance(anchored));
+                    half observedCoverage = SAMPLE_TEXTURE2D(
+                        _CoverageMask,
+                        sampler_CoverageMask,
+                        input.uv).r;
+                    coverageMask = 1.0h - observedCoverage;
                     anchored = lerp(
                         anchored,
                         _CoverageFallbackColor.rgb,

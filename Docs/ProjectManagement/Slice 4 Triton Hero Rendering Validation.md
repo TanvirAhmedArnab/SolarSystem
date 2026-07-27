@@ -37,13 +37,15 @@ Voyager-era imagery.
 | Specular | `0.03` | Restrained non-metallic frost response |
 | Smoothness | `0.18` | Presentation smoothness, not measured roughness |
 | Nightside readability | `0.06` | Bounded anchored-color floor |
-| Coverage threshold | `0.015` | Near-black unobserved-source detection |
-| Coverage fill strength | `0.85` | Uniform neutral presentation fill |
+| Coverage derivation threshold | `0.015` | Near-black border-connected source detection |
+| Coverage-mask feather | `8` pixels | Spatially softens only the observed/unknown boundary |
+| Coverage fill strength | `1.0` | Uniform near-black neutral presentation fill |
 
-The shared shader still performs five texture samples: one anchored color
-sample and four neighboring luminance samples. Existing Mercury, Moon, Mars,
-Io, Europa, Ganymede, and Callisto materials keep the coverage-fill option
-disabled.
+The shared shader performs five anchored-source samples: one color sample and
+four neighboring luminance samples. Triton adds one linear coverage-mask
+sample. Existing Mercury, Moon, Mars, Io, Europa, Ganymede, and Callisto
+materials keep the coverage-fill option disabled and therefore do not sample
+the mask.
 
 ## Source and licensing evidence
 
@@ -56,10 +58,14 @@ disabled.
   `SourceAssets/ThirdParty/Textures/USGS/triton_global_color_mosaic_browse.jpg`.
 - Runtime source:
   `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Triton/T_Triton_Surface_Browse.jpg`.
+- Project-owned derived coverage mask:
+  `Assets/SolarSystem/Content/Art/Textures/CelestialBodies/Triton/T_Triton_ObservedCoverageMask.png`.
 - Runtime browse dimensions: `512 x 256`.
 - Cataloged source-product dimensions: `4500 x 3500`.
 - SHA-256 for both retained and runtime JPEGs:
   `A71DF5E3DE28BA755200E0E9DB2633E0529CD2CDF344299715660F3DA37D1FCE`.
+- Coverage-mask SHA-256:
+  `1584C8531667FA341BB1583F82635D30F77D0088FCD1B4D505F08E51F86DA9EB`.
 - USGS usage status: public domain.
 - Retained release credit: `NASA/JPL/USGS`.
 
@@ -70,10 +76,11 @@ body during the 1989 encounter.
 
 ## Reconstruction disclosure
 
-The source browse contains substantial black/unobserved coverage. The shader
-uses the anchored center sample's luminance only to identify near-black
-coverage and blend a uniform neutral mauve-gray fill. The observed source
-image remains byte-identical and is not repainted.
+The source browse contains substantial black/unobserved coverage. A
+project-owned linear grayscale mask identifies only near-black pixels
+connected to the image boundary, then applies an `8`-pixel spatial feather.
+The shader samples that mask and blends a uniform near-black neutral fill. The
+observed source image remains byte-identical and is not repainted.
 
 The fill is not:
 
@@ -85,6 +92,30 @@ The fill is not:
 
 Source-luminance normal perturbation is suppressed wherever the fill applies,
 so no terrain detail is manufactured in the reconstructed region.
+
+## 2026-07-27 release-acceptance correction
+
+Owner review found that the original uniform mauve-gray fallback formed a
+sharp, irregular cap that looked like a broken material. The correction keeps
+the Voyager image unchanged, replaces source-luminance detection in the
+runtime shader with the dedicated feathered mask, and moves the uniform
+unknown-region fill to a restrained near-black neutral. No scientific,
+orbital, scale, hierarchy, selection, or camera state changed.
+
+Corrective validation:
+
+- Unity compilation and shader import: passed.
+- Edit Mode: `222 / 222` passed.
+- Focused Play Mode, Triton material plus navigator selection/focus:
+  `2 / 2` passed.
+- Full headless Play Mode: `26 / 27` passed; the remaining pre-existing
+  cinematic-tour case yields `WaitForEndOfFrame`, which Unity does not evoke
+  in batch mode. It is unrelated to this rendering change.
+- Full in-Editor Play Mode: all `27 / 27` tests show green after the isolated
+  fast-moon reticle tolerance rerun.
+- Owner visual review: passed on `2026-07-27`; Tanvir approved the softened
+  photographed/unknown boundary and neutral near-black unknown region in the
+  current source candidate. Final rebuilt-player smoke confirmation remains.
 
 ## Scientific-state regression
 
@@ -125,7 +156,8 @@ date-specific activity is authored.
 - The retained runtime browse is intentionally low resolution.
 - Coverage is incomplete and Voyager-era.
 - Color is synthesized rather than natural.
-- The coverage fill is presentation-only and intentionally uniform.
+- The coverage fill is presentation-only and intentionally uniform; the
+  mask feather changes only the transition boundary and adds no terrain.
 - The atmosphere is omitted because rendering its physical thinness at this
   scale would be visually misleading.
 - Geyser activity is historical evidence, not a simulated present state.

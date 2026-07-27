@@ -22,7 +22,7 @@ recorded under `Docs/Release`.
 | Field | Required value | Current state |
 |---|---|---|
 | Release version | `1.0.0` | Approved and serialized |
-| Release commit | Full Git SHA, clean and pushed | Pending |
+| Release commit | Full Git SHA, clean and pushed | Current Windows candidate: `f6f4d61d9f8a652851735b58edd5aed546f6c970`; final synchronized release commit pending |
 | Unity version | `6000.5.3f1` | Verified project baseline |
 | Render pipeline | URP `17.5.0` | Verified project baseline |
 | Required platforms | Windows x86-64, WebGL, and macOS Universal | Approved |
@@ -43,7 +43,7 @@ recorded under `Docs/Release`.
 
 ## Gate 1 — Source Release Candidate
 
-- [ ] All approved content is implemented.
+- [x] All approved content is implemented.
 - [x] `companyName`, product name, application identifiers, version, desktop
       resolution, window policy, and WebGL settings are intentionally authored.
 - [x] WebGL Decompression Fallback is enabled.
@@ -52,12 +52,12 @@ recorded under `Docs/Release`.
 - [x] Console warnings are zero.
 - [x] Complete Edit Mode suite passes.
 - [x] Complete Play Mode suite passes.
-- [ ] Keyboard-only menu and simulation walkthrough passes.
-- [ ] Focus order and visible focus indicators are inspected.
+- [x] Keyboard-only menu and simulation walkthrough passes.
+- [x] Focus order and visible focus indicators are inspected.
 - [x] UI passes at 1280×720, 1920×1080, and the approved 960×540
       small-window case.
-- [ ] Audio, mute, four channel levels, and persistence pass.
-- [ ] Full Motion and Reduced Motion both pass.
+- [x] Audio, mute, four channel levels, and persistence pass.
+- [x] Full Motion and Reduced Motion both pass.
 - [ ] Credits and scientific disclosures match the versioned ledgers.
 - [ ] Repository preflight, secret scan, generated-file scan, `.meta` scan, LFS
       scan, and staged diff review pass.
@@ -72,14 +72,14 @@ recorded under `Docs/Release`.
 | Edit Mode report and count | Unity Test Runner validation on `2026-07-26` | 222 passed |
 | Play Mode report and count | Unity Test Runner validation on `2026-07-27` | 27 passed |
 | Responsive UI report | `Docs/Release/Windows Release Build and Performance Validation.md` | Pass at exact 960×540, 1280×720, and 1920×1080 client areas |
-| Accessibility walkthrough | `Docs/Release/Windows Owner Acceptance Walkthrough.md` | Owner input/audio checks in progress |
+| Accessibility walkthrough | `Docs/Release/Windows Owner Acceptance Walkthrough.md` | All 11 current-source acceptance groups passed by Tanvir on `2026-07-27`; final rebuilt-player smoke recheck pending |
 | Repository preflight | `[PENDING]` | Pending |
 
 ## Gate 2 — Windows x86-64
 
 - [x] Windows IL2CPP build support is installed.
 - [x] Build is produced from clean, pushed candidate commit
-      `81ca928932d9d695ad019888c5abeabd0fb18baa`.
+      `f6f4d61d9f8a652851735b58edd5aed546f6c970`.
 - [x] Build report records target, Unity version, version, result, warnings,
       errors, duration, size, and output.
 - [x] Executable and companion data folder are present.
@@ -110,13 +110,13 @@ recorded under `Docs/Release`.
 
 | Field | Value |
 |---|---|
-| Source commit | `81ca928932d9d695ad019888c5abeabd0fb18baa` |
+| Source commit | `f6f4d61d9f8a652851735b58edd5aed546f6c970` |
 | Build output | `Builds/Release/SolarSystem-1.0.0-Windows-x86_64/` |
 | Executable | `Solar System Simulation.exe` |
 | Player log inspected | `%USERPROFILE%/AppData/LocalLow/Tanvir Ahmed Arnab/Solar System Simulation/Player.log` |
-| Smoke-test date and tester | `2026-07-26`; Codex-assisted process/log smoke test, owner-visible walkthrough pending |
+| Smoke-test date and tester | `2026-07-27`; Codex structural validation plus Tanvir focus/zoom/reticle acceptance, remaining owner walkthrough checks pending |
 | Performance evidence | `Builds/Release/Evidence/windows-performance-81ca928-full.json`; versioned summary in `Docs/Release/Windows Release Build and Performance Validation.md` |
-| Uncompressed size | `1,164,273,825` bytes generated; `117,927,789` bytes estimated shippable after required do-not-ship exclusions |
+| Uncompressed size | `1,164,372,950` bytes generated; final shippable archive size pending synchronized release packaging |
 | ZIP path | `<release-root>/Archives/SolarSystem-[VERSION]-Windows-x86_64.zip` |
 | ZIP SHA-256 | `[PENDING]` |
 | itch.io classification | Executable / Windows |

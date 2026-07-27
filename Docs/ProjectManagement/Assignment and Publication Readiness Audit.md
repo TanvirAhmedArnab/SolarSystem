@@ -3,9 +3,9 @@
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
 **Audit date:** 2026-07-26  
-**Repository commit inspected:** `bf807333`  
-**Status:** Windows and macOS builds verified; final synchronized builds, full
-Windows acceptance, WebGL build, packaging, and publication evidence remain
+**Repository commit inspected:** `f6f4d61`  
+**Status:** Windows acceptance and existing desktop builds verified; final
+synchronized builds, WebGL build, packaging, and publication evidence remain
 
 ## Purpose
 
@@ -32,9 +32,13 @@ direct project, build, media, or publication evidence proves it.
   return to the pool when expired or safely outside the camera.
 - Installed platform modules include Windows Standalone, WebGL, and macOS
   Standalone.
-- A Windows x86-64 IL2CPP release player has been built successfully from
-  clean pushed commit `81ca928`, launched, log-smoke-tested, and measured with
-  the project-owned 11-scenario performance harness.
+- A Windows x86-64 IL2CPP release player has been rebuilt successfully from
+  clean pushed commit `f6f4d61`, structurally validated, and owner-tested for
+  focus, proportional zoom, and stable fast-body reticle behavior. Earlier
+  available-hardware performance evidence remains valid for unchanged
+  simulation/content systems. Tanvir has completed all eleven owner-visible
+  Windows acceptance groups against the current release-source candidate; the
+  final rebuilt player still requires a concise smoke recheck.
 - A macOS Universal application has been regenerated from clean pushed
   target-restoration commit `bf807333`. Its bundle structure and Intel x86-64
   plus Apple silicon arm64 launcher slices are verified; it remains unsigned,
@@ -58,7 +62,7 @@ direct project, build, media, or publication evidence proves it.
 | Additional creative modifications | Eight planets, seven moons, scale comparison, navigator, labels, facts, settings, audio, and cinematic tour | Exceeded | Select highlights for the itch.io description |
 | At least two builds | Verified Windows x86-64 and macOS Universal release builds exist from clean pushed source commits | Complete | Build WebGL, then regenerate all final artifacts from one release commit |
 | WebGL decompression fallback | `webGLDecompressionFallback: 1`; protected by Edit Mode regression | Complete | Verify `.unityweb` output and hosted loading after the WebGL build |
-| Test at least one desktop build | Windows player launches, remains responsive, initializes production systems, and has no release-blocking log entry | Partial | Complete the owner-visible input, audio, settings, motion, and responsive-layout walkthrough |
+| Test at least one desktop build | Windows launches cleanly, automated diagnostics pass, and Tanvir completed the full owner-visible input, audio, settings, motion, responsive-layout, performance, and exit walkthrough | Complete for current source candidate | Repeat a concise launch/focus/exit smoke check after the final synchronized rebuild |
 | Test WebGL on itch.io | No current WebGL build/page | Incomplete | Upload and smoke-test the embedded player |
 | ZIP every build folder | No current release archives | Incomplete | Produce deterministic Windows, macOS, and WebGL ZIP archives |
 | itch.io page | No authenticated publication evidence | Incomplete | Owner creates/signs into account; Codex configures page after approval |
@@ -85,10 +89,8 @@ Implemented evidence:
 
 Release evidence still required:
 
-- complete keyboard-only walkthrough in a standalone build;
-- focus-order and visible-focus inspection for every menu control;
-- contrast and minimum-text-size inspection at supported resolutions;
-- 1280x720, 1920x1080, and a small-window responsive pass;
+- concise launch/focus/exit smoke confirmation in the final synchronized
+  Windows rebuild;
 - WebGL keyboard focus, audio-start, persistence, and browser-resize checks.
 
 ## Release Settings Gaps
@@ -98,8 +100,9 @@ desktop/WebGL resolutions, Windows IL2CPP backend, Brotli compression, and
 WebGL Decompression Fallback are now serialized and protected by Edit Mode
 tests. Windows build and automated process/log/performance evidence now exist.
 The macOS Universal bundle and both required CPU architectures are also
-verified. Owner-visible input, audio, settings, motion, accessibility, and
-responsive-layout acceptance remains pending.
+verified. Owner-visible input, audio, settings, motion, accessibility,
+responsive-layout, perceived-performance, and exit acceptance now passes for
+the current source candidate; final rebuilt-player smoke confirmation remains.
 
 ## Platform Decision
 
