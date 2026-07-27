@@ -2,7 +2,8 @@
 
 **Date:** 2026-07-26  
 **Owner:** Tanvir  
-**Status:** Implemented and validated; release builds pending
+**Status:** Implemented and validated; Windows and macOS builds verified
+separately
 
 ## Scope
 
@@ -53,6 +54,9 @@ the performance and desktop-quality authority.
 - `SolarSystemReleaseBuilder` exposes individual and ordered build commands,
   restores temporary desktop backend/architecture changes, and writes one
   JSON report beside every ignored artifact.
+- `StandaloneTargetRestorationCoordinator` persists restoration through
+  domain reloads, waits for compilation/import work, observes the build target,
+  and then requests the prior standalone target asynchronously.
 - Edit Mode tests protect identity, window, WebGL, scene, and Universal macOS
   contracts.
 
@@ -67,3 +71,54 @@ the performance and desktop-quality authority.
 - Play Mode: `26 passed`, `0 failed`, `0 skipped`, `0 inconclusive`.
 - Unity Console: `0 errors`, `0 warnings`.
 - Release artifacts: intentionally not built in this slice.
+
+## Subsequent Windows evidence
+
+The committed Windows x86-64 IL2CPP builder was subsequently executed from
+clean pushed commit `81ca928`. The build succeeded with zero reported build
+warnings and errors, launched without a release-blocking player-log entry, and
+completed the automated available-hardware performance pass. The managed
+allocation counter and human-visible acceptance remain incomplete.
+
+See:
+
+`Docs/Release/Windows Release Build and Performance Validation.md`
+
+## Subsequent macOS evidence
+
+The macOS Universal builder was subsequently executed from the same clean,
+pushed commit `81ca928`. The build succeeded with zero errors and produced a
+valid `.app` bundle whose launcher contains both Intel x86-64 and Apple silicon
+arm64 slices. The artifact remains unsigned, unnotarized, and untested because
+no Mac test device or Apple Developer membership is available.
+
+Unity recorded one non-blocking warning while the builder restored the prior
+Windows target before a deferred platform switch had settled. The editor was
+then restored and verified explicitly. The target-restoration timing remains
+an automation-hardening item in that first artifact.
+
+See:
+
+`Docs/Release/macOS Universal Build Validation.md`
+
+## Target-restoration hardening candidate
+
+The release builder no longer writes `selectedStandaloneTarget` directly.
+Restoration now uses a two-phase, `SessionState`-backed coordinator that first
+waits until Unity has visibly activated the platform used by the build, then
+waits for compilation/import work to settle before requesting the previous
+standalone target asynchronously. Pending state survives the domain reload
+caused by the target switch.
+
+Final candidate validation:
+
+- Unity compilation: passed.
+- Edit Mode: `213 passed`, `0 failed`, `0 skipped`, `0 inconclusive`.
+- Play Mode: `26 passed`, `0 failed`, `0 skipped`, `0 inconclusive`.
+- Unity Console: `0 errors`, `0 warnings`.
+- Focused restoration-policy tests: early completion blocked, built-target
+  observation required, busy-editor wait required, asynchronous switch
+  requested only when safe, and already-restored completion verified.
+
+The fix is not yet committed or pushed. The release guard therefore correctly
+blocks a macOS rebuild until owner approval, commit, and push are complete.

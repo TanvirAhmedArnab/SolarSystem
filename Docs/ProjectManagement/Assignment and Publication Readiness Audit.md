@@ -3,8 +3,9 @@
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
 **Audit date:** 2026-07-26  
-**Repository commit inspected:** `f4b10de`  
-**Status:** Assignment interpretation resolved; build and publication gaps remain
+**Repository commit inspected:** `81ca928`  
+**Status:** Windows and macOS builds verified; full Windows acceptance, WebGL
+build, packaging, and publication evidence remain
 
 ## Purpose
 
@@ -31,7 +32,15 @@ direct project, build, media, or publication evidence proves it.
   return to the pool when expired or safely outside the camera.
 - Installed platform modules include Windows Standalone, WebGL, and macOS
   Standalone.
-- The repository is clean and synchronized with `origin/main`.
+- A Windows x86-64 IL2CPP release player has been built successfully from
+  clean pushed commit `81ca928`, launched, log-smoke-tested, and measured with
+  the project-owned 11-scenario performance harness.
+- A macOS Universal application has been built from the same commit. Its
+  bundle structure and Intel x86-64 plus Apple silicon arm64 launcher slices
+  are verified; it remains unsigned, unnotarized, and untested on macOS.
+- The source commit used for both builds was clean and synchronized with
+  `origin/main`; this audit update is the only intended post-build source
+  change.
 
 ## Assignment Compliance Matrix
 
@@ -46,9 +55,9 @@ direct project, build, media, or publication evidence proves it.
 | Adjust two cameras | One adaptive camera supports free flight, focus, guided comparison, and five cinematic chapters | Complete | Explain the intentional stronger single-camera architecture in the submission |
 | Adjust comet spawner if necessary | A rotating Sun-relative spawner produces deterministic randomized pooled comets with project-authored nucleus/trail materials, no colliders, and automatic despawn | Complete | Disclose that comet paths and visual scale are illustrative rather than ephemeris-driven |
 | Additional creative modifications | Eight planets, seven moons, scale comparison, navigator, labels, facts, settings, audio, and cinematic tour | Exceeded | Select highlights for the itch.io description |
-| At least two builds | Windows, WebGL, and macOS modules are installed; no release builds exist yet | Incomplete | Build all three; validate Windows and hosted WebGL |
+| At least two builds | Windows x86-64 and macOS Universal release builds exist from the same pushed source commit | Complete | Build WebGL to deliver the approved third platform |
 | WebGL decompression fallback | `webGLDecompressionFallback: 1`; protected by Edit Mode regression | Complete | Verify `.unityweb` output and hosted loading after the WebGL build |
-| Test at least one desktop build | No current release build | Incomplete | Test Windows build locally |
+| Test at least one desktop build | Windows player launches, remains responsive, initializes production systems, and has no release-blocking log entry | Partial | Complete the owner-visible input, audio, settings, motion, and responsive-layout walkthrough |
 | Test WebGL on itch.io | No current WebGL build/page | Incomplete | Upload and smoke-test the embedded player |
 | ZIP every build folder | No current release archives | Incomplete | Produce deterministic Windows, macOS, and WebGL ZIP archives |
 | itch.io page | No authenticated publication evidence | Incomplete | Owner creates/signs into account; Codex configures page after approval |
@@ -86,7 +95,10 @@ Release evidence still required:
 The approved identity, version, application identifiers, window policy,
 desktop/WebGL resolutions, Windows IL2CPP backend, Brotli compression, and
 WebGL Decompression Fallback are now serialized and protected by Edit Mode
-tests. Player smoke validation remains pending.
+tests. Windows build and automated process/log/performance evidence now exist.
+The macOS Universal bundle and both required CPU architectures are also
+verified. Owner-visible input, audio, settings, motion, accessibility, and
+responsive-layout acceptance remains pending.
 
 ## Platform Decision
 
@@ -105,11 +117,13 @@ The evidence supports a three-platform submission:
 2. Compile, test, and build Windows.
 3. Run player performance certification and Windows smoke QA.
 4. Build WebGL with decompression fallback and browser-safe settings.
-5. Complete release licensing, documentation, and known limitations.
-6. Capture hierarchy, assets, gameplay, and cover media.
-7. Package and hash both build archives.
-8. Configure uploads and page metadata after owner authentication.
-9. Verify the public player page and final peer-review URL.
+5. Approve, commit, and push the validated macOS target-restoration hardening,
+   then regenerate the unsigned Universal bundle.
+6. Complete release licensing, documentation, and known limitations.
+7. Capture hierarchy, assets, gameplay, and cover media.
+8. Package and hash all three build archives.
+9. Configure uploads and page metadata after owner authentication.
+10. Verify the public player page and final peer-review URL.
 
 ## Resolved Assignment Interpretation
 

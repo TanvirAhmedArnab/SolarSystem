@@ -7,7 +7,7 @@
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
 **Document status:** Living technical authority; release performance contract and diagnostic harness validated  
-**Version:** 0.37.0  
+**Version:** 0.38.0  
 **Last updated:** 2026-07-26  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
@@ -63,6 +63,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.35.0 | 2026-07-26 | Codex, for Tanvir | Added a deterministic pooled comet presentation system with ScriptableObject authoring, a project-owned trail shader, bounded off-camera despawn, pause behavior, and Edit/Play Mode coverage | Assignment comet slice implemented and validated |
 | 0.36.0 | 2026-07-26 | Codex, for Tanvir | Added a centralized readable-opening epoch contract and regression coverage that distributes all eight planet directions without altering per-body scientific authoring | Owner-requested initial composition implemented and validated |
 | 0.37.0 | 2026-07-26 | Codex, for Tanvir | Added a centralized release identity, deterministic Windows/macOS/WebGL build commands, settings and module validation, platform-specific backend policy, and JSON build evidence | Three-platform release architecture approved and implemented |
+| 0.38.0 | 2026-07-26 | Codex, for Tanvir | Replaced immediate post-build standalone-target assignment with a SessionState-backed, two-phase asynchronous restoration coordinator and focused regression coverage | Owner-requested hardening implemented and validated; clean macOS rebuild pending commit and push |
 
 ### 1.3 Status vocabulary
 
@@ -349,6 +350,14 @@ release version, target, result, warnings, errors, duration, size, and output
 path as JSON beside the ignored artifact. A build is rejected before platform
 mutation unless the working tree is clean and `HEAD` matches its configured
 upstream.
+
+Standalone target restoration is intentionally asynchronous. The
+`StandaloneTargetRestorationCoordinator` records the pre-build and built
+targets in `SessionState`, survives domain reloads, waits while Unity is
+compiling or importing, observes the built target before allowing completion,
+and requests the prior target through `SwitchActiveBuildTargetAsync`. This
+prevents both premature completion and direct target mutation during Unity's
+deferred platform transition.
 
 The macOS artifact is intentionally unsigned and unnotarized because the owner
 has neither Mac test access nor Apple Developer Program membership. It must not
@@ -1534,6 +1543,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-030 | 2026-07-26 | Retain one adaptive production camera and implement assignment comets as deterministic, pooled, collider-free transient visuals with bounded TrailRenderer output and off-camera/lifetime despawn | Approved, implemented, and validated | Tanvir | Satisfies the lesson feature without duplicating camera architecture or misrepresenting illustrative comets as scientific orbital bodies |
 | TDD-031 | 2026-07-26 | Keep J2000 orbital elements immutable and obtain the readable opening composition from one shared `423,705,600`-second clock offset, with a tested 30-degree minimum opening separation between every planet direction | Approved, implemented, and validated | Tanvir | Preserves coherent analytical motion while avoiding the visually clustered J2000 opening configuration |
 | TDD-032 | 2026-07-26 | Centralize release identity and build outputs, validate settings and modules before building, use Windows IL2CPP, WebGL Brotli with fallback, and an unsigned Universal macOS Mono artifact with explicit test/signing limitations | Approved and implemented | Tanvir | Reproducible three-platform assignment delivery without implying unavailable Apple certification |
+| TDD-033 | 2026-07-26 | Persist post-build standalone restoration across domain reloads, observe the built target before completion, and switch back asynchronously only after Unity becomes idle | Owner-requested, implemented, and validated | Tanvir | Prevents the deferred-platform-switch Console diagnostic and false early restoration while keeping release builds tied to clean pushed source |
 
 ## 19. Definition of Done for TDD Version 1.0
 

@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Replaced immediate standalone-target reassignment after desktop builds with
+  a domain-reload-safe, two-phase editor coordinator that waits for the built
+  platform to activate before asynchronously restoring the prior target.
 - Applied the approved `1.0.0` public identity, 1280x720 resizable Windows
   launch policy, 960x540 WebGL canvas, Windows IL2CPP backend, Brotli
   compression, and assignment-required WebGL Decompression Fallback.
@@ -27,7 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   regression proving that all three continuous-audio playheads advance.
 - Centralized Escape handling under one contextual router: close menu, cancel
   tour, cancel scale comparison, cancel focus, then open Help in free flight.
-- Expanded validation to 203 Edit Mode and 26 Play Mode cases with a clean
+- Expanded validation to 213 Edit Mode and 26 Play Mode cases with a clean
   Unity Console.
 - Renamed the active PC pipeline fallback volume profile from the misleading
   template name `SampleSceneProfile` to `PC_DefaultVolumeProfile` while

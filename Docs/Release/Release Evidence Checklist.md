@@ -68,7 +68,7 @@ recorded under `Docs/Release`.
 |---|---|---|
 | Commit SHA | `[PENDING]` | Pending |
 | Unity Console report | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 0 errors, 0 warnings |
-| Edit Mode report and count | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 208 passed |
+| Edit Mode report and count | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 213 passed |
 | Play Mode report and count | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 26 passed |
 | Responsive UI report | `[PENDING]` | Pending |
 | Accessibility walkthrough | `[PENDING]` | Pending |
@@ -76,33 +76,44 @@ recorded under `Docs/Release`.
 
 ## Gate 2 — Windows x86-64
 
-- [ ] Windows build support is installed.
-- [ ] Build is produced from the release commit.
-- [ ] Build report records target, Unity version, version, result, warnings,
+- [x] Windows IL2CPP build support is installed.
+- [x] Build is produced from clean, pushed candidate commit
+      `81ca928932d9d695ad019888c5abeabd0fb18baa`.
+- [x] Build report records target, Unity version, version, result, warnings,
       errors, duration, size, and output.
-- [ ] Executable and companion data folder are present.
-- [ ] Player launches without a crash or release-blocking log entry.
+- [x] Executable and companion data folder are present.
+- [x] Player launches without a crash or release-blocking log entry.
 - [ ] Main scene, input, selection, focus, zoom, time, navigation, labels,
       scale comparison, tour, settings, credits, lighting, and audio pass.
 - [ ] 1280×720 windowed presentation passes.
 - [ ] 1920×1080 presentation passes.
 - [ ] Window resize and UI safe areas pass.
+- [x] Owner-visible screenshot confirms that the status panel, Help button,
+      and complete quick-controls panel remain readable and inside the current
+      maximized player window; exact-resolution checks remain open.
 - [ ] Cold launch is measured on the approved reference hardware class.
 - [ ] Standalone performance capture meets the approved frame-time, allocation,
       process-memory, and rendering budgets.
-- [ ] External GPU memory is measured or explicitly recorded unavailable.
+- [x] Available-hardware cold launch is measured externally at `1.472` seconds
+      to a responsive player window.
+- [x] Available frame, CPU, GPU, process-memory, and rendering counters are
+      captured across all 11 production scenarios; the managed-allocation
+      counter remains unavailable, so formal performance certification is
+      incomplete.
+- [x] External dedicated application GPU memory is measured at
+      `349,573,120` bytes peak across ten samples.
 
 ### Windows Artifact Record
 
 | Field | Value |
 |---|---|
-| Source commit | `[PENDING]` |
-| Build output | `<release-root>/SolarSystem-[VERSION]-Windows-x86_64/` |
-| Executable | `SolarSystem.exe` |
-| Player log inspected | `[PENDING]` |
-| Smoke-test date and tester | `[PENDING]` |
-| Performance evidence | `[PENDING]` |
-| Uncompressed size | `[PENDING]` |
+| Source commit | `81ca928932d9d695ad019888c5abeabd0fb18baa` |
+| Build output | `Builds/Release/SolarSystem-1.0.0-Windows-x86_64/` |
+| Executable | `Solar System Simulation.exe` |
+| Player log inspected | `%USERPROFILE%/AppData/LocalLow/Tanvir Ahmed Arnab/Solar System Simulation/Player.log` |
+| Smoke-test date and tester | `2026-07-26`; Codex-assisted process/log smoke test, owner-visible walkthrough pending |
+| Performance evidence | `Builds/Release/Evidence/windows-performance-81ca928-full.json`; versioned summary in `Docs/Release/Windows Release Build and Performance Validation.md` |
+| Uncompressed size | `1,164,273,825` bytes generated; `117,927,789` bytes estimated shippable after required do-not-ship exclusions |
 | ZIP path | `<release-root>/Archives/SolarSystem-[VERSION]-Windows-x86_64.zip` |
 | ZIP SHA-256 | `[PENDING]` |
 | itch.io classification | Executable / Windows |
@@ -142,10 +153,11 @@ recorded under `Docs/Release`.
 ## Gate 3B — macOS Universal
 
 - [x] macOS Standalone build support is installed.
-- [ ] Universal Intel 64-bit plus Apple silicon build is produced from the
+- [x] Universal Intel 64-bit plus Apple silicon build is produced from the
       same release commit as Windows and WebGL.
-- [ ] Build report records target, result, warnings, errors, duration, size,
+- [x] Build report records target, result, warnings, errors, duration, size,
       Unity version, release version, source commit, and output.
+- [x] Bundle structure and Universal Mach-O architecture records are verified.
 - [ ] The complete `.app` bundle is archived without losing executable
       permissions.
 - [ ] itch.io upload is classified for macOS.
@@ -157,9 +169,10 @@ recorded under `Docs/Release`.
 
 | Field | Value |
 |---|---|
-| Source commit | `[PENDING]` |
-| Build output | `<release-root>/SolarSystem-[VERSION]-macOS-Universal/` |
+| Source commit | `81ca928932d9d695ad019888c5abeabd0fb18baa` |
+| Build output | `Builds/Release/SolarSystem-1.0.0-macOS-Universal/` |
 | Application | `Solar System Simulation.app` |
+| Build evidence | `Docs/Release/macOS Universal Build Validation.md` |
 | Test device | Unavailable |
 | Signing/notarization | Unavailable |
 | ZIP path | `<release-root>/Archives/SolarSystem-[VERSION]-macOS-Universal.zip` |

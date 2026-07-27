@@ -78,14 +78,13 @@ namespace Tanvir.SolarSystem.Editor.Release
                 includeModuleAvailability: true);
             EnsureCleanPushedSource();
             BuildTarget previousTarget =
-                EditorUserBuildSettings.selectedStandaloneTarget;
+                EditorUserBuildSettings.activeBuildTarget;
             ScriptingImplementation previousBackend =
                 PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone);
             int previousArchitecture =
                 PlayerSettings.GetArchitecture(NamedBuildTarget.Standalone);
             try
             {
-                EditorUserBuildSettings.selectedStandaloneTarget = target;
                 PlayerSettings.SetScriptingBackend(
                     NamedBuildTarget.Standalone,
                     scriptingBackend);
@@ -106,8 +105,10 @@ namespace Tanvir.SolarSystem.Editor.Release
                 PlayerSettings.SetScriptingBackend(
                     NamedBuildTarget.Standalone,
                     previousBackend);
-                EditorUserBuildSettings.selectedStandaloneTarget = previousTarget;
                 AssetDatabase.SaveAssets();
+                StandaloneTargetRestorationCoordinator.Request(
+                    previousTarget,
+                    target);
             }
         }
 
