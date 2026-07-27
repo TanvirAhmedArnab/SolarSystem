@@ -60,15 +60,53 @@ The log contains a non-blocking Direct3D diagnostics-interface message:
 `d3d12: failed to query info queue interface (0x80004002)`. Rendering
 continued normally. No player failure was associated with this message.
 
-Detailed mouse, keyboard, audio, focus, and responsive-layout acceptance was
-not completed because Windows app-control permission for the newly generated
-executable timed out. Those checks remain owner-visible release gates.
+The subsequent Codex-assisted visible walkthrough verified left-click
+selection, the selected-body information panel, Help, Settings, Credits &
+Sources, projected-label toggling, orbit-guide toggling, and restoration of
+the original release preferences. Synthetic keyboard and wheel injection did
+not reach Unity's Input System reliably, so keyboard, right-mouse camera,
+wheel, and focus remain owner-performed checks rather than automated passes.
+Tanvir confirmed on 2026-07-26 that the simulation is clearly visible and the
+ambient music is clearly audible. Detailed mute, channel-mix, interface-sound,
+and Sun/Earth spatial-audio checks remain open. Tanvir also confirmed that
+`Space` pauses and resumes the simulation as intended; rate adjustment and the
+remaining keyboard controls are still pending.
 
-Tanvir subsequently confirmed that the current visible player window passes
-the panel-safe-area check: the status panel, Help button, and complete
-quick-controls panel are readable and remain within the window. The supplied
-screenshot appears maximized, so it does not independently prove an exact
-1280x720 viewport. The exact-resolution checkbox therefore remains open.
+Tanvir confirmed that `F` enters body focus. Codex-assisted visible inspection
+confirmed that `Esc` then ended focus and cleared the target. Mouse-wheel zoom
+feel remains owner-pending. A later visible frame proved successful wheel zoom
+toward the focused Sun without camera penetration; reverse zoom remains open.
+
+The live `Player.log` was re-inspected after the acceptance interactions. It
+contained no exception, missing-reference, input, or audio error match. The
+previously documented non-blocking Direct3D diagnostics message remained the
+only unusual startup line.
+
+The Settings surface retained the previously authored channel values across
+multiple relaunches (`65%` master, `18%` music, `45%` interface, and `22%`
+celestial ambience). Mute and Reduced Motion checkboxes changed state
+visibly and were restored to off. This proves UI binding and local persistence
+for the displayed values, but it does not replace the owner's audible and
+motion-perception checks.
+
+## Responsive Presentation Acceptance
+
+The existing release player was relaunched with explicit window arguments for
+each approved client area. The title bar and borders account for the additional
+two horizontal and 32 vertical pixels visible in the capture dimensions.
+
+| Client area | Captured window | Evidence inspected | Result |
+|---|---:|---|---|
+| Approved small/WebGL reference | `960x540` | Status, Help launcher, complete quick controls, selected-body panel, Help, Settings, and Credits & Sources | Pass |
+| Windows first-launch reference | `1280x720` | Same surfaces plus projected labels and orbit-guide setting transitions | Pass |
+| Desktop performance reference | `1920x1080` | Status, Help launcher, complete quick controls, selection reticle, and selected-body panel | Pass |
+
+All inspected surfaces remained inside their respective frames with no
+clipping or overlap that blocked interaction. The compact layout was active at
+`960x540` and `1280x720`, consistent with the authored `1500x820` threshold.
+At `1920x1080`, the full layout remained correctly anchored. The responsive
+resolution gate is therefore satisfied for this build; manual resize-drag
+feel remains part of the owner walkthrough.
 
 ## Performance Capture Method
 
@@ -141,8 +179,8 @@ Before Gate 2 can close:
 1. complete the owner-visible keyboard and mouse walkthrough;
 2. verify selection, focus, zoom, simulation time, navigation, scale
    comparison, cinematic tour, settings, credits, lighting, and audio;
-3. inspect 1280x720, 1920x1080, the approved small window, resize transitions,
-   and UI safe areas;
+3. confirm manual resize-drag feel after the three exact resolution and safe-area
+   checks passed;
 4. verify mute, channel levels, persistence, Full Motion, and Reduced Motion;
 5. investigate managed allocation with a suitable development-player capture;
 6. repeat representative performance checks on the approved mid-range hardware

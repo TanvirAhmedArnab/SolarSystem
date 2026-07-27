@@ -54,7 +54,8 @@ recorded under `Docs/Release`.
 - [x] Complete Play Mode suite passes.
 - [ ] Keyboard-only menu and simulation walkthrough passes.
 - [ ] Focus order and visible focus indicators are inspected.
-- [ ] UI passes at 1280×720, 1920×1080, and the approved small-window case.
+- [x] UI passes at 1280×720, 1920×1080, and the approved 960×540
+      small-window case.
 - [ ] Audio, mute, four channel levels, and persistence pass.
 - [ ] Full Motion and Reduced Motion both pass.
 - [ ] Credits and scientific disclosures match the versioned ledgers.
@@ -70,8 +71,8 @@ recorded under `Docs/Release`.
 | Unity Console report | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 0 errors, 0 warnings |
 | Edit Mode report and count | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 213 passed |
 | Play Mode report and count | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 26 passed |
-| Responsive UI report | `[PENDING]` | Pending |
-| Accessibility walkthrough | `[PENDING]` | Pending |
+| Responsive UI report | `Docs/Release/Windows Release Build and Performance Validation.md` | Pass at exact 960×540, 1280×720, and 1920×1080 client areas |
+| Accessibility walkthrough | `Docs/Release/Windows Owner Acceptance Walkthrough.md` | Owner input/audio checks in progress |
 | Repository preflight | `[PENDING]` | Pending |
 
 ## Gate 2 — Windows x86-64
@@ -85,12 +86,14 @@ recorded under `Docs/Release`.
 - [x] Player launches without a crash or release-blocking log entry.
 - [ ] Main scene, input, selection, focus, zoom, time, navigation, labels,
       scale comparison, tour, settings, credits, lighting, and audio pass.
-- [ ] 1280×720 windowed presentation passes.
-- [ ] 1920×1080 presentation passes.
-- [ ] Window resize and UI safe areas pass.
+- [x] 1280×720 windowed presentation passes.
+- [x] 1920×1080 presentation passes.
+- [x] Approved 960×540 small-window presentation and UI safe areas pass;
+      owner resize-drag feel remains in the manual walkthrough.
 - [x] Owner-visible screenshot confirms that the status panel, Help button,
       and complete quick-controls panel remain readable and inside the current
-      maximized player window; exact-resolution checks remain open.
+      maximized player window; subsequent explicit launches prove the three
+      exact resolution cases above.
 - [ ] Cold launch is measured on the approved reference hardware class.
 - [ ] Standalone performance capture meets the approved frame-time, allocation,
       process-memory, and rendering budgets.
@@ -120,8 +123,9 @@ recorded under `Docs/Release`.
 
 ## Gate 3 — WebGL
 
-- [ ] WebGL build support is installed.
-- [ ] Decompression Fallback is enabled in serialized Player Settings.
+- [x] WebGL build support is installed for Unity `6000.5.3f1` on the release
+      workstation.
+- [x] Decompression Fallback is enabled in serialized Player Settings.
 - [ ] Build is produced from the same release commit as Windows.
 - [ ] Build report records target, result, warnings, errors, duration, and size.
 - [ ] Expected `Build`, `TemplateData`, and entry files exist.
@@ -239,10 +243,15 @@ recorded under `Docs/Release`.
 
 ## Gate 6 — Archive Integrity
 
+- [x] Repository-owned validator/packager passes isolated commit, version,
+      structure, exclusion, unsafe-entry, fail-before-write, archive-root,
+      determinism, and macOS permission fixtures.
 - [ ] Windows ZIP contains the executable and complete companion files.
 - [ ] WebGL ZIP contains the playable files at the archive root expected by
       itch.io.
-- [ ] Both archives open successfully after creation.
+- [ ] macOS ZIP contains the `.app` at its root and preserves Unix executable
+      metadata for the launcher and native libraries.
+- [ ] All three archives open successfully after creation.
 - [ ] SHA-256 hashes are recorded above and in the release manifest.
 - [ ] Archive names and embedded version match the release.
 - [ ] Archives contain no source files, credentials, logs, personal paths, or

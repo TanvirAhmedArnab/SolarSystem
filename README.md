@@ -61,6 +61,12 @@ Artifacts and JSON build reports are written under the ignored
 `Builds/Release` directory. The macOS artifact is unsigned, unnotarized, and
 not tested on macOS; Windows remains the certified desktop platform.
 
+After all three builds come from the same pushed commit, use the
+[release artifact tooling](Tools/Release/README.md) to validate platform
+structure, exclude Unity's Windows do-not-ship folders, preserve macOS Unix
+launcher permissions, create root-correct upload ZIPs, and record SHA-256
+checksums.
+
 ## Documentation
 
 - [Game Design Document](Docs/Design/GDD.md)
@@ -107,6 +113,7 @@ not tested on macOS; Windows remains the certified desktop platform.
 - [Readable Initial Orbit Composition Validation](Docs/ProjectManagement/Readable%20Initial%20Orbit%20Composition%20Validation.md)
 - [Proposed itch.io Page Copy](Docs/Release/itch.io%20Page%20Draft.md)
 - [Release Evidence Checklist](Docs/Release/Release%20Evidence%20Checklist.md)
+- [Windows Owner Acceptance Walkthrough](Docs/Release/Windows%20Owner%20Acceptance%20Walkthrough.md)
 - [Release Player Settings Proposal](Docs/Release/Release%20Player%20Settings%20Proposal.md)
 
 ## Current validation state

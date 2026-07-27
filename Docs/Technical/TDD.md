@@ -64,6 +64,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.36.0 | 2026-07-26 | Codex, for Tanvir | Added a centralized readable-opening epoch contract and regression coverage that distributes all eight planet directions without altering per-body scientific authoring | Owner-requested initial composition implemented and validated |
 | 0.37.0 | 2026-07-26 | Codex, for Tanvir | Added a centralized release identity, deterministic Windows/macOS/WebGL build commands, settings and module validation, platform-specific backend policy, and JSON build evidence | Three-platform release architecture approved and implemented |
 | 0.38.0 | 2026-07-26 | Codex, for Tanvir | Replaced immediate post-build standalone-target assignment with a SessionState-backed, two-phase asynchronous restoration coordinator and focused regression coverage | Owner-requested hardening implemented and validated; clean macOS rebuild pending commit and push |
+| 0.39.0 | 2026-07-26 | Codex, for Tanvir | Added deterministic cross-platform artifact validation and ZIP packaging with source-commit and version enforcement, Windows exclusions, WebGL structure checks, unsafe-entry rejection, fail-before-write protection, macOS Unix-mode preservation, and checksum manifests | Release packaging architecture implemented and fixture-tested; final same-commit artifacts pending |
 
 ### 1.3 Status vocabulary
 
@@ -362,6 +363,22 @@ deferred platform transition.
 The macOS artifact is intentionally unsigned and unnotarized because the owner
 has neither Mac test access nor Apple Developer Program membership. It must not
 be represented as tested or Gatekeeper-certified.
+
+Ignored build folders are validated and packaged by
+`Tools/Release/release_artifacts.py`. The tool refuses a build report from any
+commit or release version other than the explicitly approved identity,
+validates the platform-specific folder contract, and creates archives with
+playable files at the ZIP root. Windows do-not-ship symbol/back-up directories
+are filtered. Unsafe or duplicate archive paths are rejected, and an existing
+protected destination aborts the complete run before any new ZIP is written.
+WebGL requires the entry page, template data, loader, and every
+fallback-compressed `.unityweb` payload. The macOS archive declares Unix ZIP
+metadata and executable bits for the launcher and native libraries even when
+packaged on Windows. Sorted paths and fixed entry timestamps make archive
+content reproducible, while a generated manifest and `SHA256SUMS.txt` preserve
+artifact identity outside Git. Raw Unity reports remain local because their
+diagnostic output path can identify the workstation; each public ZIP receives
+a sanitized deterministic `release-manifest.json` instead.
 
 ## 6. Runtime Systems
 
@@ -1544,6 +1561,7 @@ Data sources, units, transformations, and limitations remain visible and testabl
 | TDD-031 | 2026-07-26 | Keep J2000 orbital elements immutable and obtain the readable opening composition from one shared `423,705,600`-second clock offset, with a tested 30-degree minimum opening separation between every planet direction | Approved, implemented, and validated | Tanvir | Preserves coherent analytical motion while avoiding the visually clustered J2000 opening configuration |
 | TDD-032 | 2026-07-26 | Centralize release identity and build outputs, validate settings and modules before building, use Windows IL2CPP, WebGL Brotli with fallback, and an unsigned Universal macOS Mono artifact with explicit test/signing limitations | Approved and implemented | Tanvir | Reproducible three-platform assignment delivery without implying unavailable Apple certification |
 | TDD-033 | 2026-07-26 | Persist post-build standalone restoration across domain reloads, observe the built target before completion, and switch back asynchronously only after Unity becomes idle | Owner-requested, implemented, and validated | Tanvir | Prevents the deferred-platform-switch Console diagnostic and false early restoration while keeping release builds tied to clean pushed source |
+| TDD-034 | 2026-07-26 | Validate and package all three ignored release builds through a deterministic repository-owned tool that enforces one source commit and release version, correct ZIP roots, platform exclusions, unsafe-entry rejection, fail-before-write protection, Unix metadata, and SHA-256 evidence | Implemented and fixture-tested; final artifact run pending | Tanvir | Makes assignment uploads repeatable and prevents stale, malformed, partial, or non-portable archives |
 
 ## 19. Definition of Done for TDD Version 1.0
 

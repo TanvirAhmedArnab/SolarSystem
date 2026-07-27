@@ -50,6 +50,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Deterministic release-artifact validation and packaging tooling with
+  same-commit and release-version enforcement, WebGL fallback-payload checks,
+  Windows do-not-ship exclusions, macOS executable-mode preservation,
+  root-correct ZIPs, unsafe-entry rejection, fail-before-write archive
+  protection, sanitized public manifests without local output paths, SHA-256
+  manifests, and isolated regression fixtures.
 - Added centralized release contracts, settings/module validation, and
   non-development build commands for Windows x86-64, unsigned Universal
   macOS, WebGL, and an ordered all-platform build with JSON evidence.
