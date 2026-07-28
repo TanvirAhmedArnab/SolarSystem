@@ -6,8 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+No changes yet.
+
+## [1.0.0] - 2026-07-28
+
 ### Changed
 
+- Published the first portfolio release on itch.io with hosted WebGL, Windows
+  x86-64, and unsigned Universal macOS artifacts built from
+  `6338a5fba17c79321347d634ede8dde4394aa836`; recorded deterministic archive
+  hashes, final owner acceptance, external browser/device verification, and
+  assignment submission.
 - Hardened the ordered three-platform release command so it validates source
   identity once, avoids intermediate clean-tree and target-restoration races,
   accepts WebGL as the final observed build target, and restores the approved
@@ -416,3 +425,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Generated IDE solution file from version control.
 
 [Unreleased]: https://github.com/TanvirAhmedArnab/SolarSystem/commits/main
+[1.0.0]: https://github.com/TanvirAhmedArnab/SolarSystem/tree/6338a5fba17c79321347d634ede8dde4394aa836

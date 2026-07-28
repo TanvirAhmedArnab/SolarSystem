@@ -1,8 +1,14 @@
 # Solar System Simulation
 
-Solar System Simulation is a polished Unity portfolio project that turns verified planetary data and deterministic analytical orbital motion into an accessible, cinematic exploration of our Solar System.
+Solar System Simulation is a released Unity portfolio project that turns verified planetary data and deterministic analytical orbital motion into an accessible, cinematic exploration of our Solar System.
 
-The project is currently in visual/content development. Its product, engineering, art, licensing, and repository decisions are maintained as living, reviewable documents rather than being left implicit in scenes or code.
+Version `1.0.0` is publicly available on
+[itch.io](https://tanvirahmedarnab.itch.io/solar-system-simulation) as a hosted
+WebGL experience with Windows x86-64 and unsigned Universal macOS downloads.
+The release was built from
+[`6338a5f`](https://github.com/TanvirAhmedArnab/SolarSystem/tree/6338a5fba17c79321347d634ede8dde4394aa836).
+Its product, engineering, art, licensing, release, and repository decisions
+remain maintained as living, reviewable documents.
 
 ## Portfolio goals
 
@@ -111,7 +117,8 @@ checksums.
 - [Assignment and Publication Readiness Audit](Docs/ProjectManagement/Assignment%20and%20Publication%20Readiness%20Audit.md)
 - [Assignment Comet Spawner Validation](Docs/ProjectManagement/Assignment%20Comet%20Spawner%20Validation.md)
 - [Readable Initial Orbit Composition Validation](Docs/ProjectManagement/Readable%20Initial%20Orbit%20Composition%20Validation.md)
-- [Proposed itch.io Page Copy](Docs/Release/itch.io%20Page%20Draft.md)
+- [Project Workflow Status and Handoff](Docs/ProjectManagement/Project%20Workflow%20Status%20and%20Handoff.md)
+- [itch.io Publication Record](Docs/Release/itch.io%20Page%20Draft.md)
 - [Release Evidence Checklist](Docs/Release/Release%20Evidence%20Checklist.md)
 - [Windows Owner Acceptance Walkthrough](Docs/Release/Windows%20Owner%20Acceptance%20Walkthrough.md)
 - [Release Player Settings Proposal](Docs/Release/Release%20Player%20Settings%20Proposal.md)
@@ -161,9 +168,9 @@ with their existing keyboard controls.
 A dormant profiling harness now traverses 11 production states and records raw
 frame, CPU, GPU, allocation, memory, and rendering-counter samples to versioned
 JSON. A 1920x1080 Editor diagnostic has verified the harness and scenario
-routing; release certification still requires a standalone Windows player on
-the approved mid-range hardware class plus external VRAM and cold-launch
-measurement.
+routing. The standalone Windows release player completed the owner-visible
+acceptance walkthrough; external VRAM and cold-launch measurement remain
+optional deeper profiling rather than a v1.0.0 release blocker.
 Earth now provides the representative layered-rendering proof with a custom
 URP surface, ocean response, nightside-only city lights, independent clouds,
 a restrained atmosphere rim, and close-focus orbit-guide suppression.
