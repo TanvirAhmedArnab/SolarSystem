@@ -26,6 +26,7 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
     public sealed class SolarSystemScenePlayModeTests
     {
         private const float FocusTransitionTimeoutSeconds = 5f;
+        private const float ReticleViewportLockTolerancePixels = 1f;
         private bool hadExplorerSettings;
         private string savedExplorerSettings;
         private static readonly string[] ExpectedBodyIds =
@@ -390,7 +391,8 @@ namespace Tanvir.SolarSystem.Tests.PlayMode
                     Vector2.Distance(
                         hud.SelectionReticleWorldBound.center,
                         hud.HudWorldBound.center),
-                    Is.LessThan(0.5f),
+                    Is.LessThanOrEqualTo(
+                        ReticleViewportLockTolerancePixels),
                     $"Focused Titan reticle drifted on frame {frame}.");
             }
         }

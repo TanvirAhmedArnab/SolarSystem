@@ -36,8 +36,12 @@ namespace Tanvir.SolarSystem.Editor.Release
         /// Records and schedules restoration of the supplied standalone target
         /// after Unity has completed activation of the build target.
         /// </summary>
-        /// <param name="target">Standalone target active before the build.</param>
-        /// <param name="builtTarget">Standalone target used by the build.</param>
+        /// <param name="target">
+        /// Standalone target to restore after the build.
+        /// </param>
+        /// <param name="builtTarget">
+        /// Final target used by the build sequence.
+        /// </param>
         public static void Request(BuildTarget target, BuildTarget builtTarget)
         {
             if (!IsStandaloneTarget(target))
@@ -48,12 +52,12 @@ namespace Tanvir.SolarSystem.Editor.Release
                     "Only standalone desktop targets can be restored.");
             }
 
-            if (!IsStandaloneTarget(builtTarget))
+            if (builtTarget == BuildTarget.NoTarget)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(builtTarget),
                     builtTarget,
-                    "Only standalone desktop build targets are supported.");
+                    "A concrete final build target is required.");
             }
 
             SessionState.SetInt(TargetKey, (int)target);
@@ -63,6 +67,25 @@ namespace Tanvir.SolarSystem.Editor.Release
                 target == builtTarget);
             SessionState.SetBool(PendingKey, true);
             ScheduleNextAttempt();
+        }
+
+        /// <summary>
+        /// Resolves a safe standalone restoration target for individual builds
+        /// and ordered multi-platform build sequences.
+        /// </summary>
+        /// <param name="previousTarget">
+        /// Editor target active before the release command.
+        /// </param>
+        /// <returns>
+        /// The previous standalone target, or the approved Windows baseline
+        /// when the previous target was not a standalone desktop platform.
+        /// </returns>
+        public static BuildTarget ResolveRestorationTarget(
+            BuildTarget previousTarget)
+        {
+            return IsStandaloneTarget(previousTarget)
+                ? previousTarget
+                : BuildTarget.StandaloneWindows64;
         }
 
         /// <summary>

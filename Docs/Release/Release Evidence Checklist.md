@@ -22,7 +22,7 @@ recorded under `Docs/Release`.
 | Field | Required value | Current state |
 |---|---|---|
 | Release version | `1.0.0` | Approved and serialized |
-| Release commit | Full Git SHA, clean and pushed | Current source candidate: `99ac9a678dd57af3fe827455e6642e0c2e37f4d5`; packaging safeguard correction and final synchronized release commit pending |
+| Release commit | Full Git SHA, clean and pushed | Latest pushed source: `c130637f27db3601185017a8c64086bed74e530e`; ordered-builder hardening candidate and final synchronized release commit pending |
 | Unity version | `6000.5.3f1` | Verified project baseline |
 | Render pipeline | URP `17.5.0` | Verified project baseline |
 | Required platforms | Windows x86-64, WebGL, and macOS Universal | Approved |
@@ -69,7 +69,7 @@ recorded under `Docs/Release`.
 |---|---|---|
 | Commit SHA | `[PENDING]` | Pending |
 | Unity Console report | `Docs/ProjectManagement/Release Settings and Build Automation Validation.md` | 0 errors, 0 warnings |
-| Edit Mode report and count | Unity Test Runner validation on `2026-07-26` | 222 passed |
+| Edit Mode report and count | Unity Test Runner validation on `2026-07-27` | 226 passed |
 | Play Mode report and count | Unity Test Runner validation on `2026-07-27` | 27 passed |
 | Responsive UI report | `Docs/Release/Windows Release Build and Performance Validation.md` | Pass at exact 960×540, 1280×720, and 1920×1080 client areas |
 | Accessibility walkthrough | `Docs/Release/Windows Owner Acceptance Walkthrough.md` | All 11 current-source acceptance groups passed by Tanvir on `2026-07-27`; final rebuilt-player smoke recheck pending |

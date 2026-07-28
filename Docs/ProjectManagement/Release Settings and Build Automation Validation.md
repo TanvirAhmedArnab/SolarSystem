@@ -2,8 +2,8 @@
 
 **Date:** 2026-07-26  
 **Owner:** Tanvir  
-**Status:** Implemented and validated; Windows and macOS builds verified
-separately
+**Status:** Implemented and validated; synchronized three-platform rebuild
+pending clean commit and push
 
 ## Scope
 
@@ -55,8 +55,8 @@ the performance and desktop-quality authority.
   restores temporary desktop backend/architecture changes, and writes one
   JSON report beside every ignored artifact.
 - `StandaloneTargetRestorationCoordinator` persists restoration through
-  domain reloads, waits for compilation/import work, observes the build target,
-  and then requests the prior standalone target asynchronously.
+  domain reloads, waits for compilation/import work, observes the final build
+  target, and then requests the approved standalone target asynchronously.
 - Edit Mode tests protect identity, window, WebGL, scene, and Universal macOS
   contracts.
 
@@ -125,3 +125,48 @@ The fix was committed and pushed as `bf807333`, then exercised by the clean
 macOS rebuild described above. The final Windows, WebGL, and macOS publication
 artifacts must still be regenerated from one final release commit after the
 remaining release work is complete.
+
+## Ordered all-platform hardening validation
+
+The first synchronized attempt from clean pushed commit `c130637` began while
+the Editor's active target was WebGL. Its Windows player completed successfully,
+but the ordered command then stopped before macOS because the individual
+desktop builder tried to restore WebGL through a standalone-only coordinator.
+That diagnostic Windows artifact is not a release artifact.
+
+Review also proved that invoking the three public build commands sequentially
+would create two additional risks: Unity's expected platform-import
+serialization churn could fail the second command's clean-tree precondition,
+and an intermediate asynchronous restoration request could race the following
+platform build.
+
+The corrected architecture:
+
+- validates settings, clean source, and pushed upstream identity once before
+  any platform mutation;
+- performs Windows, macOS, and WebGL builds inside one owned sequence;
+- restores standalone scripting backend and architecture once in a final
+  block;
+- records WebGL as the final target that must be observed before restoration;
+- preserves a previous standalone target, or uses
+  `StandaloneWindows64` when the command started from WebGL; and
+- retains the domain-reload-safe asynchronous switch after the final build.
+
+The navigator's obsolete `PreventDefault()` call was also removed while
+`StopImmediatePropagation()` continues to consume an activated Enter event.
+The existing real-scene test confirms that Enter still selects, focuses, and
+closes the navigator. The focused fast-moon reticle regression now allows one
+UI pixel of layout rounding while still sampling all 20 maximum-speed frames.
+
+Candidate validation:
+
+- Unity compilation: passed with no compiler warning.
+- Edit Mode: `226 passed`, `0 failed`, `0 skipped`, `0 inconclusive`.
+- Play Mode: `27 passed`, `0 failed`, `0 skipped`, `0 inconclusive`.
+- Unity Console: `0 errors`, `0 warnings`.
+- Focused restoration tests cover standalone preservation, WebGL-to-Windows
+  normalization, final-WebGL observation, busy-editor waiting, safe switching,
+  and already-restored completion.
+
+The corrected command still requires a clean commit and push before the
+synchronized all-platform build can be repeated.

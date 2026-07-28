@@ -63,9 +63,71 @@ namespace Tanvir.SolarSystem.Editor.Release
         [MenuItem(MenuRoot + "All Three Platforms")]
         public static void BuildAll()
         {
-            BuildWindows();
-            BuildMacOs();
-            BuildWebGl();
+            ReleaseSettingsManager.ThrowIfInvalid(
+                includeModuleAvailability: true);
+            EnsureCleanPushedSource();
+
+            BuildTarget restorationTarget =
+                StandaloneTargetRestorationCoordinator
+                    .ResolveRestorationTarget(
+                        EditorUserBuildSettings.activeBuildTarget);
+            ScriptingImplementation previousBackend =
+                PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone);
+            int previousArchitecture =
+                PlayerSettings.GetArchitecture(NamedBuildTarget.Standalone);
+            BuildTarget finalBuildTarget = BuildTarget.NoTarget;
+            try
+            {
+                ConfigureStandalone(
+                    ScriptingImplementation.IL2CPP,
+                    architecture: null);
+                finalBuildTarget = BuildTarget.StandaloneWindows64;
+                Build(
+                    finalBuildTarget,
+                    Path.Combine(
+                        ReleaseBuildContract.ReleaseRoot,
+                        ReleaseBuildContract.WindowsDirectory,
+                        ReleaseBuildContract.WindowsExecutable),
+                    BuildOptions.CompressWithLz4HC);
+
+                ConfigureStandalone(
+                    ScriptingImplementation.Mono2x,
+                    ReleaseBuildContract.MacOsUniversalArchitecture);
+                finalBuildTarget = BuildTarget.StandaloneOSX;
+                Build(
+                    finalBuildTarget,
+                    Path.Combine(
+                        ReleaseBuildContract.ReleaseRoot,
+                        ReleaseBuildContract.MacOsDirectory,
+                        ReleaseBuildContract.MacOsApplication),
+                    BuildOptions.CompressWithLz4HC);
+
+                finalBuildTarget = BuildTarget.WebGL;
+                Build(
+                    finalBuildTarget,
+                    Path.Combine(
+                        ReleaseBuildContract.ReleaseRoot,
+                        ReleaseBuildContract.WebGlDirectory),
+                    BuildOptions.None);
+            }
+            finally
+            {
+                try
+                {
+                    RestoreStandaloneSettings(
+                        previousBackend,
+                        previousArchitecture);
+                }
+                finally
+                {
+                    if (finalBuildTarget != BuildTarget.NoTarget)
+                    {
+                        StandaloneTargetRestorationCoordinator.Request(
+                            restorationTarget,
+                            finalBuildTarget);
+                    }
+                }
+            }
         }
 
         private static void BuildStandalone(
@@ -77,39 +139,63 @@ namespace Tanvir.SolarSystem.Editor.Release
             ReleaseSettingsManager.ThrowIfInvalid(
                 includeModuleAvailability: true);
             EnsureCleanPushedSource();
-            BuildTarget previousTarget =
-                EditorUserBuildSettings.activeBuildTarget;
+            BuildTarget restorationTarget =
+                StandaloneTargetRestorationCoordinator
+                    .ResolveRestorationTarget(
+                        EditorUserBuildSettings.activeBuildTarget);
             ScriptingImplementation previousBackend =
                 PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone);
             int previousArchitecture =
                 PlayerSettings.GetArchitecture(NamedBuildTarget.Standalone);
             try
             {
-                PlayerSettings.SetScriptingBackend(
-                    NamedBuildTarget.Standalone,
-                    scriptingBackend);
-                if (architecture.HasValue)
-                {
-                    PlayerSettings.SetArchitecture(
-                        NamedBuildTarget.Standalone,
-                        architecture.Value);
-                }
+                ConfigureStandalone(scriptingBackend, architecture);
 
                 Build(target, outputPath, BuildOptions.CompressWithLz4HC);
             }
             finally
             {
+                try
+                {
+                    RestoreStandaloneSettings(
+                        previousBackend,
+                        previousArchitecture);
+                }
+                finally
+                {
+                    StandaloneTargetRestorationCoordinator.Request(
+                        restorationTarget,
+                        target);
+                }
+            }
+        }
+
+        private static void ConfigureStandalone(
+            ScriptingImplementation scriptingBackend,
+            int? architecture)
+        {
+            PlayerSettings.SetScriptingBackend(
+                NamedBuildTarget.Standalone,
+                scriptingBackend);
+            if (architecture.HasValue)
+            {
                 PlayerSettings.SetArchitecture(
                     NamedBuildTarget.Standalone,
-                    previousArchitecture);
-                PlayerSettings.SetScriptingBackend(
-                    NamedBuildTarget.Standalone,
-                    previousBackend);
-                AssetDatabase.SaveAssets();
-                StandaloneTargetRestorationCoordinator.Request(
-                    previousTarget,
-                    target);
+                    architecture.Value);
             }
+        }
+
+        private static void RestoreStandaloneSettings(
+            ScriptingImplementation scriptingBackend,
+            int architecture)
+        {
+            PlayerSettings.SetArchitecture(
+                NamedBuildTarget.Standalone,
+                architecture);
+            PlayerSettings.SetScriptingBackend(
+                NamedBuildTarget.Standalone,
+                scriptingBackend);
+            AssetDatabase.SaveAssets();
         }
 
         private static void Build(

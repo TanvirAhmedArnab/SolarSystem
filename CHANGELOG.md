@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Hardened the ordered three-platform release command so it validates source
+  identity once, avoids intermediate clean-tree and target-restoration races,
+  accepts WebGL as the final observed build target, and restores the approved
+  standalone editor baseline only after the sequence completes.
+- Removed the obsolete UI Toolkit `PreventDefault()` call from navigator Enter
+  activation while retaining immediate event consumption, and calibrated the
+  focused-reticle regression to a one-pixel UI layout tolerance.
 - Generalized release packaging safeguards so Unity do-not-ship directories
   are excluded and rejected across Windows, WebGL, and macOS archives, with a
   WebGL regression fixture covering Burst debug output.

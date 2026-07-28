@@ -7,8 +7,8 @@
 **Document owner:** Tanvir  
 **Technical steward:** Codex, subject to owner review  
 **Document status:** Living technical authority; release performance contract and diagnostic harness validated  
-**Version:** 0.38.0  
-**Last updated:** 2026-07-26  
+**Version:** 0.45.0  
+**Last updated:** 2026-07-27  
 **Unity baseline:** Unity 6000.5.3f1, Universal Render Pipeline 17.5.0  
 **Product authority:** `Docs/Design/GDD.md`  
 **Art authority:** `Docs/Art/ArtBible.md`
@@ -70,6 +70,7 @@ This document converts the approved Solar System GDD into a testable Unity archi
 | 0.42.0 | 2026-07-27 | Codex, for Tanvir | Consolidated the remaining root-level Unity assets into project-owned input and rendering settings folders while preserving every asset and folder GUID | Folder cleanup implemented and Unity reimport validated |
 | 0.43.0 | 2026-07-27 | Codex, for Tanvir | Replaced Triton's abrupt runtime luminance threshold with a dedicated linear observed-coverage mask, an 8-pixel source-honest feather, and a uniform near-black unknown-region fill | Implemented, test-covered, and owner-validated |
 | 0.44.0 | 2026-07-27 | Codex, for Tanvir | Added explicit focused-row Enter activation and measured status-to-navigator spacing with real-scene keyboard and responsive-layout regressions | Implemented, test-covered, and owner-validated |
+| 0.45.0 | 2026-07-27 | Codex, for Tanvir | Hardened the ordered release builder against WebGL starting targets, intermediate dirty-tree checks, and asynchronous restoration races; generalized final-target observation and removed obsolete navigator event handling | Implemented and fully test-covered; clean pushed all-platform rebuild pending |
 
 ### 1.3 Status vocabulary
 
@@ -355,7 +356,10 @@ scene order, resolutions, platform names, and ignored output paths.
 `ReleaseSettingsManager` applies and validates the serialized Player Settings
 without starting a build. `SolarSystemReleaseBuilder` exposes separate
 non-development build commands for Windows x86-64, macOS Universal, WebGL, and
-an ordered all-platform sequence.
+an ordered all-platform sequence. The ordered command validates clean pushed
+source once, performs Windows, macOS, and WebGL builds without invoking the
+individual-command preconditions between platform mutations, and restores
+temporary standalone backend and architecture settings in one final block.
 
 Windows uses IL2CPP. The Windows-hosted macOS build temporarily uses Mono,
 targets Intel 64-bit plus Apple silicon, and restores the serialized Windows
@@ -367,12 +371,14 @@ mutation unless the working tree is clean and `HEAD` matches its configured
 upstream.
 
 Standalone target restoration is intentionally asynchronous. The
-`StandaloneTargetRestorationCoordinator` records the pre-build and built
-targets in `SessionState`, survives domain reloads, waits while Unity is
-compiling or importing, observes the built target before allowing completion,
-and requests the prior target through `SwitchActiveBuildTargetAsync`. This
-prevents both premature completion and direct target mutation during Unity's
-deferred platform transition.
+`StandaloneTargetRestorationCoordinator` records the standalone target to
+restore and the sequence's final built target in `SessionState`, survives
+domain reloads, waits while Unity is compiling or importing, observes the
+final target before allowing completion, and requests the standalone target
+through `SwitchActiveBuildTargetAsync`. A command started while WebGL is active
+normalizes restoration to the approved `StandaloneWindows64` editor baseline.
+This prevents premature completion, invalid WebGL-as-standalone requests, and
+direct target mutation during Unity's deferred platform transition.
 
 The macOS artifact is intentionally unsigned and unnotarized because the owner
 has neither Mac test access nor Apple Developer Program membership. It must not
@@ -382,9 +388,10 @@ Ignored build folders are validated and packaged by
 `Tools/Release/release_artifacts.py`. The tool refuses a build report from any
 commit or release version other than the explicitly approved identity,
 validates the platform-specific folder contract, and creates archives with
-playable files at the ZIP root. Windows do-not-ship symbol/back-up directories
-are filtered. Unsafe or duplicate archive paths are rejected, and an existing
-protected destination aborts the complete run before any new ZIP is written.
+playable files at the ZIP root. Unity do-not-ship symbol/back-up directories
+are filtered on every platform. Unsafe or duplicate archive paths are rejected,
+and an existing protected destination aborts the complete run before any new
+ZIP is written.
 WebGL requires the entry page, template data, loader, and every
 fallback-compressed `.unityweb` payload. The macOS archive declares Unix ZIP
 metadata and executable bits for the launcher and native libraries even when

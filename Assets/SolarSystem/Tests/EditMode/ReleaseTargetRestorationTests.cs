@@ -86,5 +86,59 @@ namespace Tanvir.SolarSystem.Tests.EditMode
                 Is.EqualTo(
                     StandaloneTargetRestorationStep.ObserveBuiltTarget));
         }
+
+        [Test]
+        public void ResolveRestorationTarget_WhenPreviousTargetIsWebGl_UsesWindows()
+        {
+            BuildTarget target =
+                StandaloneTargetRestorationCoordinator
+                    .ResolveRestorationTarget(BuildTarget.WebGL);
+
+            Assert.That(target, Is.EqualTo(BuildTarget.StandaloneWindows64));
+        }
+
+        [Test]
+        public void ResolveRestorationTarget_WhenPreviousTargetIsMacOs_PreservesIt()
+        {
+            BuildTarget target =
+                StandaloneTargetRestorationCoordinator
+                    .ResolveRestorationTarget(BuildTarget.StandaloneOSX);
+
+            Assert.That(target, Is.EqualTo(BuildTarget.StandaloneOSX));
+        }
+
+        [Test]
+        public void GetNextStep_WhenWebGlFinalTargetActivates_ObservesItFirst()
+        {
+            StandaloneTargetRestorationStep step =
+                StandaloneTargetRestorationCoordinator.GetNextStep(
+                    BuildTarget.StandaloneWindows64,
+                    BuildTarget.WebGL,
+                    BuildTarget.WebGL,
+                    editorBusy: false,
+                    builtTargetObserved: false);
+
+            Assert.That(
+                step,
+                Is.EqualTo(
+                    StandaloneTargetRestorationStep.ObserveBuiltTarget));
+        }
+
+        [Test]
+        public void GetNextStep_AfterWebGlObservation_RequestsWindowsSwitch()
+        {
+            StandaloneTargetRestorationStep step =
+                StandaloneTargetRestorationCoordinator.GetNextStep(
+                    BuildTarget.StandaloneWindows64,
+                    BuildTarget.WebGL,
+                    BuildTarget.WebGL,
+                    editorBusy: false,
+                    builtTargetObserved: true);
+
+            Assert.That(
+                step,
+                Is.EqualTo(
+                    StandaloneTargetRestorationStep.RequestSwitch));
+        }
     }
 }

@@ -834,7 +834,6 @@ namespace Tanvir.SolarSystem.Presentation.UI
 
             if (TryNavigateFromNavigatorElement(evt.target as VisualElement))
             {
-                evt.PreventDefault();
                 evt.StopImmediatePropagation();
             }
         }

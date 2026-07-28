@@ -37,6 +37,13 @@ direct project, build, media, or publication evidence proves it.
   Decompression Fallback. The simulation rendered, accepted the `H` keyboard
   command, and produced zero browser-console errors. Full hosted acceptance
   remains pending on itch.io.
+- The first synchronized command attempt from pushed commit `c130637` produced
+  a successful diagnostic Windows build, then exposed an ordered-builder
+  restoration defect because the Editor began on WebGL. The incomplete attempt
+  is not release evidence. The corrected builder now validates source once,
+  owns all three platform mutations, and restores Windows only after observing
+  the final WebGL target; its clean commit and synchronized rerun remain
+  pending.
 - A Windows x86-64 IL2CPP release player has been rebuilt successfully from
   clean pushed commit `f6f4d61`, structurally validated, and owner-tested for
   focus, proportional zoom, and stable fast-body reticle behavior. Earlier
