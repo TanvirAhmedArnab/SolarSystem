@@ -21,9 +21,9 @@ from typing import Iterable
 BUILD_REPORT_NAME = "release-build-report.json"
 ARCHIVE_MANIFEST_NAME = "release-manifest.json"
 FIXED_ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
-WINDOWS_EXCLUDED_DIRECTORIES = (
-    "Solar System Simulation_BackUpThisFolder_ButDontShipItWithYourGame",
-    "Solar System Simulation_BurstDebugInformation_DoNotShip",
+UNITY_DO_NOT_SHIP_DIRECTORY_SUFFIXES = (
+    "_BackUpThisFolder_ButDontShipItWithYourGame",
+    "_BurstDebugInformation_DoNotShip",
 )
 
 
@@ -246,12 +246,11 @@ def archive_path(
     return archive_root / f"SolarSystem-{version}-{contract.archive_suffix}.zip"
 
 
-def is_excluded(platform_key: str, relative_path: PurePosixPath) -> bool:
-    if platform_key != "windows":
-        return False
+def is_excluded(relative_path: PurePosixPath) -> bool:
     return any(
-        part in WINDOWS_EXCLUDED_DIRECTORIES
+        part.endswith(suffix)
         for part in relative_path.parts
+        for suffix in UNITY_DO_NOT_SHIP_DIRECTORY_SUFFIXES
     )
 
 
@@ -304,7 +303,7 @@ def iter_archive_entries(
         relative = PurePosixPath(path.relative_to(root).as_posix())
         if relative.as_posix() == BUILD_REPORT_NAME:
             continue
-        if is_excluded(platform_key, relative):
+        if is_excluded(relative):
             continue
         yield path, relative
 
@@ -454,20 +453,21 @@ def validate_archive(
             "Archive contains an extra top-level build directory.",
             issues,
         )
+        require(
+            not any(
+                part.endswith(suffix)
+                for name in names
+                for part in PurePosixPath(name).parts
+                for suffix in UNITY_DO_NOT_SHIP_DIRECTORY_SUFFIXES
+            ),
+            "Archive contains a Unity do-not-ship directory.",
+            issues,
+        )
 
         if platform_key == "windows":
             require(
                 "Solar System Simulation.exe" in names,
                 "Windows archive is missing the executable at its root.",
-                issues,
-            )
-            require(
-                not any(
-                    excluded in PurePosixPath(name).parts
-                    for name in names
-                    for excluded in WINDOWS_EXCLUDED_DIRECTORIES
-                ),
-                "Windows archive contains a Unity do-not-ship directory.",
                 issues,
             )
         elif platform_key == "webgl":

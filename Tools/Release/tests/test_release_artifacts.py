@@ -145,6 +145,35 @@ class ReleaseArtifactTests(unittest.TestCase):
                 self.commit,
             )
 
+    def test_webgl_archive_with_do_not_ship_directory_is_rejected(self) -> None:
+        archive_path = self.release_root / "unsafe-webgl.zip"
+        manifest = {
+            "sourceCommit": self.commit,
+            "platform": "webgl",
+        }
+        with zipfile.ZipFile(archive_path, "w") as archive:
+            archive.writestr(
+                release_artifacts.ARCHIVE_MANIFEST_NAME,
+                json.dumps(manifest),
+            )
+            archive.writestr("index.html", b"<html></html>")
+            archive.writestr("Build/game.loader.js", b"fixture")
+            archive.writestr("TemplateData/style.css", b"fixture")
+            archive.writestr(
+                (
+                    "Solar System Simulation_"
+                    "BurstDebugInformation_DoNotShip/must-not-ship.txt"
+                ),
+                b"private debug data",
+            )
+
+        with self.assertRaises(release_artifacts.ReleaseArtifactError):
+            release_artifacts.validate_archive(
+                "webgl",
+                archive_path,
+                self.commit,
+            )
+
     def test_package_all_is_root_correct_filtered_and_deterministic(self) -> None:
         first_manifest = release_artifacts.package_all(
             self.release_root,
@@ -184,9 +213,12 @@ class ReleaseArtifactTests(unittest.TestCase):
         self.assertNotIn(release_artifacts.BUILD_REPORT_NAME, names)
         self.assertFalse(
             any(
-                excluded in Path(name).parts
+                part.endswith(suffix)
                 for name in names
-                for excluded in release_artifacts.WINDOWS_EXCLUDED_DIRECTORIES
+                for part in Path(name).parts
+                for suffix in (
+                    release_artifacts.UNITY_DO_NOT_SHIP_DIRECTORY_SUFFIXES
+                )
             )
         )
         self.assertFalse(
@@ -210,6 +242,16 @@ class ReleaseArtifactTests(unittest.TestCase):
         self.assertIn("index.html", webgl_names)
         self.assertIn("Build/game.data.unityweb", webgl_names)
         self.assertIn("TemplateData/style.css", webgl_names)
+        self.assertFalse(
+            any(
+                part.endswith(suffix)
+                for name in webgl_names
+                for part in Path(name).parts
+                for suffix in (
+                    release_artifacts.UNITY_DO_NOT_SHIP_DIRECTORY_SUFFIXES
+                )
+            )
+        )
 
         macos_archive = archive_root / (
             f"SolarSystem-{self.version}-macOS-Universal.zip"
@@ -262,8 +304,10 @@ class ReleaseArtifactTests(unittest.TestCase):
         data = root / "Solar System Simulation_Data"
         data.mkdir()
         (data / "globalgamemanagers").write_bytes(b"fixture")
-        for excluded in release_artifacts.WINDOWS_EXCLUDED_DIRECTORIES:
-            directory = root / excluded
+        for suffix in (
+            release_artifacts.UNITY_DO_NOT_SHIP_DIRECTORY_SUFFIXES
+        ):
+            directory = root / f"Solar System Simulation{suffix}"
             directory.mkdir()
             (directory / "must-not-ship.txt").write_text(
                 "excluded",
@@ -290,6 +334,15 @@ class ReleaseArtifactTests(unittest.TestCase):
         template_data = root / "TemplateData"
         template_data.mkdir()
         (template_data / "style.css").write_text("", encoding="utf-8")
+        burst_debug = (
+            root
+            / "Solar System Simulation_BurstDebugInformation_DoNotShip"
+        )
+        burst_debug.mkdir()
+        (burst_debug / "must-not-ship.txt").write_text(
+            "excluded",
+            encoding="utf-8",
+        )
 
     def _create_macos_fixture(self) -> None:
         root = release_artifacts.build_directory(

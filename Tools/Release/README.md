@@ -10,7 +10,7 @@ The tool:
 - checks the platform-specific player structure;
 - verifies WebGL fallback-compressed `.unityweb` payloads;
 - verifies that the macOS launcher is a Universal Mach-O binary;
-- removes Unity's two Windows do-not-ship directories from the public ZIP;
+- removes Unity's do-not-ship directories from every public platform ZIP;
 - places each platform's playable files directly at its archive root;
 - preserves Unix executable metadata for the macOS launcher and libraries;
 - validates every completed ZIP before replacing an earlier archive; and
@@ -68,3 +68,6 @@ Generated outputs remain ignored under `Builds/Release/Archives`.
 The packager validates the embedded release version before writing any
 archive, rejects unsafe or duplicate ZIP entry paths, and aborts before
 creating a partial archive set when a protected destination already exists.
+Unity directories explicitly named `BackUpThisFolder_ButDontShipItWithYourGame`
+or `BurstDebugInformation_DoNotShip` are excluded and rejected across Windows,
+WebGL, and macOS archives.

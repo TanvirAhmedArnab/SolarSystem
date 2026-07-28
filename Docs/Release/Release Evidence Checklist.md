@@ -22,7 +22,7 @@ recorded under `Docs/Release`.
 | Field | Required value | Current state |
 |---|---|---|
 | Release version | `1.0.0` | Approved and serialized |
-| Release commit | Full Git SHA, clean and pushed | Current Windows candidate: `f6f4d61d9f8a652851735b58edd5aed546f6c970`; final synchronized release commit pending |
+| Release commit | Full Git SHA, clean and pushed | Current source candidate: `99ac9a678dd57af3fe827455e6642e0c2e37f4d5`; packaging safeguard correction and final synchronized release commit pending |
 | Unity version | `6000.5.3f1` | Verified project baseline |
 | Render pipeline | URP `17.5.0` | Verified project baseline |
 | Required platforms | Windows x86-64, WebGL, and macOS Universal | Approved |
@@ -127,29 +127,32 @@ recorded under `Docs/Release`.
       workstation.
 - [x] Decompression Fallback is enabled in serialized Player Settings.
 - [ ] Build is produced from the same release commit as Windows.
-- [ ] Build report records target, result, warnings, errors, duration, and size.
-- [ ] Expected `Build`, `TemplateData`, and entry files exist.
+- [x] Build report records target, result, warnings, errors, duration, and size.
+- [x] Expected `Build`, `TemplateData`, and entry files exist.
 - [ ] Complete WebGL build folder is archived without an extra parent nesting
       level that prevents itch.io playback.
 - [ ] Archive is uploaded as `This file will be played in the browser`.
 - [ ] Embedded player loads successfully on itch.io.
-- [ ] First interaction grants keyboard focus.
+- [x] First local interaction grants keyboard focus; hosted confirmation remains
+      pending.
 - [ ] Browser audio starts after an allowed user gesture.
 - [ ] Main input and learning flows pass.
 - [ ] Browser resize and fullscreen presentation pass.
-- [ ] Browser console has no release-blocking error.
+- [x] Local browser console has no release-blocking error; hosted confirmation
+      remains pending.
 - [ ] Persistence behavior is verified within browser-storage limitations.
 
 ### WebGL Artifact Record
 
 | Field | Value |
 |---|---|
-| Source commit | `[PENDING]` |
-| Build output | `<release-root>/SolarSystem-[VERSION]-WebGL/` |
-| Hosted smoke-test browser | `[PENDING]` |
-| Hosted smoke-test date and tester | `[PENDING]` |
-| Browser-console evidence | `[PENDING]` |
-| Uncompressed size | `[PENDING]` |
+| Source commit | `99ac9a678dd57af3fe827455e6642e0c2e37f4d5` (provisional; synchronized rebuild pending) |
+| Build output | `Builds/Release/SolarSystem-1.0.0-WebGL/` |
+| Local smoke-test browser | Codex in-app Chromium over plain local HTTP |
+| Local smoke-test date and tester | `2026-07-27`; Codex |
+| Browser-console evidence | `0` errors; three documented non-blocking Unity/platform warnings |
+| Build evidence | `Docs/Release/WebGL Build Validation.md` |
+| Uncompressed size | `27,188,882` bytes |
 | ZIP path | `<release-root>/Archives/SolarSystem-[VERSION]-WebGL.zip` |
 | ZIP SHA-256 | `[PENDING]` |
 | itch.io classification | This file will be played in the browser |

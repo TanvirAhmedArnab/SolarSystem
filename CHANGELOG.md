@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Generalized release packaging safeguards so Unity do-not-ship directories
+  are excluded and rejected across Windows, WebGL, and macOS archives, with a
+  WebGL regression fixture covering Burst debug output.
 - Routed `Enter` and numeric-keypad `Enter` explicitly from the focused
   celestial-navigator row to the existing selection/focus controller, and
   positioned the navigator from the status card's measured height so the two
@@ -69,7 +72,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Deterministic release-artifact validation and packaging tooling with
   same-commit and release-version enforcement, WebGL fallback-payload checks,
-  Windows do-not-ship exclusions, macOS executable-mode preservation,
+  cross-platform do-not-ship exclusions, macOS executable-mode preservation,
   root-correct ZIPs, unsafe-entry rejection, fail-before-write archive
   protection, sanitized public manifests without local output paths, SHA-256
   manifests, and isolated regression fixtures.

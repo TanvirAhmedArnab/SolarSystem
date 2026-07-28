@@ -3,9 +3,9 @@
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
 **Audit date:** 2026-07-26  
-**Repository commit inspected:** `f6f4d61`  
-**Status:** Windows acceptance and existing desktop builds verified; final
-synchronized builds, WebGL build, packaging, and publication evidence remain
+**Repository commit inspected:** `99ac9a6`  
+**Status:** Windows acceptance and provisional WebGL pipeline verified; final
+synchronized builds, packaging, and publication evidence remain
 
 ## Purpose
 
@@ -32,6 +32,11 @@ direct project, build, media, or publication evidence proves it.
   return to the pool when expired or safely outside the camera.
 - Installed platform modules include Windows Standalone, WebGL, and macOS
   Standalone.
+- A WebGL release player has been built successfully from clean pushed commit
+  `99ac9a6`, structurally validated, and loaded over plain local HTTP to prove
+  Decompression Fallback. The simulation rendered, accepted the `H` keyboard
+  command, and produced zero browser-console errors. Full hosted acceptance
+  remains pending on itch.io.
 - A Windows x86-64 IL2CPP release player has been rebuilt successfully from
   clean pushed commit `f6f4d61`, structurally validated, and owner-tested for
   focus, proportional zoom, and stable fast-body reticle behavior. Earlier
@@ -63,8 +68,8 @@ direct project, build, media, or publication evidence proves it.
 | At least two builds | Verified Windows x86-64 and macOS Universal release builds exist from clean pushed source commits | Complete | Build WebGL, then regenerate all final artifacts from one release commit |
 | WebGL decompression fallback | `webGLDecompressionFallback: 1`; protected by Edit Mode regression | Complete | Verify `.unityweb` output and hosted loading after the WebGL build |
 | Test at least one desktop build | Windows launches cleanly, automated diagnostics pass, and Tanvir completed the full owner-visible input, audio, settings, motion, responsive-layout, performance, and exit walkthrough | Complete for current source candidate | Repeat a concise launch/focus/exit smoke check after the final synchronized rebuild |
-| Test WebGL on itch.io | No current WebGL build/page | Incomplete | Upload and smoke-test the embedded player |
-| ZIP every build folder | No current release archives | Incomplete | Produce deterministic Windows, macOS, and WebGL ZIP archives |
+| Test WebGL on itch.io | Provisional WebGL build passes local fallback-loading and keyboard-focus smoke checks; no itch.io page exists | Incomplete | Regenerate from the final commit, upload, and smoke-test the embedded player |
+| ZIP every build folder | No current release archives; packager now strips Unity do-not-ship output across all platforms | Incomplete | Produce deterministic Windows, macOS, and WebGL ZIP archives |
 | itch.io page | No authenticated publication evidence | Incomplete | Owner creates/signs into account; Codex configures page after approval |
 | Expanded scene-hierarchy screenshot | Current hierarchy is suitable but no release evidence image exists | Incomplete | Expand every parent and capture readable evidence |
 | Expanded project-assets screenshot | Folder organization exists but no release evidence image exists | Incomplete | Expand relevant authored folders and capture readable evidence |
