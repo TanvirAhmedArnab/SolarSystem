@@ -2,7 +2,7 @@
 
 **Project:** Solar System Simulation  
 **Owner:** Tanvir  
-**Maintainer:** Unity Game Project Manager / Codex, subject to owner review  
+**Maintainer:** Codex Unity Game Studio — Wraith / Codex, subject to owner review  
 **Status:** Released — maintenance mode  
 **Release:** `1.0.0`  
 **Released:** 2026-07-28  
@@ -15,6 +15,22 @@ This is the project-local entry point for resuming Solar System Simulation
 after its first public release. It points to the authoritative project
 documents, records the certified release boundary, and prevents a future
 thread from restarting completed work.
+
+## Maintenance Authority Transfer
+
+This record transfers ongoing Solar System Simulation maintenance authority to
+Codex Unity Game Studio — Wraith / Codex, subject to owner review. Unity Game
+Project Manager is the retired historical predecessor and no longer holds live
+maintenance authority. This is an authority transfer only; it does not change
+the released game, adopt a Studio framework, or modify Central Studio source.
+
+Release `1.0.0`, its release-source commit, recorded artifact hashes, public
+release, runtime, packages, Unity version, assets, scenes, settings, licensing
+records, and scientific-source records are unchanged by this transfer. No
+Wraith framework version has been adopted by this transfer.
+
+Future maintenance, features, releases, framework adoption, publication, or
+account work require separately bounded owner authorization.
 
 ## Released State
 
@@ -85,7 +101,7 @@ outside version control.
 
 The validated reusable workflow is maintained in:
 
-`G:\My Drive\08 AI Agent Projects\01 Active Projects\Personal Agents\Unity Game Project Manager`
+`G:\My Drive\08 AI Agent Projects\01 Active Projects\Workflows & Automations\Codex Unity Game Studio`
 
 Solar System Simulation established reusable standards for:
 
